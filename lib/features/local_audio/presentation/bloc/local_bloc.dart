@@ -1,0 +1,70 @@
+import 'dart:io';
+
+import 'package:bloc/bloc.dart';
+import 'package:sound_center/features/local_audio/data/repositories/linux_audio_repository.dart';
+import 'package:sound_center/features/local_audio/data/repositories/local_audio_repository.dart';
+import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
+import 'package:sound_center/features/local_audio/domain/usecases/get_audios_usecase.dart';
+import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
+
+part 'local_event.dart';
+part 'local_state.dart';
+
+class LocalBloc extends Bloc<LocalEvent, LocalState> {
+  LocalBloc() : super(LocalState(LoadingLocalAudios())) {
+    late final GetAudioUseCase getAudioUseCase;
+    if (Platform.isLinux) {
+      getAudioUseCase = GetAudioUseCase(LocalAudioRepositoryLinux());
+    } else {
+      getAudioUseCase = GetAudioUseCase(LocalAudioRepository());
+    }
+    final LocalPlayerRepositoryImp player = LocalPlayerRepositoryImp();
+    on<GetLocalAudios>((event, emit) async {
+      player.setBloc(this);
+      List<AudioEntity> audios = await getAudioUseCase.call();
+      emit(state.copyWith(LocalAudioStatus(audios: audios)));
+    });
+    on<PlayAudio>((event, emit) async {
+      LocalAudioStatus status = state.status as LocalAudioStatus;
+      LocalPlayerRepositoryImp().setPlayList(status.audios);
+      await LocalPlayerRepositoryImp().play(event.index);
+      status.index = event.index;
+      emit(state.copyWith(status));
+    });
+
+    on<PlayNextAudio>((event, emit) async {
+      LocalAudioStatus status = state.status as LocalAudioStatus;
+      status.index = await player.next();
+      emit(state.copyWith(status));
+    });
+
+    on<PlayPreviousAudio>((event, emit) async {
+      LocalAudioStatus status = state.status as LocalAudioStatus;
+      status.index = await player.previous();
+      emit(state.copyWith(status));
+    });
+
+    on<AutoPlayNext>((event, emit) async {
+      LocalAudioStatus status = state.status as LocalAudioStatus;
+      status.index = event.index;
+      emit(state.copyWith(status));
+    });
+
+    on<TogglePlay>((event, emit) async {
+      LocalAudioStatus status = state.status as LocalAudioStatus;
+      final newStatus = LocalAudioStatus(
+        audios: status.audios,
+        index: status.index,
+      );
+      emit(state.copyWith(newStatus));
+    });
+
+    on<Search>((event, emit) async {
+      List<AudioEntity> audios = await getAudioUseCase.search(event.query);
+      LocalAudioStatus status = state.status as LocalAudioStatus;
+      status.audios = audios;
+      emit(state.copyWith(status));
+    });
+  }
+}

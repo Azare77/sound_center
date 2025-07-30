@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/features/local_audio/data/repositories/linux_audio_repository.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_audio_repository.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
+import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/domain/usecases/get_audios_usecase.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 
@@ -59,7 +61,11 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     });
 
     on<Search>((event, emit) async {
-      List<AudioEntity> audios = await getAudioUseCase.search(event.query);
+      List<AudioEntity> audios = await getAudioUseCase.search(
+        params: event.query,
+        orderBy: event.column,
+        desc: defaultDesc,
+      );
       LocalAudioStatus status = state.status as LocalAudioStatus;
       status.audios = audios;
       status.currentAudio = status.currentAudio;

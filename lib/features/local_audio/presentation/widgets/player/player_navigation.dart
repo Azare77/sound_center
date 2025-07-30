@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sound_center/core/constants/player_modes.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
+import 'package:sound_center/shared/Repository/player_repository.dart';
 
 class PlayerNavigation extends StatefulWidget {
   const PlayerNavigation({super.key});
@@ -51,12 +51,13 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             convertTime(pass),
             Expanded(
               child: Slider(
-                value: sliderPosition,
+                value: pass.toDouble(),
                 inactiveColor: Colors.grey,
+                max: total.toDouble(),
                 onChanged: (val) async {
-                  pass = (total * val).floor();
+                  pass = val.toInt();
                   setState(() {
-                    sliderPosition = val;
+                    pass = val.toInt();
                   });
                 },
                 onChangeStart: (_) {
@@ -135,6 +136,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   }
 
   Future<void> _updateDuration() async {
+    pass = 0;
     pass = await imp.getCurrentPosition();
     total = await imp.getDuration();
     setState(() {

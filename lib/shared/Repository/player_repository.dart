@@ -1,5 +1,9 @@
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
+enum RepeatMode { repeatAll, repeatOne, noRepeat }
+
+enum ShuffleMode { shuffle, noShuffle }
+
 abstract class PlayerRepository {
   void setPlayList(dynamic audios);
 

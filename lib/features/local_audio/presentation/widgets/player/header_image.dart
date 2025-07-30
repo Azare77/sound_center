@@ -16,12 +16,13 @@ class HeaderImage extends StatelessWidget {
         child: img != null
             ? Image.memory(
                 img!,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 filterQuality: FilterQuality.high,
               )
-            : Container(
-                color: Colors.red,
-                child: Icon(Icons.music_note, size: 100),
+            : Image.asset(
+                'assets/logo.png',
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
               ),
       ),
     );

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:metadata_god/metadata_god.dart';
-// import 'package:metadata_god/metadata_god.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/database/drift/local/audio.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
@@ -12,9 +11,10 @@ class LocalAudioRepositoryLinux implements AudioRepository {
   final AppDatabase database = AppDatabase();
 
   @override
-  Future<List<AudioModel>> getAudios() async {
-    final List<AudioModel> audios = [];
-
+  Future<List<AudioModel>> getAudios({
+    required AudioColumns orderBy,
+    required bool desc,
+  }) async {
     final homeDir = Platform.environment['HOME'];
     if (homeDir == null) return [];
 
@@ -24,15 +24,11 @@ class LocalAudioRepositoryLinux implements AudioRepository {
     final List<File> audioFiles = await _scanAudioFiles(musicDir);
     await updateDB(audioFiles);
 
-    final List<LocalAudiosTableData> dbData = await (database.select(
-      database.localAudiosTable,
-    )..orderBy([(tbl) => OrderingTerm.desc(tbl.title)])).get();
-
-    for (final item in dbData) {
-      audios.add(AudioModel.fromSongModel(item));
-    }
-
-    return audios;
+    final dbData = await LocalAudiosTable().search(
+      orderBy: orderBy,
+      desc: desc,
+    );
+    return dbData.map((item) => AudioModel.fromSongModel(item)).toList();
   }
 
   Future<List<File>> _scanAudioFiles(Directory dir) async {
@@ -111,8 +107,16 @@ class LocalAudioRepositoryLinux implements AudioRepository {
   }
 
   @override
-  Future<List<AudioModel>> search({String? like}) async {
-    final dbData = await LocalAudiosTable().search(input: like);
+  Future<List<AudioModel>> search({
+    String? like,
+    required AudioColumns orderBy,
+    required bool desc,
+  }) async {
+    final dbData = await LocalAudiosTable().search(
+      input: like,
+      orderBy: orderBy,
+      desc: desc,
+    );
     return dbData.map((item) => AudioModel.fromSongModel(item)).toList();
   }
 }

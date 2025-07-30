@@ -43,56 +43,59 @@ class _PlayerHeaderState extends State<PlayerHeader> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocalBloc, LocalState>(
-      builder: (BuildContext context, LocalState state) {
-        final LocalAudioStatus status = state.status as LocalAudioStatus;
-        AudioEntity song = status.currentAudio!;
-        List<AudioEntity> currentPlayList = LocalPlayerRepositoryImp()
-            .getPlayList();
-        _jumpToCorrectPage(currentPlayList, song);
-        return SizedBox(
-          child: Column(
-            spacing: 20,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.close_rounded),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.more_vert_rounded),
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.width * 0.8 - 10,
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification notification) {
-                    if (notification is ScrollEndNotification) {
-                      onScrollEnd();
-                    }
-                    return false;
-                  },
-                  child: PageView.builder(
-                    controller: controller,
-                    itemCount: currentPlayList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return HeaderImage(img: currentPlayList[index].cover);
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.49,
+      child: BlocBuilder<LocalBloc, LocalState>(
+        builder: (BuildContext context, LocalState state) {
+          final LocalAudioStatus status = state.status as LocalAudioStatus;
+          AudioEntity song = status.currentAudio!;
+          List<AudioEntity> currentPlayList = LocalPlayerRepositoryImp()
+              .getPlayList();
+          _jumpToCorrectPage(currentPlayList, song);
+          return SizedBox(
+            child: Column(
+              spacing: 20,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close_rounded),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.more_vert_rounded),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.width * 0.8 - 10,
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification notification) {
+                      if (notification is ScrollEndNotification) {
+                        onScrollEnd();
+                      }
+                      return false;
                     },
+                    child: PageView.builder(
+                      controller: controller,
+                      itemCount: currentPlayList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return HeaderImage(img: currentPlayList[index].cover);
+                      },
+                    ),
                   ),
                 ),
-              ),
-              TextView(song.title, maxLines: 1, textAlign: TextAlign.center),
-              TextView(song.artist, maxLines: 1, textAlign: TextAlign.center),
-            ],
-          ),
-        );
-      },
+                TextView(song.title, maxLines: 1, textAlign: TextAlign.center),
+                TextView(song.artist, maxLines: 1, textAlign: TextAlign.center),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

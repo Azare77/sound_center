@@ -1,4 +1,3 @@
-import 'package:sound_center/core/constants/player_modes.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
@@ -53,7 +52,8 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   List<AudioEntity> getPlayList() {
-    return audios;
+    if (shuffleMode == ShuffleMode.noShuffle) return audios;
+    return _shuffle.map((i) => audios[i]).toList();
   }
 
   @override
@@ -126,8 +126,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> seek(double position) async {
     int duration = await _playerService.getDuration();
-    int newPosition = (position * duration).floor();
-    _playerService.seek(newPosition);
+    _playerService.seek(position.floor());
   }
 
   Future<void> seekNotif(Duration duration) async {

@@ -23,7 +23,8 @@ class AutoPlayNext extends LocalEvent {
 class TogglePlay extends LocalEvent {}
 
 class Search extends LocalEvent {
-  final String query;
+  final String? query;
+  final AudioColumns column;
 
-  Search(this.query);
+  Search({this.query, this.column = queryConstants});
 }

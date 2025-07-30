@@ -10,19 +10,19 @@ class LocalAudioRepository implements AudioRepository {
   final LocalStorageSource _localStorageSource = LocalStorageSource();
 
   @override
-  Future<List<AudioModel>> getAudios() async {
-    List<AudioModel> audios = [];
+  Future<List<AudioModel>> getAudios({
+    required AudioColumns orderBy,
+    required bool desc,
+  }) async {
     List<SongModel> songs = await _localStorageSource.scanStorage();
     songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
     final database = AppDatabase();
     await updateDB(songs, database);
-    List<LocalAudiosTableData> dbData = await (database.select(
-      database.localAudiosTable,
-    )..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)])).get();
-    for (final item in dbData) {
-      audios.add(AudioModel.fromSongModel(item));
-    }
-    return audios;
+    final dbData = await LocalAudiosTable().search(
+      orderBy: orderBy,
+      desc: desc,
+    );
+    return dbData.map((item) => AudioModel.fromSongModel(item)).toList();
   }
 
   Future<void> updateDB(List<SongModel> songs, AppDatabase database) async {
@@ -67,8 +67,16 @@ class LocalAudioRepository implements AudioRepository {
   }
 
   @override
-  Future<List<AudioModel>> search({String? like}) async {
-    final dbData = await LocalAudiosTable().search(input: like);
+  Future<List<AudioModel>> search({
+    String? like,
+    required AudioColumns orderBy,
+    required bool desc,
+  }) async {
+    final dbData = await LocalAudiosTable().search(
+      input: like,
+      orderBy: orderBy,
+      desc: desc,
+    );
     return dbData.map((item) => AudioModel.fromSongModel(item)).toList();
   }
 }

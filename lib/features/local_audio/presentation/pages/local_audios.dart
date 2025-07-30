@@ -50,47 +50,37 @@ class _LocalAudiosState extends State<LocalAudios> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Sound Center"),
-        actions: [],
-      ),
-      body: Column(
-        children: [
-          TextField(
-            onChanged: (text) {
-              BlocProvider.of<LocalBloc>(context).add(Search(text.trim()));
+    return Column(
+      children: [
+        TextField(
+          onChanged: (text) {
+            BlocProvider.of<LocalBloc>(context).add(Search(query: text.trim()));
+          },
+        ),
+        Expanded(
+          child: BlocBuilder<LocalBloc, LocalState>(
+            builder: (BuildContext context, LocalState state) {
+              if (state.status is LocalAudioStatus) {
+                LocalAudioStatus status = state.status as LocalAudioStatus;
+                return Column(
+                  children: [
+                    Expanded(child: AudioListTemplate(status.audios)),
+                    if (LocalPlayerRepositoryImp().hasSource())
+                      CurrentAudio(audioEntity: status.currentAudio!),
+                  ],
+                );
+              }
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 5,
+                  children: [CircularProgressIndicator(), TextView("Scanning")],
+                ),
+              );
             },
           ),
-          Expanded(
-            child: BlocBuilder<LocalBloc, LocalState>(
-              builder: (BuildContext context, LocalState state) {
-                if (state.status is LocalAudioStatus) {
-                  LocalAudioStatus status = state.status as LocalAudioStatus;
-                  return Column(
-                    children: [
-                      Expanded(child: AudioListTemplate(status.audios)),
-                      if (LocalPlayerRepositoryImp().hasSource())
-                        CurrentAudio(audioEntity: status.currentAudio!),
-                    ],
-                  );
-                }
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 5,
-                    children: [
-                      CircularProgressIndicator(),
-                      TextView("Scanning"),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

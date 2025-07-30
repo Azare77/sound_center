@@ -6,7 +6,7 @@ class LoadingLocalAudios extends LocalStatus {}
 
 class LocalAudioStatus extends LocalStatus {
   List<AudioEntity> audios;
-  int index;
+  AudioEntity? currentAudio;
 
-  LocalAudioStatus({required this.audios, this.index = 0});
+  LocalAudioStatus({required this.audios, this.currentAudio});
 }

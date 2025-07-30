@@ -1,4 +1,4 @@
-import 'package:sound_center/core/constants/player_modes.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
 abstract class PlayerRepository {
   void setPlayList(dynamic audios);
@@ -13,13 +13,13 @@ abstract class PlayerRepository {
 
   Future<void> seek(double position);
 
-  Future<int> next();
+  Future<AudioEntity> next();
 
-  Future<int> previous();
+  Future<AudioEntity> previous();
 
   Future<void> stop();
 
-  Future<void> changeRepeatState(RepeatMode mode);
+  Future<void> changeRepeatState();
 
-  Future<void> changeShuffleState(ShuffleMode mode);
+  Future<void> changeShuffleState();
 }

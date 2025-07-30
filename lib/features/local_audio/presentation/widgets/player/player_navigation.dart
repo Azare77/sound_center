@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/core/constants/player_modes.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
@@ -73,11 +74,23 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.repeat)),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  imp.changeRepeatState();
+                });
+              },
+              icon: Icon(
+                imp.repeatMode == RepeatMode.noRepeat
+                    ? Icons.repeat
+                    : imp.repeatMode == RepeatMode.repeatOne
+                    ? Icons.repeat_one
+                    : Icons.repeat_on_rounded,
+              ),
+            ),
             IconButton(
               onPressed: () async {
                 _localBloc.add(PlayPreviousAudio());
-                await Future.delayed(Duration(milliseconds: 100));
                 await _updateDuration();
               },
               icon: Icon(Icons.chevron_left),
@@ -92,12 +105,21 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             IconButton(
               onPressed: () async {
                 _localBloc.add(PlayNextAudio());
-                await Future.delayed(Duration(milliseconds: 100));
                 await _updateDuration();
               },
               icon: Icon(Icons.chevron_right),
             ),
-            IconButton(onPressed: () {}, icon: Icon(Icons.shuffle)),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  imp.changeShuffleState();
+                });
+              },
+              icon: Icon(
+                Icons.shuffle,
+                color: imp.isShuffle() ? Colors.blue : null,
+              ),
+            ),
           ],
         ),
       ],

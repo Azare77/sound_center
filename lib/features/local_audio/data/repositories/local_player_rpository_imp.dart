@@ -20,7 +20,11 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   final JustAudioService _playerService = JustAudioService();
   final List<AudioEntity> audios = [];
+  List<int> _shuffle = [];
   int index = 0;
+  int shuffleIndex = 0;
+  RepeatMode repeatMode = RepeatMode.repeatAll;
+  ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   late final LocalBloc bloc;
 
   bool isPlaying() {
@@ -29,6 +33,10 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   bool hasSource() {
     return _playerService.hasSource();
+  }
+
+  bool isShuffle() {
+    return shuffleMode == ShuffleMode.shuffle;
   }
 
   void setBloc(LocalBloc bloc) {
@@ -44,16 +52,36 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     }
   }
 
-  @override
-  Future<void> changeRepeatState(RepeatMode mode) {
-    // TODO: implement changeRepeatState
-    throw UnimplementedError();
+  List<AudioEntity> getPlayList() {
+    return audios;
   }
 
   @override
-  Future<void> changeShuffleState(ShuffleMode mode) {
-    // TODO: implement changeShuffleState
-    throw UnimplementedError();
+  Future<void> changeRepeatState() async {
+    switch (repeatMode) {
+      case RepeatMode.noRepeat:
+        repeatMode = RepeatMode.repeatAll;
+        break;
+      case RepeatMode.repeatAll:
+        repeatMode = RepeatMode.repeatOne;
+        break;
+      case RepeatMode.repeatOne:
+        repeatMode = RepeatMode.noRepeat;
+        break;
+    }
+  }
+
+  @override
+  Future<void> changeShuffleState() async {
+    shuffleIndex = 0;
+    if (shuffleMode == ShuffleMode.shuffle) {
+      shuffleMode = ShuffleMode.noShuffle;
+      _shuffle = [];
+    } else {
+      shuffleMode = ShuffleMode.shuffle;
+      _shuffle = List.generate(audios.length, (i) => i)..shuffle();
+      _shuffle[0] = index;
+    }
   }
 
   @override
@@ -61,33 +89,26 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     this.index = index;
     await _playerService.setSource(audios[index].path);
     _playerService.play();
+    bloc.add(AutoPlayNext(audios[index]));
     (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
       audios[index],
     );
   }
 
   @override
-  Future<int> next() async {
-    if (index + 1 == audios.length) {
-      index = 0;
-    } else {
-      index++;
-    }
+  Future<AudioEntity> next() async {
+    index = getIndex(true);
     await play(index);
-    bloc.add(AutoPlayNext(index));
-    return index;
+    bloc.add(AutoPlayNext(audios[index]));
+    return audios[index];
   }
 
   @override
-  Future<int> previous() async {
-    if (index == 0) {
-      index = audios.length - 1;
-    } else {
-      index--;
-    }
+  Future<AudioEntity> previous() async {
+    index = getIndex(false);
     await play(index);
-    bloc.add(AutoPlayNext(index));
-    return index;
+    bloc.add(AutoPlayNext(audios[index]));
+    return audios[index];
   }
 
   @override
@@ -123,5 +144,17 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   Future<void> stop() async {
     await _playerService.release();
     bloc.add(TogglePlay());
+  }
+
+  int getIndex(bool forward) {
+    if (shuffleMode == ShuffleMode.shuffle) {
+      shuffleIndex =
+          (shuffleIndex + (forward ? 1 : -1) + _shuffle.length) %
+          _shuffle.length;
+      return _shuffle[shuffleIndex];
+    } else {
+      index = (index + (forward ? 1 : -1) + audios.length) % audios.length;
+      return index;
+    }
   }
 }

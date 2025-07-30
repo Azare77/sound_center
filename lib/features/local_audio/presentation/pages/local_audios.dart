@@ -72,7 +72,7 @@ class _LocalAudiosState extends State<LocalAudios> {
                     children: [
                       Expanded(child: AudioListTemplate(status.audios)),
                       if (LocalPlayerRepositoryImp().hasSource())
-                        CurrentAudio(audioEntity: status.audios[status.index]),
+                        CurrentAudio(audioEntity: status.currentAudio!),
                     ],
                   );
                 }

@@ -16,7 +16,7 @@ class HeaderImage extends StatelessWidget {
         child: img != null
             ? Image.memory(
                 img!,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 filterQuality: FilterQuality.high,
               )
             : Container(

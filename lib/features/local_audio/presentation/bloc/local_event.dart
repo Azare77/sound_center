@@ -15,9 +15,9 @@ class PlayNextAudio extends LocalEvent {}
 class PlayPreviousAudio extends LocalEvent {}
 
 class AutoPlayNext extends LocalEvent {
-  final int index;
+  final AudioEntity audioEntity;
 
-  AutoPlayNext(this.index);
+  AutoPlayNext(this.audioEntity);
 }
 
 class TogglePlay extends LocalEvent {}

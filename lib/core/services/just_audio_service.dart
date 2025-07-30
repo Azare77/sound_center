@@ -19,7 +19,9 @@ class JustAudioService {
   }
 
   Future<void> setSource(String path) async {
-    await _player.setFilePath(path);
+    try {
+      await _player.setFilePath(path);
+    } catch (_) {}
   }
 
   Future<void> play() async {
@@ -68,7 +70,9 @@ class JustAudioService {
     return duration.inMilliseconds;
   }
 
-  void setRepeatMode() {}
+  Future<void> setRepeatMode(LoopMode mode) async {
+    await _player.setLoopMode(mode);
+  }
 
   bool hasSource() {
     final duration = _player.duration;

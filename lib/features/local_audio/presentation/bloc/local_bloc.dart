@@ -29,25 +29,23 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       LocalAudioStatus status = state.status as LocalAudioStatus;
       LocalPlayerRepositoryImp().setPlayList(status.audios);
       await LocalPlayerRepositoryImp().play(event.index);
-      status.index = event.index;
-      emit(state.copyWith(status));
     });
 
     on<PlayNextAudio>((event, emit) async {
       LocalAudioStatus status = state.status as LocalAudioStatus;
-      status.index = await player.next();
+      await player.next();
       emit(state.copyWith(status));
     });
 
     on<PlayPreviousAudio>((event, emit) async {
       LocalAudioStatus status = state.status as LocalAudioStatus;
-      status.index = await player.previous();
+      await player.previous();
       emit(state.copyWith(status));
     });
 
     on<AutoPlayNext>((event, emit) async {
       LocalAudioStatus status = state.status as LocalAudioStatus;
-      status.index = event.index;
+      status.currentAudio = event.audioEntity;
       emit(state.copyWith(status));
     });
 
@@ -55,7 +53,7 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       LocalAudioStatus status = state.status as LocalAudioStatus;
       final newStatus = LocalAudioStatus(
         audios: status.audios,
-        index: status.index,
+        currentAudio: status.currentAudio,
       );
       emit(state.copyWith(newStatus));
     });
@@ -64,6 +62,7 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       List<AudioEntity> audios = await getAudioUseCase.search(event.query);
       LocalAudioStatus status = state.status as LocalAudioStatus;
       status.audios = audios;
+      status.currentAudio = status.currentAudio;
       emit(state.copyWith(status));
     });
   }

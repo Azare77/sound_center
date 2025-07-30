@@ -24,16 +24,15 @@ class CurrentAudio extends StatelessWidget {
       padding: EdgeInsetsGeometry.only(bottom: 20),
       child: ListTile(
         onTap: () {
-          PlayAudio player = PlayAudio(song: audioEntity);
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
             requestFocus: true,
             constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width, // عرض حداقل
+              minWidth: MediaQuery.of(context).size.width,
             ),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            builder: (_) => player,
+            builder: (_) => PlayAudio(),
           );
         },
         leading: SizedBox(

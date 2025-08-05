@@ -16,7 +16,6 @@ class PlayerNavigation extends StatefulWidget {
 
 class _PlayerNavigationState extends State<PlayerNavigation> {
   final LocalPlayerRepositoryImp imp = LocalPlayerRepositoryImp();
-  double sliderPosition = 0;
   late final Timer _timer;
   late final LocalBloc _localBloc;
   late AudioEntity song;
@@ -53,7 +52,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
               child: Slider(
                 value: pass.toDouble(),
                 inactiveColor: Colors.grey,
-                max: total.toDouble(),
+                max: total.toDouble() + 0.1,
                 onChanged: (val) async {
                   pass = val.toInt();
                   setState(() {
@@ -137,11 +136,9 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
 
   Future<void> _updateDuration() async {
     pass = 0;
-    pass = await imp.getCurrentPosition();
     total = await imp.getDuration();
-    setState(() {
-      sliderPosition = pass / total;
-    });
+    pass = await imp.getCurrentPosition();
+    setState(() {});
   }
 
   Future<void> _setUpTimer() async {
@@ -149,10 +146,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
       total = await imp.getDuration();
       pass = await imp.getCurrentPosition();
       if (!seeking) {
-        setState(() {
-          sliderPosition = pass / total;
-          if (sliderPosition > 1) sliderPosition = 1;
-        });
+        setState(() {});
       }
     });
   }

@@ -125,8 +125,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> seek(double position) async {
-    int duration = await _playerService.getDuration();
-    _playerService.seek(position.floor());
+    await _playerService.seek(position.floor());
   }
 
   Future<void> seekNotif(Duration duration) async {
@@ -146,7 +145,15 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   int getIndex(bool forward) {
-    if (shuffleMode == ShuffleMode.shuffle) {
+    bool isShuffle = shuffleMode == ShuffleMode.shuffle;
+    if (repeatMode == RepeatMode.repeatOne) {
+      if (isShuffle) {
+        return _shuffle[shuffleIndex];
+      } else {
+        return index;
+      }
+    }
+    if (isShuffle) {
       shuffleIndex =
           (shuffleIndex + (forward ? 1 : -1) + _shuffle.length) %
           _shuffle.length;

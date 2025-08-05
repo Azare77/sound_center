@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/database/drift/local/audio.dart';
 
 import 'local/playlist.dart';
@@ -13,17 +17,35 @@ class AppDatabase extends _$AppDatabase {
 
   factory AppDatabase() => _instance;
 
-  AppDatabase._internal() : super(_openConnection());
+  AppDatabase._internal() : super(_openConnectionSync());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 1;
 
-  static QueryExecutor _openConnection() {
+  static QueryExecutor _openConnectionSync() {
+    // Call the synchronous method to get the database path
+    final dbPath = getDatabasePath();
     return driftDatabase(
       name: 'audio_db',
-      native: const DriftNativeOptions(
-        databaseDirectory: getApplicationDocumentsDirectory,
-      ),
+      native: DriftNativeOptions(databaseDirectory: () async => dbPath),
     );
+  }
+
+  static Future<String> getDatabasePath() async {
+    if (Platform.isLinux) {
+      // Get the home directory for Linux
+      final homeDir = Directory(Platform.environment['HOME']!);
+      // Create the .config/app_name directory
+      final configDir = Directory(p.join(homeDir.path, '.config', APP_NAME));
+      if (!await configDir.exists()) {
+        await configDir.create(recursive: true);
+      }
+      // Return the path for the database file
+      return p.join(configDir.path);
+    } else {
+      // For other platforms, use the application documents directory
+      final documentsDir = await getApplicationDocumentsDirectory();
+      return documentsDir.path;
+    }
   }
 }

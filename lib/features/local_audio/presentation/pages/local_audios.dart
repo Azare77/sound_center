@@ -7,6 +7,7 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.d
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/current_audio.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/tool_bar.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
 class LocalAudios extends StatefulWidget {
@@ -20,21 +21,25 @@ class _LocalAudiosState extends State<LocalAudios> {
   late final LocalAudioRepository audioService;
   late final PermissionHandler handler;
   late final LocalPlayerRepositoryImp player;
+  late final ToolBar toolBar;
 
   @override
   void initState() {
     player = LocalPlayerRepositoryImp();
     audioService = LocalAudioRepository();
     handler = PermissionHandler();
+    toolBar = ToolBar();
     super.initState();
     getPermissions();
   }
 
-  void getPermissions() async {
-    await handler.requestPermission(PermissionType.audio);
-    await handler.requestPermission(PermissionType.notification);
-    await handler.requestPermission(PermissionType.storage);
-    loadAudios();
+  Future<void> getPermissions() async {
+    try {
+      await handler.requestPermission(PermissionType.audio);
+      await handler.requestPermission(PermissionType.notification);
+      await handler.requestPermission(PermissionType.storage);
+      loadAudios();
+    } catch (_) {}
   }
 
   void loadAudios() async {
@@ -52,11 +57,7 @@ class _LocalAudiosState extends State<LocalAudios> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextField(
-          onChanged: (text) {
-            BlocProvider.of<LocalBloc>(context).add(Search(query: text.trim()));
-          },
-        ),
+        toolBar,
         Expanded(
           child: BlocBuilder<LocalBloc, LocalState>(
             builder: (BuildContext context, LocalState state) {

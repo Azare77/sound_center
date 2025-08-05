@@ -8,6 +8,7 @@ import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:metadata_god/metadata_god.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core_view/home.dart';
+import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 
 late final AudioHandler audioHandler;
@@ -15,6 +16,7 @@ late final AudioHandler audioHandler;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   JustAudioMediaKit.ensureInitialized();
+  await Storage.instance.init();
   if (!(kIsWeb || Platform.isWindows)) {
     audioHandler = await AudioService.init(
       builder: () => JustAudioNotificationHandler(),

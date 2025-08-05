@@ -15,7 +15,10 @@ class PlayAudio extends StatelessWidget {
         child: Column(
           spacing: 25,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [PlayerHeader(), PlayerNavigation()],
+          children: [
+            Expanded(flex: 3, child: PlayerHeader()),
+            Expanded(flex: 2, child: PlayerNavigation()),
+          ],
         ),
       ),
     );

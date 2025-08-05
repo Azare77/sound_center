@@ -44,7 +44,6 @@ class _PlayerHeaderState extends State<PlayerHeader> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.49,
       child: BlocBuilder<LocalBloc, LocalState>(
         builder: (BuildContext context, LocalState state) {
           final LocalAudioStatus status = state.status as LocalAudioStatus;

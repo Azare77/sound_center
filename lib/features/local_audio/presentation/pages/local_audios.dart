@@ -8,7 +8,7 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_status
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/current_audio.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/tool_bar.dart';
-import 'package:sound_center/shared/widgets/text_view.dart';
+import 'package:sound_center/shared/widgets/loading.dart';
 
 class LocalAudios extends StatefulWidget {
   const LocalAudios({super.key});
@@ -71,13 +71,7 @@ class _LocalAudiosState extends State<LocalAudios> {
                   ],
                 );
               }
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 5,
-                  children: [CircularProgressIndicator(), TextView("Scanning")],
-                ),
-              );
+              return Loading(label: "Scanning");
             },
           ),
         ),

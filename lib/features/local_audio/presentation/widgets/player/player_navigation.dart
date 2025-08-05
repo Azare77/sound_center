@@ -64,7 +64,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
                 },
                 onChangeEnd: (val) {
                   seeking = false;
-                  imp.seek(val);
+                  imp.seek(Duration(milliseconds: val.floor()));
                 },
               ),
             ),

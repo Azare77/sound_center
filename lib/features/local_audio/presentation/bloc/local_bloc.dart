@@ -34,7 +34,7 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     on<PlayAudio>((event, emit) async {
       LocalAudioStatus status = state.status as LocalAudioStatus;
       LocalPlayerRepositoryImp().setPlayList(status.audios);
-      await LocalPlayerRepositoryImp().play(event.index);
+      await LocalPlayerRepositoryImp().play(event.index, direct: true);
     });
 
     on<PlayNextAudio>((event, emit) async {

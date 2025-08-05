@@ -1,5 +1,6 @@
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
+import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/main.dart';
@@ -15,6 +16,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   LocalPlayerRepositoryImp._internal() {
     _playerService.setOnComplete(() => next());
+    _initialPlayerState();
   }
 
   final JustAudioService _playerService = JustAudioService();
@@ -25,6 +27,11 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   RepeatMode repeatMode = RepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   late final LocalBloc bloc;
+
+  void _initialPlayerState() {
+    repeatMode = PlayerStateStorage.getRepeatMode();
+    shuffleMode = PlayerStateStorage.getShuffleMode();
+  }
 
   bool isPlaying() {
     return _playerService.getPlayer().playing;
@@ -49,6 +56,9 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     for (AudioEntity audioEntity in audios) {
       this.audios.add(audioEntity);
     }
+    if (shuffleMode == ShuffleMode.shuffle) {
+      _shuffleAudios();
+    }
   }
 
   List<AudioEntity> getPlayList() {
@@ -69,24 +79,33 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
         repeatMode = RepeatMode.noRepeat;
         break;
     }
+    await PlayerStateStorage.saveRepeatMode(repeatMode);
   }
 
   @override
   Future<void> changeShuffleState() async {
-    shuffleIndex = 0;
     if (shuffleMode == ShuffleMode.shuffle) {
       shuffleMode = ShuffleMode.noShuffle;
       _shuffle = [];
     } else {
       shuffleMode = ShuffleMode.shuffle;
-      _shuffle = List.generate(audios.length, (i) => i)..shuffle();
-      _shuffle[0] = index;
+      _shuffleAudios();
     }
+    await PlayerStateStorage.saveShuffleMode(shuffleMode);
+  }
+
+  void _shuffleAudios() {
+    shuffleIndex = 0;
+    _shuffle = List.generate(audios.length, (i) => i)..shuffle();
+    _shuffle[0] = index;
   }
 
   @override
-  Future<void> play(int index) async {
+  Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
+    if (direct && shuffleMode == ShuffleMode.shuffle) {
+      _shuffleAudios();
+    }
     await _playerService.setSource(audios[index].path);
     _playerService.play();
     bloc.add(AutoPlayNext(audios[index]));
@@ -124,12 +143,8 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  Future<void> seek(double position) async {
-    await _playerService.seek(position.floor());
-  }
-
-  Future<void> seekNotif(Duration duration) async {
-    _playerService.seek(duration.inMilliseconds);
+  Future<void> seek(Duration position) async {
+    await _playerService.seek(position);
   }
 
   @override

@@ -65,7 +65,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
 
   @override
   Future<void> seek(Duration position) =>
-      LocalPlayerRepositoryImp().seekNotif(position);
+      LocalPlayerRepositoryImp().seek(position);
 
   @override
   Future<void> skipToNext() => LocalPlayerRepositoryImp().next();

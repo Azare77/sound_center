@@ -15,7 +15,7 @@ abstract class PlayerRepository {
 
   Future<void> togglePlayState();
 
-  Future<void> seek(double position);
+  Future<void> seek(Duration position);
 
   Future<AudioEntity> next();
 

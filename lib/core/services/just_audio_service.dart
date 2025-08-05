@@ -43,8 +43,8 @@ class JustAudioService {
     await _player.stop();
   }
 
-  Future<void> seek(int position) async {
-    await _player.seek(Duration(milliseconds: position));
+  Future<void> seek(Duration position) async {
+    await _player.seek(position);
   }
 
   void setOnComplete(void Function() onComplete) {

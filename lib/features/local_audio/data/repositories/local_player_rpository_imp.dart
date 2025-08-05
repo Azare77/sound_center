@@ -20,7 +20,11 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   final JustAudioService _playerService = JustAudioService();
-  final List<AudioEntity> audios = [];
+  List<AudioEntity> audios = [];
+
+  AudioEntity? _currentAudio;
+
+  AudioEntity? get getCurrentAudio => _currentAudio;
   List<int> _shuffle = [];
   int index = 0;
   int shuffleIndex = 0;
@@ -56,9 +60,6 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     for (AudioEntity audioEntity in audios) {
       this.audios.add(audioEntity);
     }
-    if (shuffleMode == ShuffleMode.shuffle) {
-      _shuffleAudios();
-    }
   }
 
   List<AudioEntity> getPlayList() {
@@ -88,16 +89,16 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       shuffleMode = ShuffleMode.noShuffle;
       _shuffle = [];
     } else {
-      shuffleMode = ShuffleMode.shuffle;
       _shuffleAudios();
     }
     await PlayerStateStorage.saveShuffleMode(shuffleMode);
   }
 
   void _shuffleAudios() {
+    shuffleMode = ShuffleMode.shuffle;
     shuffleIndex = 0;
     _shuffle = List.generate(audios.length, (i) => i)..shuffle();
-    _shuffle[0] = index;
+    _shuffle.insert(0, index);
   }
 
   @override
@@ -112,6 +113,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
       audios[index],
     );
+    _currentAudio = audios[index];
   }
 
   @override

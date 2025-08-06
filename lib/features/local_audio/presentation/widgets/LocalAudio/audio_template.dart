@@ -28,11 +28,14 @@ class AudioTemplate extends StatelessWidget {
                     return SizedBox();
                   },
                 )
-              : Container(
-                  color: Colors.red,
+              : SizedBox(
                   width: size,
                   height: size,
-                  child: Icon(Icons.music_note, size: 20),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
+                  ),
                 ),
         ),
       ),

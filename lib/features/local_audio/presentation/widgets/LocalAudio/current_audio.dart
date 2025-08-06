@@ -46,7 +46,11 @@ class CurrentAudio extends StatelessWidget {
                     filterQuality: FilterQuality.high,
                   ),
                 )
-              : Icon(Icons.music_note, size: 20),
+              : Image.asset(
+                  'assets/logo.png',
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                ),
         ),
         title: Text(audioEntity.title, maxLines: 1),
         subtitle: Text(audioEntity.artist),

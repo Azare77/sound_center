@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="200" height="200" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- حرف A در مرکز -->
+    <text x="0" y="40" font-size="30" font-family="Arial" font-weight="bold" fill="black">
+        A
+    </text>
+
+    <!-- فلش رو به پایین -->
+    <line x1="0" y1="50" x2="50" y2="50" stroke="black" stroke-width="2" />
+    <polyline points="45,65 50,70 55,65" fill="none" stroke="black" stroke-width="2" />
+
+</svg>

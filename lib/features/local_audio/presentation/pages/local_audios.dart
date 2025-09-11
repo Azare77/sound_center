@@ -38,8 +38,10 @@ class _LocalAudiosState extends State<LocalAudios> {
       await handler.requestPermission(PermissionType.audio);
       await handler.requestPermission(PermissionType.notification);
       await handler.requestPermission(PermissionType.storage);
+    } catch (_) {
+    } finally {
       loadAudios();
-    } catch (_) {}
+    }
   }
 
   void loadAudios() async {

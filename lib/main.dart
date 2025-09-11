@@ -20,10 +20,11 @@ void main() async {
   if (!(kIsWeb || Platform.isWindows)) {
     audioHandler = await AudioService.init(
       builder: () => JustAudioNotificationHandler(),
-      config: const AudioServiceConfig(
+      config: AudioServiceConfig(
         androidNotificationChannelId: 'com.example.sound_center.channel.audio',
         androidNotificationChannelName: 'Music Playback',
         androidNotificationOngoing: true,
+        androidStopForegroundOnPause: false,
       ),
     );
   }

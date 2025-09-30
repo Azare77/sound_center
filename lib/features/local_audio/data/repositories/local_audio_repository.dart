@@ -27,35 +27,27 @@ class LocalAudioRepository implements AudioRepository {
 
   Future<void> updateDB(List<SongModel> songs, AppDatabase database) async {
     songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
-    final currentPaths = songs.map((s) => s.data).toSet();
+    final currentIds = songs.map((s) => s.id).toSet();
     await (database.delete(
       database.localAudiosTable,
-    )..where((tbl) => tbl.path.isNotIn(currentPaths))).go();
+    )..where((tbl) => tbl.audioId.isNotIn(currentIds))).go();
 
-    final existingPaths = await database
+    final existingIds = await database
         .select(database.localAudiosTable)
         .get()
-        .then((rows) => rows.map((row) => row.path).toSet());
-
-    final newSongs = songs.where((song) => !existingPaths.contains(song.data));
-    final OnAudioQuery audioQuery = OnAudioQuery();
+        .then((rows) => rows.map((row) => row.audioId).toSet());
+    final newSongs = songs.where((song) => !existingIds.contains(song.id));
     for (final song in newSongs) {
-      final art = await audioQuery.queryArtwork(
-        song.id,
-        ArtworkType.AUDIO,
-        quality: 100,
-        format: ArtworkFormat.JPEG,
-        size: 600,
-      );
       DateTime date = DateTime.fromMillisecondsSinceEpoch(song.dateAdded ?? 0);
       await database
           .into(database.localAudiosTable)
           .insert(
             LocalAudiosTableCompanion.insert(
               title: song.title,
+              audioId: Value(song.id),
               path: song.data,
               duration: song.duration ?? 0,
-              cover: Value(art),
+              cover: Value(null),
               artist: Value(song.artist),
               album: Value(song.album),
               genre: Value(song.genre),

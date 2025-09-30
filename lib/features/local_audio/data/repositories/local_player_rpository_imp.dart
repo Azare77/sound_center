@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
@@ -28,6 +30,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   List<int> _shuffle = [];
   int index = 0;
   int shuffleIndex = 0;
+  bool _initialized = false;
   RepeatMode repeatMode = RepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   late final LocalBloc bloc;
@@ -60,6 +63,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     for (AudioEntity audioEntity in audios) {
       this.audios.add(audioEntity);
     }
+    _preloadCoversInBackground();
   }
 
   List<AudioEntity> getPlayList() {
@@ -106,6 +110,9 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     this.index = index;
     if (direct && shuffleMode == ShuffleMode.shuffle) {
       _shuffleAudios();
+    }
+    if (!_initialized && audios[index].cover == null) {
+      _loadChunk(index);
     }
     await _playerService.setSource(audios[index].path);
     _playerService.play();
@@ -178,6 +185,39 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     } else {
       index = (index + (forward ? 1 : -1) + audios.length) % audios.length;
       return index;
+    }
+  }
+
+  Future<void> _preloadCoversInBackground() async {
+    for (final audio in audios) {
+      try {
+        final cover = await AudioUtil().getCover(
+          audio.audioId,
+          coverSize: CoverSize.banner,
+        );
+        if (cover != null) {
+          audio.cover = cover;
+        }
+        await Future.delayed(const Duration(milliseconds: 50));
+      } catch (e) {
+        debugPrint("Error loading cover for ${audio.id}: $e");
+      }
+    }
+    _initialized = true;
+  }
+
+  Future<void> _loadChunk(int index) async {
+    final start = (index - 5).clamp(0, audios.length - 1);
+    final end = (index + 5).clamp(0, audios.length - 1);
+    for (int i = start; i <= end; i++) {
+      final audio = audios[i];
+      if (audio.cover == null) {
+        final cover = await AudioUtil().getCover(
+          audio.audioId,
+          coverSize: CoverSize.banner,
+        );
+        audio.cover = cover;
+      }
     }
   }
 }

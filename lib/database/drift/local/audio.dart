@@ -5,6 +5,8 @@ import 'package:sound_center/features/local_audio/domain/repositories/audio_repo
 import '../mixin.dart';
 
 class LocalAudiosTable extends Table with TableMixin {
+  IntColumn get audioId => integer().clientDefault(() => 0)();
+
   TextColumn get title => text()();
 
   IntColumn get duration => integer()();

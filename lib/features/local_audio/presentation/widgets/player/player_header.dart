@@ -18,6 +18,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
   late final PageController controller;
 
   int currentIndex = 0;
+  List<AudioEntity> currentPlayList = [];
 
   @override
   void initState() {
@@ -48,8 +49,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
         builder: (BuildContext context, LocalState state) {
           final LocalAudioStatus status = state.status as LocalAudioStatus;
           AudioEntity song = status.currentAudio!;
-          List<AudioEntity> currentPlayList = LocalPlayerRepositoryImp()
-              .getPlayList();
+          currentPlayList = LocalPlayerRepositoryImp().getPlayList();
           _jumpToCorrectPage(currentPlayList, song);
           return SizedBox(
             child: Column(
@@ -71,7 +71,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.width * 0.8 - 10,
+                  height: MediaQuery.of(context).size.width * 0.8 - 30,
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (ScrollNotification notification) {
                       if (notification is ScrollEndNotification) {

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 class AudioEntity {
   AudioEntity({
     required this.id,
+    required this.audioId,
     required this.path,
     required this.title,
     required this.duration,
@@ -16,6 +17,7 @@ class AudioEntity {
   });
 
   final int id;
+  final int audioId;
   final String path;
   final String title;
   final int duration;
@@ -25,5 +27,5 @@ class AudioEntity {
   final int trackNum;
   final bool isPodcast;
   final bool isAlarm;
-  final Uint8List? cover;
+  Uint8List? cover;
 }

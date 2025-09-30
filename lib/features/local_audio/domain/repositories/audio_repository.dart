@@ -1,6 +1,6 @@
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 
-enum AudioColumns { createdAt, title, artist, album, duration }
+enum AudioColumns { audioId, createdAt, title, artist, album, duration }
 
 abstract class AudioRepository {
   Future<List<AudioModel>> getAudios({

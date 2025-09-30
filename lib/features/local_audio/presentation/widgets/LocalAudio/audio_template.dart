@@ -1,14 +1,39 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
-class AudioTemplate extends StatelessWidget {
+class AudioTemplate extends StatefulWidget {
   const AudioTemplate({super.key, required this.audioEntity});
 
   final AudioEntity audioEntity;
 
   @override
+  State<AudioTemplate> createState() => _AudioTemplateState();
+}
+
+class _AudioTemplateState extends State<AudioTemplate> {
+  Uint8List? cover;
+
+  @override
+  void initState() {
+    getCover();
+    super.initState();
+  }
+
+  Future<void> getCover() async {
+    cover = await AudioUtil().getCover(
+      widget.audioEntity.audioId,
+      coverSize: CoverSize.thumbnail,
+    );
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    int duration = ((audioEntity.duration) / 1000).floor();
+    int duration = ((widget.audioEntity.duration) / 1000).floor();
     int minutes = duration ~/ 60;
     int seconds = duration % 60;
     String secondsStr = seconds.toString().padLeft(2, '0');
@@ -17,9 +42,9 @@ class AudioTemplate extends StatelessWidget {
       leading: SizedBox(
         width: size,
         child: ClipOval(
-          child: audioEntity.cover != null
+          child: cover != null
               ? Image.memory(
-                  audioEntity.cover!,
+                  cover!,
                   width: size,
                   height: size,
                   fit: BoxFit.cover,
@@ -39,8 +64,8 @@ class AudioTemplate extends StatelessWidget {
                 ),
         ),
       ),
-      title: Text(audioEntity.title, maxLines: 1),
-      subtitle: Text(audioEntity.artist),
+      title: Text(widget.audioEntity.title, maxLines: 1),
+      subtitle: Text(widget.audioEntity.artist),
       trailing: Text("$minutes:$secondsStr"),
     );
   }

@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
-import 'package:metadata_god/metadata_god.dart';
+// import 'package:metadata_god/metadata_god.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core_view/home.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
@@ -23,13 +23,10 @@ void main() async {
       config: AudioServiceConfig(
         androidNotificationChannelId: 'com.example.sound_center.channel.audio',
         androidNotificationChannelName: 'Music Playback',
-        androidNotificationOngoing: true,
+        androidNotificationOngoing: false,
         androidStopForegroundOnPause: false,
       ),
     );
-  }
-  if (Platform.isLinux) {
-    await MetadataGod.initialize();
   }
   runApp(const MyApp());
 }

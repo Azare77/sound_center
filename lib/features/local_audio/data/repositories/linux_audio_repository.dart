@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:metadata_god/metadata_god.dart';
+// import 'package:metadata_god/metadata_god.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/database/drift/local/audio.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
@@ -69,6 +69,7 @@ class LocalAudioRepositoryLinux implements AudioRepository {
           .into(database.localAudiosTable)
           .insert(
             LocalAudiosTableCompanion.insert(
+              audioId: Value(0),
               title: metadata.title ?? file.uri.pathSegments.last,
               path: file.path,
               duration: metadata.duration ?? 0,
@@ -85,13 +86,13 @@ class LocalAudioRepositoryLinux implements AudioRepository {
 
   Future<MetadataResult> _readMetadata(File file) async {
     try {
-      final metadata = await MetadataGod.readMetadata(file: file.path);
-      String? title = metadata.title;
-      String? artist = metadata.artist;
-      String? album = metadata.album;
-      String? genre = metadata.genre;
-      int? duration = metadata.duration?.inMilliseconds;
-      Uint8List? cover = metadata.picture?.data;
+      FileStat fileStat = await file.stat();
+      String? title = "فایل";
+      String? artist = "آرتیست";
+      String? album = "آلبوم";
+      String? genre = "ژانر";
+      int? duration = 8585;
+      Uint8List? cover;
 
       return MetadataResult(
         title: title,

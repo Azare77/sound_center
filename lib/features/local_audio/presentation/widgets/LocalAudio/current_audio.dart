@@ -1,15 +1,40 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/play_audio.dart';
 
-class CurrentAudio extends StatelessWidget {
+class CurrentAudio extends StatefulWidget {
   const CurrentAudio({super.key, required this.audioEntity});
 
   final AudioEntity audioEntity;
 
   @override
+  State<CurrentAudio> createState() => _CurrentAudioState();
+}
+
+class _CurrentAudioState extends State<CurrentAudio> {
+  Uint8List? cover;
+  late int audioId;
+
+  @override
+  void initState() {
+    audioId = widget.audioEntity.audioId;
+    getCover();
+    super.initState();
+  }
+
+  void getCover() async {
+    audioId = widget.audioEntity.audioId;
+    cover = await AudioUtil().getCover(audioId, coverSize: CoverSize.thumbnail);
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (audioId != widget.audioEntity.audioId) getCover();
     final borderRadios = Radius.circular(20);
     return Container(
       height: 70,
@@ -37,10 +62,10 @@ class CurrentAudio extends StatelessWidget {
         },
         leading: SizedBox(
           width: 50,
-          child: audioEntity.cover != null
+          child: cover != null
               ? ClipOval(
                   child: Image.memory(
-                    audioEntity.cover!,
+                    cover!,
                     width: 50,
                     height: 50,
                     filterQuality: FilterQuality.high,
@@ -52,8 +77,8 @@ class CurrentAudio extends StatelessWidget {
                   filterQuality: FilterQuality.high,
                 ),
         ),
-        title: Text(audioEntity.title, maxLines: 1),
-        subtitle: Text(audioEntity.artist),
+        title: Text(widget.audioEntity.title, maxLines: 1),
+        subtitle: Text(widget.audioEntity.artist),
         trailing: IconButton(
           onPressed: () {
             LocalPlayerRepositoryImp().togglePlayState();

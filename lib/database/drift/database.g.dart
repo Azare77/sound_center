@@ -34,6 +34,18 @@ class $LocalAudiosTableTable extends LocalAudiosTable
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _audioIdMeta = const VerificationMeta(
+    'audioId',
+  );
+  @override
+  late final GeneratedColumn<int> audioId = GeneratedColumn<int>(
+    'audio_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: () => 0,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -145,6 +157,7 @@ class $LocalAudiosTableTable extends LocalAudiosTable
   List<GeneratedColumn> get $columns => [
     id,
     createdAt,
+    audioId,
     title,
     duration,
     artist,
@@ -175,6 +188,12 @@ class $LocalAudiosTableTable extends LocalAudiosTable
       context.handle(
         _createdAtMeta,
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('audio_id')) {
+      context.handle(
+        _audioIdMeta,
+        audioId.isAcceptableOrUnknown(data['audio_id']!, _audioIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -260,6 +279,10 @@ class $LocalAudiosTableTable extends LocalAudiosTable
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      audioId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}audio_id'],
+      )!,
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -313,6 +336,7 @@ class LocalAudiosTableData extends DataClass
     implements Insertable<LocalAudiosTableData> {
   final int id;
   final DateTime createdAt;
+  final int audioId;
   final String title;
   final int duration;
   final String? artist;
@@ -326,6 +350,7 @@ class LocalAudiosTableData extends DataClass
   const LocalAudiosTableData({
     required this.id,
     required this.createdAt,
+    required this.audioId,
     required this.title,
     required this.duration,
     this.artist,
@@ -342,6 +367,7 @@ class LocalAudiosTableData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['audio_id'] = Variable<int>(audioId);
     map['title'] = Variable<String>(title);
     map['duration'] = Variable<int>(duration);
     if (!nullToAbsent || artist != null) {
@@ -369,6 +395,7 @@ class LocalAudiosTableData extends DataClass
     return LocalAudiosTableCompanion(
       id: Value(id),
       createdAt: Value(createdAt),
+      audioId: Value(audioId),
       title: Value(title),
       duration: Value(duration),
       artist: artist == null && nullToAbsent
@@ -400,6 +427,7 @@ class LocalAudiosTableData extends DataClass
     return LocalAudiosTableData(
       id: serializer.fromJson<int>(json['id']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      audioId: serializer.fromJson<int>(json['audioId']),
       title: serializer.fromJson<String>(json['title']),
       duration: serializer.fromJson<int>(json['duration']),
       artist: serializer.fromJson<String?>(json['artist']),
@@ -418,6 +446,7 @@ class LocalAudiosTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'audioId': serializer.toJson<int>(audioId),
       'title': serializer.toJson<String>(title),
       'duration': serializer.toJson<int>(duration),
       'artist': serializer.toJson<String?>(artist),
@@ -434,6 +463,7 @@ class LocalAudiosTableData extends DataClass
   LocalAudiosTableData copyWith({
     int? id,
     DateTime? createdAt,
+    int? audioId,
     String? title,
     int? duration,
     Value<String?> artist = const Value.absent(),
@@ -447,6 +477,7 @@ class LocalAudiosTableData extends DataClass
   }) => LocalAudiosTableData(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
+    audioId: audioId ?? this.audioId,
     title: title ?? this.title,
     duration: duration ?? this.duration,
     artist: artist.present ? artist.value : this.artist,
@@ -462,6 +493,7 @@ class LocalAudiosTableData extends DataClass
     return LocalAudiosTableData(
       id: data.id.present ? data.id.value : this.id,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      audioId: data.audioId.present ? data.audioId.value : this.audioId,
       title: data.title.present ? data.title.value : this.title,
       duration: data.duration.present ? data.duration.value : this.duration,
       artist: data.artist.present ? data.artist.value : this.artist,
@@ -480,6 +512,7 @@ class LocalAudiosTableData extends DataClass
     return (StringBuffer('LocalAudiosTableData(')
           ..write('id: $id, ')
           ..write('createdAt: $createdAt, ')
+          ..write('audioId: $audioId, ')
           ..write('title: $title, ')
           ..write('duration: $duration, ')
           ..write('artist: $artist, ')
@@ -498,6 +531,7 @@ class LocalAudiosTableData extends DataClass
   int get hashCode => Object.hash(
     id,
     createdAt,
+    audioId,
     title,
     duration,
     artist,
@@ -515,6 +549,7 @@ class LocalAudiosTableData extends DataClass
       (other is LocalAudiosTableData &&
           other.id == this.id &&
           other.createdAt == this.createdAt &&
+          other.audioId == this.audioId &&
           other.title == this.title &&
           other.duration == this.duration &&
           other.artist == this.artist &&
@@ -530,6 +565,7 @@ class LocalAudiosTableData extends DataClass
 class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
   final Value<int> id;
   final Value<DateTime> createdAt;
+  final Value<int> audioId;
   final Value<String> title;
   final Value<int> duration;
   final Value<String?> artist;
@@ -543,6 +579,7 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
   const LocalAudiosTableCompanion({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.audioId = const Value.absent(),
     this.title = const Value.absent(),
     this.duration = const Value.absent(),
     this.artist = const Value.absent(),
@@ -557,6 +594,7 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
   LocalAudiosTableCompanion.insert({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.audioId = const Value.absent(),
     required String title,
     required int duration,
     this.artist = const Value.absent(),
@@ -573,6 +611,7 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
   static Insertable<LocalAudiosTableData> custom({
     Expression<int>? id,
     Expression<DateTime>? createdAt,
+    Expression<int>? audioId,
     Expression<String>? title,
     Expression<int>? duration,
     Expression<String>? artist,
@@ -587,6 +626,7 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (createdAt != null) 'created_at': createdAt,
+      if (audioId != null) 'audio_id': audioId,
       if (title != null) 'title': title,
       if (duration != null) 'duration': duration,
       if (artist != null) 'artist': artist,
@@ -603,6 +643,7 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
   LocalAudiosTableCompanion copyWith({
     Value<int>? id,
     Value<DateTime>? createdAt,
+    Value<int>? audioId,
     Value<String>? title,
     Value<int>? duration,
     Value<String?>? artist,
@@ -617,6 +658,7 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
     return LocalAudiosTableCompanion(
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
+      audioId: audioId ?? this.audioId,
       title: title ?? this.title,
       duration: duration ?? this.duration,
       artist: artist ?? this.artist,
@@ -638,6 +680,9 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (audioId.present) {
+      map['audio_id'] = Variable<int>(audioId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -677,6 +722,7 @@ class LocalAudiosTableCompanion extends UpdateCompanion<LocalAudiosTableData> {
     return (StringBuffer('LocalAudiosTableCompanion(')
           ..write('id: $id, ')
           ..write('createdAt: $createdAt, ')
+          ..write('audioId: $audioId, ')
           ..write('title: $title, ')
           ..write('duration: $duration, ')
           ..write('artist: $artist, ')
@@ -1055,6 +1101,7 @@ typedef $$LocalAudiosTableTableCreateCompanionBuilder =
     LocalAudiosTableCompanion Function({
       Value<int> id,
       Value<DateTime> createdAt,
+      Value<int> audioId,
       required String title,
       required int duration,
       Value<String?> artist,
@@ -1070,6 +1117,7 @@ typedef $$LocalAudiosTableTableUpdateCompanionBuilder =
     LocalAudiosTableCompanion Function({
       Value<int> id,
       Value<DateTime> createdAt,
+      Value<int> audioId,
       Value<String> title,
       Value<int> duration,
       Value<String?> artist,
@@ -1133,6 +1181,11 @@ class $$LocalAudiosTableTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get audioId => $composableBuilder(
+    column: $table.audioId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1231,6 +1284,11 @@ class $$LocalAudiosTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get audioId => $composableBuilder(
+    column: $table.audioId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -1296,6 +1354,9 @@ class $$LocalAudiosTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get audioId =>
+      $composableBuilder(column: $table.audioId, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
@@ -1385,6 +1446,7 @@ class $$LocalAudiosTableTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<int> audioId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<int> duration = const Value.absent(),
                 Value<String?> artist = const Value.absent(),
@@ -1398,6 +1460,7 @@ class $$LocalAudiosTableTableTableManager
               }) => LocalAudiosTableCompanion(
                 id: id,
                 createdAt: createdAt,
+                audioId: audioId,
                 title: title,
                 duration: duration,
                 artist: artist,
@@ -1413,6 +1476,7 @@ class $$LocalAudiosTableTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<int> audioId = const Value.absent(),
                 required String title,
                 required int duration,
                 Value<String?> artist = const Value.absent(),
@@ -1426,6 +1490,7 @@ class $$LocalAudiosTableTableTableManager
               }) => LocalAudiosTableCompanion.insert(
                 id: id,
                 createdAt: createdAt,
+                audioId: audioId,
                 title: title,
                 duration: duration,
                 artist: artist,

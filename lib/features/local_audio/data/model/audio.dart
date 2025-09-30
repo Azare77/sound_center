@@ -4,6 +4,7 @@ import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 class AudioModel extends AudioEntity {
   AudioModel({
     required super.id,
+    required super.audioId,
     required super.path,
     required super.title,
     required super.duration,
@@ -19,6 +20,7 @@ class AudioModel extends AudioEntity {
   factory AudioModel.fromSongModel(LocalAudiosTableData song) {
     return AudioModel(
       id: song.id,
+      audioId: song.audioId,
       path: song.path,
       title: song.title,
       duration: song.duration,

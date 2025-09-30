@@ -10,6 +10,7 @@ import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core_view/home.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 
 late final AudioHandler audioHandler;
 
@@ -39,7 +40,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: MultiBlocProvider(
-        providers: [BlocProvider(create: (_) => LocalBloc())],
+        providers: [
+          BlocProvider(create: (_) => LocalBloc()),
+          BlocProvider(create: (_) => PodcastBloc()),
+        ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Sound Center',

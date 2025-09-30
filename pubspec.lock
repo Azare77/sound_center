@@ -249,6 +249,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
+  dio:
+    dependency: transitive
+    description:
+      name: dio
+      sha256: d90ee57923d1828ac14e492ca49440f65477f4bb1263575900be731a3dac66a9
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.9.0"
+  dio_web_adapter:
+    dependency: transitive
+    description:
+      name: dio_web_adapter
+      sha256: "7586e476d70caecaf1686d21eee7247ea43ef5c345eab9e0cc3583ff13378d78"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   draggable_scrollbar:
     dependency: "direct main"
     description:
@@ -424,6 +440,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.4"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
   io:
     dependency: transitive
     description:
@@ -760,6 +784,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  podcast_search:
+    dependency: "direct main"
+    description:
+      name: podcast_search
+      sha256: "9032b196770bbd9c2d62463a5e17b56c71a587f32c6254d8fa30ac3bdac40552"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.11"
   pool:
     dependency: transitive
     description:
@@ -808,6 +840,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  rss_dart:
+    dependency: transitive
+    description:
+      name: rss_dart
+      sha256: "562f6740fb133e5349eddbf733b65fb8ddeee220040ac964aad23bc891f4fb15"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.13"
   rxdart:
     dependency: transitive
     description:

@@ -4,19 +4,19 @@ import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 
-class LocalPlayerRepositoryImp implements PlayerRepository {
-  static final LocalPlayerRepositoryImp _instance =
-      LocalPlayerRepositoryImp._internal();
+class PodcastPlayerRepositoryImp implements PlayerRepository {
+  static final PodcastPlayerRepositoryImp _instance =
+      PodcastPlayerRepositoryImp._internal();
 
-  factory LocalPlayerRepositoryImp() {
+  factory PodcastPlayerRepositoryImp() {
     return _instance;
   }
 
-  LocalPlayerRepositoryImp._internal() {
+  PodcastPlayerRepositoryImp._internal() {
     _playerService.setOnComplete(() => next());
     _initialPlayerState();
   }
@@ -33,7 +33,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   bool _initialized = false;
   RepeatMode repeatMode = RepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
-  late final LocalBloc bloc;
+  late final PodcastBloc bloc;
 
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
@@ -52,7 +52,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     return shuffleMode == ShuffleMode.shuffle;
   }
 
-  void setBloc(LocalBloc bloc) {
+  void setBloc(PodcastBloc bloc) {
     this.bloc = bloc;
   }
 
@@ -116,7 +116,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     }
     await _playerService.setSource(audios[index].path, AudioSource.local);
     _playerService.play();
-    bloc.add(AutoPlayNext(audios[index]));
+    // bloc.add(AutoPlayNext(audios[index]));
     (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
       audios[index],
     );
@@ -127,7 +127,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   Future<AudioEntity> next() async {
     index = getIndex(true);
     await play(index);
-    bloc.add(AutoPlayNext(audios[index]));
+    // bloc.add(AutoPlayNext(audios[index]));
     return audios[index];
   }
 
@@ -135,7 +135,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   Future<AudioEntity> previous() async {
     index = getIndex(false);
     await play(index);
-    bloc.add(AutoPlayNext(audios[index]));
+    // bloc.add(AutoPlayNext(audios[index]));
     return audios[index];
   }
 

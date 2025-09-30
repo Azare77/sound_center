@@ -1,5 +1,7 @@
 import 'package:just_audio/just_audio.dart';
 
+enum AudioSource { local, online }
+
 class JustAudioService {
   static JustAudioService? _instance;
 
@@ -18,9 +20,13 @@ class JustAudioService {
     return _player;
   }
 
-  Future<void> setSource(String path) async {
+  Future<void> setSource(String path, AudioSource source) async {
     try {
-      await _player.setFilePath(path);
+      if (source == AudioSource.local) {
+        await _player.setFilePath(path);
+      } else {
+        await _player.setUrl(path);
+      }
     } catch (_) {}
   }
 

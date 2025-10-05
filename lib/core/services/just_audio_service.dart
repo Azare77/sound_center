@@ -13,6 +13,8 @@ class JustAudioService {
   JustAudioService._internal();
 
   void Function()? _onComplete;
+  void Function()? _onLoading;
+  void Function()? _onReady;
 
   final AudioPlayer _player = AudioPlayer();
   AudioSource? _source;
@@ -57,13 +59,31 @@ class JustAudioService {
     await _player.seek(position);
   }
 
-  void setOnComplete(void Function() onComplete) {
+  void setOnComplete(
+    void Function()? onComplete, {
+    void Function()? onLoading,
+    void Function()? onReady,
+  }) {
     _onComplete = onComplete;
+    _onLoading = onLoading;
+    _onReady = onReady;
     _player.processingStateStream.listen((state) {
+      print(state);
       if (state == ProcessingState.completed) {
         _onComplete?.call();
       }
+      if (state == ProcessingState.loading) {
+        _onLoading?.call();
+      }
+      if (state == ProcessingState.ready) {
+        _onReady?.call();
+      }
     });
+  }
+
+  bool isLoading() {
+    return _player.processingState == ProcessingState.loading ||
+        _player.processingState == ProcessingState.buffering;
   }
 
   Future<int> getCurrentPosition() async {

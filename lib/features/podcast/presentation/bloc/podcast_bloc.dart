@@ -43,7 +43,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     //
     on<TogglePlay>((event, emit) async {
       PodcastResultStatus status = state.status as PodcastResultStatus;
-      emit(state);
+      emit(state.copyWith(status));
     });
 
     on<SearchPodcast>((event, emit) async {

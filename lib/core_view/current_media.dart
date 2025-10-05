@@ -35,6 +35,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
   }
 
   Widget media() {
+    print(podcastPlayer.isPlaying());
     if (localPlayer.hasSource()) {
       return CurrentAudio(audioEntity: localPlayer.getCurrentAudio!);
     }

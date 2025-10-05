@@ -5,6 +5,7 @@ import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/play_audio.dart';
+import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
 class CurrentAudio extends StatefulWidget {
   const CurrentAudio({super.key, required this.audioEntity});
@@ -79,15 +80,11 @@ class _CurrentAudioState extends State<CurrentAudio> {
         ),
         title: Text(widget.audioEntity.title, maxLines: 1),
         subtitle: Text(widget.audioEntity.artist),
-        trailing: IconButton(
-          onPressed: () {
-            LocalPlayerRepositoryImp().togglePlayState();
+        trailing: PlayPauseButton(
+          isPlaying: LocalPlayerRepositoryImp().isPlaying(),
+          onPressed: () async {
+            await LocalPlayerRepositoryImp().togglePlayState();
           },
-          icon: Icon(
-            LocalPlayerRepositoryImp().isPlaying()
-                ? Icons.pause
-                : Icons.play_arrow,
-          ),
         ),
       ),
     );

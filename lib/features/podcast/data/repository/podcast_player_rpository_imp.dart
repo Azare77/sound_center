@@ -15,8 +15,12 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   PodcastPlayerRepositoryImp._internal() {
-    // _playerService.setOnComplete(() => next());
+    _playerService.setOnComplete(() => next());
     _initialPlayerState();
+  }
+
+  bool isLoading() {
+    return _playerService.isLoading();
   }
 
   final JustAudioService _playerService = JustAudioService();
@@ -89,30 +93,12 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  Future<void> changeShuffleState() async {
-    // if (shuffleMode == ShuffleMode.shuffle) {
-    //   shuffleMode = ShuffleMode.noShuffle;
-    //   _shuffle = [];
-    // } else {
-    //   _shuffleAudios();
-    // }
-    // await PlayerStateStorage.saveShuffleMode(shuffleMode);
-  }
-
-  // void _shuffleAudios() {
-  // shuffleMode = ShuffleMode.shuffle;
-  // shuffleIndex = 0;
-  // _shuffle = List.generate(_episodes.length, (i) => i)..shuffle();
-  // _shuffle.insert(0, index);
-  // }
+  Future<void> changeShuffleState() async {}
 
   @override
   Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
     _currentEpisode = _episodes[index];
-    // if (direct && shuffleMode == ShuffleMode.shuffle) {
-    //   _shuffleAudios();
-    // }
     bloc.add(AutoPlayPodcast(_currentEpisode!));
     await _playerService.setSource(
       _episodes[index].contentUrl!,
@@ -126,8 +112,8 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<Episode> next() async {
-    // index = getIndex(true);
-    // await play(index);
+    index = getIndex(true);
+    await play(index);
     // bloc.add(AutoPlayNext(audios[index]));
     return _episodes[index];
   }

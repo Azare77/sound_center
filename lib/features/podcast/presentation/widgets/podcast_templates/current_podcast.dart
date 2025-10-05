@@ -3,6 +3,7 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/pages/play_podcast.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
+import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
 class CurrentPodcast extends StatelessWidget {
   const CurrentPodcast({super.key, required this.episode});
@@ -42,15 +43,12 @@ class CurrentPodcast extends StatelessWidget {
         ),
         title: Text(episode.title, maxLines: 1),
         subtitle: Text(episode.author ?? "Who Knows"),
-        trailing: IconButton(
-          onPressed: () {
+        trailing: PlayPauseButton(
+          isLoading: PodcastPlayerRepositoryImp().isLoading(),
+          isPlaying: PodcastPlayerRepositoryImp().isPlaying(),
+          onPressed: () async {
             PodcastPlayerRepositoryImp().togglePlayState();
           },
-          icon: Icon(
-            PodcastPlayerRepositoryImp().isPlaying()
-                ? Icons.pause
-                : Icons.play_arrow,
-          ),
         ),
       ),
     );

@@ -1,26 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
-import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
-class PlayerNavigation extends StatefulWidget {
-  const PlayerNavigation({super.key});
+class PodcastNavigation extends StatefulWidget {
+  const PodcastNavigation({super.key});
 
   @override
-  State<PlayerNavigation> createState() => _PlayerNavigationState();
+  State<PodcastNavigation> createState() => _PodcastNavigationState();
 }
 
-class _PlayerNavigationState extends State<PlayerNavigation> {
-  final LocalPlayerRepositoryImp imp = LocalPlayerRepositoryImp();
+class _PodcastNavigationState extends State<PodcastNavigation> {
+  final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
   late final Timer _timer;
-  late final LocalBloc _localBloc;
-  late AudioEntity song;
+  late Episode episode;
   int total = 1;
   int pass = 0;
   bool seeking = false;
@@ -28,7 +24,6 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   @override
   void initState() {
     setupPage();
-    _localBloc = BlocProvider.of<LocalBloc>(context);
     super.initState();
   }
 
@@ -76,27 +71,23 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            MediaControllerButton(
-              svg: imp.repeatMode == RepeatMode.noRepeat
-                  ? "assets/icons/no-repeat.svg"
-                  : imp.repeatMode == RepeatMode.repeatOne
-                  ? "assets/icons/repeat-one.svg"
-                  : "assets/icons/repeat-all.svg",
-              onPressed: () {
-                setState(() {
-                  imp.changeRepeatState();
-                });
-              },
-            ),
+            // MediaControllerButton(
+            //   svg: 'assets/icons/previous.svg',
+            //   onPressed: () async {
+            //     int dest = await imp.getCurrentPosition() - 30000;
+            //     await imp.seek(Duration(milliseconds: dest));
+            //     await _updateDuration();
+            //   },
+            // ),
             MediaControllerButton(
               svg: 'assets/icons/previous.svg',
               onPressed: () async {
-                _localBloc.add(PlayPreviousAudio());
+                // _localBloc.add(PlayPreviousAudio());
                 await _updateDuration();
               },
             ),
-
             PlayPauseButton(
+              isLoading: imp.isLoading(),
               isPlaying: imp.isPlaying(),
               onPressed: () async {
                 await imp.togglePlayState();
@@ -106,19 +97,18 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             MediaControllerButton(
               svg: 'assets/icons/next.svg',
               onPressed: () async {
-                _localBloc.add(PlayNextAudio());
+                // _localBloc.add(PlayNextAudio());
                 await _updateDuration();
               },
             ),
-            MediaControllerButton(
-              svg: 'assets/icons/shuffle.svg',
-              color: imp.isShuffle() ? Colors.blue : Colors.white,
-              onPressed: () {
-                setState(() {
-                  imp.changeShuffleState();
-                });
-              },
-            ),
+            // MediaControllerButton(
+            //   svg: 'assets/icons/next.svg',
+            //   onPressed: () async {
+            //     int dest = await imp.getCurrentPosition() + 30000;
+            //     await imp.seek(Duration(milliseconds: dest));
+            //     await _updateDuration();
+            //   },
+            // ),
           ],
         ),
       ],
@@ -142,7 +132,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
     pass = 0;
     total = await imp.getDuration();
     pass = await imp.getCurrentPosition();
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   Future<void> _setUpTimer() async {

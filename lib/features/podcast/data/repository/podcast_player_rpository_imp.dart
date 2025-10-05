@@ -113,12 +113,12 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     // if (direct && shuffleMode == ShuffleMode.shuffle) {
     //   _shuffleAudios();
     // }
+    bloc.add(AutoPlayPodcast(_currentEpisode!));
     await _playerService.setSource(
       _episodes[index].contentUrl!,
       AudioSource.online,
     );
     _playerService.play();
-    // bloc.add(AutoPlayNext(audios[index]));
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
       _episodes[index],
     );

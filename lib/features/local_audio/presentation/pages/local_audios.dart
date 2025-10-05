@@ -64,9 +64,7 @@ class _LocalAudiosState extends State<LocalAudios> {
             builder: (BuildContext context, LocalState state) {
               if (state.status is LocalAudioStatus) {
                 LocalAudioStatus status = state.status as LocalAudioStatus;
-                return Column(
-                  children: [Expanded(child: AudioListTemplate(status.audios))],
-                );
+                return AudioListTemplate(status.audios);
               }
               return Loading(label: "Scanning");
             },

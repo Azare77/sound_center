@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
+import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/local_audios.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/current_audio.dart';
-import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/current_podcast.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,8 +12,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int index = 0;
-  LocalPlayerRepositoryImp localPlayer = LocalPlayerRepositoryImp();
-  PodcastPlayerRepositoryImp podcastPlayer = PodcastPlayerRepositoryImp();
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +55,7 @@ class _HomeState extends State<Home> {
               children: [LocalAudios(), Podcast()],
             ),
           ),
-          if (localPlayer.hasSource())
-            CurrentAudio(audioEntity: localPlayer.getCurrentAudio!),
-          if (podcastPlayer.hasSource())
-            CurrentPodcast(episode: podcastPlayer.getCurrentEpisode!),
+          CurrentMedia(),
         ],
       ),
     );

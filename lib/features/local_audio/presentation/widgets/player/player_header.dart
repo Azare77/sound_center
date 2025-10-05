@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/player/header_image.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
@@ -47,8 +46,8 @@ class _PlayerHeaderState extends State<PlayerHeader> {
     return SizedBox(
       child: BlocBuilder<LocalBloc, LocalState>(
         builder: (BuildContext context, LocalState state) {
-          final LocalAudioStatus status = state.status as LocalAudioStatus;
-          AudioEntity song = status.currentAudio!;
+          // final LocalAudioStatus status = state.status as LocalAudioStatus;
+          AudioEntity song = LocalPlayerRepositoryImp().getCurrentAudio!;
           currentPlayList = LocalPlayerRepositoryImp().getPlayList();
           _jumpToCorrectPage(currentPlayList, song);
           return SizedBox(

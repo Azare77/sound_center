@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
-import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/header_image.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
@@ -43,9 +42,9 @@ class _PodcastHeaderState extends State<PodcastHeader> {
     return SizedBox(
       child: BlocBuilder<PodcastBloc, PodcastState>(
         builder: (BuildContext context, PodcastState state) {
-          final PodcastResultStatus status =
-              state.status as PodcastResultStatus;
-          Episode episode = status.currentEpisode!;
+          // final PodcastResultStatus status =
+          //     state.status as PodcastResultStatus;
+          Episode episode = PodcastPlayerRepositoryImp().getCurrentEpisode!;
           currentPlayList = PodcastPlayerRepositoryImp().getPlayList();
           _jumpToCorrectPage(currentPlayList, episode);
           return SizedBox(

@@ -20,10 +20,10 @@ class PlayNextPodcast extends PodcastEvent {}
 
 class PlayPreviousPodcast extends PodcastEvent {}
 
-class AutoPlayNext extends PodcastEvent {
+class AutoPlayPodcast extends PodcastEvent {
   final Episode podcastEntity;
 
-  AutoPlayNext(this.podcastEntity);
+  AutoPlayPodcast(this.podcastEntity);
 }
 
 class TogglePlay extends PodcastEvent {}

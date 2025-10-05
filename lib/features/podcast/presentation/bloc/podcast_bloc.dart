@@ -22,14 +22,9 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     });
 
     on<PlayPodcast>((event, emit) async {
-      PodcastResultStatus status = state.status as PodcastResultStatus;
       player.setPlayList([event.episode]);
-      final PodcastResultStatus newStatus = PodcastResultStatus(
-        podcasts: status.podcasts,
-        currentEpisode: event.episode,
-      );
       await player.play(0, direct: true);
-      emit(state.copyWith(newStatus));
+      emit(state.copyWith(state.status));
     });
     // on<PlayNextAudio>((event, emit) async {
     //   PodcastStatus status = state.status as PodcastStatus;
@@ -41,19 +36,14 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     //   await player.previous();
     //   emit(state.copyWith(status));
     // });
-    // on<AutoPlayNext>((event, emit) async {
-    //   PodcastStatus status = state.status as PodcastStatus;
-    //   status.currentEpisode = event.audioEntity;
-    //   emit(state.copyWith(status));
-    // });
+    on<AutoPlayPodcast>((event, emit) async {
+      PodcastResultStatus status = state.status as PodcastResultStatus;
+      emit(state.copyWith(status));
+    });
     //
     on<TogglePlay>((event, emit) async {
       PodcastResultStatus status = state.status as PodcastResultStatus;
-      final newStatus = PodcastResultStatus(
-        podcasts: status.podcasts,
-        currentEpisode: status.currentEpisode,
-      );
-      emit(state.copyWith(newStatus));
+      emit(state);
     });
 
     on<SearchPodcast>((event, emit) async {

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
+import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/current_podcast.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode_template.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
@@ -41,41 +40,47 @@ class _EpisodesState extends State<Episodes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.podcast.trackName ?? '')),
-      body: BlocBuilder<PodcastBloc, PodcastState>(
-        builder: (BuildContext context, PodcastState state) {
-          if (state.status is PodcastResultStatus) {
-            PodcastResultStatus status = state.status as PodcastResultStatus;
-            return podcast == null
-                ? Loading()
-                : Column(
-                    children: [
-                      Wrap(children: [Text(podcast!.description ?? "")]),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: podcast!.episodes.length,
-                          itemBuilder: (context, index) {
-                            Episode episode = podcast!.episodes[index];
-                            return InkWell(
-                              onTap: () {
-                                BlocProvider.of<PodcastBloc>(
-                                  context,
-                                ).add(PlayPodcast(episode));
-                              },
-                              child: EpisodeTemplate(
-                                episode: episode,
-                                podcastUrl: widget.podcast.bestArtworkUrl,
+      body: Column(
+        children: [
+          Expanded(
+            child: BlocBuilder<PodcastBloc, PodcastState>(
+              builder: (BuildContext context, PodcastState state) {
+                if (state.status is PodcastResultStatus) {
+                  PodcastResultStatus status =
+                      state.status as PodcastResultStatus;
+                  return podcast == null
+                      ? Loading()
+                      : Column(
+                          children: [
+                            Wrap(children: [Text(podcast!.description ?? "")]),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: podcast!.episodes.length,
+                                itemBuilder: (context, index) {
+                                  Episode episode = podcast!.episodes[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      BlocProvider.of<PodcastBloc>(
+                                        context,
+                                      ).add(PlayPodcast(episode));
+                                    },
+                                    child: EpisodeTemplate(
+                                      episode: episode,
+                                      podcastUrl: widget.podcast.bestArtworkUrl,
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      if (PodcastPlayerRepositoryImp().hasSource())
-                        CurrentPodcast(episode: status.currentEpisode!),
-                    ],
-                  );
-          }
-          return Loading();
-        },
+                            ),
+                          ],
+                        );
+                }
+                return Loading();
+              },
+            ),
+          ),
+          CurrentMedia(),
+        ],
       ),
     );
   }

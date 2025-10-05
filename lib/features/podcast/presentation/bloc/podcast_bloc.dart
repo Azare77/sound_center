@@ -16,20 +16,21 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     );
 
     final PodcastPlayerRepositoryImp player = PodcastPlayerRepositoryImp();
-    on<GetLocalAudios>((event, emit) async {
+    player.setBloc(this);
+    on<GetLocalPodcast>((event, emit) async {
       player.setBloc(this);
-      // List<AudioEntity> audios = await getPodcastUseCase.call(
-      //   orderBy: event.column,
-      //   desc: event.desc,
-      // );
-      // emit(state.copyWith(PodcastStatus(audios: audios)));
     });
 
-    // on<PlayAudio>((event, emit) async {
-    //   PodcastStatus status = state.status as PodcastStatus;
-    //   LocalPlayerRepositoryImp().setPlayList(status.audios);
-    //   await LocalPlayerRepositoryImp().play(event.index, direct: true);
-    // });
+    on<PlayPodcast>((event, emit) async {
+      PodcastResultStatus status = state.status as PodcastResultStatus;
+      player.setPlayList([event.episode]);
+      final PodcastResultStatus newStatus = PodcastResultStatus(
+        podcasts: status.podcasts,
+        currentEpisode: event.episode,
+      );
+      await player.play(0, direct: true);
+      emit(state.copyWith(newStatus));
+    });
     // on<PlayNextAudio>((event, emit) async {
     //   PodcastStatus status = state.status as PodcastStatus;
     //   await player.next();
@@ -46,20 +47,19 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     //   emit(state.copyWith(status));
     // });
     //
-    // on<TogglePlay>((event, emit) async {
-    //   PodcastStatus status = state.status as PodcastStatus;
-    //   final newStatus = PodcastStatus(
-    //     audios: status.audios,
-    //     currentEpisode: status.currentEpisode,
-    //   );
-    //   emit(state.copyWith(newStatus));
-    // });
+    on<TogglePlay>((event, emit) async {
+      PodcastResultStatus status = state.status as PodcastResultStatus;
+      final newStatus = PodcastResultStatus(
+        podcasts: status.podcasts,
+        currentEpisode: status.currentEpisode,
+      );
+      emit(state.copyWith(newStatus));
+    });
 
     on<SearchPodcast>((event, emit) async {
+      emit(state.copyWith(PodcastResultStatus(podcasts: PodcastEntity([]))));
       PodcastEntity podcasts = await getPodcastUseCase.find(event.query);
       PodcastResultStatus status = PodcastResultStatus(podcasts: podcasts);
-      // status.podcasts = podcasts;
-      // status.currentEpisode = status.currentEpisode;
       emit(state.copyWith(status));
     });
   }

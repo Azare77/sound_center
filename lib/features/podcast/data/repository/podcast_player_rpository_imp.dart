@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
-import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
-import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
@@ -17,27 +15,29 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   PodcastPlayerRepositoryImp._internal() {
-    _playerService.setOnComplete(() => next());
+    // _playerService.setOnComplete(() => next());
     _initialPlayerState();
   }
 
   final JustAudioService _playerService = JustAudioService();
-  List<AudioEntity> audios = [];
+  final List<Episode> _episodes = [];
 
-  AudioEntity? _currentAudio;
+  Episode? _currentEpisode;
 
-  AudioEntity? get getCurrentAudio => _currentAudio;
-  List<int> _shuffle = [];
+  Episode? get getCurrentEpisode => _currentEpisode;
+
+  // List<int> _shuffle = [];
   int index = 0;
-  int shuffleIndex = 0;
-  bool _initialized = false;
+
+  // int shuffleIndex = 0;
   RepeatMode repeatMode = RepeatMode.repeatAll;
-  ShuffleMode shuffleMode = ShuffleMode.noShuffle;
+
+  // ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   late final PodcastBloc bloc;
 
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
-    shuffleMode = PlayerStateStorage.getShuffleMode();
+    // shuffleMode = PlayerStateStorage.getShuffleMode();
   }
 
   bool isPlaying() {
@@ -45,11 +45,12 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   bool hasSource() {
-    return _playerService.hasSource();
+    return _playerService.hasSource(AudioSource.online);
   }
 
   bool isShuffle() {
-    return shuffleMode == ShuffleMode.shuffle;
+    return false;
+    // return shuffleMode == ShuffleMode.shuffle;
   }
 
   void setBloc(PodcastBloc bloc) {
@@ -57,18 +58,18 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  void setPlayList(dynamic audios) {
-    assert(audios is List<AudioEntity>);
-    this.audios.clear();
-    for (AudioEntity audioEntity in audios) {
-      this.audios.add(audioEntity);
+  void setPlayList(dynamic episodes) {
+    assert(episodes is List<Episode>);
+    _episodes.clear();
+    for (Episode episode in episodes) {
+      _episodes.add(episode);
     }
-    _preloadCoversInBackground();
   }
 
-  List<AudioEntity> getPlayList() {
-    if (shuffleMode == ShuffleMode.noShuffle) return audios;
-    return _shuffle.map((i) => audios[i]).toList();
+  List<Episode> getPlayList() {
+    return _episodes;
+    // if (shuffleMode == ShuffleMode.noShuffle) return _episodes;
+    // return _shuffle.map((i) => _episodes[i]).toList();
   }
 
   @override
@@ -89,54 +90,54 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> changeShuffleState() async {
-    if (shuffleMode == ShuffleMode.shuffle) {
-      shuffleMode = ShuffleMode.noShuffle;
-      _shuffle = [];
-    } else {
-      _shuffleAudios();
-    }
-    await PlayerStateStorage.saveShuffleMode(shuffleMode);
+    // if (shuffleMode == ShuffleMode.shuffle) {
+    //   shuffleMode = ShuffleMode.noShuffle;
+    //   _shuffle = [];
+    // } else {
+    //   _shuffleAudios();
+    // }
+    // await PlayerStateStorage.saveShuffleMode(shuffleMode);
   }
 
-  void _shuffleAudios() {
-    shuffleMode = ShuffleMode.shuffle;
-    shuffleIndex = 0;
-    _shuffle = List.generate(audios.length, (i) => i)..shuffle();
-    _shuffle.insert(0, index);
-  }
+  // void _shuffleAudios() {
+  // shuffleMode = ShuffleMode.shuffle;
+  // shuffleIndex = 0;
+  // _shuffle = List.generate(_episodes.length, (i) => i)..shuffle();
+  // _shuffle.insert(0, index);
+  // }
 
   @override
   Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
-    if (direct && shuffleMode == ShuffleMode.shuffle) {
-      _shuffleAudios();
-    }
-    if (!_initialized && audios[index].cover == null) {
-      _loadChunk(index);
-    }
-    await _playerService.setSource(audios[index].path, AudioSource.local);
+    _currentEpisode = _episodes[index];
+    // if (direct && shuffleMode == ShuffleMode.shuffle) {
+    //   _shuffleAudios();
+    // }
+    await _playerService.setSource(
+      _episodes[index].contentUrl!,
+      AudioSource.online,
+    );
     _playerService.play();
     // bloc.add(AutoPlayNext(audios[index]));
-    (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
-      audios[index],
+    (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
+      _episodes[index],
     );
-    _currentAudio = audios[index];
   }
 
   @override
-  Future<AudioEntity> next() async {
-    index = getIndex(true);
-    await play(index);
+  Future<Episode> next() async {
+    // index = getIndex(true);
+    // await play(index);
     // bloc.add(AutoPlayNext(audios[index]));
-    return audios[index];
+    return _episodes[index];
   }
 
   @override
-  Future<AudioEntity> previous() async {
+  Future<Episode> previous() async {
     index = getIndex(false);
     await play(index);
     // bloc.add(AutoPlayNext(audios[index]));
-    return audios[index];
+    return _episodes[index];
   }
 
   @override
@@ -164,60 +165,28 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> stop() async {
+    _currentEpisode = null;
     await _playerService.release();
     bloc.add(TogglePlay());
   }
 
   int getIndex(bool forward) {
-    bool isShuffle = shuffleMode == ShuffleMode.shuffle;
+    // bool isShuffle = shuffleMode == ShuffleMode.shuffle;
     if (repeatMode == RepeatMode.repeatOne) {
-      if (isShuffle) {
-        return _shuffle[shuffleIndex];
-      } else {
-        return index;
-      }
-    }
-    if (isShuffle) {
-      shuffleIndex =
-          (shuffleIndex + (forward ? 1 : -1) + _shuffle.length) %
-          _shuffle.length;
-      return _shuffle[shuffleIndex];
-    } else {
-      index = (index + (forward ? 1 : -1) + audios.length) % audios.length;
+      // if (isShuffle) {
+      //   return _shuffle[shuffleIndex];
+      // } else {
       return index;
+      // }
     }
-  }
-
-  Future<void> _preloadCoversInBackground() async {
-    for (final audio in audios) {
-      try {
-        final cover = await AudioUtil().getCover(
-          audio.audioId,
-          coverSize: CoverSize.banner,
-        );
-        if (cover != null) {
-          audio.cover = cover;
-        }
-        await Future.delayed(const Duration(milliseconds: 50));
-      } catch (e) {
-        debugPrint("Error loading cover for ${audio.id}: $e");
-      }
-    }
-    _initialized = true;
-  }
-
-  Future<void> _loadChunk(int index) async {
-    final start = (index - 5).clamp(0, audios.length - 1);
-    final end = (index + 5).clamp(0, audios.length - 1);
-    for (int i = start; i <= end; i++) {
-      final audio = audios[i];
-      if (audio.cover == null) {
-        final cover = await AudioUtil().getCover(
-          audio.audioId,
-          coverSize: CoverSize.banner,
-        );
-        audio.cover = cover;
-      }
-    }
+    // if (isShuffle) {
+    //   shuffleIndex =
+    //       (shuffleIndex + (forward ? 1 : -1) + _shuffle.length) %
+    //       _shuffle.length;
+    //   return _shuffle[shuffleIndex];
+    // } else {
+    index = (index + (forward ? 1 : -1) + _episodes.length) % _episodes.length;
+    return index;
+    // }
   }
 }

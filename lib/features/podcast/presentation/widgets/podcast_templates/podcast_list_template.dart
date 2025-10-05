@@ -1,7 +1,8 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/LocalAudio/podcast_template.dart';
+import 'package:sound_center/features/podcast/presentation/pages/episodes.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_template.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
 class PodcastListTemplate extends StatelessWidget {
@@ -31,14 +32,18 @@ class PodcastListTemplate extends StatelessWidget {
         child: ListView.builder(
           itemCount: podcasts.length,
           controller: _scrollController,
+          itemExtent: 70,
           itemBuilder: (context, index) {
             final podcast = podcasts[index];
-            return SizedBox(
-              height: 70,
-              child: InkWell(
-                onTap: () => {},
-                child: PodcastTemplate(podcast: podcast),
-              ),
+            return InkWell(
+              key: Key(podcast.feedUrl!),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => Episodes(podcast: podcast)),
+                );
+              },
+              child: PodcastTemplate(podcast: podcast),
             );
           },
         ),

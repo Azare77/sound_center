@@ -1,11 +1,10 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 
-class HeaderImage extends StatelessWidget {
-  const HeaderImage({super.key, this.img});
+class PodcastHeaderImage extends StatelessWidget {
+  const PodcastHeaderImage({super.key, this.url});
 
-  final Uint8List? img;
+  final String? url;
 
   @override
   Widget build(BuildContext context) {
@@ -13,17 +12,7 @@ class HeaderImage extends StatelessWidget {
       padding: EdgeInsetsGeometry.symmetric(horizontal: 15),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: img != null
-            ? Image.memory(
-                img!,
-                fit: BoxFit.fill,
-                filterQuality: FilterQuality.high,
-              )
-            : Image.asset(
-                'assets/logo.png',
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-              ),
+        child: NetworkCacheImage(url: url, size: null),
       ),
     );
   }

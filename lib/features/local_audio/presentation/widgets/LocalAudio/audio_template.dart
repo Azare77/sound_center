@@ -33,10 +33,6 @@ class _AudioTemplateState extends State<AudioTemplate> {
 
   @override
   Widget build(BuildContext context) {
-    int duration = ((widget.audioEntity.duration) / 1000).floor();
-    int minutes = duration ~/ 60;
-    int seconds = duration % 60;
-    String secondsStr = seconds.toString().padLeft(2, '0');
     double size = 50;
     return ListTile(
       leading: SizedBox(
@@ -66,11 +62,20 @@ class _AudioTemplateState extends State<AudioTemplate> {
       ),
       title: Text(widget.audioEntity.title, maxLines: 1),
       subtitle: Text(widget.audioEntity.artist),
-      trailing: Text("$minutes:$secondsStr"),
+      trailing: convertTime(widget.audioEntity.duration),
     );
   }
 
-  DateTime getFormattedDate(int? timestamp) {
-    return DateTime.fromMillisecondsSinceEpoch(timestamp! * 1000);
+  Widget convertTime(int input) {
+    final duration = Duration(milliseconds: input);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+
+    final timeStr = hours > 0
+        ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
+        : "${minutes.toString()}:${seconds.toString().padLeft(2, '0')}";
+
+    return Text(timeStr);
   }
 }

@@ -199,11 +199,16 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   }
 
   Widget convertTime(int input) {
-    int duration = ((input) / 1000).floor();
-    int minutes = duration ~/ 60;
-    int seconds = duration % 60;
-    String secondsStr = seconds.toString().padLeft(2, '0');
-    return SizedBox(width: 40, child: Text("$minutes:$secondsStr"));
+    final duration = Duration(milliseconds: input);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+
+    final timeStr = hours > 0
+        ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
+        : "${minutes.toString()}:${seconds.toString().padLeft(2, '0')}";
+
+    return Text(timeStr);
   }
 
   Future<void> _updateDuration() async {

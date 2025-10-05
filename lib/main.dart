@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ late final AudioHandler audioHandler;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   JustAudioMediaKit.ensureInitialized();
+  await FastCachedImageConfig.init();
   await Storage.instance.init();
   if (!(kIsWeb || Platform.isWindows)) {
     audioHandler = await AudioService.init(

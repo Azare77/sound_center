@@ -8,22 +8,22 @@ class SearchPodcast extends PodcastEvent {
   SearchPodcast(this.query);
 }
 
-class GetLocalAudios extends PodcastEvent {}
+class GetLocalPodcast extends PodcastEvent {}
 
-class PlayAudio extends PodcastEvent {
-  final int index;
+class PlayPodcast extends PodcastEvent {
+  final Episode episode;
 
-  PlayAudio(this.index);
+  PlayPodcast(this.episode);
 }
 
-class PlayNextAudio extends PodcastEvent {}
+class PlayNextPodcast extends PodcastEvent {}
 
-class PlayPreviousAudio extends PodcastEvent {}
+class PlayPreviousPodcast extends PodcastEvent {}
 
 class AutoPlayNext extends PodcastEvent {
-  final Episode audioEntity;
+  final Episode podcastEntity;
 
-  AutoPlayNext(this.audioEntity);
+  AutoPlayNext(this.podcastEntity);
 }
 
 class TogglePlay extends PodcastEvent {}

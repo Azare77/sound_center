@@ -1,25 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
-import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
+import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 
-class PlayerNavigation extends StatefulWidget {
-  const PlayerNavigation({super.key});
+class PodcastNavigation extends StatefulWidget {
+  const PodcastNavigation({super.key});
 
   @override
-  State<PlayerNavigation> createState() => _PlayerNavigationState();
+  State<PodcastNavigation> createState() => _PodcastNavigationState();
 }
 
-class _PlayerNavigationState extends State<PlayerNavigation> {
-  final LocalPlayerRepositoryImp imp = LocalPlayerRepositoryImp();
+class _PodcastNavigationState extends State<PodcastNavigation> {
+  final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
   late final Timer _timer;
-  late final LocalBloc _localBloc;
-  late AudioEntity song;
+
+  // late final LocalBloc _localBloc;
+  late Episode episode;
   int total = 1;
   int pass = 0;
   bool seeking = false;
@@ -27,7 +26,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   @override
   void initState() {
     setupPage();
-    _localBloc = BlocProvider.of<LocalBloc>(context);
+    // _localBloc = BlocProvider.of<LocalBloc>(context);
     super.initState();
   }
 
@@ -108,7 +107,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             ),
             InkWell(
               onTap: () async {
-                _localBloc.add(PlayPreviousAudio());
+                // _localBloc.add(PlayPreviousAudio());
                 await _updateDuration();
               },
               child: SvgPicture.asset(
@@ -148,7 +147,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             // ),
             InkWell(
               onTap: () async {
-                _localBloc.add(PlayNextAudio());
+                // _localBloc.add(PlayNextAudio());
                 await _updateDuration();
               },
               child: SvgPicture.asset(
@@ -199,11 +198,16 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   }
 
   Widget convertTime(int input) {
-    int duration = ((input) / 1000).floor();
-    int minutes = duration ~/ 60;
-    int seconds = duration % 60;
-    String secondsStr = seconds.toString().padLeft(2, '0');
-    return SizedBox(width: 40, child: Text("$minutes:$secondsStr"));
+    final duration = Duration(milliseconds: input);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+
+    final timeStr = hours > 0
+        ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
+        : "${minutes.toString()}:${seconds.toString().padLeft(2, '0')}";
+
+    return Text(timeStr);
   }
 
   Future<void> _updateDuration() async {

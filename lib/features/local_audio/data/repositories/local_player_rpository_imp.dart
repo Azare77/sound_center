@@ -45,7 +45,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   bool hasSource() {
-    return _playerService.hasSource();
+    return _playerService.hasSource(AudioSource.local);
   }
 
   bool isShuffle() {
@@ -57,11 +57,11 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  void setPlayList(dynamic audios) {
-    assert(audios is List<AudioEntity>);
-    this.audios.clear();
-    for (AudioEntity audioEntity in audios) {
-      this.audios.add(audioEntity);
+  void setPlayList(dynamic episodes) {
+    assert(episodes is List<AudioEntity>);
+    audios.clear();
+    for (AudioEntity audioEntity in episodes) {
+      audios.add(audioEntity);
     }
     _preloadCoversInBackground();
   }
@@ -164,6 +164,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> stop() async {
+    _currentAudio = null;
     await _playerService.release();
     bloc.add(TogglePlay());
   }

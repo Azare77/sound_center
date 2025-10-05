@@ -1,5 +1,7 @@
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/shared/widgets/loading.dart';
 
 class PodcastTemplate extends StatelessWidget {
   const PodcastTemplate({super.key, required this.podcast});
@@ -32,14 +34,25 @@ class PodcastTemplate extends StatelessWidget {
         width: size,
         child: ClipOval(
           child: artwork != null
-              ? Image.network(
-                  artwork,
+              ? FastCachedImage(
+                  url: artwork,
                   width: size,
                   height: size,
                   fit: BoxFit.cover,
                   filterQuality: FilterQuality.high,
                   errorBuilder: (ctx, ob, s) {
-                    return SizedBox();
+                    return SizedBox(
+                      width: size,
+                      height: size,
+                      child: Image.asset(
+                        'assets/logo.png',
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                      ),
+                    );
+                  },
+                  loadingBuilder: (context, progress) {
+                    return Loading();
                   },
                 )
               : SizedBox(

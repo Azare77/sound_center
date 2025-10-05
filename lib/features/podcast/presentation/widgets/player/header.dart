@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
-import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/player/header_image.dart';
+import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/player/header_image.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
-class PlayerHeader extends StatefulWidget {
-  const PlayerHeader({super.key});
+class PodcastHeader extends StatefulWidget {
+  const PodcastHeader({super.key});
 
   @override
-  State<PlayerHeader> createState() => _PlayerHeaderState();
+  State<PodcastHeader> createState() => _PodcastHeaderState();
 }
 
-class _PlayerHeaderState extends State<PlayerHeader> {
+class _PodcastHeaderState extends State<PodcastHeader> {
   late final PageController controller;
 
   int currentIndex = 0;
-  List<AudioEntity> currentPlayList = [];
+  List<Episode> currentPlayList = [];
 
   @override
   void initState() {
@@ -35,22 +35,19 @@ class _PlayerHeaderState extends State<PlayerHeader> {
   void onScrollEnd() {
     int page = controller.page?.round() ?? 0;
     int change = page - currentIndex;
-    for (int i = 0; i < change.abs(); i++) {
-      BlocProvider.of<LocalBloc>(
-        context,
-      ).add(change > 0 ? PlayNextAudio() : PlayPreviousAudio());
-    }
+    for (int i = 0; i < change.abs(); i++) {}
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: BlocBuilder<LocalBloc, LocalState>(
-        builder: (BuildContext context, LocalState state) {
-          final LocalAudioStatus status = state.status as LocalAudioStatus;
-          AudioEntity song = status.currentAudio!;
-          currentPlayList = LocalPlayerRepositoryImp().getPlayList();
-          _jumpToCorrectPage(currentPlayList, song);
+      child: BlocBuilder<PodcastBloc, PodcastState>(
+        builder: (BuildContext context, PodcastState state) {
+          final PodcastResultStatus status =
+              state.status as PodcastResultStatus;
+          Episode episode = status.currentEpisode!;
+          currentPlayList = PodcastPlayerRepositoryImp().getPlayList();
+          _jumpToCorrectPage(currentPlayList, episode);
           return SizedBox(
             child: Column(
               spacing: 20,
@@ -83,13 +80,21 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                       controller: controller,
                       itemCount: currentPlayList.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return HeaderImage(img: currentPlayList[index].cover);
+                        return PodcastHeaderImage(url: episode.imageUrl);
                       },
                     ),
                   ),
                 ),
-                TextView(song.title, maxLines: 1, textAlign: TextAlign.center),
-                TextView(song.artist, maxLines: 1, textAlign: TextAlign.center),
+                TextView(
+                  episode.title,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                ),
+                TextView(
+                  episode.author ?? '',
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           );
@@ -98,9 +103,9 @@ class _PlayerHeaderState extends State<PlayerHeader> {
     );
   }
 
-  void _jumpToCorrectPage(List<AudioEntity> currentPlayList, AudioEntity song) {
+  void _jumpToCorrectPage(List<Episode> currentPlayList, Episode song) {
     for (var entry in currentPlayList.asMap().entries) {
-      if (entry.value.id == song.id) {
+      if (entry.value.contentUrl == song.contentUrl) {
         currentIndex = entry.key;
         break;
       }

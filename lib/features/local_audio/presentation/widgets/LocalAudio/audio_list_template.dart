@@ -36,12 +36,13 @@ class AudioListTemplate extends StatelessWidget {
         child: ListView.builder(
           itemCount: audios.length,
           controller: _scrollController,
+          itemExtent: 70,
           itemBuilder: (context, index) {
             final audio = audios[index];
             final isCurrent = currentAudio?.id == audio.id;
-            return Container(
-              height: 70,
-              color: isCurrent ? Color(0x1D1BF1D8) : null,
+            return Material(
+              key: Key(audio.audioId.toString()),
+              color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
               child: InkWell(
                 onTap: () =>
                     context.read<event.LocalBloc>().add(event.PlayAudio(index)),

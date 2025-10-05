@@ -1,11 +1,11 @@
-import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
+
 
 enum RepeatMode { repeatAll, repeatOne, noRepeat }
 
 enum ShuffleMode { shuffle, noShuffle }
 
 abstract class PlayerRepository {
-  void setPlayList(dynamic audios);
+  void setPlayList(dynamic episodes);
 
   Future<int> getCurrentPosition();
 
@@ -17,9 +17,9 @@ abstract class PlayerRepository {
 
   Future<void> seek(Duration position);
 
-  Future<AudioEntity> next();
+  Future<dynamic> next();
 
-  Future<AudioEntity> previous();
+  Future<dynamic> previous();
 
   Future<void> stop();
 

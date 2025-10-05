@@ -6,7 +6,6 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/current_audio.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/tool_bar.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
@@ -66,11 +65,7 @@ class _LocalAudiosState extends State<LocalAudios> {
               if (state.status is LocalAudioStatus) {
                 LocalAudioStatus status = state.status as LocalAudioStatus;
                 return Column(
-                  children: [
-                    Expanded(child: AudioListTemplate(status.audios)),
-                    if (LocalPlayerRepositoryImp().hasSource())
-                      CurrentAudio(audioEntity: status.currentAudio!),
-                  ],
+                  children: [Expanded(child: AudioListTemplate(status.audios))],
                 );
               }
               return Loading(label: "Scanning");

@@ -12,6 +12,12 @@ class PodcastRepositoryImp implements PodcastRepository {
   @override
   Future<PodcastEntity> find(String searchText) async {
     Search search = Search();
+    // search = Search(
+    //   searchProvider: PodcastIndexProvider(
+    //     key: 'EXDBALQGZKUFF9H6ZBCP',
+    //     secret: "7vpySXwG\$CCr68Eh3ySehrvSeLmaCTG36YB8UEEE",
+    //   ),
+    // );
     SearchResult results = await search.search(searchText, limit: 10);
     if (results.successful) {
       return PodcastEntity(results.items);

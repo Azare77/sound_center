@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
@@ -82,6 +83,19 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       artist: audio.artist,
       artUri: artUri,
       duration: Duration(milliseconds: audio.duration),
+    );
+
+    mediaItem.add(item);
+  }
+
+  void setMediaItemFromEpisode(Episode episode) async {
+    final Uri? artUri = Uri.tryParse(episode.imageUrl ?? '');
+    MediaItem item = MediaItem(
+      id: episode.contentUrl!,
+      title: episode.title,
+      artist: episode.author,
+      artUri: artUri,
+      duration: Duration(milliseconds: episode.duration?.inMilliseconds ?? 0),
     );
 
     mediaItem.add(item);

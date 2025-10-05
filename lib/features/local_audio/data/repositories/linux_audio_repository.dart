@@ -86,7 +86,7 @@ class LocalAudioRepositoryLinux implements AudioRepository {
 
   Future<MetadataResult> _readMetadata(File file) async {
     try {
-      FileStat fileStat = await file.stat();
+      // FileStat fileStat = await file.stat();
       String? title = "فایل";
       String? artist = "آرتیست";
       String? album = "آلبوم";

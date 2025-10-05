@@ -15,6 +15,7 @@ class JustAudioService {
   void Function()? _onComplete;
 
   final AudioPlayer _player = AudioPlayer();
+  AudioSource? _source;
 
   AudioPlayer getPlayer() {
     return _player;
@@ -22,12 +23,15 @@ class JustAudioService {
 
   Future<void> setSource(String path, AudioSource source) async {
     try {
+      _source = source;
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
       } else {
         await _player.setUrl(path);
       }
-    } catch (_) {}
+    } catch (_) {
+      _source == null;
+    }
   }
 
   Future<void> play() async {
@@ -80,7 +84,8 @@ class JustAudioService {
     await _player.setLoopMode(mode);
   }
 
-  bool hasSource() {
+  bool hasSource(AudioSource source) {
+    if (_source == null || _source != source) return false;
     final duration = _player.duration;
     final processingState = _player.processingState;
     return duration != null || processingState != ProcessingState.idle;

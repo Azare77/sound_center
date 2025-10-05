@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/LocalAudio/podcast_list_template.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_list_template.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+
+import '../widgets/podcast_templates/current_podcast.dart';
 
 class Podcast extends StatefulWidget {
   const Podcast({super.key});
@@ -56,8 +59,8 @@ class _PodcastState extends State<Podcast> {
                     Expanded(
                       child: PodcastListTemplate(status.podcasts.podcasts),
                     ),
-                    // if (PodcastPlayerRepositoryImp().hasSource())
-                    // CurrentAudio(audioEntity: status.currentAudio!),
+                    if (PodcastPlayerRepositoryImp().hasSource())
+                      CurrentPodcast(episode: status.currentEpisode!),
                   ],
                 );
               }

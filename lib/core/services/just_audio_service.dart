@@ -68,7 +68,6 @@ class JustAudioService {
     _onLoading = onLoading;
     _onReady = onReady;
     _player.processingStateStream.listen((state) {
-      print(state);
       if (state == ProcessingState.completed) {
         _onComplete?.call();
       }

@@ -3,14 +3,13 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 
 class EpisodeTemplate extends StatelessWidget {
-  const EpisodeTemplate({super.key, required this.episode, this.podcastUrl});
+  const EpisodeTemplate({super.key, required this.episode});
 
   final Episode episode;
-  final String? podcastUrl;
 
   @override
   Widget build(BuildContext context) {
-    String? artwork = episode.imageUrl ?? podcastUrl;
+    String? artwork = episode.imageUrl;
     double size = 50;
     return ListTile(
       leading: SizedBox(

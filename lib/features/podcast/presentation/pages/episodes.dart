@@ -46,8 +46,8 @@ class _EpisodesState extends State<Episodes> {
             child: BlocBuilder<PodcastBloc, PodcastState>(
               builder: (BuildContext context, PodcastState state) {
                 if (state.status is PodcastResultStatus) {
-                  PodcastResultStatus status =
-                      state.status as PodcastResultStatus;
+                  // PodcastResultStatus status =
+                  //     state.status as PodcastResultStatus;
                   return podcast == null
                       ? Loading()
                       : Column(
@@ -58,16 +58,15 @@ class _EpisodesState extends State<Episodes> {
                                 itemCount: podcast!.episodes.length,
                                 itemBuilder: (context, index) {
                                   Episode episode = podcast!.episodes[index];
+                                  episode.imageUrl ??=
+                                      widget.podcast.bestArtworkUrl;
                                   return InkWell(
                                     onTap: () {
                                       BlocProvider.of<PodcastBloc>(
                                         context,
                                       ).add(PlayPodcast(episode));
                                     },
-                                    child: EpisodeTemplate(
-                                      episode: episode,
-                                      podcastUrl: widget.podcast.bestArtworkUrl,
-                                    ),
+                                    child: EpisodeTemplate(episode: episode),
                                   );
                                 },
                               ),

@@ -5,6 +5,7 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 // import 'package:metadata_god/metadata_god.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
@@ -48,6 +49,14 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
+          locale: const Locale('fa'),
+          supportedLocales: const [Locale("fa"), Locale("en")],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+
           title: 'Sound Center',
           theme: ThemeData(
             fontFamily: "Vazir",

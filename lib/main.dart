@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          locale: const Locale('fa'),
+          locale: const Locale('en'),
           supportedLocales: const [Locale("fa"), Locale("en")],
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
@@ -61,6 +61,12 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             fontFamily: "Vazir",
             brightness: Brightness.dark,
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                foregroundColor: WidgetStatePropertyAll(Colors.white),
+                backgroundColor: WidgetStatePropertyAll(Color(0xFFE7AC2E)),
+              ),
+            ),
             colorScheme: ColorScheme(
               brightness: Brightness.dark,
               primary: Color(0xFFD0BCFF),

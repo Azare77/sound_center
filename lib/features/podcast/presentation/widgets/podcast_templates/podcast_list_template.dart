@@ -1,7 +1,8 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/features/podcast/presentation/pages/episodes.dart';
+import 'package:sound_center/core/constants/query_constants.dart';
+import 'package:sound_center/features/podcast/presentation/pages/episode/podcast_detail.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_template.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
@@ -32,7 +33,7 @@ class PodcastListTemplate extends StatelessWidget {
         child: ListView.builder(
           itemCount: podcasts.length,
           controller: _scrollController,
-          itemExtent: 70,
+          itemExtent: LIST_ITEM_HEIGHT,
           itemBuilder: (context, index) {
             final podcast = podcasts[index];
             return InkWell(
@@ -40,7 +41,9 @@ class PodcastListTemplate extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => Episodes(podcast: podcast)),
+                  MaterialPageRoute(
+                    builder: (_) => PodcastDetail(podcast: podcast),
+                  ),
                 );
               },
               child: PodcastTemplate(podcast: podcast),

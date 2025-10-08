@@ -42,7 +42,7 @@ class CurrentPodcast extends StatelessWidget {
           child: ClipOval(child: NetworkCacheImage(url: episode.imageUrl)),
         ),
         title: Text(episode.title, maxLines: 1),
-        subtitle: Text(episode.author ?? "Who Knows"),
+        subtitle: Text(episode.author ?? "Who Knows", maxLines: 1),
         trailing: PlayPauseButton(
           isLoading: PodcastPlayerRepositoryImp().isLoading(),
           isPlaying: PodcastPlayerRepositoryImp().isPlaying(),

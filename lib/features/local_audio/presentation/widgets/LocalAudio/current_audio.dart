@@ -79,7 +79,7 @@ class _CurrentAudioState extends State<CurrentAudio> {
                 ),
         ),
         title: Text(widget.audioEntity.title, maxLines: 1),
-        subtitle: Text(widget.audioEntity.artist),
+        subtitle: Text(widget.audioEntity.artist, maxLines: 1),
         trailing: PlayPauseButton(
           isPlaying: LocalPlayerRepositoryImp().isPlaying(),
           onPressed: () async {

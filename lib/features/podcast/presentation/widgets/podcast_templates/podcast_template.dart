@@ -67,7 +67,7 @@ class PodcastTemplate extends StatelessWidget {
         ),
       ),
       title: Text(podcast.trackName ?? '', maxLines: 1),
-      subtitle: Text(podcast.artistName ?? ''),
+      subtitle: Text(podcast.artistName ?? '', maxLines: 1),
     );
   }
 

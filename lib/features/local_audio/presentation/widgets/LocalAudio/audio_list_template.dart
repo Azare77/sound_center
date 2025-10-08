@@ -1,6 +1,7 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart'
@@ -36,7 +37,7 @@ class AudioListTemplate extends StatelessWidget {
         child: ListView.builder(
           itemCount: audios.length,
           controller: _scrollController,
-          itemExtent: 70,
+          itemExtent: LIST_ITEM_HEIGHT,
           itemBuilder: (context, index) {
             final audio = audios[index];
             final isCurrent = currentAudio?.id == audio.id;

@@ -17,7 +17,7 @@ class EpisodeTemplate extends StatelessWidget {
         child: ClipOval(child: NetworkCacheImage(url: artwork)),
       ),
       title: Text(episode.title, maxLines: 1),
-      subtitle: Text(episode.author ?? ''),
+      subtitle: Text(episode.author ?? '', maxLines: 1),
       trailing: convertTime(episode.duration?.inMilliseconds ?? 0),
     );
   }

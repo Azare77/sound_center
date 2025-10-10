@@ -15,7 +15,6 @@ class PodcastHeader extends StatefulWidget {
 
 class _PodcastHeaderState extends State<PodcastHeader> {
   late final PageController controller;
-
   int currentIndex = 0;
   List<Episode> currentPlayList = [];
 
@@ -47,55 +46,37 @@ class _PodcastHeaderState extends State<PodcastHeader> {
           Episode episode = PodcastPlayerRepositoryImp().getCurrentEpisode!;
           currentPlayList = PodcastPlayerRepositoryImp().getPlayList();
           _jumpToCorrectPage(currentPlayList, episode);
-          return SizedBox(
-            child: Column(
-              spacing: 20,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.close_rounded),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.more_vert_rounded),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.width * 0.8 - 30,
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification notification) {
-                      if (notification is ScrollEndNotification) {
-                        onScrollEnd();
-                      }
-                      return false;
+          return Column(
+            spacing: 20,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.width * 0.8 - 30,
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification notification) {
+                    if (notification is ScrollEndNotification) {
+                      onScrollEnd();
+                    }
+                    return false;
+                  },
+                  child: PageView.builder(
+                    controller: controller,
+                    itemCount: currentPlayList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return PodcastHeaderImage(url: episode.imageUrl);
                     },
-                    child: PageView.builder(
-                      controller: controller,
-                      itemCount: currentPlayList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return PodcastHeaderImage(url: episode.imageUrl);
-                      },
-                    ),
                   ),
                 ),
+              ),
+              TextView(episode.title, maxLines: 1, textAlign: TextAlign.center),
+              if (episode.author != null)
                 TextView(
-                  episode.title,
+                  episode.author!,
                   maxLines: 1,
                   textAlign: TextAlign.center,
                 ),
-                TextView(
-                  episode.author ?? '',
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+            ],
           );
         },
       ),

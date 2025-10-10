@@ -28,6 +28,7 @@ class JustAudioService {
       _source = source;
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
+        _player.setSpeed(1);
       } else {
         await _player.setUrl(path);
       }
@@ -57,6 +58,10 @@ class JustAudioService {
 
   Future<void> seek(Duration position) async {
     await _player.seek(position);
+  }
+
+  Future<void> setSpeed(double speed) async {
+    await _player.setSpeed(speed);
   }
 
   void setOnComplete(

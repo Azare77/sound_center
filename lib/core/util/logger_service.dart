@@ -32,11 +32,15 @@ class LoggerService {
   }
 
   static Future<void> log(String message) async {
-    if (_logFile == null) await init();
+    try {
+      if (_logFile == null) await init();
 
-    final now = DateTime.now().toIso8601String();
-    final logMessage = '[$now] $message\n';
-    await _logFile!.writeAsString(logMessage, mode: FileMode.append);
+      final now = DateTime.now().toIso8601String();
+      final logMessage = '[$now] $message\n';
+      await _logFile!.writeAsString(logMessage, mode: FileMode.append);
+    } catch (_) {
+      return;
+    }
   }
 
   static Future<String?> getLogFilePath() async {

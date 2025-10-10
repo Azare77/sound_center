@@ -71,14 +71,14 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // MediaControllerButton(
-            //   svg: 'assets/icons/previous.svg',
-            //   onPressed: () async {
-            //     int dest = await imp.getCurrentPosition() - 30000;
-            //     await imp.seek(Duration(milliseconds: dest));
-            //     await _updateDuration();
-            //   },
-            // ),
+            MediaControllerButton(
+              svg: 'assets/icons/30back.svg',
+              onPressed: () async {
+                int dest = await imp.getCurrentPosition() - 30000;
+                await imp.seek(Duration(milliseconds: dest));
+                await _updateDuration();
+              },
+            ),
             MediaControllerButton(
               svg: 'assets/icons/previous.svg',
               onPressed: () async {
@@ -101,14 +101,31 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
                 await _updateDuration();
               },
             ),
-            // MediaControllerButton(
-            //   svg: 'assets/icons/next.svg',
-            //   onPressed: () async {
-            //     int dest = await imp.getCurrentPosition() + 30000;
-            //     await imp.seek(Duration(milliseconds: dest));
-            //     await _updateDuration();
-            //   },
-            // ),
+            MediaControllerButton(
+              svg: 'assets/icons/30forward.svg',
+              onPressed: () async {
+                int dest = await imp.getCurrentPosition() + 30000;
+                await imp.seek(Duration(milliseconds: dest));
+                await _updateDuration();
+              },
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: () {
+                PodcastPlayerRepositoryImp().setSpeed(1.8);
+              },
+              icon: Icon(Icons.arrow_upward_rounded),
+            ),
+            IconButton(
+              onPressed: () {
+                PodcastPlayerRepositoryImp().setSpeed(1);
+              },
+              icon: Icon(Icons.arrow_downward_rounded),
+            ),
           ],
         ),
       ],

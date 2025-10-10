@@ -72,8 +72,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   List<Episode> getPlayList() {
     return _episodes;
-    // if (shuffleMode == ShuffleMode.noShuffle) return _episodes;
-    // return _shuffle.map((i) => _episodes[i]).toList();
   }
 
   @override
@@ -141,6 +139,10 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> seek(Duration position) async {
     await _playerService.seek(position);
+  }
+
+  Future<void> setSpeed(double speed) async {
+    await _playerService.setSpeed(speed);
   }
 
   @override

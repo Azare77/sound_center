@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 // import 'package:metadata_god/metadata_god.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
+import 'package:sound_center/core/util/logger_service.dart';
 import 'package:sound_center/core_view/home.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
@@ -16,23 +18,86 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 
 late final AudioHandler audioHandler;
 
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await LoggerService.init();
+//   await LoggerService.log('INITIAL NEW SESSION ${DateTime.now()}');
+//   // گرفتن خطاهای sync
+//   FlutterError.onError = (FlutterErrorDetails details) async {
+//     FlutterError.dumpErrorToConsole(details);
+//     await LoggerService.log('Flutter Error: ${details.exceptionAsString()}');
+//   };
+//
+//   // گرفتن خطاهای async (مثل Future ها)
+//   runZonedGuarded(
+//     () async {
+//       runApp(MyApp());
+//     },
+//     (error, stackTrace) async {
+//       await LoggerService.log('Async Error: $error\nStack: $stackTrace');
+//     },
+//   );
+//   JustAudioMediaKit.ensureInitialized();
+//   await FastCachedImageConfig.init();
+//   await Storage.instance.init();
+//   if (!(kIsWeb || Platform.isWindows)) {
+//     audioHandler = await AudioService.init(
+//       builder: () => JustAudioNotificationHandler(),
+//       config: AudioServiceConfig(
+//         androidNotificationChannelId: 'com.example.sound_center.channel.audio',
+//         androidNotificationChannelName: 'Music Playback',
+//         androidNotificationOngoing: false,
+//         androidStopForegroundOnPause: false,
+//       ),
+//     );
+//   }
+//   runApp(const MyApp());
+// }
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  JustAudioMediaKit.ensureInitialized();
-  await FastCachedImageConfig.init();
-  await Storage.instance.init();
-  if (!(kIsWeb || Platform.isWindows)) {
-    audioHandler = await AudioService.init(
-      builder: () => JustAudioNotificationHandler(),
-      config: AudioServiceConfig(
-        androidNotificationChannelId: 'com.example.sound_center.channel.audio',
-        androidNotificationChannelName: 'Music Playback',
-        androidNotificationOngoing: false,
-        androidStopForegroundOnPause: false,
-      ),
-    );
-  }
-  runApp(const MyApp());
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      // راه‌اندازی لاگر
+      if (Platform.isAndroid) {
+        await LoggerService.init();
+        await LoggerService.log('INITIAL NEW SESSION ${DateTime.now()}');
+
+        // گرفتن خطاهای Flutter
+        FlutterError.onError = (FlutterErrorDetails details) async {
+          FlutterError.dumpErrorToConsole(details);
+          await LoggerService.log(
+            'Flutter Error: ${details.exceptionAsString()}',
+          );
+        };
+      }
+
+      // 📦 سایر initها هم باید داخل همین Zone باشند
+      JustAudioMediaKit.ensureInitialized();
+      await FastCachedImageConfig.init();
+      await Storage.instance.init();
+
+      if (!(kIsWeb || Platform.isWindows)) {
+        audioHandler = await AudioService.init(
+          builder: () => JustAudioNotificationHandler(),
+          config: AudioServiceConfig(
+            androidNotificationChannelId:
+                'com.example.sound_center.channel.audio',
+            androidNotificationChannelName: 'Music Playback',
+            androidNotificationOngoing: false,
+            androidStopForegroundOnPause: false,
+          ),
+        );
+      }
+
+      // اجرای اپ در همون Zone
+      runApp(const MyApp());
+    },
+    (error, stackTrace) async {
+      // ثبت خطاهای async
+      await LoggerService.log('Async Error: $error\nStack: $stackTrace');
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {

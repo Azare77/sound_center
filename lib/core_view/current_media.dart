@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/current_audio.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
@@ -36,10 +38,15 @@ class _CurrentMediaState extends State<CurrentMedia> {
 
   Widget media() {
     if (localPlayer.hasSource()) {
-      return CurrentAudio(audioEntity: localPlayer.getCurrentAudio!);
+      AudioEntity audioEntity = localPlayer.getCurrentAudio!;
+      return CurrentAudio(
+        key: Key(audioEntity.id.toString()),
+        audioEntity: audioEntity,
+      );
     }
     if (podcastPlayer.hasSource()) {
-      return CurrentPodcast(episode: podcastPlayer.getCurrentEpisode!);
+      Episode episode = podcastPlayer.getCurrentEpisode!;
+      return CurrentPodcast(key: Key(episode.guid), episode: episode);
     }
     return const SizedBox.shrink();
   }

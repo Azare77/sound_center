@@ -22,20 +22,20 @@ class _CurrentAudioState extends State<CurrentAudio> {
 
   @override
   void initState() {
-    audioId = widget.audioEntity.audioId;
+    audioId = widget.audioEntity.id;
     getCover();
     super.initState();
   }
 
   void getCover() async {
-    audioId = widget.audioEntity.audioId;
+    audioId = widget.audioEntity.id;
     cover = await AudioUtil().getCover(audioId, coverSize: CoverSize.thumbnail);
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    if (audioId != widget.audioEntity.audioId) getCover();
+    if (audioId != widget.audioEntity.id) getCover();
     final borderRadios = Radius.circular(20);
     return Container(
       height: 70,

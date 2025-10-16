@@ -42,7 +42,7 @@ class AudioListTemplate extends StatelessWidget {
             final audio = audios[index];
             final isCurrent = currentAudio?.id == audio.id;
             return Material(
-              key: Key(audio.audioId.toString()),
+              key: Key(audio.id.toString()),
               color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
               child: InkWell(
                 onTap: () =>

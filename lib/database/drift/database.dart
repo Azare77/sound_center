@@ -6,13 +6,13 @@ import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sound_center/core/constants/query_constants.dart';
-import 'package:sound_center/database/drift/local/audio.dart';
 
 import 'local/playlist.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [LocalAudiosTable, PlaylistTable])
+// @DriftDatabase(tables: [LocalAudiosTable, PlaylistTable])
+@DriftDatabase(tables: [PlaylistTable])
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase _instance = AppDatabase._internal();
 

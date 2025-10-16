@@ -53,7 +53,10 @@ class _PodcastState extends State<Podcast> {
                     state.status as PodcastResultStatus;
                 return PodcastListTemplate(status.podcasts.podcasts);
               }
-              return Loading(label: "waiting for your search input");
+              if (state.status is LoadingPodcasts) {
+                return Loading(label: "waiting for your search input");
+              }
+              return Center(child: Text("NO PODCAST"));
             },
           ),
         ),

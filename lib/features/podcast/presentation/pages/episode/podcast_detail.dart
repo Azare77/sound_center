@@ -24,7 +24,11 @@ class _PodcastDetailState extends State<PodcastDetail>
     try {
       podcast = await Feed.loadFeed(url: widget.podcast.feedUrl!);
       if (podcast?.image == null) {}
-    } catch (e) {
+    } on PodcastFailedException catch (e) {
+      podcast = null;
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+    } catch (_) {
       podcast = null;
       // ignore: use_build_context_synchronously
       Navigator.pop(context);

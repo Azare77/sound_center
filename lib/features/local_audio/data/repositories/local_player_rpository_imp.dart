@@ -193,7 +193,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     for (final audio in audios) {
       try {
         final cover = await AudioUtil().getCover(
-          audio.audioId,
+          audio.id,
           coverSize: CoverSize.banner,
         );
         if (cover != null) {
@@ -214,7 +214,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       final audio = audios[i];
       if (audio.cover == null) {
         final cover = await AudioUtil().getCover(
-          audio.audioId,
+          audio.id,
           coverSize: CoverSize.banner,
         );
         audio.cover = cover;

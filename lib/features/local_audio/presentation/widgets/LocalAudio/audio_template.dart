@@ -18,13 +18,14 @@ class _AudioTemplateState extends State<AudioTemplate> {
 
   @override
   void initState() {
-    getCover();
+    cover = widget.audioEntity.cover;
+    if (cover == null) getCover();
     super.initState();
   }
 
   Future<void> getCover() async {
     cover = await AudioUtil().getCover(
-      widget.audioEntity.audioId,
+      widget.audioEntity.id,
       coverSize: CoverSize.thumbnail,
     );
     if (!mounted) return;
@@ -46,6 +47,10 @@ class _AudioTemplateState extends State<AudioTemplate> {
                   fit: BoxFit.cover,
                   filterQuality: FilterQuality.high,
                   errorBuilder: (ctx, ob, s) {
+                    if (widget.audioEntity.title.contains("Kami")) {
+                      print(s);
+                      print(cover!.lengthInBytes);
+                    }
                     return SizedBox();
                   },
                 )

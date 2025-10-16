@@ -4,6 +4,8 @@ sealed class PodcastStatus {}
 
 class LoadingPodcasts extends PodcastStatus {}
 
+class SubscribedPodcasts extends PodcastStatus {}
+
 class PodcastResultStatus extends PodcastStatus {
   PodcastEntity podcasts;
 

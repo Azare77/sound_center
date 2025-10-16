@@ -23,7 +23,7 @@ class OrderMenu extends StatelessWidget {
           _buildItem(AudioColumns.title, currentColumn, 'Title'),
           _buildItem(AudioColumns.artist, currentColumn, 'Artist'),
           _buildItem(AudioColumns.album, currentColumn, 'Album'),
-          _buildItem(AudioColumns.createdAt, currentColumn, 'Create time'),
+          _buildItem(AudioColumns.id, currentColumn, 'Create time'),
           _buildItem(AudioColumns.duration, currentColumn, 'Duration'),
           const PopupMenuDivider(),
           PopupMenuItem(

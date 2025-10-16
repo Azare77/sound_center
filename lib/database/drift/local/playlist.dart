@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:sound_center/database/drift/local/audio.dart';
 import 'package:sound_center/database/drift/mixin.dart';
 
 class PlaylistTable extends Table with TableMixin {
@@ -7,5 +6,5 @@ class PlaylistTable extends Table with TableMixin {
 
   IntColumn get order => integer()();
 
-  IntColumn get audio => integer().references(LocalAudiosTable, #id)();
+  IntColumn get audio => integer()();
 }

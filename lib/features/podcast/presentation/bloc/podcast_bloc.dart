@@ -10,7 +10,7 @@ part 'podcast_event.dart';
 part 'podcast_state.dart';
 
 class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
-  PodcastBloc() : super(PodcastState(LoadingPodcasts())) {
+  PodcastBloc() : super(PodcastState(SubscribedPodcasts())) {
     final GetPodcastsUseCase getPodcastUseCase = GetPodcastsUseCase(
       PodcastRepositoryImp(),
     );
@@ -47,10 +47,14 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     });
 
     on<SearchPodcast>((event, emit) async {
-      emit(state.copyWith(PodcastResultStatus(podcasts: PodcastEntity([]))));
-      PodcastEntity podcasts = await getPodcastUseCase.find(event.query);
-      PodcastResultStatus status = PodcastResultStatus(podcasts: podcasts);
-      emit(state.copyWith(status));
+      if (event.query.isEmpty) {
+        emit(state.copyWith(SubscribedPodcasts()));
+      } else {
+        emit(state.copyWith(LoadingPodcasts()));
+        PodcastEntity podcasts = await getPodcastUseCase.find(event.query);
+        PodcastResultStatus status = PodcastResultStatus(podcasts: podcasts);
+        emit(state.copyWith(status));
+      }
     });
   }
 }

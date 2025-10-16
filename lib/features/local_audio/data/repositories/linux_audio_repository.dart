@@ -1,17 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:drift/drift.dart';
-// import 'package:metadata_god/metadata_god.dart';
-import 'package:sound_center/database/drift/database.dart';
-import 'package:sound_center/database/drift/local/audio.dart';
+import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 
 class LocalAudioRepositoryLinux implements AudioRepository {
-  final AppDatabase database = AppDatabase();
-
   @override
-  Future<List<AudioModel>> getAudios({
+  Future<List<AudioModel>> fetchLocalAudios({
+    String? like,
     required AudioColumns orderBy,
     required bool desc,
   }) async {
@@ -22,13 +19,32 @@ class LocalAudioRepositoryLinux implements AudioRepository {
     if (!await musicDir.exists()) return [];
 
     final List<File> audioFiles = await _scanAudioFiles(musicDir);
-    await updateDB(audioFiles);
-
-    final dbData = await LocalAudiosTable().search(
-      orderBy: orderBy,
-      desc: desc,
-    );
-    return dbData.map((item) => AudioModel.fromSongModel(item)).toList();
+    List<AudioModel> files = [];
+    AudioMetadata metadata;
+    for (File file in audioFiles) {
+      try {
+        metadata = readMetadata(file, getImage: true);
+      } catch (e) {
+        e.runtimeType;
+        continue;
+      }
+      files.add(
+        AudioModel(
+          id: 0,
+          path: file.path,
+          title: metadata.title ?? "",
+          duration: metadata.duration?.inMilliseconds ?? 0,
+          album: metadata.album ?? "",
+          genre: "",
+          trackNum: metadata.trackNumber ?? 0,
+          isPodcast: false,
+          isAlarm: false,
+          artist: metadata.artist ?? "",
+          cover: metadata.pictures.firstOrNull?.bytes,
+        ),
+      );
+    }
+    return files;
   }
 
   Future<List<File>> _scanAudioFiles(Directory dir) async {
@@ -47,78 +63,20 @@ class LocalAudioRepositoryLinux implements AudioRepository {
     return files;
   }
 
-  Future<void> updateDB(List<File> files) async {
-    final currentPaths = files.map((f) => f.path).toSet();
-
-    await (database.delete(
-      database.localAudiosTable,
-    )..where((tbl) => tbl.path.isNotIn(currentPaths))).go();
-
-    final existingPaths = await database
-        .select(database.localAudiosTable)
-        .get()
-        .then((rows) => rows.map((row) => row.path).toSet());
-
-    final newFiles = files.where((file) => !existingPaths.contains(file.path));
-
-    for (final file in newFiles) {
-      final metadata = await _readMetadata(file);
-      final stat = await file.stat();
-
-      await database
-          .into(database.localAudiosTable)
-          .insert(
-            LocalAudiosTableCompanion.insert(
-              audioId: Value(0),
-              title: metadata.title ?? file.uri.pathSegments.last,
-              path: file.path,
-              duration: metadata.duration ?? 0,
-              cover: Value(metadata.cover),
-              artist: Value(metadata.artist),
-              album: Value(metadata.album),
-              genre: Value(metadata.genre),
-              isPodcast: Value(false),
-              createdAt: Value(stat.modified),
-            ),
-          );
-    }
-  }
-
   Future<MetadataResult> _readMetadata(File file) async {
     try {
-      // FileStat fileStat = await file.stat();
-      String? title = "فایل";
-      String? artist = "آرتیست";
-      String? album = "آلبوم";
-      String? genre = "ژانر";
-      int? duration = 8585;
-      Uint8List? cover;
-
+      final AudioMetadata metadata = readMetadata(file, getImage: true);
       return MetadataResult(
-        title: title,
-        artist: artist,
-        album: album,
-        genre: genre,
-        duration: duration,
-        cover: cover,
+        title: metadata.title,
+        artist: metadata.artist,
+        album: metadata.album,
+        genre: metadata.genres.firstOrNull,
+        duration: metadata.duration?.inMilliseconds ?? 0,
+        cover: metadata.pictures.firstOrNull?.bytes,
       );
     } catch (e) {
       return MetadataResult();
     }
-  }
-
-  @override
-  Future<List<AudioModel>> search({
-    String? like,
-    required AudioColumns orderBy,
-    required bool desc,
-  }) async {
-    final dbData = await LocalAudiosTable().search(
-      input: like,
-      orderBy: orderBy,
-      desc: desc,
-    );
-    return dbData.map((item) => AudioModel.fromSongModel(item)).toList();
   }
 }
 

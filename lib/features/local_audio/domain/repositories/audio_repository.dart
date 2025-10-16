@@ -1,14 +1,9 @@
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 
-enum AudioColumns { audioId, createdAt, title, artist, album, duration }
+enum AudioColumns { id, createdAt, title, artist, album, duration }
 
 abstract class AudioRepository {
-  Future<List<AudioModel>> getAudios({
-    required AudioColumns orderBy,
-    required bool desc,
-  });
-
-  Future<List<AudioModel>> search({
+  Future<List<AudioModel>> fetchLocalAudios({
     String? like,
     required AudioColumns orderBy,
     required bool desc,

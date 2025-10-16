@@ -1,10 +1,9 @@
-import 'package:sound_center/database/drift/database.dart';
+import 'package:on_audio_query_forked/on_audio_query.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
 class AudioModel extends AudioEntity {
   AudioModel({
     required super.id,
-    required super.audioId,
     required super.path,
     required super.title,
     required super.duration,
@@ -17,17 +16,16 @@ class AudioModel extends AudioEntity {
     super.cover,
   });
 
-  factory AudioModel.fromSongModel(LocalAudiosTableData song) {
+  factory AudioModel.fromSongModel(SongModel song) {
     return AudioModel(
       id: song.id,
-      audioId: song.audioId,
-      path: song.path,
+      path: song.data,
       title: song.title,
-      duration: song.duration,
-      trackNum: song.trackNum ?? 0,
-      isPodcast: song.isPodcast,
-      isAlarm: song.isAlarm,
-      cover: song.cover,
+      duration: song.duration ?? 0,
+      trackNum: song.track ?? 0,
+      isPodcast: song.isPodcast ?? false,
+      isAlarm: song.isAlarm ?? false,
+      cover: null,
       album: song.album == "<unknown>" || song.album == null
           ? "Who Knows"
           : song.album!,

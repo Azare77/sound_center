@@ -4,6 +4,7 @@ import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/features/podcast/presentation/pages/episode/episodes.dart';
 import 'package:sound_center/features/podcast/presentation/pages/episode/podcast_info.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastDetail extends StatefulWidget {
   const PodcastDetail({super.key, required this.podcast});
@@ -24,7 +25,7 @@ class _PodcastDetailState extends State<PodcastDetail>
     try {
       podcast = await Feed.loadFeed(url: widget.podcast.feedUrl!);
       if (podcast?.image == null) {}
-    } on PodcastFailedException catch (e) {
+    } on PodcastFailedException catch (_) {
       podcast = null;
       // ignore: use_build_context_synchronously
       Navigator.pop(context);
@@ -56,11 +57,13 @@ class _PodcastDetailState extends State<PodcastDetail>
       body: podcast == null
           ? Loading()
           : Column(
+              spacing: 5,
               children: [
                 Row(
+                  spacing: 10,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(podcast!.title ?? ""),
+                    Flexible(child: ScrollingText(podcast!.title ?? "")),
                     ElevatedButton(
                       onPressed: () {},
                       child: Text("I'm into it"),

@@ -7,6 +7,7 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.d
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/order_menu.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class ToolBar extends StatefulWidget {
   const ToolBar({super.key});
@@ -43,21 +44,14 @@ class _ToolBarState extends State<ToolBar> {
               ? CrossFadeState.showFirst
               : CrossFadeState.showSecond,
           duration: Duration(milliseconds: 200),
-          firstChild: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              controller: _controller,
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: 'what do you want?',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (text) {
-                BlocProvider.of<LocalBloc>(
-                  context,
-                ).add(Search(query: text.trim()));
-              },
-            ),
+          firstChild: TextFieldBox(
+            controller: _controller,
+            hintText: 'what do you want?',
+            onChanged: (text) {
+              BlocProvider.of<LocalBloc>(
+                context,
+              ).add(Search(query: text.trim()));
+            },
           ),
           secondChild: SizedBox.shrink(),
         ),

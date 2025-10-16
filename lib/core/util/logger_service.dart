@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -9,7 +10,7 @@ class LoggerService {
   static Future<void> init() async {
     final status = await Permission.storage.request();
     if (!status.isGranted) {
-      print('Storage permission not granted');
+      debugPrint('Storage permission not granted');
       return;
     }
 
@@ -28,7 +29,7 @@ class LoggerService {
       await _logFile!.create(recursive: true);
     }
 
-    print('✅ Log file initialized at: $path');
+    debugPrint('✅ Log file initialized at: $path');
   }
 
   static Future<void> log(String message) async {

@@ -26,7 +26,6 @@ class TextView extends StatelessWidget {
       textAlign: textAlign,
       overflow: overflow,
       textDirection: direction,
-      style: TextStyle(fontSize: 18),
     );
   }
 }

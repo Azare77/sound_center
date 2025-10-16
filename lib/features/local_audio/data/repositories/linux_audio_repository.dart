@@ -28,21 +28,31 @@ class LocalAudioRepositoryLinux implements AudioRepository {
         e.runtimeType;
         continue;
       }
-      files.add(
-        AudioModel(
-          id: 0,
-          path: file.path,
-          title: metadata.title ?? "",
-          duration: metadata.duration?.inMilliseconds ?? 0,
-          album: metadata.album ?? "",
-          genre: "",
-          trackNum: metadata.trackNumber ?? 0,
-          isPodcast: false,
-          isAlarm: false,
-          artist: metadata.artist ?? "",
-          cover: metadata.pictures.firstOrNull?.bytes,
-        ),
+      AudioModel audioModel = AudioModel(
+        id: files.length,
+        path: file.path,
+        title: metadata.title ?? "",
+        duration: metadata.duration?.inMilliseconds ?? 0,
+        album: metadata.album ?? "",
+        genre: "",
+        trackNum: metadata.trackNumber ?? 0,
+        isPodcast: false,
+        isAlarm: false,
+        artist: metadata.artist ?? "",
+        cover: metadata.pictures.firstOrNull?.bytes,
       );
+
+      files.add(audioModel);
+    }
+    if (like != null) {
+      files = files.where((song) {
+        final title = song.title.toLowerCase();
+        final artist = (song.artist).toLowerCase();
+        final album = (song.album).toLowerCase();
+        return title.contains(like) ||
+            artist.contains(like) ||
+            album.contains(like);
+      }).toList();
     }
     return files;
   }

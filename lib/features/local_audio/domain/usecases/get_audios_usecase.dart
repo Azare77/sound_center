@@ -11,8 +11,8 @@ class GetAudioUseCase implements UseCase {
   @override
   Future<List<AudioEntity>> call({
     params,
-    AudioColumns orderBy = queryConstants,
-    bool desc = defaultDesc,
+    AudioColumns orderBy = QUERY_DEFAULT_COLUMN_ORDER,
+    bool desc = DEFAULT_DESC,
   }) async {
     return await _audioRepository.fetchLocalAudios(
       orderBy: orderBy,
@@ -22,8 +22,8 @@ class GetAudioUseCase implements UseCase {
 
   Future<List<AudioEntity>> search({
     String? params,
-    AudioColumns orderBy = queryConstants,
-    bool desc = defaultDesc,
+    AudioColumns orderBy = QUERY_DEFAULT_COLUMN_ORDER,
+    bool desc = DEFAULT_DESC,
   }) async {
     return await _audioRepository.fetchLocalAudios(
       like: params,

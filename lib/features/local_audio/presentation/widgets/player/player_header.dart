@@ -4,7 +4,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/player/header_image.dart';
-import 'package:sound_center/shared/widgets/text_view.dart';
+import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PlayerHeader extends StatefulWidget {
   const PlayerHeader({super.key});
@@ -87,8 +87,16 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                     ),
                   ),
                 ),
-                TextView(song.title, maxLines: 1, textAlign: TextAlign.center),
-                TextView(song.artist, maxLines: 1, textAlign: TextAlign.center),
+                ScrollingText(
+                  song.title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                ScrollingText(
+                  song.artist,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
               ],
             ),
           );

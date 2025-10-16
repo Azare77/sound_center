@@ -1,7 +1,6 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 
 class PodcastTemplate extends StatelessWidget {
   const PodcastTemplate({super.key, required this.podcast});
@@ -32,46 +31,10 @@ class PodcastTemplate extends StatelessWidget {
     return ListTile(
       leading: SizedBox(
         width: size,
-        child: ClipOval(
-          child: artwork != null
-              ? FastCachedImage(
-                  url: artwork,
-                  width: size,
-                  height: size,
-                  fit: BoxFit.cover,
-                  filterQuality: FilterQuality.high,
-                  errorBuilder: (ctx, ob, s) {
-                    return SizedBox(
-                      width: size,
-                      height: size,
-                      child: Image.asset(
-                        'assets/logo.png',
-                        fit: BoxFit.contain,
-                        filterQuality: FilterQuality.high,
-                      ),
-                    );
-                  },
-                  loadingBuilder: (context, progress) {
-                    return Loading();
-                  },
-                )
-              : SizedBox(
-                  width: size,
-                  height: size,
-                  child: Image.asset(
-                    'assets/logo.png',
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.high,
-                  ),
-                ),
-        ),
+        child: ClipOval(child: NetworkCacheImage(url: artwork)),
       ),
       title: Text(podcast.trackName ?? '', maxLines: 1),
       subtitle: Text(podcast.artistName ?? '', maxLines: 1),
     );
-  }
-
-  DateTime getFormattedDate(int? timestamp) {
-    return DateTime.fromMillisecondsSinceEpoch(timestamp! * 1000);
   }
 }

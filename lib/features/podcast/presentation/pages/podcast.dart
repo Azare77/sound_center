@@ -4,6 +4,7 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_list_template.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class Podcast extends StatefulWidget {
   const Podcast({super.key});
@@ -31,14 +32,10 @@ class _PodcastState extends State<Podcast> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextField(
+        TextFieldBox(
           controller: _controller,
-          autofocus: true,
           textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            hintText: 'what do you want?',
-            border: OutlineInputBorder(),
-          ),
+          hintText: 'what do you want?',
           onSubmitted: (text) {
             BlocProvider.of<PodcastBloc>(
               context,

@@ -7,12 +7,12 @@ class LocalOrderStorage {
     final String? name = Storage.instance.prefs.getString('order');
     return AudioColumns.values.firstWhere(
       (e) => e.name == name,
-      orElse: () => queryConstants,
+      orElse: () => QUERY_DEFAULT_COLUMN_ORDER,
     );
   }
 
   static bool getSavedDesc() {
     final bool? desc = Storage.instance.prefs.getBool('desc');
-    return desc ?? defaultDesc;
+    return desc ?? DEFAULT_DESC;
   }
 }

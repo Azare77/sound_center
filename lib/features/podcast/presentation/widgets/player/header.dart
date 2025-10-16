@@ -4,7 +4,7 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/header_image.dart';
-import 'package:sound_center/shared/widgets/text_view.dart';
+import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastHeader extends StatefulWidget {
   const PodcastHeader({super.key});
@@ -69,12 +69,16 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                   ),
                 ),
               ),
-              TextView(episode.title, maxLines: 1, textAlign: TextAlign.center),
+              ScrollingText(
+                episode.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
+              ),
               if (episode.author != null)
-                TextView(
+                ScrollingText(
                   episode.author!,
-                  maxLines: 1,
                   textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
                 ),
             ],
           );

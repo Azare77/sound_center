@@ -12,8 +12,8 @@ class GetPodcastsUseCase implements UseCase {
   @override
   Future<List<PodcastEntity>> call({
     params,
-    AudioColumns orderBy = queryConstants,
-    bool desc = defaultDesc,
+    AudioColumns orderBy = QUERY_DEFAULT_COLUMN_ORDER,
+    bool desc = DEFAULT_DESC,
   }) async {
     return await _audioRepository.getHome();
   }

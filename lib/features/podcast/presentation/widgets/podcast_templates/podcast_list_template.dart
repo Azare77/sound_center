@@ -22,7 +22,7 @@ class PodcastListTemplate extends StatelessWidget {
         controller: _scrollController,
         backgroundColor: Colors.blueAccent,
         labelTextBuilder: (offset) {
-          final itemIndex = (offset / 70).floor();
+          final itemIndex = (offset / LIST_ITEM_HEIGHT).floor();
           if (itemIndex < 0 || itemIndex >= podcasts.length) {
             return const Text('');
           }

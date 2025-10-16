@@ -19,11 +19,13 @@ class CurrentAudio extends StatefulWidget {
 class _CurrentAudioState extends State<CurrentAudio> {
   Uint8List? cover;
   late int audioId;
+  final double size = 50;
 
   @override
   void initState() {
     audioId = widget.audioEntity.id;
-    getCover();
+    cover = widget.audioEntity.cover;
+    if (cover == null) getCover();
     super.initState();
   }
 
@@ -63,20 +65,24 @@ class _CurrentAudioState extends State<CurrentAudio> {
         },
         leading: SizedBox(
           width: 50,
-          child: cover != null
-              ? ClipOval(
-                  child: Image.memory(
-                    cover!,
-                    width: 50,
-                    height: 50,
-                    filterQuality: FilterQuality.high,
-                  ),
-                )
-              : Image.asset(
-                  'assets/logo.png',
-                  fit: BoxFit.contain,
-                  filterQuality: FilterQuality.high,
-                ),
+          child: ClipOval(
+            child: Image(
+              image: cover != null
+                  ? MemoryImage(cover!)
+                  : const AssetImage('assets/logo.png') as ImageProvider,
+              width: size,
+              height: size,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+              errorBuilder: (ctx, error, stack) => Image.asset(
+                'assets/logo.png',
+                width: size,
+                height: size,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
+          ),
         ),
         title: Text(widget.audioEntity.title, maxLines: 1),
         subtitle: Text(widget.audioEntity.artist, maxLines: 1),

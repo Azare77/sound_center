@@ -9,16 +9,31 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.d
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_template.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
-class AudioListTemplate extends StatelessWidget {
-  AudioListTemplate(this.audios, {super.key});
+class AudioListTemplate extends StatefulWidget {
+  const AudioListTemplate(this.audios, {super.key});
 
   final List<AudioEntity> audios;
+
+  @override
+  State<AudioListTemplate> createState() => _AudioListTemplateState();
+}
+
+class _AudioListTemplateState extends State<AudioListTemplate> {
   final _scrollController = ScrollController();
+  final playerRepo = LocalPlayerRepositoryImp();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentAudio = LocalPlayerRepositoryImp().getCurrentAudio;
-    if (audios.isEmpty) return const Center(child: TextView("NO AUDIO!!"));
+    final currentAudio = playerRepo.getCurrentAudio;
+    if (widget.audios.isEmpty) {
+      return const Center(child: TextView("NO AUDIO!!"));
+    }
 
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
@@ -26,23 +41,23 @@ class AudioListTemplate extends StatelessWidget {
         controller: _scrollController,
         backgroundColor: Colors.blueAccent,
         labelTextBuilder: (offset) {
-          final itemIndex = (offset / 70).floor();
-          if (itemIndex < 0 || itemIndex >= audios.length) {
+          final itemIndex = (offset / LIST_ITEM_HEIGHT).floor();
+          if (itemIndex < 0 || itemIndex >= widget.audios.length) {
             return const Text('');
           }
-          final title = audios[itemIndex].title;
+          final title = widget.audios[itemIndex].title;
           final label = title.isNotEmpty ? title[0].toUpperCase() : '#';
           return Text(label);
         },
         child: ListView.builder(
-          itemCount: audios.length,
+          itemCount: widget.audios.length,
           controller: _scrollController,
           itemExtent: LIST_ITEM_HEIGHT,
           itemBuilder: (context, index) {
-            final audio = audios[index];
+            final audio = widget.audios[index];
             final isCurrent = currentAudio?.id == audio.id;
             return Material(
-              key: Key(audio.id.toString()),
+              key: ValueKey(audio.id),
               color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
               child: InkWell(
                 onTap: () =>

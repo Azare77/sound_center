@@ -8,11 +8,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sound_center/core/constants/query_constants.dart';
 
 import 'local/playlist.dart';
+import 'podcast/download.dart';
+import 'podcast/subscription.dart';
 
 part 'database.g.dart';
 
 // @DriftDatabase(tables: [LocalAudiosTable, PlaylistTable])
-@DriftDatabase(tables: [PlaylistTable])
+@DriftDatabase(tables: [PlaylistTable, SubscriptionTable, DownloadTable])
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase _instance = AppDatabase._internal();
 
@@ -21,7 +23,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnectionSync());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   static QueryExecutor _openConnectionSync() {
     // Call the synchronous method to get the database path

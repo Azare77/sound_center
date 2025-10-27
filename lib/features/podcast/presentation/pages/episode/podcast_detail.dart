@@ -21,18 +21,23 @@ class _PodcastDetailState extends State<PodcastDetail>
 
   Podcast? podcast;
 
-  void getEpisodes() async {
+  void getEpisodes({bool retry = true}) async {
     try {
       podcast = await Feed.loadFeed(url: widget.podcast.feedUrl!);
       if (podcast?.image == null) {}
     } on PodcastFailedException catch (_) {
       podcast = null;
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
     } catch (_) {
       podcast = null;
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+    } finally {
+      if (podcast == null) {
+        if (retry) {
+          getEpisodes(retry: false);
+        } else {
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
+        }
+      }
     }
     if (mounted) setState(() {});
   }
@@ -40,8 +45,8 @@ class _PodcastDetailState extends State<PodcastDetail>
   @override
   void initState() {
     super.initState();
-    getEpisodes();
     _controller = TabController(length: 2, vsync: this);
+    getEpisodes();
   }
 
   @override

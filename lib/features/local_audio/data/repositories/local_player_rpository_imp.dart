@@ -34,7 +34,6 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   RepeatMode repeatMode = RepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   late final LocalBloc bloc;
-  final AudioUtil _audioUtil = AudioUtil();
 
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
@@ -193,7 +192,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   Future<void> _preloadCoversInBackground() async {
     for (final audio in audios) {
       try {
-        final cover = await _audioUtil.getCover(
+        final cover = await AudioUtil.getCover(
           audio.id,
           coverSize: CoverSize.banner,
         );
@@ -213,7 +212,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     final end = (index + 5).clamp(0, audios.length - 1);
     for (int i = start; i <= end; i++) {
       final audio = audios[i];
-      audio.cover ??= await _audioUtil.getCover(
+      audio.cover ??= await AudioUtil.getCover(
         audio.id,
         coverSize: CoverSize.banner,
       );

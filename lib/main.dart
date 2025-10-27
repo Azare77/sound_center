@@ -18,68 +18,34 @@ late final AudioHandler audioHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  JustAudioMediaKit.ensureInitialized();
   await FastCachedImageConfig.init();
   await Storage.instance.init();
-  if (!(kIsWeb || Platform.isWindows)) {
-    audioHandler = await AudioService.init(
-      builder: () => JustAudioNotificationHandler(),
-      config: AudioServiceConfig(
-        androidNotificationChannelId: 'com.example.sound_center.channel.audio',
-        androidNotificationChannelName: 'Music Playback',
-        androidNotificationOngoing: false,
-        androidStopForegroundOnPause: false,
-      ),
-    );
-  }
+  Future.microtask(_init);
   runApp(const MyApp());
 }
-// void main() async {
-//   runZonedGuarded(
-//     () async {
-//       WidgetsFlutterBinding.ensureInitialized();
-//
-//       // راه‌اندازی لاگر
-//       if (Platform.isAndroid) {
-//         await LoggerService.init();
-//         await LoggerService.log('INITIAL NEW SESSION ${DateTime.now()}');
-//
-//         // گرفتن خطاهای Flutter
-//         FlutterError.onError = (FlutterErrorDetails details) async {
-//           FlutterError.dumpErrorToConsole(details);
-//           await LoggerService.log(
-//             'Flutter Error: ${details.exceptionAsString()}',
-//           );
-//         };
-//       }
-//
-//       // 📦 سایر initها هم باید داخل همین Zone باشند
-//       JustAudioMediaKit.ensureInitialized();
-//       await FastCachedImageConfig.init();
-//       await Storage.instance.init();
-//
-//       if (!(kIsWeb || Platform.isWindows)) {
-//         audioHandler = await AudioService.init(
-//           builder: () => JustAudioNotificationHandler(),
-//           config: AudioServiceConfig(
-//             androidNotificationChannelId:
-//                 'com.example.sound_center.channel.audio',
-//             androidNotificationChannelName: 'Music Playback',
-//             androidNotificationOngoing: false,
-//             androidStopForegroundOnPause: false,
-//           ),
-//         );
-//       }
-//
-//       // اجرای اپ در همون Zone
-//       runApp(const MyApp());
-//     },
-//     (error, stackTrace) async {
-//       // ثبت خطاهای async
-//       await LoggerService.log('Async Error: $error\nStack: $stackTrace');
-//     },
-//   );
-// }
+
+Future<void> _init() async {
+  try {
+    if (!(kIsWeb || Platform.isWindows)) {
+      audioHandler = await AudioService.init(
+        builder: () => JustAudioNotificationHandler(),
+        config: AudioServiceConfig(
+          androidNotificationChannelId:
+              'com.example.sound_center.channel.audio',
+          androidNotificationChannelName: 'Music Playback',
+          androidNotificationOngoing: false,
+          androidStopForegroundOnPause: true,
+        ),
+      );
+    }
+    if (Platform.isLinux) {
+      JustAudioMediaKit.ensureInitialized();
+    }
+    debugPrint('✅ _init() completed successfully');
+  } catch (e, st) {
+    debugPrint('❌ Error in _init(): $e\n$st');
+  }
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

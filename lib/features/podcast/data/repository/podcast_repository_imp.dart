@@ -10,7 +10,7 @@ class PodcastRepositoryImp implements PodcastRepository {
   }
 
   @override
-  Future<PodcastEntity> find(String searchText) async {
+  Future<PodcastEntity> find(String searchText, {bool retry = true}) async {
     Search search = Search();
     // search = Search(
     //   searchProvider: PodcastIndexProvider(
@@ -20,9 +20,16 @@ class PodcastRepositoryImp implements PodcastRepository {
     // );
     SearchResult results = await search.search(searchText, limit: 10);
     if (results.successful) {
+      results.items.removeWhere(
+        (item) => item.feedUrl == null || item.feedUrl!.trim().isEmpty,
+      );
       return PodcastEntity(results.items);
     } else {
-      return PodcastEntity([]);
+      if (retry) {
+        return find(searchText, retry: false);
+      } else {
+        return PodcastEntity([]);
+      }
     }
   }
 

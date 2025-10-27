@@ -16,18 +16,16 @@ class AudioTemplate extends StatefulWidget {
 class _AudioTemplateState extends State<AudioTemplate> {
   Uint8List? cover;
   final double size = 50;
-  late AudioUtil audioUtil;
 
   @override
   void initState() {
     super.initState();
-    audioUtil = AudioUtil();
     cover = widget.audioEntity.cover;
     if (cover == null) getCover();
   }
 
   Future<void> getCover() async {
-    cover = await audioUtil.getCover(
+    cover = await AudioUtil.getCover(
       widget.audioEntity.id,
       coverSize: CoverSize.thumbnail,
     );
@@ -61,7 +59,7 @@ class _AudioTemplateState extends State<AudioTemplate> {
       ),
       title: Text(widget.audioEntity.title, maxLines: 1),
       subtitle: Text(widget.audioEntity.artist, maxLines: 1),
-      trailing: Text(audioUtil.convertTime(widget.audioEntity.duration)),
+      trailing: Text(AudioUtil.convertTime(widget.audioEntity.duration)),
     );
   }
 }

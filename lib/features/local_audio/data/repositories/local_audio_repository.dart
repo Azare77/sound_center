@@ -13,14 +13,10 @@ class LocalAudioRepository implements AudioRepository {
     required AudioColumns orderBy,
     required bool desc,
   }) async {
-    if (allSongs.isEmpty) {
-      allSongs = await _localStorageSource.scanStorage();
-    }
-
-    List<SongModel> filtered = allSongs;
+    allSongs = await _localStorageSource.scanStorage();
     if (like != null && like.trim().isNotEmpty) {
       final query = like.toLowerCase().trim();
-      filtered = allSongs.where((song) {
+      allSongs = allSongs.where((song) {
         final title = song.title.toLowerCase();
         final artist = (song.artist ?? '').toLowerCase();
         final album = (song.album ?? '').toLowerCase();
@@ -30,8 +26,8 @@ class LocalAudioRepository implements AudioRepository {
             album.contains(query);
       }).toList();
     }
-    filtered = _sort(filtered, orderBy, desc);
-    return filtered.map(AudioModel.fromSongModel).toList();
+    allSongs = _sort(allSongs, orderBy, desc);
+    return allSongs.map(AudioModel.fromSongModel).toList();
   }
 
   List<SongModel> _sort(List<SongModel> audios, AudioColumns order, bool desc) {

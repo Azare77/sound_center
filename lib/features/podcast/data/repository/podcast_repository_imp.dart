@@ -1,23 +1,36 @@
 import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/domain/entity/podcast_entity.dart';
+import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
 
 class PodcastRepositoryImp implements PodcastRepository {
+  final AppDatabase database;
+
+  PodcastRepositoryImp(this.database);
+
   @override
-  Future<List<PodcastEntity>> getHome() {
-    // TODO: implement getHome
-    throw UnimplementedError();
+  Future<List<SubscriptionEntity>> getHome() async {
+    final subs = await database.select(database.subscriptionTable).get();
+    final models = subs.map((s) => SubscriptionEntity.fromDrift(s)).toList();
+    return models;
+  }
+
+  @override
+  Future<bool> subscribe(SubscriptionEntity podcast) async {
+    final existing = await (database.select(
+      database.subscriptionTable,
+    )..where((tbl) => tbl.feedUrl.equals(podcast.feedUrl))).getSingleOrNull();
+    if (existing != null) {
+      return false;
+    }
+    await database.into(database.subscriptionTable).insert(podcast.toDrift());
+    return true;
   }
 
   @override
   Future<PodcastEntity> find(String searchText, {bool retry = true}) async {
     Search search = Search();
-    // search = Search(
-    //   searchProvider: PodcastIndexProvider(
-    //     key: 'EXDBALQGZKUFF9H6ZBCP',
-    //     secret: "7vpySXwG\$CCr68Eh3ySehrvSeLmaCTG36YB8UEEE",
-    //   ),
-    // );
     SearchResult results = await search.search(searchText, limit: 10);
     if (results.successful) {
       results.items.removeWhere(

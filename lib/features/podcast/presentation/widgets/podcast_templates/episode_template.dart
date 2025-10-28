@@ -8,39 +8,56 @@ class EpisodeTemplate extends StatelessWidget {
 
   final Episode episode;
 
-  @override
-  Widget build(BuildContext context) {
-    String? publishDate = "";
-    if (episode.publicationDate != null) {
-      publishDate = toJalali(episode.publicationDate!);
-    }
-    String? artwork = episode.imageUrl;
-    double size = 50;
-    return ListTile(
-      leading: SizedBox(
-        width: size,
-        child: ClipOval(child: NetworkCacheImage(url: artwork)),
-      ),
-      title: Text(episode.title, maxLines: 1),
-      subtitle: Text(
-        publishDate,
-        maxLines: 1,
-        style: TextStyle(color: Colors.grey),
-      ),
-      trailing: convertTime(episode.duration?.inMilliseconds ?? 0),
-    );
-  }
-
-  Widget convertTime(int input) {
-    final duration = Duration(milliseconds: input);
-    final hours = duration.inHours;
+  String _formatDuration(int milliseconds) {
+    final duration = Duration(milliseconds: milliseconds);
     final minutes = duration.inMinutes % 60;
     final seconds = duration.inSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
 
-    final timeStr = hours > 0
-        ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
-        : "${minutes.toString()}:${seconds.toString().padLeft(2, '0')}";
+  @override
+  Widget build(BuildContext context) {
+    final publishDate = episode.publicationDate != null
+        ? toJalali(episode.publicationDate!)
+        : '';
 
-    return Text(timeStr);
+    return Container(
+      height: 70,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        spacing: 10,
+        children: [
+          SizedBox(
+            width: 50,
+            height: 50,
+            child: ClipOval(child: NetworkCacheImage(url: episode.imageUrl)),
+          ),
+          Expanded(
+            child: Column(
+              spacing: 2,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  episode.title,
+                  maxLines: 2,
+                  style: TextStyle(fontSize: 16),
+                ),
+                if (publishDate.isNotEmpty)
+                  Text(
+                    publishDate,
+                    maxLines: 1,
+                    style: const TextStyle(color: Colors.grey, fontSize: 13),
+                  ),
+              ],
+            ),
+          ),
+          Text(
+            _formatDuration(episode.duration?.inMilliseconds ?? 0),
+            style: const TextStyle(color: Colors.grey, fontSize: 13),
+          ),
+        ],
+      ),
+    );
   }
 }

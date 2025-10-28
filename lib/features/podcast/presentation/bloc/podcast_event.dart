@@ -10,6 +10,12 @@ class SearchPodcast extends PodcastEvent {
 
 class GetLocalPodcast extends PodcastEvent {}
 
+class SubscribeToPodcast extends PodcastEvent {
+  final SubscriptionEntity podcast;
+
+  SubscribeToPodcast(this.podcast);
+}
+
 class PlayPodcast extends PodcastEvent {
   final Episode episode;
 

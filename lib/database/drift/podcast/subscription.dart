@@ -2,7 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:sound_center/database/drift/mixin.dart';
 
 class SubscriptionTable extends Table with TableMixin {
-  TextColumn get podcastId => text().unique()(); // id از iTunes یا PodcastIndex
+  TextColumn get podcastId =>
+      text().nullable().unique()(); // id از iTunes یا PodcastIndex
   TextColumn get title => text()();
 
   TextColumn get author => text().nullable()();

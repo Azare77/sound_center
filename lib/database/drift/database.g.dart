@@ -380,9 +380,9 @@ class $SubscriptionTableTable extends SubscriptionTable
   late final GeneratedColumn<String> podcastId = GeneratedColumn<String>(
     'podcast_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
@@ -487,8 +487,6 @@ class $SubscriptionTableTable extends SubscriptionTable
         _podcastIdMeta,
         podcastId.isAcceptableOrUnknown(data['podcast_id']!, _podcastIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_podcastIdMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -556,7 +554,7 @@ class $SubscriptionTableTable extends SubscriptionTable
       podcastId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}podcast_id'],
-      )!,
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -594,7 +592,7 @@ class SubscriptionTableData extends DataClass
     implements Insertable<SubscriptionTableData> {
   final int id;
   final DateTime createdAt;
-  final String podcastId;
+  final String? podcastId;
   final String title;
   final String? author;
   final String? artworkUrl;
@@ -604,7 +602,7 @@ class SubscriptionTableData extends DataClass
   const SubscriptionTableData({
     required this.id,
     required this.createdAt,
-    required this.podcastId,
+    this.podcastId,
     required this.title,
     this.author,
     this.artworkUrl,
@@ -617,7 +615,9 @@ class SubscriptionTableData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['podcast_id'] = Variable<String>(podcastId);
+    if (!nullToAbsent || podcastId != null) {
+      map['podcast_id'] = Variable<String>(podcastId);
+    }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || author != null) {
       map['author'] = Variable<String>(author);
@@ -635,7 +635,9 @@ class SubscriptionTableData extends DataClass
     return SubscriptionTableCompanion(
       id: Value(id),
       createdAt: Value(createdAt),
-      podcastId: Value(podcastId),
+      podcastId: podcastId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(podcastId),
       title: Value(title),
       author: author == null && nullToAbsent
           ? const Value.absent()
@@ -657,7 +659,7 @@ class SubscriptionTableData extends DataClass
     return SubscriptionTableData(
       id: serializer.fromJson<int>(json['id']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      podcastId: serializer.fromJson<String>(json['podcastId']),
+      podcastId: serializer.fromJson<String?>(json['podcastId']),
       title: serializer.fromJson<String>(json['title']),
       author: serializer.fromJson<String?>(json['author']),
       artworkUrl: serializer.fromJson<String?>(json['artworkUrl']),
@@ -672,7 +674,7 @@ class SubscriptionTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'podcastId': serializer.toJson<String>(podcastId),
+      'podcastId': serializer.toJson<String?>(podcastId),
       'title': serializer.toJson<String>(title),
       'author': serializer.toJson<String?>(author),
       'artworkUrl': serializer.toJson<String?>(artworkUrl),
@@ -685,7 +687,7 @@ class SubscriptionTableData extends DataClass
   SubscriptionTableData copyWith({
     int? id,
     DateTime? createdAt,
-    String? podcastId,
+    Value<String?> podcastId = const Value.absent(),
     String? title,
     Value<String?> author = const Value.absent(),
     Value<String?> artworkUrl = const Value.absent(),
@@ -695,7 +697,7 @@ class SubscriptionTableData extends DataClass
   }) => SubscriptionTableData(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
-    podcastId: podcastId ?? this.podcastId,
+    podcastId: podcastId.present ? podcastId.value : this.podcastId,
     title: title ?? this.title,
     author: author.present ? author.value : this.author,
     artworkUrl: artworkUrl.present ? artworkUrl.value : this.artworkUrl,
@@ -770,7 +772,7 @@ class SubscriptionTableCompanion
     extends UpdateCompanion<SubscriptionTableData> {
   final Value<int> id;
   final Value<DateTime> createdAt;
-  final Value<String> podcastId;
+  final Value<String?> podcastId;
   final Value<String> title;
   final Value<String?> author;
   final Value<String?> artworkUrl;
@@ -791,15 +793,14 @@ class SubscriptionTableCompanion
   SubscriptionTableCompanion.insert({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
-    required String podcastId,
+    this.podcastId = const Value.absent(),
     required String title,
     this.author = const Value.absent(),
     this.artworkUrl = const Value.absent(),
     required String feedUrl,
     this.subscribedAt = const Value.absent(),
     this.lastListenAt = const Value.absent(),
-  }) : podcastId = Value(podcastId),
-       title = Value(title),
+  }) : title = Value(title),
        feedUrl = Value(feedUrl);
   static Insertable<SubscriptionTableData> custom({
     Expression<int>? id,
@@ -828,7 +829,7 @@ class SubscriptionTableCompanion
   SubscriptionTableCompanion copyWith({
     Value<int>? id,
     Value<DateTime>? createdAt,
-    Value<String>? podcastId,
+    Value<String?>? podcastId,
     Value<String>? title,
     Value<String?>? author,
     Value<String?>? artworkUrl,
@@ -1631,7 +1632,7 @@ typedef $$SubscriptionTableTableCreateCompanionBuilder =
     SubscriptionTableCompanion Function({
       Value<int> id,
       Value<DateTime> createdAt,
-      required String podcastId,
+      Value<String?> podcastId,
       required String title,
       Value<String?> author,
       Value<String?> artworkUrl,
@@ -1643,7 +1644,7 @@ typedef $$SubscriptionTableTableUpdateCompanionBuilder =
     SubscriptionTableCompanion Function({
       Value<int> id,
       Value<DateTime> createdAt,
-      Value<String> podcastId,
+      Value<String?> podcastId,
       Value<String> title,
       Value<String?> author,
       Value<String?> artworkUrl,
@@ -1847,7 +1848,7 @@ class $$SubscriptionTableTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<String> podcastId = const Value.absent(),
+                Value<String?> podcastId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> author = const Value.absent(),
                 Value<String?> artworkUrl = const Value.absent(),
@@ -1869,7 +1870,7 @@ class $$SubscriptionTableTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                required String podcastId,
+                Value<String?> podcastId = const Value.absent(),
                 required String title,
                 Value<String?> author = const Value.absent(),
                 Value<String?> artworkUrl = const Value.absent(),

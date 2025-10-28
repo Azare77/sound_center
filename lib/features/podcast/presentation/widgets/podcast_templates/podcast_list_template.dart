@@ -42,7 +42,7 @@ class PodcastListTemplate extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => PodcastDetail(podcast: podcast),
+                    builder: (_) => PodcastDetail(feedUrl: podcast.feedUrl!),
                   ),
                 );
               },

@@ -16,7 +16,7 @@ class LocalAudios extends StatefulWidget {
   State<LocalAudios> createState() => _LocalAudiosState();
 }
 
-class _LocalAudiosState extends State<LocalAudios> {
+class _LocalAudiosState extends State<LocalAudios> with WidgetsBindingObserver {
   late final LocalAudioRepository audioService;
   late final PermissionHandler handler;
   late final LocalPlayerRepositoryImp player;
@@ -24,12 +24,19 @@ class _LocalAudiosState extends State<LocalAudios> {
 
   @override
   void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
     player = LocalPlayerRepositoryImp();
     audioService = LocalAudioRepository();
     handler = PermissionHandler();
     toolBar = ToolBar();
-    super.initState();
     getPermissions();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> getPermissions() async {
@@ -72,5 +79,17 @@ class _LocalAudiosState extends State<LocalAudios> {
         ),
       ],
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        loadAudios();
+        return;
+      default:
+        return;
+    }
   }
 }

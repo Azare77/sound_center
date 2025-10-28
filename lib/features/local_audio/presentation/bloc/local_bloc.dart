@@ -23,8 +23,8 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       getAudioUseCase = GetAudioUseCase(LocalAudioRepository());
     }
     final LocalPlayerRepositoryImp player = LocalPlayerRepositoryImp();
+    player.setBloc(this);
     on<GetLocalAudios>((event, emit) async {
-      player.setBloc(this);
       List<AudioEntity> audios = await getAudioUseCase.call(
         orderBy: event.column,
         desc: event.desc,

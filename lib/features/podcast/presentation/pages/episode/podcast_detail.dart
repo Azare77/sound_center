@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core_view/current_media.dart';
+import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/episode/episodes.dart';
 import 'package:sound_center/features/podcast/presentation/pages/episode/podcast_info.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastDetail extends StatefulWidget {
-  const PodcastDetail({super.key, required this.podcast});
+  const PodcastDetail({super.key, required this.feedUrl});
 
-  final Item podcast;
+  final String feedUrl;
 
   @override
   State<PodcastDetail> createState() => _PodcastDetailState();
@@ -23,7 +26,7 @@ class _PodcastDetailState extends State<PodcastDetail>
 
   void getEpisodes({bool retry = true}) async {
     try {
-      podcast = await Feed.loadFeed(url: widget.podcast.feedUrl!);
+      podcast = await Feed.loadFeed(url: widget.feedUrl);
       if (podcast?.image == null) {}
     } on PodcastFailedException catch (_) {
       podcast = null;
@@ -70,7 +73,15 @@ class _PodcastDetailState extends State<PodcastDetail>
                   children: [
                     Flexible(child: ScrollingText(podcast!.title ?? "")),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        SubscriptionEntity sub = SubscriptionEntity.fromPodcast(
+                          widget.feedUrl,
+                          podcast!,
+                        );
+                        BlocProvider.of<PodcastBloc>(
+                          context,
+                        ).add(SubscribeToPodcast(sub));
+                      },
                       child: Text("I'm into it"),
                     ),
                   ],
@@ -86,10 +97,7 @@ class _PodcastDetailState extends State<PodcastDetail>
                   child: TabBarView(
                     controller: _controller,
                     children: [
-                      Episodes(
-                        episodes: podcast!.episodes,
-                        bestImageUrl: widget.podcast.bestArtworkUrl,
-                      ),
+                      Episodes(episodes: podcast!.episodes, bestImageUrl: null),
                       PodcastInfo(info: podcast!.description ?? ""),
                     ],
                   ),

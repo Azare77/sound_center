@@ -18,12 +18,8 @@ class PodcastRepositoryImp implements PodcastRepository {
 
   @override
   Future<bool> subscribe(SubscriptionEntity podcast) async {
-    final existing = await (database.select(
-      database.subscriptionTable,
-    )..where((tbl) => tbl.feedUrl.equals(podcast.feedUrl))).getSingleOrNull();
-    if (existing != null) {
-      return false;
-    }
+    bool exists = await isSubscribed(podcast.feedUrl);
+    if (exists) return false;
     await database.into(database.subscriptionTable).insert(podcast.toDrift());
     return true;
   }
@@ -50,5 +46,23 @@ class PodcastRepositoryImp implements PodcastRepository {
   Future<Podcast> loadPodcastInfo(String feedUrl) async {
     var podcast = await Feed.loadFeed(url: feedUrl);
     return podcast;
+  }
+
+  Future<bool> isSubscribed(String feedUrl) async {
+    final existing = await (database.select(
+      database.subscriptionTable,
+    )..where((tbl) => tbl.feedUrl.equals(feedUrl))).getSingleOrNull();
+    if (existing != null) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> unsubscribe(String feedUrl) async {
+    await (database.delete(
+      database.subscriptionTable,
+    )..where((tbl) => tbl.feedUrl.equals(feedUrl))).go();
+    return true;
   }
 }

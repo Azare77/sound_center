@@ -10,7 +10,7 @@ class SubscribeTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double size = 120;
+    double size = 135;
     return Card(
       color: Color(0xFF082041),
       child: Padding(
@@ -22,7 +22,11 @@ class SubscribeTemplate extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5),
-                child: NetworkCacheImage(url: podcast.artworkUrl, size: size),
+                child: NetworkCacheImage(
+                  url: podcast.artworkUrl,
+                  size: size,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
             ScrollingText(podcast.title),

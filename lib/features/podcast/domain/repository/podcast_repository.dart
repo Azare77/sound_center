@@ -7,6 +7,8 @@ abstract class PodcastRepository {
 
   Future<bool> subscribe(SubscriptionEntity podcast);
 
+  Future<bool> unsubscribe(String feedUrl);
+
   Future<PodcastEntity> find(String searchText);
 
   Future<Podcast> loadPodcastInfo(String feedUrl);

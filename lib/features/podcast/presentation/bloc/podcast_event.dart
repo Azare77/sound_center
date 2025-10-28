@@ -16,6 +16,12 @@ class SubscribeToPodcast extends PodcastEvent {
   SubscribeToPodcast(this.podcast);
 }
 
+class UnsubscribeFromPodcast extends PodcastEvent {
+  final String feedUrl;
+
+  UnsubscribeFromPodcast(this.feedUrl);
+}
+
 class PlayPodcast extends PodcastEvent {
   final Episode episode;
 

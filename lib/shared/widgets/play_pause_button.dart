@@ -21,7 +21,7 @@ class PlayPauseButton extends StatelessWidget {
         // آیکون پلی/پاز
         InkWell(
           borderRadius: BorderRadius.circular(100),
-          onTap: isLoading ? null : onPressed,
+          onTap: onPressed,
           child: Container(
             width: 60,
             height: 60,

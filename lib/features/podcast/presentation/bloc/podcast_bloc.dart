@@ -31,6 +31,12 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
         add(GetLocalPodcast());
       }
     });
+    on<UnsubscribeFromPodcast>((event, emit) async {
+      bool success = await getPodcastUseCase.unsubscribe(event.feedUrl);
+      if (success) {
+        add(GetLocalPodcast());
+      }
+    });
 
     on<PlayPodcast>((event, emit) async {
       player.setPlayList([event.episode]);

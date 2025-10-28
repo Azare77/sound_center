@@ -26,4 +26,8 @@ class GetPodcastsUseCase implements UseCase {
   Future<bool> subscribe(SubscriptionEntity podcast) async {
     return await _audioRepository.subscribe(podcast);
   }
+
+  Future<bool> unsubscribe(String feedUrl) async {
+    return await _audioRepository.unsubscribe(feedUrl);
+  }
 }

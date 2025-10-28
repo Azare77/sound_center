@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core_view/current_media.dart';
+import 'package:sound_center/database/drift/database.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_repository_imp.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/episode/episodes.dart';
@@ -21,11 +23,13 @@ class PodcastDetail extends StatefulWidget {
 class _PodcastDetailState extends State<PodcastDetail>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
-
+  final PodcastRepositoryImp db = PodcastRepositoryImp(AppDatabase());
+  bool subscribed = false;
   Podcast? podcast;
 
   void getEpisodes({bool retry = true}) async {
     try {
+      subscribed = await db.isSubscribed(widget.feedUrl);
       podcast = await Feed.loadFeed(url: widget.feedUrl);
       if (podcast?.image == null) {}
     } on PodcastFailedException catch (_) {
@@ -73,16 +77,25 @@ class _PodcastDetailState extends State<PodcastDetail>
                   children: [
                     Flexible(child: ScrollingText(podcast!.title ?? "")),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         SubscriptionEntity sub = SubscriptionEntity.fromPodcast(
                           widget.feedUrl,
                           podcast!,
                         );
-                        BlocProvider.of<PodcastBloc>(
-                          context,
-                        ).add(SubscribeToPodcast(sub));
+                        PodcastEvent event;
+                        if (subscribed) {
+                          event = UnsubscribeFromPodcast(sub.feedUrl);
+                        } else {
+                          event = SubscribeToPodcast(sub);
+                        }
+                        BlocProvider.of<PodcastBloc>(context).add(event);
+                        setState(() {
+                          subscribed = !subscribed;
+                        });
                       },
-                      child: Text("I'm into it"),
+                      child: Text(
+                        subscribed ? "i want to escape" : "I'm into it",
+                      ),
                     ),
                   ],
                 ),

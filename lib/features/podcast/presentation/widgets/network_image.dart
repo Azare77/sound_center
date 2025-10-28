@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class NetworkCacheImage extends StatelessWidget {
-  const NetworkCacheImage({super.key, required this.url, this.size = 50});
+  const NetworkCacheImage({
+    super.key,
+    required this.url,
+    this.size = 50,
+    this.fit = BoxFit.cover,
+  });
 
   final String? url;
   final double? size;
+  final BoxFit fit;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +21,7 @@ class NetworkCacheImage extends StatelessWidget {
             url: url!,
             width: size,
             height: size,
-            fit: BoxFit.cover,
+            fit: fit,
             filterQuality: FilterQuality.high,
             loadingBuilder: (context, progress) {
               return Loading();

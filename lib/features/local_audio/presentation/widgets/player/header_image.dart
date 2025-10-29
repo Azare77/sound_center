@@ -13,17 +13,18 @@ class HeaderImage extends StatelessWidget {
       padding: EdgeInsetsGeometry.symmetric(horizontal: 15),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: img != null
-            ? Image.memory(
-                img!,
-                fit: BoxFit.fill,
-                filterQuality: FilterQuality.high,
-              )
-            : Image.asset(
-                'assets/logo.png',
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-              ),
+        child: Image(
+          image: img != null
+              ? MemoryImage(img!)
+              : const AssetImage('assets/logo.png') as ImageProvider,
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
+          errorBuilder: (ctx, error, stack) => Image.asset(
+            'assets/logo.png',
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+          ),
+        ),
       ),
     );
   }

@@ -15,7 +15,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   PodcastPlayerRepositoryImp._internal() {
-    // _playerService.setOnComplete(() => next());
+    _playerService.setOnPodcastComplete(() => next());
     _initialPlayerState();
   }
 

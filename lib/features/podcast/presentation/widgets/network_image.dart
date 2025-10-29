@@ -1,5 +1,6 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class NetworkCacheImage extends StatelessWidget {
@@ -14,38 +15,46 @@ class NetworkCacheImage extends StatelessWidget {
   final double? size;
   final BoxFit fit;
 
+  // یک بار در کل اپلیکیشن تعریف بشه (مثلاً در main.dart یا یک فایل config)
+  static final customCacheManager = CacheManager(
+    Config(
+      'soundCenterImageCache',
+      stalePeriod: const Duration(days: 30),
+      maxNrOfCacheObjects: 1000,
+      repo: JsonCacheInfoRepository(databaseName: 'imageCacheInfo'),
+      fileService: HttpFileService(),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return url != null
-        ? FastCachedImage(
-            url: url!,
-            width: size,
-            height: size,
-            fit: fit,
-            filterQuality: FilterQuality.high,
-            loadingBuilder: (context, progress) {
-              return Loading();
-            },
-            errorBuilder: (ctx, ob, s) {
-              return SizedBox(
-                width: size,
-                height: size,
-                child: Image.asset(
-                  'assets/logo.png',
-                  fit: BoxFit.contain,
-                  filterQuality: FilterQuality.high,
-                ),
-              );
-            },
-          )
-        : SizedBox(
-            width: size,
-            height: size,
-            child: Image.asset(
-              'assets/logo.png',
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
-            ),
-          );
+    if (url == null || url!.isEmpty) {
+      return _fallback();
+    }
+    return CachedNetworkImage(
+      imageUrl: url!,
+      cacheManager: customCacheManager,
+      width: size,
+      height: size,
+      fit: fit,
+      memCacheWidth: 1024,
+      memCacheHeight: 1024,
+      filterQuality: FilterQuality.high,
+      placeholder: (context, url) => const Loading(),
+      errorWidget: (context, url, error) => _fallback(),
+      fadeInDuration: const Duration(milliseconds: 300),
+    );
+  }
+
+  Widget _fallback() {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Image.asset(
+        'assets/logo.png',
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
+      ),
+    );
   }
 }

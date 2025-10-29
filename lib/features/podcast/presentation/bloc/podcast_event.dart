@@ -23,9 +23,10 @@ class UnsubscribeFromPodcast extends PodcastEvent {
 }
 
 class PlayPodcast extends PodcastEvent {
-  final Episode episode;
+  final List<Episode> episodes;
+  final int index;
 
-  PlayPodcast(this.episode);
+  PlayPodcast({required this.episodes, required this.index});
 }
 
 class PlayNextPodcast extends PodcastEvent {}

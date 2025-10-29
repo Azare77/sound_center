@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
@@ -63,8 +66,18 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                       icon: Icon(Icons.close_rounded),
                     ),
                     IconButton(
+                      onPressed: () async {
+                        if (!Platform.isLinux) {
+                          await SharePlus.instance.share(
+                            ShareParams(files: [XFile(song.path)]),
+                          );
+                        }
+                      },
+                      icon: Icon(Icons.share_rounded),
+                    ),
+                    IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.more_vert_rounded),
+                      icon: Icon(Icons.delete_rounded),
                     ),
                   ],
                 ),

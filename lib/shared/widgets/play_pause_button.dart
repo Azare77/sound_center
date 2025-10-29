@@ -18,6 +18,15 @@ class PlayPauseButton extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
+        if (isLoading)
+          SizedBox(
+            width: 55,
+            height: 55,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: Colors.white,
+            ),
+          ),
         // آیکون پلی/پاز
         InkWell(
           borderRadius: BorderRadius.circular(100),
@@ -39,15 +48,6 @@ class PlayPauseButton extends StatelessWidget {
         ),
 
         // لودینگ دایره‌ای (فقط اگه isLoading == true)
-        if (isLoading)
-          SizedBox(
-            width: 55,
-            height: 55,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              color: Colors.white,
-            ),
-          ),
       ],
     );
   }

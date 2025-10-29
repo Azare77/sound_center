@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
@@ -20,14 +22,16 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
   int total = 1;
   int pass = 0;
   bool seeking = false;
+  late PodcastBloc _podcastBloc;
 
   @override
   void initState() {
-    setupPage();
     super.initState();
+    setupPage();
   }
 
   void setupPage() async {
+    _podcastBloc = BlocProvider.of<PodcastBloc>(context);
     await _updateDuration();
     await _setUpTimer();
   }
@@ -82,7 +86,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
             MediaControllerButton(
               svg: 'assets/icons/previous.svg',
               onPressed: () async {
-                // _localBloc.add(PlayPreviousAudio());
+                _podcastBloc.add(PlayPreviousPodcast());
                 await _updateDuration();
               },
             ),
@@ -97,7 +101,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
             MediaControllerButton(
               svg: 'assets/icons/next.svg',
               onPressed: () async {
-                // _localBloc.add(PlayNextAudio());
+                _podcastBloc.add(PlayNextPodcast());
                 await _updateDuration();
               },
             ),
@@ -156,7 +160,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
     _timer = Timer.periodic(Duration(seconds: 1), (_) async {
       total = await imp.getDuration();
       pass = await imp.getCurrentPosition();
-      if (!seeking) {
+      if (!seeking && mounted) {
         setState(() {});
       }
     });

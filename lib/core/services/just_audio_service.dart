@@ -17,6 +17,7 @@ class JustAudioService {
 
   // Callbacks
   void Function()? _onComplete;
+  void Function()? _onPodcastComplete;
   void Function()? _onLoading;
   void Function()? _onReady;
 
@@ -43,7 +44,11 @@ class JustAudioService {
     // forward processing state callbacks
     _player.processingStateStream.listen((state) {
       if (state == ProcessingState.completed) {
-        _onComplete?.call();
+        if (_source == AudioSource.local) {
+          _onComplete?.call();
+        } else {
+          _onPodcastComplete?.call();
+        }
       } else if (state == ProcessingState.loading) {
         _onLoading?.call();
       } else if (state == ProcessingState.ready) {
@@ -85,15 +90,20 @@ class JustAudioService {
 
   Future<void> setSpeed(double speed) async => await _player.setSpeed(speed);
 
-  void setOnComplete(
-    void Function()? onComplete, {
-    void Function()? onLoading,
-    void Function()? onReady,
-  }) {
+  void setOnComplete(void Function()? onComplete) {
     _onComplete = onComplete;
+  }
+
+  void setOnPodcastComplete(void Function()? onPodcastComplete) {
+    _onPodcastComplete = onPodcastComplete;
+  }
+
+  void setOnLoading(void Function()? onLoading) {
     _onLoading = onLoading;
+  }
+
+  void setOnReady(void Function()? onReady) {
     _onReady = onReady;
-    // listeners already configured in _init()
   }
 
   bool isLoading() {
@@ -134,7 +144,11 @@ class JustAudioService {
       return;
     }
     _handlingError = true;
-    _onComplete?.call();
+    if (_source == AudioSource.local) {
+      _onComplete?.call();
+    } else {
+      _onPodcastComplete?.call();
+    }
     await Future.delayed(const Duration(milliseconds: 200));
     _handlingError = false;
   }

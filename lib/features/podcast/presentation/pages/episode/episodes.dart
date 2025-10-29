@@ -25,13 +25,16 @@ class _EpisodesState extends State<Episodes>
     super.build(context);
     return ListView.builder(
       itemExtent: LIST_ITEM_HEIGHT,
+      cacheExtent: 700,
       itemCount: widget.episodes.length,
       itemBuilder: (context, index) {
         Episode episode = widget.episodes[index];
         episode.imageUrl ??= widget.bestImageUrl;
         return InkWell(
           onTap: () {
-            BlocProvider.of<PodcastBloc>(context).add(PlayPodcast(episode));
+            BlocProvider.of<PodcastBloc>(
+              context,
+            ).add(PlayPodcast(episodes: widget.episodes, index: index));
           },
           child: EpisodeTemplate(episode: episode),
         );

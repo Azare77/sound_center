@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
@@ -98,14 +101,30 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     this.index = index;
     _currentEpisode = _episodes[index];
     bloc.add(AutoPlayPodcast(_currentEpisode!));
+    final String? cacheFile = await _chach(_currentEpisode!.title);
     await _playerService.setSource(
       _episodes[index].contentUrl!,
       AudioSource.online,
+      cachedFilePath: cacheFile,
     );
     _playerService.play();
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
       _episodes[index],
     );
+  }
+
+  Future<String?> _chach(String filename) async {
+    final Directory baseDir = await getApplicationDocumentsDirectory();
+
+    // مسیر نهایی فایل
+    final String fullPath = '${baseDir.path}/Podcasts/$filename.mp3';
+
+    // 🔍 چک وجود فایل روی دیسک
+    final bool exists = await File(fullPath).exists();
+    if (exists) {
+      return fullPath;
+    }
+    return null;
   }
 
   @override

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode_template.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episode_template.dart';
 
 class Episodes extends StatefulWidget {
   const Episodes({super.key, required this.episodes, this.bestImageUrl});

@@ -17,11 +17,13 @@ class _PodcastHeaderState extends State<PodcastHeader> {
   late final PageController controller;
   int currentIndex = 0;
   List<Episode> currentPlayList = [];
+  late final PodcastPlayerRepositoryImp playerRepository;
 
   @override
   void initState() {
     super.initState();
     controller = PageController();
+    playerRepository = PodcastPlayerRepositoryImp();
   }
 
   @override
@@ -33,7 +35,11 @@ class _PodcastHeaderState extends State<PodcastHeader> {
   void onScrollEnd() {
     int page = controller.page?.round() ?? 0;
     int change = page - currentIndex;
-    for (int i = 0; i < change.abs(); i++) {}
+    PodcastEvent event;
+    for (int i = 0; i < change.abs(); i++) {
+      event = change > 0 ? PlayNextPodcast() : PlayPreviousPodcast();
+      BlocProvider.of<PodcastBloc>(context).add(event);
+    }
   }
 
   @override
@@ -43,9 +49,9 @@ class _PodcastHeaderState extends State<PodcastHeader> {
         builder: (BuildContext context, PodcastState state) {
           // final PodcastResultStatus status =
           //     state.status as PodcastResultStatus;
-          Episode episode = PodcastPlayerRepositoryImp().getCurrentEpisode!;
-          currentPlayList = PodcastPlayerRepositoryImp().getPlayList();
-          _jumpToCorrectPage(currentPlayList, episode);
+          Episode currentEpisode = playerRepository.getCurrentEpisode!;
+          currentPlayList = playerRepository.getPlayList();
+          _jumpToCorrectPage(currentPlayList, currentEpisode);
           return Column(
             spacing: 20,
             mainAxisSize: MainAxisSize.min,
@@ -64,19 +70,20 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                     controller: controller,
                     itemCount: currentPlayList.length,
                     itemBuilder: (BuildContext context, int index) {
+                      Episode episode = currentPlayList[index];
                       return PodcastHeaderImage(url: episode.imageUrl);
                     },
                   ),
                 ),
               ),
               ScrollingText(
-                episode.title,
+                currentEpisode.title,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),
-              if (episode.author != null)
+              if (currentEpisode.author != null)
                 ScrollingText(
-                  episode.author!,
+                  currentEpisode.author!,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 18),
                 ),

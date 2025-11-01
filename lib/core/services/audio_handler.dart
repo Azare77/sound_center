@@ -22,7 +22,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
             MediaControl.skipToPrevious,
             _player.playing ? MediaControl.pause : MediaControl.play,
             MediaControl.skipToNext,
-            MediaControl.stop,
+            // MediaControl.stop,
           ],
           systemActions: const {
             MediaAction.seek,
@@ -62,7 +62,10 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   Future<void> pause() => LocalPlayerRepositoryImp().togglePlayState();
 
   @override
-  Future<void> stop() => LocalPlayerRepositoryImp().stop();
+  Future<void> stop() async {
+    await LocalPlayerRepositoryImp().stop();
+    await super.stop();
+  }
 
   @override
   Future<void> seek(Duration position) =>

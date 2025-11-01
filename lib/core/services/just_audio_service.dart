@@ -58,17 +58,28 @@ class JustAudioService {
   }
 
   // Public API to set a single source (will clear any managed playlist unless using setPlaylist)
-  Future<void> setSource(String path, AudioSource source) async {
+  Future<void> setSource(
+    String path,
+    AudioSource source, {
+    String? cachedFilePath,
+  }) async {
     try {
       _source = source;
+
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
-        _player.setSpeed(1);
       } else {
-        await _player.setUrl(path);
+        if (cachedFilePath != null) {
+          await _player.setFilePath(cachedFilePath);
+        } else {
+          await _player.setUrl(path);
+        }
       }
-    } catch (_) {
-      _source == null;
+
+      await _player.setSpeed(1.0);
+    } catch (e) {
+      _source = null;
+      debugPrint('خطا در setSource: $e');
     }
   }
 
@@ -84,6 +95,7 @@ class JustAudioService {
 
   Future<void> release() async {
     await _player.stop();
+    await _player.clearAudioSources();
   }
 
   Future<void> seek(Duration position) async => await _player.seek(position);

@@ -72,22 +72,6 @@ class LocalAudioRepositoryLinux implements AudioRepository {
 
     return files;
   }
-
-  Future<MetadataResult> _readMetadata(File file) async {
-    try {
-      final AudioMetadata metadata = readMetadata(file, getImage: true);
-      return MetadataResult(
-        title: metadata.title,
-        artist: metadata.artist,
-        album: metadata.album,
-        genre: metadata.genres.firstOrNull,
-        duration: metadata.duration?.inMilliseconds ?? 0,
-        cover: metadata.pictures.firstOrNull?.bytes,
-      );
-    } catch (e) {
-      return MetadataResult();
-    }
-  }
 }
 
 class MetadataResult {

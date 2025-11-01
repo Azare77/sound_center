@@ -12,7 +12,7 @@ class PodcastHeaderImage extends StatelessWidget {
       padding: EdgeInsetsGeometry.symmetric(horizontal: 15),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: NetworkCacheImage(url: url, size: null),
+        child: NetworkCacheImage(url: url, size: null, memCacheSize: 1024),
       ),
     );
   }

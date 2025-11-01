@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
-// import 'package:metadata_god/metadata_god.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
+import 'package:sound_center/core/services/download_manager.dart';
 import 'package:sound_center/core_view/home.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
@@ -17,7 +17,6 @@ late final AudioHandler audioHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await FastCachedImageConfig.init();
   await Storage.instance.init();
   Future.microtask(_init);
   runApp(const MyApp());
@@ -33,13 +32,14 @@ Future<void> _init() async {
               'com.example.sound_center.channel.audio',
           androidNotificationChannelName: 'Music Playback',
           androidNotificationOngoing: false,
-          androidStopForegroundOnPause: true,
+          androidStopForegroundOnPause: false,
         ),
       );
     }
     if (Platform.isLinux) {
       JustAudioMediaKit.ensureInitialized();
     }
+    await PodcastDownloader.init();
     debugPrint('✅ _init() completed successfully');
   } catch (e, st) {
     debugPrint('❌ Error in _init(): $e\n$st');

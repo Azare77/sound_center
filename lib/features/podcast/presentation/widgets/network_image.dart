@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
@@ -8,11 +9,13 @@ class NetworkCacheImage extends StatelessWidget {
     super.key,
     required this.url,
     this.size = 50,
+    this.memCacheSize = 400,
     this.fit = BoxFit.cover,
   });
 
   final String? url;
   final double? size;
+  final int memCacheSize;
   final BoxFit fit;
 
   // یک بار در کل اپلیکیشن تعریف بشه (مثلاً در main.dart یا یک فایل config)
@@ -20,7 +23,7 @@ class NetworkCacheImage extends StatelessWidget {
     Config(
       'soundCenterImageCache',
       stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 1000,
+      maxNrOfCacheObjects: 100,
       repo: JsonCacheInfoRepository(databaseName: 'imageCacheInfo'),
       fileService: HttpFileService(),
     ),
@@ -37,8 +40,8 @@ class NetworkCacheImage extends StatelessWidget {
       width: size,
       height: size,
       fit: fit,
-      memCacheWidth: 1024,
-      memCacheHeight: 1024,
+      memCacheWidth: memCacheSize,
+      memCacheHeight: memCacheSize,
       filterQuality: FilterQuality.high,
       placeholder: (context, url) => const Loading(),
       errorWidget: (context, url, error) => _fallback(),

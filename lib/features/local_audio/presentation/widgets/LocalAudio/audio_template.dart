@@ -45,7 +45,8 @@ class _AudioTemplateState extends State<AudioTemplate> {
           SizedBox(
             width: size,
             height: size,
-            child: ClipOval(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
               child: Image(
                 image: cover != null
                     ? MemoryImage(cover!)

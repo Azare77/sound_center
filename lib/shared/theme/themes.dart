@@ -28,11 +28,11 @@ ThemeData DARK_THEME = ThemeData(
   fontFamily: "Vazir",
   brightness: Brightness.dark,
   appBarTheme: AppBarTheme(
-    elevation: 10,
+    elevation: 2,
     centerTitle: true,
     shadowColor: Color(0xFF601410),
   ),
-  
+
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       foregroundColor: WidgetStatePropertyAll(Colors.white),

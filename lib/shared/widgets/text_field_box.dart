@@ -10,6 +10,7 @@ class TextFieldBox extends StatefulWidget {
     this.isPassword = false,
     this.enabled = true,
     this.canRequestFocus = true,
+    this.autofocus = false,
     this.onSubmitted,
     this.inputFormatters,
     this.suffix,
@@ -33,6 +34,7 @@ class TextFieldBox extends StatefulWidget {
   final String? labelText;
   final String? hintText;
   final bool? enabled;
+  final bool autofocus;
   final bool useBorder;
   final int? maxLength;
   final int? maxLines;
@@ -112,6 +114,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
         textInputAction: widget.textInputAction,
         enabled: widget.enabled,
         textDirection: textDirection,
+        autofocus: widget.autofocus,
         autofillHints: widget.autofillHints,
         style: const TextStyle(fontFamily: "Vazir", color: Colors.white),
         inputFormatters: widget.inputFormatters,

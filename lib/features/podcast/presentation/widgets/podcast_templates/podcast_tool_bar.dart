@@ -1,22 +1,17 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/order_menu.dart';
-import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/features/podcast/presentation/pages/downloaded_episodes.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
-class ToolBar extends StatefulWidget {
-  const ToolBar({super.key});
+class PodcastToolBar extends StatefulWidget {
+  const PodcastToolBar({super.key});
 
   @override
-  State<ToolBar> createState() => _ToolBarState();
+  State<PodcastToolBar> createState() => _PodcastToolBarState();
 }
 
-class _ToolBarState extends State<ToolBar> {
+class _PodcastToolBarState extends State<PodcastToolBar> {
   bool _showSearch = false;
   final _controller = TextEditingController();
 
@@ -42,21 +37,33 @@ class _ToolBarState extends State<ToolBar> {
             Expanded(
               child: TextFieldBox(
                 controller: _controller,
-                autofocus: true,
+                textInputAction: TextInputAction.search,
                 hintText: 'what do you want?',
+                autofocus: true,
                 onChanged: (text) {
-                  BlocProvider.of<LocalBloc>(
+                  if (text.trim().isEmpty) {
+                    BlocProvider.of<PodcastBloc>(
+                      context,
+                    ).add(GetSubscribedPodcasts());
+                  }
+                },
+                onSubmitted: (text) {
+                  BlocProvider.of<PodcastBloc>(
                     context,
-                  ).add(Search(query: text.trim()));
+                  ).add(SearchPodcast(text.trim()));
                 },
               ),
             ),
           if (!_showSearch) const Spacer(),
           IconButton(
-            icon: const Icon(Icons.shuffle_rounded),
-            onPressed: _shufflePlay,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => DownloadedEpisodes()),
+              );
+            },
+            icon: Icon(Icons.arrow_downward_rounded),
           ),
-          OrderMenu(),
         ],
       ),
     );
@@ -68,20 +75,9 @@ class _ToolBarState extends State<ToolBar> {
     if (!_showSearch) {
       final text = _controller.text.trim();
       if (text.isNotEmpty) {
-        context.read<LocalBloc>().add(Search());
+        context.read<PodcastBloc>().add(GetSubscribedPodcasts());
       }
       _controller.clear();
     }
-  }
-
-  void _shufflePlay() {
-    final bloc = context.read<LocalBloc>();
-    final status = bloc.state.status as LocalAudioStatus;
-
-    if (status.audios.isEmpty) return;
-
-    LocalPlayerRepositoryImp().shuffleMode = ShuffleMode.shuffle;
-    final randomIndex = Random().nextInt(status.audios.length);
-    bloc.add(PlayAudio(randomIndex));
   }
 }

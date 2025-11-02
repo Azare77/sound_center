@@ -37,6 +37,7 @@ class LocalAudioRepositoryLinux implements AudioRepository {
         duration: metadata.duration?.inMilliseconds ?? 0,
         album: metadata.album ?? "",
         genre: "",
+        dateAdded: DateTime.now(),
         trackNum: metadata.trackNumber ?? 0,
         isPodcast: false,
         isAlarm: false,

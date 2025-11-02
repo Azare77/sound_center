@@ -12,6 +12,7 @@ class AudioEntity {
     required this.trackNum,
     required this.isPodcast,
     required this.isAlarm,
+    required this.dateAdded,
     this.uri,
     this.cover,
   });
@@ -27,6 +28,7 @@ class AudioEntity {
   final int trackNum;
   final bool isPodcast;
   final bool isAlarm;
+  final DateTime dateAdded;
   Uint8List? cover;
 
   @override

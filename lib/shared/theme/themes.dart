@@ -31,6 +31,7 @@ ThemeData DARK_THEME = ThemeData(
     elevation: 2,
     centerTitle: true,
     shadowColor: Color(0xFF601410),
+    backgroundColor: Color(0xff202138),
   ),
 
   elevatedButtonTheme: ElevatedButtonThemeData(

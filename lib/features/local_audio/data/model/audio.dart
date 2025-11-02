@@ -13,6 +13,7 @@ class AudioModel extends AudioEntity {
     required super.isPodcast,
     required super.isAlarm,
     required super.artist,
+    required super.dateAdded,
     super.uri,
     super.cover,
   });
@@ -23,6 +24,9 @@ class AudioModel extends AudioEntity {
       uri: song.uri,
       path: song.data,
       title: song.title,
+      dateAdded: DateTime.fromMillisecondsSinceEpoch(
+        (song.dateAdded ?? 0) * 1000,
+      ),
       duration: song.duration ?? 0,
       trackNum: song.track ?? 0,
       isPodcast: song.isPodcast ?? false,

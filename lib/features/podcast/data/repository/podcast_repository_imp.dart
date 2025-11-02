@@ -1,5 +1,6 @@
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/database/drift/database.dart';
+import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/podcast_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
@@ -64,5 +65,20 @@ class PodcastRepositoryImp implements PodcastRepository {
       database.subscriptionTable,
     )..where((tbl) => tbl.feedUrl.equals(feedUrl))).go();
     return true;
+  }
+
+  @override
+  Future<bool> downloadEpisode(DownloadedEpisodeEntity episode) async {
+    await database.into(database.downloadTable).insert(episode.toDrift());
+    return true;
+  }
+
+  @override
+  Future<List<Episode>> getDownloadedEpisodes() async {
+    final subs = await database.select(database.downloadTable).get();
+    final List<Episode> episodes = subs
+        .map((s) => DownloadedEpisodeEntity.fromDrift(s).toEpisode())
+        .toList();
+    return episodes;
   }
 }

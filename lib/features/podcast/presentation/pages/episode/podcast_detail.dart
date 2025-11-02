@@ -12,9 +12,10 @@ import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastDetail extends StatefulWidget {
-  const PodcastDetail({super.key, required this.feedUrl});
+  const PodcastDetail({super.key, required this.feedUrl, this.defaultImg});
 
   final String feedUrl;
+  final String? defaultImg;
 
   @override
   State<PodcastDetail> createState() => _PodcastDetailState();
@@ -110,7 +111,10 @@ class _PodcastDetailState extends State<PodcastDetail>
                   child: TabBarView(
                     controller: _controller,
                     children: [
-                      Episodes(episodes: podcast!.episodes, bestImageUrl: null),
+                      Episodes(
+                        episodes: podcast!.episodes,
+                        bestImageUrl: widget.defaultImg,
+                      ),
                       PodcastInfo(info: podcast!.description ?? ""),
                     ],
                   ),

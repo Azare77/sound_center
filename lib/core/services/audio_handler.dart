@@ -23,6 +23,11 @@ class JustAudioNotificationHandler extends BaseAudioHandler
             _player.playing ? MediaControl.pause : MediaControl.play,
             MediaControl.skipToNext,
             // MediaControl.stop,
+            // MediaControl.custom(
+            //   androidIcon: "drawable/logo", // مسیر آیکن
+            //   label: "Favorite",
+            //   name: "favorite",
+            // ),
           ],
           systemActions: const {
             MediaAction.seek,
@@ -76,6 +81,12 @@ class JustAudioNotificationHandler extends BaseAudioHandler
 
   @override
   Future<void> skipToPrevious() => LocalPlayerRepositoryImp().previous();
+
+  // @override
+  // Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
+  //   if (name == 'favorite') {
+  //   }
+  // }
 
   void setMediaItemFrom(AudioEntity audio) async {
     final Uri? artUri = await saveCoverToFile(audio.cover, "cover_${audio.id}");

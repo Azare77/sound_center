@@ -112,7 +112,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       _shuffleAudios();
     }
     if (!_initialized && audios[index].cover == null) {
-      _loadChunk(index);
+      await _loadChunk(index);
     }
     await _playerService.setSource(audios[index].path, AudioSource.local);
     _playerService.play();

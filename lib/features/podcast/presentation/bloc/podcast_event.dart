@@ -8,7 +8,7 @@ class SearchPodcast extends PodcastEvent {
   SearchPodcast(this.query);
 }
 
-class GetLocalPodcast extends PodcastEvent {}
+class GetSubscribedPodcasts extends PodcastEvent {}
 
 class SubscribeToPodcast extends PodcastEvent {
   final SubscriptionEntity podcast;
@@ -40,3 +40,12 @@ class AutoPlayPodcast extends PodcastEvent {
 }
 
 class TogglePlay extends PodcastEvent {}
+
+//Download
+class GetDownloadedEpisodes extends PodcastEvent {}
+
+class DownloadEpisode extends PodcastEvent {
+  DownloadedEpisodeEntity episode;
+
+  DownloadEpisode(this.episode);
+}

@@ -1,6 +1,8 @@
+import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/core/usecase/usecase.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
+import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/podcast_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
@@ -29,5 +31,13 @@ class GetPodcastsUseCase implements UseCase {
 
   Future<bool> unsubscribe(String feedUrl) async {
     return await _audioRepository.unsubscribe(feedUrl);
+  }
+
+  Future<bool> downloadEpisode(DownloadedEpisodeEntity episode) async {
+    return await _audioRepository.downloadEpisode(episode);
+  }
+
+  Future<List<Episode>> getDownloadedEpisodes() async {
+    return await _audioRepository.getDownloadedEpisodes();
   }
 }

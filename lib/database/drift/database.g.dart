@@ -425,6 +425,18 @@ class $SubscriptionTableTable extends SubscriptionTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _totalEpisodesMeta = const VerificationMeta(
+    'totalEpisodes',
+  );
+  @override
+  late final GeneratedColumn<int> totalEpisodes = GeneratedColumn<int>(
+    'total_episodes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _subscribedAtMeta = const VerificationMeta(
     'subscribedAt',
   );
@@ -458,6 +470,7 @@ class $SubscriptionTableTable extends SubscriptionTable
     author,
     artworkUrl,
     feedUrl,
+    totalEpisodes,
     subscribedAt,
     lastListenAt,
   ];
@@ -516,6 +529,15 @@ class $SubscriptionTableTable extends SubscriptionTable
     } else if (isInserting) {
       context.missing(_feedUrlMeta);
     }
+    if (data.containsKey('total_episodes')) {
+      context.handle(
+        _totalEpisodesMeta,
+        totalEpisodes.isAcceptableOrUnknown(
+          data['total_episodes']!,
+          _totalEpisodesMeta,
+        ),
+      );
+    }
     if (data.containsKey('subscribed_at')) {
       context.handle(
         _subscribedAtMeta,
@@ -571,6 +593,10 @@ class $SubscriptionTableTable extends SubscriptionTable
         DriftSqlType.string,
         data['${effectivePrefix}feed_url'],
       )!,
+      totalEpisodes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_episodes'],
+      )!,
       subscribedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}subscribed_at'],
@@ -597,6 +623,7 @@ class SubscriptionTableData extends DataClass
   final String? author;
   final String? artworkUrl;
   final String feedUrl;
+  final int totalEpisodes;
   final DateTime subscribedAt;
   final DateTime lastListenAt;
   const SubscriptionTableData({
@@ -607,6 +634,7 @@ class SubscriptionTableData extends DataClass
     this.author,
     this.artworkUrl,
     required this.feedUrl,
+    required this.totalEpisodes,
     required this.subscribedAt,
     required this.lastListenAt,
   });
@@ -626,6 +654,7 @@ class SubscriptionTableData extends DataClass
       map['artwork_url'] = Variable<String>(artworkUrl);
     }
     map['feed_url'] = Variable<String>(feedUrl);
+    map['total_episodes'] = Variable<int>(totalEpisodes);
     map['subscribed_at'] = Variable<DateTime>(subscribedAt);
     map['last_listen_at'] = Variable<DateTime>(lastListenAt);
     return map;
@@ -646,6 +675,7 @@ class SubscriptionTableData extends DataClass
           ? const Value.absent()
           : Value(artworkUrl),
       feedUrl: Value(feedUrl),
+      totalEpisodes: Value(totalEpisodes),
       subscribedAt: Value(subscribedAt),
       lastListenAt: Value(lastListenAt),
     );
@@ -664,6 +694,7 @@ class SubscriptionTableData extends DataClass
       author: serializer.fromJson<String?>(json['author']),
       artworkUrl: serializer.fromJson<String?>(json['artworkUrl']),
       feedUrl: serializer.fromJson<String>(json['feedUrl']),
+      totalEpisodes: serializer.fromJson<int>(json['totalEpisodes']),
       subscribedAt: serializer.fromJson<DateTime>(json['subscribedAt']),
       lastListenAt: serializer.fromJson<DateTime>(json['lastListenAt']),
     );
@@ -679,6 +710,7 @@ class SubscriptionTableData extends DataClass
       'author': serializer.toJson<String?>(author),
       'artworkUrl': serializer.toJson<String?>(artworkUrl),
       'feedUrl': serializer.toJson<String>(feedUrl),
+      'totalEpisodes': serializer.toJson<int>(totalEpisodes),
       'subscribedAt': serializer.toJson<DateTime>(subscribedAt),
       'lastListenAt': serializer.toJson<DateTime>(lastListenAt),
     };
@@ -692,6 +724,7 @@ class SubscriptionTableData extends DataClass
     Value<String?> author = const Value.absent(),
     Value<String?> artworkUrl = const Value.absent(),
     String? feedUrl,
+    int? totalEpisodes,
     DateTime? subscribedAt,
     DateTime? lastListenAt,
   }) => SubscriptionTableData(
@@ -702,6 +735,7 @@ class SubscriptionTableData extends DataClass
     author: author.present ? author.value : this.author,
     artworkUrl: artworkUrl.present ? artworkUrl.value : this.artworkUrl,
     feedUrl: feedUrl ?? this.feedUrl,
+    totalEpisodes: totalEpisodes ?? this.totalEpisodes,
     subscribedAt: subscribedAt ?? this.subscribedAt,
     lastListenAt: lastListenAt ?? this.lastListenAt,
   );
@@ -716,6 +750,9 @@ class SubscriptionTableData extends DataClass
           ? data.artworkUrl.value
           : this.artworkUrl,
       feedUrl: data.feedUrl.present ? data.feedUrl.value : this.feedUrl,
+      totalEpisodes: data.totalEpisodes.present
+          ? data.totalEpisodes.value
+          : this.totalEpisodes,
       subscribedAt: data.subscribedAt.present
           ? data.subscribedAt.value
           : this.subscribedAt,
@@ -735,6 +772,7 @@ class SubscriptionTableData extends DataClass
           ..write('author: $author, ')
           ..write('artworkUrl: $artworkUrl, ')
           ..write('feedUrl: $feedUrl, ')
+          ..write('totalEpisodes: $totalEpisodes, ')
           ..write('subscribedAt: $subscribedAt, ')
           ..write('lastListenAt: $lastListenAt')
           ..write(')'))
@@ -750,6 +788,7 @@ class SubscriptionTableData extends DataClass
     author,
     artworkUrl,
     feedUrl,
+    totalEpisodes,
     subscribedAt,
     lastListenAt,
   );
@@ -764,6 +803,7 @@ class SubscriptionTableData extends DataClass
           other.author == this.author &&
           other.artworkUrl == this.artworkUrl &&
           other.feedUrl == this.feedUrl &&
+          other.totalEpisodes == this.totalEpisodes &&
           other.subscribedAt == this.subscribedAt &&
           other.lastListenAt == this.lastListenAt);
 }
@@ -777,6 +817,7 @@ class SubscriptionTableCompanion
   final Value<String?> author;
   final Value<String?> artworkUrl;
   final Value<String> feedUrl;
+  final Value<int> totalEpisodes;
   final Value<DateTime> subscribedAt;
   final Value<DateTime> lastListenAt;
   const SubscriptionTableCompanion({
@@ -787,6 +828,7 @@ class SubscriptionTableCompanion
     this.author = const Value.absent(),
     this.artworkUrl = const Value.absent(),
     this.feedUrl = const Value.absent(),
+    this.totalEpisodes = const Value.absent(),
     this.subscribedAt = const Value.absent(),
     this.lastListenAt = const Value.absent(),
   });
@@ -798,6 +840,7 @@ class SubscriptionTableCompanion
     this.author = const Value.absent(),
     this.artworkUrl = const Value.absent(),
     required String feedUrl,
+    this.totalEpisodes = const Value.absent(),
     this.subscribedAt = const Value.absent(),
     this.lastListenAt = const Value.absent(),
   }) : title = Value(title),
@@ -810,6 +853,7 @@ class SubscriptionTableCompanion
     Expression<String>? author,
     Expression<String>? artworkUrl,
     Expression<String>? feedUrl,
+    Expression<int>? totalEpisodes,
     Expression<DateTime>? subscribedAt,
     Expression<DateTime>? lastListenAt,
   }) {
@@ -821,6 +865,7 @@ class SubscriptionTableCompanion
       if (author != null) 'author': author,
       if (artworkUrl != null) 'artwork_url': artworkUrl,
       if (feedUrl != null) 'feed_url': feedUrl,
+      if (totalEpisodes != null) 'total_episodes': totalEpisodes,
       if (subscribedAt != null) 'subscribed_at': subscribedAt,
       if (lastListenAt != null) 'last_listen_at': lastListenAt,
     });
@@ -834,6 +879,7 @@ class SubscriptionTableCompanion
     Value<String?>? author,
     Value<String?>? artworkUrl,
     Value<String>? feedUrl,
+    Value<int>? totalEpisodes,
     Value<DateTime>? subscribedAt,
     Value<DateTime>? lastListenAt,
   }) {
@@ -845,6 +891,7 @@ class SubscriptionTableCompanion
       author: author ?? this.author,
       artworkUrl: artworkUrl ?? this.artworkUrl,
       feedUrl: feedUrl ?? this.feedUrl,
+      totalEpisodes: totalEpisodes ?? this.totalEpisodes,
       subscribedAt: subscribedAt ?? this.subscribedAt,
       lastListenAt: lastListenAt ?? this.lastListenAt,
     );
@@ -874,6 +921,9 @@ class SubscriptionTableCompanion
     if (feedUrl.present) {
       map['feed_url'] = Variable<String>(feedUrl.value);
     }
+    if (totalEpisodes.present) {
+      map['total_episodes'] = Variable<int>(totalEpisodes.value);
+    }
     if (subscribedAt.present) {
       map['subscribed_at'] = Variable<DateTime>(subscribedAt.value);
     }
@@ -893,6 +943,7 @@ class SubscriptionTableCompanion
           ..write('author: $author, ')
           ..write('artworkUrl: $artworkUrl, ')
           ..write('feedUrl: $feedUrl, ')
+          ..write('totalEpisodes: $totalEpisodes, ')
           ..write('subscribedAt: $subscribedAt, ')
           ..write('lastListenAt: $lastListenAt')
           ..write(')'))
@@ -931,12 +982,10 @@ class $DownloadTableTable extends DownloadTable
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
-  static const VerificationMeta _episodeIdMeta = const VerificationMeta(
-    'episodeId',
-  );
+  static const VerificationMeta _guidMeta = const VerificationMeta('guid');
   @override
-  late final GeneratedColumn<String> episodeId = GeneratedColumn<String>(
-    'episode_id',
+  late final GeneratedColumn<String> guid = GeneratedColumn<String>(
+    'guid',
     aliasedName,
     false,
     type: DriftSqlType.string,
@@ -951,61 +1000,80 @@ class $DownloadTableTable extends DownloadTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _audioUrlMeta = const VerificationMeta(
-    'audioUrl',
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
   );
   @override
-  late final GeneratedColumn<String> audioUrl = GeneratedColumn<String>(
-    'audio_url',
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _localFilePathMeta = const VerificationMeta(
-    'localFilePath',
-  );
+  static const VerificationMeta _authorMeta = const VerificationMeta('author');
   @override
-  late final GeneratedColumn<String> localFilePath = GeneratedColumn<String>(
-    'local_file_path',
+  late final GeneratedColumn<String> author = GeneratedColumn<String>(
+    'author',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _downloadedAtMeta = const VerificationMeta(
-    'downloadedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> downloadedAt = GeneratedColumn<DateTime>(
-    'downloaded_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
   );
-  static const VerificationMeta _podcastFeedUrlMeta = const VerificationMeta(
-    'podcastFeedUrl',
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
   );
   @override
-  late final GeneratedColumn<String> podcastFeedUrl = GeneratedColumn<String>(
-    'podcast_feed_url',
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _contentUrlMeta = const VerificationMeta(
+    'contentUrl',
+  );
+  @override
+  late final GeneratedColumn<String> contentUrl = GeneratedColumn<String>(
+    'content_url',
     aliasedName,
     false,
     type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lengthMeta = const VerificationMeta('length');
+  @override
+  late final GeneratedColumn<int> length = GeneratedColumn<int>(
+    'length',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _durationMeta = const VerificationMeta(
+    'duration',
+  );
+  @override
+  late final GeneratedColumn<int> duration = GeneratedColumn<int>(
+    'duration',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     createdAt,
-    episodeId,
+    guid,
     title,
-    audioUrl,
-    localFilePath,
-    downloadedAt,
-    podcastFeedUrl,
+    description,
+    author,
+    imageUrl,
+    contentUrl,
+    length,
+    duration,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1028,13 +1096,13 @@ class $DownloadTableTable extends DownloadTable
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
-    if (data.containsKey('episode_id')) {
+    if (data.containsKey('guid')) {
       context.handle(
-        _episodeIdMeta,
-        episodeId.isAcceptableOrUnknown(data['episode_id']!, _episodeIdMeta),
+        _guidMeta,
+        guid.isAcceptableOrUnknown(data['guid']!, _guidMeta),
       );
     } else if (isInserting) {
-      context.missing(_episodeIdMeta);
+      context.missing(_guidMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -1044,44 +1112,52 @@ class $DownloadTableTable extends DownloadTable
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
-    if (data.containsKey('audio_url')) {
+    if (data.containsKey('description')) {
       context.handle(
-        _audioUrlMeta,
-        audioUrl.isAcceptableOrUnknown(data['audio_url']!, _audioUrlMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_audioUrlMeta);
-    }
-    if (data.containsKey('local_file_path')) {
-      context.handle(
-        _localFilePathMeta,
-        localFilePath.isAcceptableOrUnknown(
-          data['local_file_path']!,
-          _localFilePathMeta,
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_localFilePathMeta);
+      context.missing(_descriptionMeta);
     }
-    if (data.containsKey('downloaded_at')) {
+    if (data.containsKey('author')) {
       context.handle(
-        _downloadedAtMeta,
-        downloadedAt.isAcceptableOrUnknown(
-          data['downloaded_at']!,
-          _downloadedAtMeta,
-        ),
+        _authorMeta,
+        author.isAcceptableOrUnknown(data['author']!, _authorMeta),
       );
     }
-    if (data.containsKey('podcast_feed_url')) {
+    if (data.containsKey('image_url')) {
       context.handle(
-        _podcastFeedUrlMeta,
-        podcastFeedUrl.isAcceptableOrUnknown(
-          data['podcast_feed_url']!,
-          _podcastFeedUrlMeta,
-        ),
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
+    }
+    if (data.containsKey('content_url')) {
+      context.handle(
+        _contentUrlMeta,
+        contentUrl.isAcceptableOrUnknown(data['content_url']!, _contentUrlMeta),
       );
     } else if (isInserting) {
-      context.missing(_podcastFeedUrlMeta);
+      context.missing(_contentUrlMeta);
+    }
+    if (data.containsKey('length')) {
+      context.handle(
+        _lengthMeta,
+        length.isAcceptableOrUnknown(data['length']!, _lengthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_lengthMeta);
+    }
+    if (data.containsKey('duration')) {
+      context.handle(
+        _durationMeta,
+        duration.isAcceptableOrUnknown(data['duration']!, _durationMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_durationMeta);
     }
     return context;
   }
@@ -1100,29 +1176,37 @@ class $DownloadTableTable extends DownloadTable
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
-      episodeId: attachedDatabase.typeMapping.read(
+      guid: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}episode_id'],
+        data['${effectivePrefix}guid'],
       )!,
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      audioUrl: attachedDatabase.typeMapping.read(
+      description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}audio_url'],
+        data['${effectivePrefix}description'],
       )!,
-      localFilePath: attachedDatabase.typeMapping.read(
+      author: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}local_file_path'],
-      )!,
-      downloadedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}downloaded_at'],
-      )!,
-      podcastFeedUrl: attachedDatabase.typeMapping.read(
+        data['${effectivePrefix}author'],
+      ),
+      imageUrl: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}podcast_feed_url'],
+        data['${effectivePrefix}image_url'],
+      ),
+      contentUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content_url'],
+      )!,
+      length: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}length'],
+      )!,
+      duration: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration'],
       )!,
     );
   }
@@ -1137,33 +1221,43 @@ class DownloadTableData extends DataClass
     implements Insertable<DownloadTableData> {
   final int id;
   final DateTime createdAt;
-  final String episodeId;
+  final String guid;
   final String title;
-  final String audioUrl;
-  final String localFilePath;
-  final DateTime downloadedAt;
-  final String podcastFeedUrl;
+  final String description;
+  final String? author;
+  final String? imageUrl;
+  final String contentUrl;
+  final int length;
+  final int duration;
   const DownloadTableData({
     required this.id,
     required this.createdAt,
-    required this.episodeId,
+    required this.guid,
     required this.title,
-    required this.audioUrl,
-    required this.localFilePath,
-    required this.downloadedAt,
-    required this.podcastFeedUrl,
+    required this.description,
+    this.author,
+    this.imageUrl,
+    required this.contentUrl,
+    required this.length,
+    required this.duration,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['episode_id'] = Variable<String>(episodeId);
+    map['guid'] = Variable<String>(guid);
     map['title'] = Variable<String>(title);
-    map['audio_url'] = Variable<String>(audioUrl);
-    map['local_file_path'] = Variable<String>(localFilePath);
-    map['downloaded_at'] = Variable<DateTime>(downloadedAt);
-    map['podcast_feed_url'] = Variable<String>(podcastFeedUrl);
+    map['description'] = Variable<String>(description);
+    if (!nullToAbsent || author != null) {
+      map['author'] = Variable<String>(author);
+    }
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
+    map['content_url'] = Variable<String>(contentUrl);
+    map['length'] = Variable<int>(length);
+    map['duration'] = Variable<int>(duration);
     return map;
   }
 
@@ -1171,12 +1265,18 @@ class DownloadTableData extends DataClass
     return DownloadTableCompanion(
       id: Value(id),
       createdAt: Value(createdAt),
-      episodeId: Value(episodeId),
+      guid: Value(guid),
       title: Value(title),
-      audioUrl: Value(audioUrl),
-      localFilePath: Value(localFilePath),
-      downloadedAt: Value(downloadedAt),
-      podcastFeedUrl: Value(podcastFeedUrl),
+      description: Value(description),
+      author: author == null && nullToAbsent
+          ? const Value.absent()
+          : Value(author),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
+      contentUrl: Value(contentUrl),
+      length: Value(length),
+      duration: Value(duration),
     );
   }
 
@@ -1188,12 +1288,14 @@ class DownloadTableData extends DataClass
     return DownloadTableData(
       id: serializer.fromJson<int>(json['id']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      episodeId: serializer.fromJson<String>(json['episodeId']),
+      guid: serializer.fromJson<String>(json['guid']),
       title: serializer.fromJson<String>(json['title']),
-      audioUrl: serializer.fromJson<String>(json['audioUrl']),
-      localFilePath: serializer.fromJson<String>(json['localFilePath']),
-      downloadedAt: serializer.fromJson<DateTime>(json['downloadedAt']),
-      podcastFeedUrl: serializer.fromJson<String>(json['podcastFeedUrl']),
+      description: serializer.fromJson<String>(json['description']),
+      author: serializer.fromJson<String?>(json['author']),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
+      contentUrl: serializer.fromJson<String>(json['contentUrl']),
+      length: serializer.fromJson<int>(json['length']),
+      duration: serializer.fromJson<int>(json['duration']),
     );
   }
   @override
@@ -1202,50 +1304,56 @@ class DownloadTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'episodeId': serializer.toJson<String>(episodeId),
+      'guid': serializer.toJson<String>(guid),
       'title': serializer.toJson<String>(title),
-      'audioUrl': serializer.toJson<String>(audioUrl),
-      'localFilePath': serializer.toJson<String>(localFilePath),
-      'downloadedAt': serializer.toJson<DateTime>(downloadedAt),
-      'podcastFeedUrl': serializer.toJson<String>(podcastFeedUrl),
+      'description': serializer.toJson<String>(description),
+      'author': serializer.toJson<String?>(author),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
+      'contentUrl': serializer.toJson<String>(contentUrl),
+      'length': serializer.toJson<int>(length),
+      'duration': serializer.toJson<int>(duration),
     };
   }
 
   DownloadTableData copyWith({
     int? id,
     DateTime? createdAt,
-    String? episodeId,
+    String? guid,
     String? title,
-    String? audioUrl,
-    String? localFilePath,
-    DateTime? downloadedAt,
-    String? podcastFeedUrl,
+    String? description,
+    Value<String?> author = const Value.absent(),
+    Value<String?> imageUrl = const Value.absent(),
+    String? contentUrl,
+    int? length,
+    int? duration,
   }) => DownloadTableData(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
-    episodeId: episodeId ?? this.episodeId,
+    guid: guid ?? this.guid,
     title: title ?? this.title,
-    audioUrl: audioUrl ?? this.audioUrl,
-    localFilePath: localFilePath ?? this.localFilePath,
-    downloadedAt: downloadedAt ?? this.downloadedAt,
-    podcastFeedUrl: podcastFeedUrl ?? this.podcastFeedUrl,
+    description: description ?? this.description,
+    author: author.present ? author.value : this.author,
+    imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
+    contentUrl: contentUrl ?? this.contentUrl,
+    length: length ?? this.length,
+    duration: duration ?? this.duration,
   );
   DownloadTableData copyWithCompanion(DownloadTableCompanion data) {
     return DownloadTableData(
       id: data.id.present ? data.id.value : this.id,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      episodeId: data.episodeId.present ? data.episodeId.value : this.episodeId,
+      guid: data.guid.present ? data.guid.value : this.guid,
       title: data.title.present ? data.title.value : this.title,
-      audioUrl: data.audioUrl.present ? data.audioUrl.value : this.audioUrl,
-      localFilePath: data.localFilePath.present
-          ? data.localFilePath.value
-          : this.localFilePath,
-      downloadedAt: data.downloadedAt.present
-          ? data.downloadedAt.value
-          : this.downloadedAt,
-      podcastFeedUrl: data.podcastFeedUrl.present
-          ? data.podcastFeedUrl.value
-          : this.podcastFeedUrl,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      author: data.author.present ? data.author.value : this.author,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
+      contentUrl: data.contentUrl.present
+          ? data.contentUrl.value
+          : this.contentUrl,
+      length: data.length.present ? data.length.value : this.length,
+      duration: data.duration.present ? data.duration.value : this.duration,
     );
   }
 
@@ -1254,12 +1362,14 @@ class DownloadTableData extends DataClass
     return (StringBuffer('DownloadTableData(')
           ..write('id: $id, ')
           ..write('createdAt: $createdAt, ')
-          ..write('episodeId: $episodeId, ')
+          ..write('guid: $guid, ')
           ..write('title: $title, ')
-          ..write('audioUrl: $audioUrl, ')
-          ..write('localFilePath: $localFilePath, ')
-          ..write('downloadedAt: $downloadedAt, ')
-          ..write('podcastFeedUrl: $podcastFeedUrl')
+          ..write('description: $description, ')
+          ..write('author: $author, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('contentUrl: $contentUrl, ')
+          ..write('length: $length, ')
+          ..write('duration: $duration')
           ..write(')'))
         .toString();
   }
@@ -1268,12 +1378,14 @@ class DownloadTableData extends DataClass
   int get hashCode => Object.hash(
     id,
     createdAt,
-    episodeId,
+    guid,
     title,
-    audioUrl,
-    localFilePath,
-    downloadedAt,
-    podcastFeedUrl,
+    description,
+    author,
+    imageUrl,
+    contentUrl,
+    length,
+    duration,
   );
   @override
   bool operator ==(Object other) =>
@@ -1281,88 +1393,105 @@ class DownloadTableData extends DataClass
       (other is DownloadTableData &&
           other.id == this.id &&
           other.createdAt == this.createdAt &&
-          other.episodeId == this.episodeId &&
+          other.guid == this.guid &&
           other.title == this.title &&
-          other.audioUrl == this.audioUrl &&
-          other.localFilePath == this.localFilePath &&
-          other.downloadedAt == this.downloadedAt &&
-          other.podcastFeedUrl == this.podcastFeedUrl);
+          other.description == this.description &&
+          other.author == this.author &&
+          other.imageUrl == this.imageUrl &&
+          other.contentUrl == this.contentUrl &&
+          other.length == this.length &&
+          other.duration == this.duration);
 }
 
 class DownloadTableCompanion extends UpdateCompanion<DownloadTableData> {
   final Value<int> id;
   final Value<DateTime> createdAt;
-  final Value<String> episodeId;
+  final Value<String> guid;
   final Value<String> title;
-  final Value<String> audioUrl;
-  final Value<String> localFilePath;
-  final Value<DateTime> downloadedAt;
-  final Value<String> podcastFeedUrl;
+  final Value<String> description;
+  final Value<String?> author;
+  final Value<String?> imageUrl;
+  final Value<String> contentUrl;
+  final Value<int> length;
+  final Value<int> duration;
   const DownloadTableCompanion({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
-    this.episodeId = const Value.absent(),
+    this.guid = const Value.absent(),
     this.title = const Value.absent(),
-    this.audioUrl = const Value.absent(),
-    this.localFilePath = const Value.absent(),
-    this.downloadedAt = const Value.absent(),
-    this.podcastFeedUrl = const Value.absent(),
+    this.description = const Value.absent(),
+    this.author = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.contentUrl = const Value.absent(),
+    this.length = const Value.absent(),
+    this.duration = const Value.absent(),
   });
   DownloadTableCompanion.insert({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
-    required String episodeId,
+    required String guid,
     required String title,
-    required String audioUrl,
-    required String localFilePath,
-    this.downloadedAt = const Value.absent(),
-    required String podcastFeedUrl,
-  }) : episodeId = Value(episodeId),
+    required String description,
+    this.author = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    required String contentUrl,
+    required int length,
+    required int duration,
+  }) : guid = Value(guid),
        title = Value(title),
-       audioUrl = Value(audioUrl),
-       localFilePath = Value(localFilePath),
-       podcastFeedUrl = Value(podcastFeedUrl);
+       description = Value(description),
+       contentUrl = Value(contentUrl),
+       length = Value(length),
+       duration = Value(duration);
   static Insertable<DownloadTableData> custom({
     Expression<int>? id,
     Expression<DateTime>? createdAt,
-    Expression<String>? episodeId,
+    Expression<String>? guid,
     Expression<String>? title,
-    Expression<String>? audioUrl,
-    Expression<String>? localFilePath,
-    Expression<DateTime>? downloadedAt,
-    Expression<String>? podcastFeedUrl,
+    Expression<String>? description,
+    Expression<String>? author,
+    Expression<String>? imageUrl,
+    Expression<String>? contentUrl,
+    Expression<int>? length,
+    Expression<int>? duration,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (createdAt != null) 'created_at': createdAt,
-      if (episodeId != null) 'episode_id': episodeId,
+      if (guid != null) 'guid': guid,
       if (title != null) 'title': title,
-      if (audioUrl != null) 'audio_url': audioUrl,
-      if (localFilePath != null) 'local_file_path': localFilePath,
-      if (downloadedAt != null) 'downloaded_at': downloadedAt,
-      if (podcastFeedUrl != null) 'podcast_feed_url': podcastFeedUrl,
+      if (description != null) 'description': description,
+      if (author != null) 'author': author,
+      if (imageUrl != null) 'image_url': imageUrl,
+      if (contentUrl != null) 'content_url': contentUrl,
+      if (length != null) 'length': length,
+      if (duration != null) 'duration': duration,
     });
   }
 
   DownloadTableCompanion copyWith({
     Value<int>? id,
     Value<DateTime>? createdAt,
-    Value<String>? episodeId,
+    Value<String>? guid,
     Value<String>? title,
-    Value<String>? audioUrl,
-    Value<String>? localFilePath,
-    Value<DateTime>? downloadedAt,
-    Value<String>? podcastFeedUrl,
+    Value<String>? description,
+    Value<String?>? author,
+    Value<String?>? imageUrl,
+    Value<String>? contentUrl,
+    Value<int>? length,
+    Value<int>? duration,
   }) {
     return DownloadTableCompanion(
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
-      episodeId: episodeId ?? this.episodeId,
+      guid: guid ?? this.guid,
       title: title ?? this.title,
-      audioUrl: audioUrl ?? this.audioUrl,
-      localFilePath: localFilePath ?? this.localFilePath,
-      downloadedAt: downloadedAt ?? this.downloadedAt,
-      podcastFeedUrl: podcastFeedUrl ?? this.podcastFeedUrl,
+      description: description ?? this.description,
+      author: author ?? this.author,
+      imageUrl: imageUrl ?? this.imageUrl,
+      contentUrl: contentUrl ?? this.contentUrl,
+      length: length ?? this.length,
+      duration: duration ?? this.duration,
     );
   }
 
@@ -1375,23 +1504,29 @@ class DownloadTableCompanion extends UpdateCompanion<DownloadTableData> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
-    if (episodeId.present) {
-      map['episode_id'] = Variable<String>(episodeId.value);
+    if (guid.present) {
+      map['guid'] = Variable<String>(guid.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (audioUrl.present) {
-      map['audio_url'] = Variable<String>(audioUrl.value);
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
     }
-    if (localFilePath.present) {
-      map['local_file_path'] = Variable<String>(localFilePath.value);
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
     }
-    if (downloadedAt.present) {
-      map['downloaded_at'] = Variable<DateTime>(downloadedAt.value);
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
     }
-    if (podcastFeedUrl.present) {
-      map['podcast_feed_url'] = Variable<String>(podcastFeedUrl.value);
+    if (contentUrl.present) {
+      map['content_url'] = Variable<String>(contentUrl.value);
+    }
+    if (length.present) {
+      map['length'] = Variable<int>(length.value);
+    }
+    if (duration.present) {
+      map['duration'] = Variable<int>(duration.value);
     }
     return map;
   }
@@ -1401,12 +1536,14 @@ class DownloadTableCompanion extends UpdateCompanion<DownloadTableData> {
     return (StringBuffer('DownloadTableCompanion(')
           ..write('id: $id, ')
           ..write('createdAt: $createdAt, ')
-          ..write('episodeId: $episodeId, ')
+          ..write('guid: $guid, ')
           ..write('title: $title, ')
-          ..write('audioUrl: $audioUrl, ')
-          ..write('localFilePath: $localFilePath, ')
-          ..write('downloadedAt: $downloadedAt, ')
-          ..write('podcastFeedUrl: $podcastFeedUrl')
+          ..write('description: $description, ')
+          ..write('author: $author, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('contentUrl: $contentUrl, ')
+          ..write('length: $length, ')
+          ..write('duration: $duration')
           ..write(')'))
         .toString();
   }
@@ -1637,6 +1774,7 @@ typedef $$SubscriptionTableTableCreateCompanionBuilder =
       Value<String?> author,
       Value<String?> artworkUrl,
       required String feedUrl,
+      Value<int> totalEpisodes,
       Value<DateTime> subscribedAt,
       Value<DateTime> lastListenAt,
     });
@@ -1649,6 +1787,7 @@ typedef $$SubscriptionTableTableUpdateCompanionBuilder =
       Value<String?> author,
       Value<String?> artworkUrl,
       Value<String> feedUrl,
+      Value<int> totalEpisodes,
       Value<DateTime> subscribedAt,
       Value<DateTime> lastListenAt,
     });
@@ -1694,6 +1833,11 @@ class $$SubscriptionTableTableFilterComposer
 
   ColumnFilters<String> get feedUrl => $composableBuilder(
     column: $table.feedUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalEpisodes => $composableBuilder(
+    column: $table.totalEpisodes,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1752,6 +1896,11 @@ class $$SubscriptionTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get totalEpisodes => $composableBuilder(
+    column: $table.totalEpisodes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get subscribedAt => $composableBuilder(
     column: $table.subscribedAt,
     builder: (column) => ColumnOrderings(column),
@@ -1794,6 +1943,11 @@ class $$SubscriptionTableTableAnnotationComposer
 
   GeneratedColumn<String> get feedUrl =>
       $composableBuilder(column: $table.feedUrl, builder: (column) => column);
+
+  GeneratedColumn<int> get totalEpisodes => $composableBuilder(
+    column: $table.totalEpisodes,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get subscribedAt => $composableBuilder(
     column: $table.subscribedAt,
@@ -1853,6 +2007,7 @@ class $$SubscriptionTableTableTableManager
                 Value<String?> author = const Value.absent(),
                 Value<String?> artworkUrl = const Value.absent(),
                 Value<String> feedUrl = const Value.absent(),
+                Value<int> totalEpisodes = const Value.absent(),
                 Value<DateTime> subscribedAt = const Value.absent(),
                 Value<DateTime> lastListenAt = const Value.absent(),
               }) => SubscriptionTableCompanion(
@@ -1863,6 +2018,7 @@ class $$SubscriptionTableTableTableManager
                 author: author,
                 artworkUrl: artworkUrl,
                 feedUrl: feedUrl,
+                totalEpisodes: totalEpisodes,
                 subscribedAt: subscribedAt,
                 lastListenAt: lastListenAt,
               ),
@@ -1875,6 +2031,7 @@ class $$SubscriptionTableTableTableManager
                 Value<String?> author = const Value.absent(),
                 Value<String?> artworkUrl = const Value.absent(),
                 required String feedUrl,
+                Value<int> totalEpisodes = const Value.absent(),
                 Value<DateTime> subscribedAt = const Value.absent(),
                 Value<DateTime> lastListenAt = const Value.absent(),
               }) => SubscriptionTableCompanion.insert(
@@ -1885,6 +2042,7 @@ class $$SubscriptionTableTableTableManager
                 author: author,
                 artworkUrl: artworkUrl,
                 feedUrl: feedUrl,
+                totalEpisodes: totalEpisodes,
                 subscribedAt: subscribedAt,
                 lastListenAt: lastListenAt,
               ),
@@ -1921,23 +2079,27 @@ typedef $$DownloadTableTableCreateCompanionBuilder =
     DownloadTableCompanion Function({
       Value<int> id,
       Value<DateTime> createdAt,
-      required String episodeId,
+      required String guid,
       required String title,
-      required String audioUrl,
-      required String localFilePath,
-      Value<DateTime> downloadedAt,
-      required String podcastFeedUrl,
+      required String description,
+      Value<String?> author,
+      Value<String?> imageUrl,
+      required String contentUrl,
+      required int length,
+      required int duration,
     });
 typedef $$DownloadTableTableUpdateCompanionBuilder =
     DownloadTableCompanion Function({
       Value<int> id,
       Value<DateTime> createdAt,
-      Value<String> episodeId,
+      Value<String> guid,
       Value<String> title,
-      Value<String> audioUrl,
-      Value<String> localFilePath,
-      Value<DateTime> downloadedAt,
-      Value<String> podcastFeedUrl,
+      Value<String> description,
+      Value<String?> author,
+      Value<String?> imageUrl,
+      Value<String> contentUrl,
+      Value<int> length,
+      Value<int> duration,
     });
 
 class $$DownloadTableTableFilterComposer
@@ -1959,8 +2121,8 @@ class $$DownloadTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get episodeId => $composableBuilder(
-    column: $table.episodeId,
+  ColumnFilters<String> get guid => $composableBuilder(
+    column: $table.guid,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1969,23 +2131,33 @@ class $$DownloadTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get audioUrl => $composableBuilder(
-    column: $table.audioUrl,
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get localFilePath => $composableBuilder(
-    column: $table.localFilePath,
+  ColumnFilters<String> get author => $composableBuilder(
+    column: $table.author,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get downloadedAt => $composableBuilder(
-    column: $table.downloadedAt,
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get podcastFeedUrl => $composableBuilder(
-    column: $table.podcastFeedUrl,
+  ColumnFilters<String> get contentUrl => $composableBuilder(
+    column: $table.contentUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get length => $composableBuilder(
+    column: $table.length,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get duration => $composableBuilder(
+    column: $table.duration,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2009,8 +2181,8 @@ class $$DownloadTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get episodeId => $composableBuilder(
-    column: $table.episodeId,
+  ColumnOrderings<String> get guid => $composableBuilder(
+    column: $table.guid,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2019,23 +2191,33 @@ class $$DownloadTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get audioUrl => $composableBuilder(
-    column: $table.audioUrl,
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get localFilePath => $composableBuilder(
-    column: $table.localFilePath,
+  ColumnOrderings<String> get author => $composableBuilder(
+    column: $table.author,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get downloadedAt => $composableBuilder(
-    column: $table.downloadedAt,
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get podcastFeedUrl => $composableBuilder(
-    column: $table.podcastFeedUrl,
+  ColumnOrderings<String> get contentUrl => $composableBuilder(
+    column: $table.contentUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get length => $composableBuilder(
+    column: $table.length,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get duration => $composableBuilder(
+    column: $table.duration,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -2055,29 +2237,33 @@ class $$DownloadTableTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  GeneratedColumn<String> get episodeId =>
-      $composableBuilder(column: $table.episodeId, builder: (column) => column);
+  GeneratedColumn<String> get guid =>
+      $composableBuilder(column: $table.guid, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<String> get audioUrl =>
-      $composableBuilder(column: $table.audioUrl, builder: (column) => column);
-
-  GeneratedColumn<String> get localFilePath => $composableBuilder(
-    column: $table.localFilePath,
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get downloadedAt => $composableBuilder(
-    column: $table.downloadedAt,
+  GeneratedColumn<String> get author =>
+      $composableBuilder(column: $table.author, builder: (column) => column);
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get contentUrl => $composableBuilder(
+    column: $table.contentUrl,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get podcastFeedUrl => $composableBuilder(
-    column: $table.podcastFeedUrl,
-    builder: (column) => column,
-  );
+  GeneratedColumn<int> get length =>
+      $composableBuilder(column: $table.length, builder: (column) => column);
+
+  GeneratedColumn<int> get duration =>
+      $composableBuilder(column: $table.duration, builder: (column) => column);
 }
 
 class $$DownloadTableTableTableManager
@@ -2117,41 +2303,49 @@ class $$DownloadTableTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<String> episodeId = const Value.absent(),
+                Value<String> guid = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String> audioUrl = const Value.absent(),
-                Value<String> localFilePath = const Value.absent(),
-                Value<DateTime> downloadedAt = const Value.absent(),
-                Value<String> podcastFeedUrl = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<String?> author = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                Value<String> contentUrl = const Value.absent(),
+                Value<int> length = const Value.absent(),
+                Value<int> duration = const Value.absent(),
               }) => DownloadTableCompanion(
                 id: id,
                 createdAt: createdAt,
-                episodeId: episodeId,
+                guid: guid,
                 title: title,
-                audioUrl: audioUrl,
-                localFilePath: localFilePath,
-                downloadedAt: downloadedAt,
-                podcastFeedUrl: podcastFeedUrl,
+                description: description,
+                author: author,
+                imageUrl: imageUrl,
+                contentUrl: contentUrl,
+                length: length,
+                duration: duration,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                required String episodeId,
+                required String guid,
                 required String title,
-                required String audioUrl,
-                required String localFilePath,
-                Value<DateTime> downloadedAt = const Value.absent(),
-                required String podcastFeedUrl,
+                required String description,
+                Value<String?> author = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                required String contentUrl,
+                required int length,
+                required int duration,
               }) => DownloadTableCompanion.insert(
                 id: id,
                 createdAt: createdAt,
-                episodeId: episodeId,
+                guid: guid,
                 title: title,
-                audioUrl: audioUrl,
-                localFilePath: localFilePath,
-                downloadedAt: downloadedAt,
-                podcastFeedUrl: podcastFeedUrl,
+                description: description,
+                author: author,
+                imageUrl: imageUrl,
+                contentUrl: contentUrl,
+                length: length,
+                duration: duration,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

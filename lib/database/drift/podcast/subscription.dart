@@ -12,6 +12,8 @@ class SubscriptionTable extends Table with TableMixin {
 
   TextColumn get feedUrl => text()();
 
+  IntColumn get totalEpisodes => integer().withDefault(const Constant(0))();
+
   DateTimeColumn get subscribedAt =>
       dateTime().withDefault(currentDateAndTime)();
 

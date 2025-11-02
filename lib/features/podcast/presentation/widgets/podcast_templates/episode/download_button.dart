@@ -5,9 +5,12 @@ import 'package:background_downloader/background_downloader.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/download_manager.dart';
+import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 
 class DownloadButton extends StatefulWidget {
   final Episode episode;
@@ -105,7 +108,13 @@ class _DownloadButtonState extends State<DownloadButton> {
         }
         if (u is TaskStatusUpdate) {
           _isRunning = u.status == TaskStatus.running;
-          if (u.status == TaskStatus.complete) _progress = 1.0;
+          if (u.status == TaskStatus.complete) {
+            _progress = 1.0;
+            final DownloadedEpisodeEntity downloadEntity =
+                DownloadedEpisodeEntity.fromEpisode(widget.episode);
+            final DownloadEpisode event = DownloadEpisode(downloadEntity);
+            BlocProvider.of<PodcastBloc>(context).add(event);
+          }
         }
       });
     });
@@ -118,7 +127,6 @@ class _DownloadButtonState extends State<DownloadButton> {
     } else {
       bool res = await PodcastDownloader.resume(_task!);
       if (!res) {
-        print("object");
         await downloader.database.deleteRecordsWithIds([_task!.taskId]);
         _start();
       }

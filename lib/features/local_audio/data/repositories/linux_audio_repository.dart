@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 
 class LocalAudioRepositoryLinux implements AudioRepository {
@@ -31,6 +32,7 @@ class LocalAudioRepositoryLinux implements AudioRepository {
       AudioModel audioModel = AudioModel(
         id: files.length,
         path: file.path,
+        uri: file.uri.path,
         title: metadata.title ?? "",
         duration: metadata.duration?.inMilliseconds ?? 0,
         album: metadata.album ?? "",
@@ -71,6 +73,16 @@ class LocalAudioRepositoryLinux implements AudioRepository {
     }
 
     return files;
+  }
+
+  @override
+  Future<bool> deleteAudio(AudioEntity audio) async {
+    final file = File(audio.path);
+    if (await file.exists()) {
+      await file.delete();
+      return true;
+    }
+    return false;
   }
 }
 

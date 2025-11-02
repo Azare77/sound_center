@@ -52,3 +52,9 @@ class AutoPlayNext extends LocalEvent {
 }
 
 class TogglePlay extends LocalEvent {}
+
+class DeleteAudio extends LocalEvent {
+  AudioEntity audio;
+
+  DeleteAudio(this.audio);
+}

@@ -13,12 +13,14 @@ class AudioModel extends AudioEntity {
     required super.isPodcast,
     required super.isAlarm,
     required super.artist,
+    super.uri,
     super.cover,
   });
 
   factory AudioModel.fromSongModel(SongModel song) {
     return AudioModel(
       id: song.id,
+      uri: song.uri,
       path: song.data,
       title: song.title,
       duration: song.duration ?? 0,

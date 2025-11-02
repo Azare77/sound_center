@@ -50,7 +50,6 @@ class DownloadedEpisodeEntity {
   }
 
   DownloadTableCompanion toDrift() {
-    print(Value(imageUrl));
     return DownloadTableCompanion(
       guid: Value(guid),
       title: Value(title),

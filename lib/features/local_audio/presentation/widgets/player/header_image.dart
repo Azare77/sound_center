@@ -17,11 +17,11 @@ class HeaderImage extends StatelessWidget {
           image: img != null
               ? MemoryImage(img!)
               : const AssetImage('assets/logo.png') as ImageProvider,
-          fit: BoxFit.cover,
+          fit: img != null ? BoxFit.cover : BoxFit.scaleDown,
           filterQuality: FilterQuality.high,
           errorBuilder: (ctx, error, stack) => Image.asset(
             'assets/logo.png',
-            fit: BoxFit.contain,
+            fit: BoxFit.scaleDown,
             filterQuality: FilterQuality.high,
           ),
         ),

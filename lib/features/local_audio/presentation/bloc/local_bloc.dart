@@ -64,6 +64,12 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       emit(state.copyWith(newStatus));
     });
 
+    on<DeleteAudio>((event, emit) async {
+      await player.removeAudio(event.audio);
+      await getAudioUseCase.deleteAudio(event.audio);
+      add(GetLocalAudios());
+    });
+
     on<Search>((event, emit) async {
       List<AudioEntity> audios = await getAudioUseCase.search(
         params: event.query,

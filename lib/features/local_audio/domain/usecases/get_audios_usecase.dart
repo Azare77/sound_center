@@ -31,4 +31,8 @@ class GetAudioUseCase implements UseCase {
       desc: desc,
     );
   }
+
+  Future<bool> deleteAudio(AudioEntity audio) async {
+    return await _audioRepository.deleteAudio(audio);
+  }
 }

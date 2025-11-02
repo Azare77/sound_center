@@ -7,6 +7,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/player/header_image.dart';
+import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PlayerHeader extends StatefulWidget {
@@ -21,10 +22,12 @@ class _PlayerHeaderState extends State<PlayerHeader> {
 
   int currentIndex = 0;
   List<AudioEntity> currentPlayList = [];
+  late final LocalPlayerRepositoryImp imp;
 
   @override
   void initState() {
     super.initState();
+    imp = LocalPlayerRepositoryImp();
     controller = PageController();
   }
 
@@ -50,8 +53,8 @@ class _PlayerHeaderState extends State<PlayerHeader> {
       child: BlocBuilder<LocalBloc, LocalState>(
         builder: (BuildContext context, LocalState state) {
           // final LocalAudioStatus status = state.status as LocalAudioStatus;
-          AudioEntity song = LocalPlayerRepositoryImp().getCurrentAudio!;
-          currentPlayList = LocalPlayerRepositoryImp().getPlayList();
+          final AudioEntity song = imp.getCurrentAudio!;
+          currentPlayList = imp.getPlayList();
           _jumpToCorrectPage(currentPlayList, song);
           return SizedBox(
             child: Column(
@@ -76,7 +79,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                       icon: Icon(Icons.share_rounded),
                     ),
                     IconButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => _delete(),
                       icon: Icon(Icons.delete_rounded),
                     ),
                   ],
@@ -130,5 +133,17 @@ class _PlayerHeaderState extends State<PlayerHeader> {
         controller.jumpToPage(currentIndex);
       }
     });
+  }
+
+  void _delete() async {
+    bool res =
+        await showDialog(context: context, builder: (_) => ConfirmDialog()) ??
+        false;
+    if (res) {
+      BlocProvider.of<LocalBloc>(
+        // ignore: use_build_context_synchronously
+        context,
+      ).add(DeleteAudio(imp.getCurrentAudio!));
+    }
   }
 }

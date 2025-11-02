@@ -12,10 +12,12 @@ class AudioEntity {
     required this.trackNum,
     required this.isPodcast,
     required this.isAlarm,
+    this.uri,
     this.cover,
   });
 
   final int id;
+  final String? uri;
   final String path;
   final String title;
   final int duration;
@@ -26,4 +28,15 @@ class AudioEntity {
   final bool isPodcast;
   final bool isAlarm;
   Uint8List? cover;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AudioEntity &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          path == other.path;
+
+  @override
+  int get hashCode => id.hashCode;
 }

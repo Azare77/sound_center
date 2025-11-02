@@ -125,7 +125,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<AudioEntity> next() async {
-    index = getIndex(true);
+    index = _getIndex(true);
     await play(index);
     bloc.add(AutoPlayNext(audios[index]));
     return audios[index];
@@ -133,7 +133,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<AudioEntity> previous() async {
-    index = getIndex(false);
+    index = _getIndex(false);
     await play(index);
     bloc.add(AutoPlayNext(audios[index]));
     return audios[index];
@@ -169,7 +169,35 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     bloc.add(TogglePlay());
   }
 
-  int getIndex(bool forward) {
+  Future<void> removeAudio(AudioEntity audio) async {
+    int removedIndex = audios.indexOf(audio);
+    if (removedIndex == -1) return;
+    audios.removeAt(removedIndex);
+    if (audios.isEmpty) {
+      index = 0;
+      return;
+    }
+    if (index >= audios.length) {
+      index = audios.length - 1;
+    }
+    final bool isShuffle = shuffleMode == ShuffleMode.shuffle;
+    if (isShuffle) {
+      _shuffle.removeWhere((i) => i == removedIndex);
+      for (int i = 0; i < _shuffle.length; i++) {
+        if (_shuffle[i] > removedIndex) {
+          _shuffle[i] -= 1;
+        }
+      }
+      if (shuffleIndex >= _shuffle.length) {
+        shuffleIndex = 0;
+      }
+    }
+    if (_currentAudio == audio) {
+      await play(isShuffle ? _shuffle[shuffleIndex] : index);
+    }
+  }
+
+  int _getIndex(bool forward) {
     bool isShuffle = shuffleMode == ShuffleMode.shuffle;
     if (repeatMode == RepeatMode.repeatOne) {
       if (isShuffle) {

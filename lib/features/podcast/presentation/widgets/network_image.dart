@@ -1,4 +1,5 @@
-// network_cache_image.dart
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';

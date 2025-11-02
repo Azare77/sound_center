@@ -17,7 +17,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Sound Center"),
         actions: [
           IconButton(
@@ -38,13 +37,6 @@ class _HomeState extends State<Home> {
             },
             icon: Icon(Icons.podcasts_rounded),
           ),
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: Icon(
-          //     Icons.signal_wifi_statusbar_connected_no_internet_4_rounded,
-          //   ),
-          // ),
-          // IconButton(onPressed: () {}, icon: Icon(Icons.radio)),
         ],
       ),
       body: Column(

@@ -44,7 +44,7 @@ class PlayPodcast extends StatelessWidget {
                 ),
               ],
             ),
-            Expanded(flex: 3, child: PodcastHeader()),
+            Expanded(flex: 4, child: PodcastHeader()),
             Expanded(flex: 2, child: PodcastNavigation()),
           ],
         ),

@@ -34,7 +34,6 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
     if (widget.audios.isEmpty) {
       return const Center(child: TextView("NO AUDIO!!"));
     }
-
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
       child: DraggableScrollbar.rrect(

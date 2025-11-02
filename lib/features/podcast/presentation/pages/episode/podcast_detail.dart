@@ -73,7 +73,7 @@ class _PodcastDetailState extends State<PodcastDetail>
               spacing: 5,
               children: [
                 Row(
-                  spacing: 10,
+                  spacing: 20,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Flexible(child: ScrollingText(podcast!.title ?? "")),
@@ -94,9 +94,7 @@ class _PodcastDetailState extends State<PodcastDetail>
                           subscribed = !subscribed;
                         });
                       },
-                      child: Text(
-                        subscribed ? "i want to escape" : "I'm into it",
-                      ),
+                      child: Text(subscribed ? "Unsubscribe" : "Subscribe"),
                     ),
                   ],
                 ),

@@ -12,6 +12,7 @@ import 'package:sound_center/core_view/home.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 late final AudioHandler audioHandler;
 
@@ -76,27 +77,7 @@ class MyApp extends StatelessWidget {
             return const Locale('en'); // fallback
           },
           title: 'Sound Center',
-          theme: ThemeData(
-            fontFamily: "Vazir",
-            brightness: Brightness.dark,
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                foregroundColor: WidgetStatePropertyAll(Colors.white),
-                backgroundColor: WidgetStatePropertyAll(Color(0xFFE7AC2E)),
-              ),
-            ),
-            colorScheme: ColorScheme(
-              brightness: Brightness.dark,
-              primary: Color(0xFFD0BCFF),
-              onPrimary: Color(0xFF27734F),
-              secondary: Color(0xFFCCC2DC),
-              onSecondary: Color(0xFF332D41),
-              error: Color(0xFFF2B8B5),
-              onError: Color(0xFF601410),
-              surface: Color(0xFF141218),
-              onSurface: Color(0xFFE6E0E9),
-            ),
-          ),
+          theme: DARK_THEME,
           home: const MyHomePage(title: 'Sound Center'),
         ),
       ),

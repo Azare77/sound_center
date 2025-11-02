@@ -63,11 +63,8 @@ class _PlayerHeaderState extends State<PlayerHeader> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.close_rounded),
-                    ),
                     IconButton(
                       onPressed: () async {
                         if (!Platform.isLinux) {
@@ -77,6 +74,16 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                         }
                       },
                       icon: Icon(Icons.share_rounded),
+                    ),
+                    const SizedBox(
+                      width: 40,
+                      height: 5,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                      ),
                     ),
                     IconButton(
                       onPressed: () => _delete(),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
@@ -18,6 +19,14 @@ late final AudioHandler audioHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: DARK_THEME.appBarTheme.backgroundColor,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: DARK_THEME.scaffoldBackgroundColor,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
   await Storage.instance.init();
   Future.microtask(_init);
   runApp(const MyApp());

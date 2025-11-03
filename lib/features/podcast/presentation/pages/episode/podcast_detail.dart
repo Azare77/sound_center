@@ -66,38 +66,21 @@ class _PodcastDetailState extends State<PodcastDetail>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: ScrollingText(podcast?.title ?? ""),
+        actions: [
+          if (podcast != null && subscribed)
+            TextButton(
+              onPressed: () => _subscribe(),
+              child: Text("Unsubscribe"),
+            ),
+        ],
+      ),
       body: podcast == null
           ? Loading()
           : Column(
               spacing: 5,
               children: [
-                Row(
-                  spacing: 20,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(child: ScrollingText(podcast!.title ?? "")),
-                    ElevatedButton(
-                      onPressed: () async {
-                        SubscriptionEntity sub = SubscriptionEntity.fromPodcast(
-                          widget.feedUrl,
-                          podcast!,
-                        );
-                        PodcastEvent event;
-                        if (subscribed) {
-                          event = UnsubscribeFromPodcast(sub.feedUrl);
-                        } else {
-                          event = SubscribeToPodcast(sub);
-                        }
-                        BlocProvider.of<PodcastBloc>(context).add(event);
-                        setState(() {
-                          subscribed = !subscribed;
-                        });
-                      },
-                      child: Text(subscribed ? "Unsubscribe" : "Subscribe"),
-                    ),
-                  ],
-                ),
                 TabBar(
                   controller: _controller,
                   tabs: const [
@@ -117,9 +100,31 @@ class _PodcastDetailState extends State<PodcastDetail>
                     ],
                   ),
                 ),
+                if (!subscribed)
+                  ElevatedButton(
+                    onPressed: () => _subscribe(),
+                    child: Text("Subscribe"),
+                  ),
                 CurrentMedia(),
               ],
             ),
     );
+  }
+
+  void _subscribe() async {
+    SubscriptionEntity sub = SubscriptionEntity.fromPodcast(
+      widget.feedUrl,
+      podcast!,
+    );
+    PodcastEvent event;
+    if (subscribed) {
+      event = UnsubscribeFromPodcast(sub.feedUrl);
+    } else {
+      event = SubscribeToPodcast(sub);
+    }
+    BlocProvider.of<PodcastBloc>(context).add(event);
+    setState(() {
+      subscribed = !subscribed;
+    });
   }
 }

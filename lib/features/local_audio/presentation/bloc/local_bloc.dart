@@ -57,10 +57,7 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
 
     on<TogglePlay>((event, emit) async {
       LocalAudioStatus status = state.status as LocalAudioStatus;
-      final newStatus = LocalAudioStatus(
-        audios: status.audios,
-        // currentAudio: status.currentAudio,
-      );
+      final newStatus = LocalAudioStatus(audios: status.audios);
       emit(state.copyWith(newStatus));
     });
 

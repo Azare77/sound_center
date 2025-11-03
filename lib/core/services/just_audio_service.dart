@@ -65,7 +65,7 @@ class JustAudioService {
   }) async {
     try {
       _source = source;
-
+      await release();
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
       } else {
@@ -143,7 +143,7 @@ class JustAudioService {
 
   bool hasSource(AudioSource source) {
     if (_source == null || _source != source) return false;
-    if (_source == AudioSource.online) return true;
+    return true;
     final duration = _player.duration;
     final processingState = _player.processingState;
     return duration != null || processingState != ProcessingState.idle;

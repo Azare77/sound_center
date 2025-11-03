@@ -20,27 +20,36 @@ class _CurrentMediaState extends State<CurrentMedia> {
   final LocalPlayerRepositoryImp localPlayer = LocalPlayerRepositoryImp();
 
   final PodcastPlayerRepositoryImp podcastPlayer = PodcastPlayerRepositoryImp();
+  Widget player = SizedBox.shrink();
+
+  @override
+  void initState() {
+    _update();
+    super.initState();
+  }
+
+  void _update() {
+    setState(() {
+      player = media() ?? player;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<LocalBloc, LocalState>(
-          listener: (_, _) => setState(() {}),
-        ),
-        BlocListener<PodcastBloc, PodcastState>(
-          listener: (_, _) => setState(() {}),
-        ),
+        BlocListener<LocalBloc, LocalState>(listener: (_, _) => _update()),
+        BlocListener<PodcastBloc, PodcastState>(listener: (_, _) => _update()),
       ],
-      child: media(),
+      child: player,
     );
   }
 
-  Widget media() {
+  Widget? media() {
     if (localPlayer.hasSource()) {
       AudioEntity audioEntity = localPlayer.getCurrentAudio!;
       return CurrentAudio(
-        key: Key(audioEntity.id.toString()),
+        key: ValueKey(audioEntity.id),
         audioEntity: audioEntity,
       );
     }
@@ -48,6 +57,6 @@ class _CurrentMediaState extends State<CurrentMedia> {
       Episode episode = podcastPlayer.getCurrentEpisode!;
       return CurrentPodcast(key: Key(episode.guid), episode: episode);
     }
-    return const SizedBox.shrink();
+    return null;
   }
 }

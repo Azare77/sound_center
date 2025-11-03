@@ -20,7 +20,7 @@ class AudioUtil {
       audioId,
       ArtworkType.AUDIO,
       quality: 100,
-      format: ArtworkFormat.JPEG,
+      format: ArtworkFormat.PNG,
       size: coverSize == CoverSize.banner ? 600 : 100,
     );
 

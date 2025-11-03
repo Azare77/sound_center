@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
@@ -89,7 +90,11 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   // }
 
   void setMediaItemFrom(AudioEntity audio) async {
-    final Uri? artUri = await saveCoverToFile(audio.cover, "cover_${audio.id}");
+    Uint8List? cover = await AudioUtil.getCover(
+      audio.id,
+      coverSize: CoverSize.banner,
+    );
+    final Uri? artUri = await saveCoverToFile(cover, "cover_${audio.id}");
 
     MediaItem item = MediaItem(
       id: audio.path,
@@ -134,6 +139,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       data ??= await getImageBytesFromAsset('assets/logo.png');
       if (data.isNotEmpty) {
         final file = File('${dir.path}/$fileName.png');
+        debugPrint("Cover length: ${data.length}");
         await file.writeAsBytes(data, flush: true);
         if (await file.exists()) {
           return Uri.file(file.path);

@@ -239,11 +239,12 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     final start = (index - 5).clamp(0, audios.length - 1);
     final end = (index + 5).clamp(0, audios.length - 1);
     for (int i = start; i <= end; i++) {
-      final audio = audios[i];
+      final AudioEntity audio = audios[i];
       audio.cover ??= await AudioUtil.getCover(
         audio.id,
         coverSize: CoverSize.banner,
       );
+      audios[i] = audio;
     }
   }
 }

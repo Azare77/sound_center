@@ -33,7 +33,10 @@ class EpisodeTemplate extends StatelessWidget {
             height: 50,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: NetworkCacheImage(url: episode.imageUrl),
+              child: NetworkCacheImage(
+                url: episode.imageUrl,
+                fit: episode.imageUrl != null ? BoxFit.cover : BoxFit.scaleDown,
+              ),
             ),
           ),
           Expanded(

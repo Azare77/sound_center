@@ -25,7 +25,9 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
       _updateStatus();
       return;
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -39,47 +41,39 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
     if (isLoading) {
       _updateStatus();
     }
-    final borderRadios = Radius.circular(20);
-    return Container(
-      height: 70,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        color: Color(0xFF25212D),
-        borderRadius: BorderRadius.only(
-          topLeft: borderRadios,
-          topRight: borderRadios,
-        ),
-      ),
-      padding: EdgeInsetsGeometry.only(bottom: 20),
-      child: ListTile(
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            requestFocus: true,
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-            ),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            builder: (_) => PlayPodcast(),
-          );
-        },
-        leading: SizedBox(
-          width: 50,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: NetworkCacheImage(url: widget.episode.imageUrl),
+    return ListTile(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          requestFocus: true,
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          builder: (_) => PlayPodcast(),
+        );
+      },
+      leading: SizedBox(
+        width: 50,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: NetworkCacheImage(
+            url: widget.episode.imageUrl,
+            fit: widget.episode.imageUrl != null
+                ? BoxFit.cover
+                : BoxFit.scaleDown,
           ),
         ),
-        title: Text(widget.episode.title, maxLines: 1),
-        subtitle: Text(widget.episode.author ?? "Who Knows", maxLines: 1),
-        trailing: PlayPauseButton(
-          isLoading: isLoading,
-          isPlaying: imp.isPlaying(),
-          onPressed: () async {
-            imp.togglePlayState();
-          },
-        ),
+      ),
+      title: Text(widget.episode.title, maxLines: 1),
+      subtitle: Text(widget.episode.author ?? "Who Knows", maxLines: 1),
+      trailing: PlayPauseButton(
+        isLoading: isLoading,
+        isPlaying: imp.isPlaying(),
+        onPressed: () async {
+          imp.togglePlayState();
+        },
       ),
     );
   }

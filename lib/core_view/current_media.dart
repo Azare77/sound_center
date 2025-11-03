@@ -8,6 +8,7 @@ import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudi
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/current_podcast.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 class CurrentMedia extends StatefulWidget {
   const CurrentMedia({super.key});
@@ -17,46 +18,70 @@ class CurrentMedia extends StatefulWidget {
 }
 
 class _CurrentMediaState extends State<CurrentMedia> {
-  final LocalPlayerRepositoryImp localPlayer = LocalPlayerRepositoryImp();
+  final LocalPlayerRepositoryImp _localPlayer = LocalPlayerRepositoryImp();
+  final PodcastPlayerRepositoryImp _podcastPlayer =
+      PodcastPlayerRepositoryImp();
 
-  final PodcastPlayerRepositoryImp podcastPlayer = PodcastPlayerRepositoryImp();
-  Widget player = SizedBox.shrink();
+  Widget? _currentPlayer;
 
   @override
   void initState() {
-    _update();
     super.initState();
+    _updatePlayer();
   }
 
-  void _update() {
-    setState(() {
-      player = media() ?? player;
-    });
+  void _updatePlayer() {
+    final newPlayer = _buildMediaPlayer();
+    if (newPlayer != null && !identical(_currentPlayer, newPlayer)) {
+      setState(() => _currentPlayer = newPlayer);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<LocalBloc, LocalState>(listener: (_, _) => _update()),
-        BlocListener<PodcastBloc, PodcastState>(listener: (_, _) => _update()),
+        BlocListener<LocalBloc, LocalState>(
+          listener: (_, _) => _updatePlayer(),
+        ),
+        BlocListener<PodcastBloc, PodcastState>(
+          listener: (_, _) => _updatePlayer(),
+        ),
       ],
-      child: player,
+      child: _currentPlayer ?? const SizedBox.shrink(),
     );
   }
 
-  Widget? media() {
-    if (localPlayer.hasSource()) {
-      AudioEntity audioEntity = localPlayer.getCurrentAudio!;
-      return CurrentAudio(
-        key: ValueKey(audioEntity.id),
-        audioEntity: audioEntity,
-      );
+  Widget? _buildMediaPlayer() {
+    final AudioEntity? audioEntity = _localPlayer.getCurrentAudio;
+    final Episode? episode = _podcastPlayer.getCurrentEpisode;
+
+    final Widget? playerContent = _selectPlayerContent(audioEntity, episode);
+    if (playerContent == null) return null;
+
+    return _buildPlayerContainer(playerContent);
+  }
+
+  Widget? _selectPlayerContent(AudioEntity? audio, Episode? episode) {
+    if (_localPlayer.hasSource() && audio != null) {
+      return CurrentAudio(key: ValueKey(audio.id), audioEntity: audio);
     }
-    if (podcastPlayer.hasSource()) {
-      Episode episode = podcastPlayer.getCurrentEpisode!;
+    if (_podcastPlayer.hasSource() && episode != null) {
       return CurrentPodcast(key: Key(episode.guid), episode: episode);
     }
     return null;
+  }
+
+  Widget _buildPlayerContainer(Widget child) {
+    return Container(
+      height: 70,
+      width: double.infinity,
+      padding: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: DarkTheme.currentMedia,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: child,
+    );
   }
 }

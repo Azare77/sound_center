@@ -65,7 +65,7 @@ class JustAudioService {
   }) async {
     try {
       _source = source;
-      await release();
+      // await release();
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
       } else {
@@ -95,7 +95,6 @@ class JustAudioService {
 
   Future<void> release() async {
     await _player.stop();
-    await _player.clearAudioSources();
   }
 
   Future<void> seek(Duration position) async => await _player.seek(position);

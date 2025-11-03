@@ -29,7 +29,7 @@ class SubscribeTemplate extends StatelessWidget {
                   child: NetworkCacheImage(
                     url: podcast.artworkUrl,
                     size: size,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

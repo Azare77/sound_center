@@ -39,61 +39,48 @@ class _CurrentAudioState extends State<CurrentAudio> {
   @override
   Widget build(BuildContext context) {
     if (audioId != widget.audioEntity.id) getCover();
-    final borderRadios = Radius.circular(20);
-    return Container(
-      height: 70,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        color: Color(0xFF25212D),
-        borderRadius: BorderRadius.only(
-          topLeft: borderRadios,
-          topRight: borderRadios,
-        ),
-      ),
-      padding: EdgeInsetsGeometry.only(bottom: 20),
-      child: ListTile(
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            requestFocus: true,
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-            ),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            builder: (_) => PlayAudio(),
-          );
-        },
-        leading: SizedBox(
-          width: 50,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image(
-              image: cover != null
-                  ? MemoryImage(cover!)
-                  : const AssetImage('assets/logo.png') as ImageProvider,
+    return ListTile(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          requestFocus: true,
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          builder: (_) => PlayAudio(),
+        );
+      },
+      leading: SizedBox(
+        width: 50,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image(
+            image: cover != null
+                ? MemoryImage(cover!)
+                : const AssetImage('assets/logo.png') as ImageProvider,
+            width: size,
+            height: size,
+            fit: cover != null ? BoxFit.cover : BoxFit.scaleDown,
+            filterQuality: FilterQuality.high,
+            errorBuilder: (ctx, error, stack) => Image.asset(
+              'assets/logo.png',
               width: size,
               height: size,
-              fit: BoxFit.contain,
+              fit: BoxFit.scaleDown,
               filterQuality: FilterQuality.high,
-              errorBuilder: (ctx, error, stack) => Image.asset(
-                'assets/logo.png',
-                width: size,
-                height: size,
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-              ),
             ),
           ),
         ),
-        title: Text(widget.audioEntity.title, maxLines: 1),
-        subtitle: Text(widget.audioEntity.artist, maxLines: 1),
-        trailing: PlayPauseButton(
-          isPlaying: imp.isPlaying(),
-          onPressed: () async {
-            await imp.togglePlayState();
-          },
-        ),
+      ),
+      title: Text(widget.audioEntity.title, maxLines: 1),
+      subtitle: Text(widget.audioEntity.artist, maxLines: 1),
+      trailing: PlayPauseButton(
+        isPlaying: imp.isPlaying(),
+        onPressed: () async {
+          await imp.togglePlayState();
+        },
       ),
     );
   }

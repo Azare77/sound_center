@@ -21,9 +21,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      statusBarColor: DARK_THEME.appBarTheme.backgroundColor,
+      statusBarColor: DarkTheme.themeData.appBarTheme.backgroundColor,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: DARK_THEME.scaffoldBackgroundColor,
+      systemNavigationBarColor: DarkTheme.themeData.scaffoldBackgroundColor,
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
             return const Locale('en'); // fallback
           },
           title: 'Sound Center',
-          theme: DARK_THEME,
+          theme: DarkTheme.themeData,
           home: const MyHomePage(title: 'Sound Center'),
         ),
       ),

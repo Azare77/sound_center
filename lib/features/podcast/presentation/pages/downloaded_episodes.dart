@@ -30,7 +30,7 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Downloaded Episodes")),
       body: Column(
         children: [
           Expanded(

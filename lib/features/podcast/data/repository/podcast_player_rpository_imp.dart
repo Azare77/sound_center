@@ -101,13 +101,12 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     this.index = index;
     _currentEpisode = _episodes[index];
     final String? cacheFile = await _chach(_currentEpisode!.title);
-    _playerService.setSource(
+    bloc.add(AutoPlayPodcast(_currentEpisode!));
+    await _playerService.setSource(
       _episodes[index].contentUrl!,
       AudioSource.online,
       cachedFilePath: cacheFile,
     );
-    await Future.delayed(Duration(microseconds: 50));
-    bloc.add(AutoPlayPodcast(_currentEpisode!));
     await _playerService.play();
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
       _episodes[index],

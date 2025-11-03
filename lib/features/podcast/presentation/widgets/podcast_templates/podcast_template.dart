@@ -33,7 +33,10 @@ class PodcastTemplate extends StatelessWidget {
         width: size,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: NetworkCacheImage(url: artwork),
+          child: NetworkCacheImage(
+            url: artwork,
+            fit: artwork != null ? BoxFit.cover : BoxFit.scaleDown,
+          ),
         ),
       ),
       title: Text(podcast.trackName ?? '', maxLines: 1),

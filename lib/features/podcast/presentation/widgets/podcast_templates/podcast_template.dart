@@ -31,7 +31,10 @@ class PodcastTemplate extends StatelessWidget {
     return ListTile(
       leading: SizedBox(
         width: size,
-        child: ClipOval(child: NetworkCacheImage(url: artwork)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: NetworkCacheImage(url: artwork),
+        ),
       ),
       title: Text(podcast.trackName ?? '', maxLines: 1),
       subtitle: Text(podcast.artistName ?? '', maxLines: 1),

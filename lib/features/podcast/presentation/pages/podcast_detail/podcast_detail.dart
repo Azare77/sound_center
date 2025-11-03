@@ -12,9 +12,15 @@ import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastDetail extends StatefulWidget {
-  const PodcastDetail({super.key, required this.feedUrl, this.defaultImg});
+  const PodcastDetail({
+    super.key,
+    required this.feedUrl,
+    this.needToUpdate = false,
+    this.defaultImg,
+  });
 
   final String feedUrl;
+  final bool needToUpdate;
   final String? defaultImg;
 
   @override
@@ -70,18 +76,33 @@ class _PodcastDetailState extends State<PodcastDetail>
       appBar: AppBar(
         title: ScrollingText(podcast?.title ?? ""),
         actions: [
-          if (podcast != null && subscribed)
-            TextButton(
+          if (podcast != null)
+            IconButton(
+              tooltip: subscribed ? "Unsubscribe" : "Subscribe",
               onPressed: () => _subscribe(),
-              child: Text("Unsubscribe"),
+              icon: Icon(
+                subscribed
+                    ? Icons.bookmark_remove_rounded
+                    : Icons.bookmark_add_outlined,
+              ),
             ),
+          // TextButton(onPressed: () => _subscribe(), child: Text("Unsubscribe")),
         ],
       ),
       body: podcast == null
           ? Loading()
           : Column(
               spacing: 5,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // if (!subscribed)
+                //   Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     child: ElevatedButton(
+                //       onPressed: () => _subscribe(),
+                //       child: Text("Subscribe"),
+                //     ),
+                //   ),
                 TabBar(
                   controller: _controller,
                   tabs: const [
@@ -101,11 +122,6 @@ class _PodcastDetailState extends State<PodcastDetail>
                     ],
                   ),
                 ),
-                if (!subscribed)
-                  ElevatedButton(
-                    onPressed: () => _subscribe(),
-                    child: Text("Subscribe"),
-                  ),
                 CurrentMedia(),
               ],
             ),
@@ -134,7 +150,7 @@ class _PodcastDetailState extends State<PodcastDetail>
       widget.feedUrl,
       podcast!,
     );
-    if (subscribed) {
+    if (subscribed && widget.needToUpdate) {
       PodcastEvent event = UpdateSubscribedPodcast(sub);
       BlocProvider.of<PodcastBloc>(context).add(event);
     }

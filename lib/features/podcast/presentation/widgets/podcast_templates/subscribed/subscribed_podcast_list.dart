@@ -28,7 +28,10 @@ class SubscribedPodcastList extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => PodcastDetail(feedUrl: podcast.feedUrl),
+                builder: (_) => PodcastDetail(
+                  feedUrl: podcast.feedUrl,
+                  needToUpdate: podcast.haveNewEpisode,
+                ),
               ),
             );
           },

@@ -31,7 +31,10 @@ class EpisodeTemplate extends StatelessWidget {
           SizedBox(
             width: 50,
             height: 50,
-            child: ClipOval(child: NetworkCacheImage(url: episode.imageUrl)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: NetworkCacheImage(url: episode.imageUrl),
+            ),
           ),
           Expanded(
             child: Column(

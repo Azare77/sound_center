@@ -22,20 +22,22 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     final PodcastPlayerRepositoryImp player = PodcastPlayerRepositoryImp();
     player.setBloc(this);
-    Future<void> getSubscribedPodcasts(Emitter<PodcastState> emit) async {
-      List<SubscriptionEntity> subs = await getPodcastUseCase.call();
-      emit(state.copyWith(SubscribedPodcasts(subs)));
+    Future<void> getSubscribedPodcasts() async {
+      // List<SubscriptionEntity> subs = await getPodcastUseCase.call();
+      // emit(state.copyWith(SubscribedPodcasts(subs)));
+      add(GetSubscribedPodcasts());
     }
 
     on<GetSubscribedPodcasts>((event, emit) async {
-      await getSubscribedPodcasts(emit);
-      final subs = await getPodcastUseCase.haveUpdate();
+      List<SubscriptionEntity> subs = await getPodcastUseCase.call();
+      emit(state.copyWith(SubscribedPodcasts(subs)));
+      subs = await getPodcastUseCase.haveUpdate();
       emit(state.copyWith(SubscribedPodcasts(subs)));
     });
     on<SubscribeToPodcast>((event, emit) async {
       bool success = await getPodcastUseCase.subscribe(event.podcast);
       if (success) {
-        await getSubscribedPodcasts(emit);
+        await getSubscribedPodcasts();
       }
     });
     on<UpdateSubscribedPodcast>((event, emit) async {
@@ -43,13 +45,13 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
         event.podcast,
       );
       if (success) {
-        await getSubscribedPodcasts(emit);
+        await getSubscribedPodcasts();
       }
     });
     on<UnsubscribeFromPodcast>((event, emit) async {
       bool success = await getPodcastUseCase.unsubscribe(event.feedUrl);
       if (success) {
-        await getSubscribedPodcasts(emit);
+        await getSubscribedPodcasts();
       }
     });
 
@@ -76,7 +78,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     on<SearchPodcast>((event, emit) async {
       if (event.query.isEmpty) {
-        await getSubscribedPodcasts(emit);
+        await getSubscribedPodcasts();
       } else {
         emit(state.copyWith(LoadingPodcasts()));
         PodcastEntity podcasts = await getPodcastUseCase.find(event.query);

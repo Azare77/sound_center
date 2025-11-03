@@ -144,9 +144,9 @@ class JustAudioService {
   bool hasSource(AudioSource source) {
     if (_source == null || _source != source) return false;
     return true;
-    final duration = _player.duration;
-    final processingState = _player.processingState;
-    return duration != null || processingState != ProcessingState.idle;
+    // final duration = _player.duration;
+    // final processingState = _player.processingState;
+    // return duration != null || processingState != ProcessingState.idle;
   }
 
   // ========= error handling & advancing logic =========

@@ -21,7 +21,10 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
   void _updateStatus() async {
     await Future.delayed(Duration(milliseconds: 200));
     isLoading = imp.isLoading();
-    if (!isLoading) _updateStatus();
+    if (isLoading) {
+      _updateStatus();
+      return;
+    }
     setState(() {});
   }
 
@@ -63,7 +66,8 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
         },
         leading: SizedBox(
           width: 50,
-          child: ClipOval(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: NetworkCacheImage(url: widget.episode.imageUrl),
           ),
         ),

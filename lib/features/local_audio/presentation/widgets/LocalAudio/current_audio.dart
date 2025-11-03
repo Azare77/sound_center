@@ -20,6 +20,7 @@ class _CurrentAudioState extends State<CurrentAudio> {
   Uint8List? cover;
   late int audioId;
   final double size = 50;
+  final LocalPlayerRepositoryImp imp = LocalPlayerRepositoryImp();
 
   @override
   void initState() {
@@ -65,7 +66,8 @@ class _CurrentAudioState extends State<CurrentAudio> {
         },
         leading: SizedBox(
           width: 50,
-          child: ClipOval(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: Image(
               image: cover != null
                   ? MemoryImage(cover!)
@@ -87,9 +89,9 @@ class _CurrentAudioState extends State<CurrentAudio> {
         title: Text(widget.audioEntity.title, maxLines: 1),
         subtitle: Text(widget.audioEntity.artist, maxLines: 1),
         trailing: PlayPauseButton(
-          isPlaying: LocalPlayerRepositoryImp().isPlaying(),
+          isPlaying: imp.isPlaying(),
           onPressed: () async {
-            await LocalPlayerRepositoryImp().togglePlayState();
+            await imp.togglePlayState();
           },
         ),
       ),

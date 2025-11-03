@@ -13,9 +13,9 @@ class SubscribedPodcasts extends PodcastStatus {
 }
 
 class PodcastResultStatus extends PodcastStatus {
-  PodcastEntity podcasts;
+  PodcastEntity searchResult;
 
-  PodcastResultStatus({required this.podcasts});
+  PodcastResultStatus({required this.searchResult});
 }
 
 class DownloadedEpisodesStatus extends PodcastStatus {

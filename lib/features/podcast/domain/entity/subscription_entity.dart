@@ -8,8 +8,10 @@ class SubscriptionEntity {
   final String? author;
   final String? artworkUrl;
   final String feedUrl;
+  final int totalEpisodes;
   final DateTime subscribedAt;
   final DateTime lastListenAt;
+  bool haveNewEpisode;
 
   SubscriptionEntity({
     this.podcastId,
@@ -17,6 +19,8 @@ class SubscriptionEntity {
     required this.subscribedAt,
     required this.lastListenAt,
     required this.title,
+    required this.totalEpisodes,
+    this.haveNewEpisode = false,
     this.author,
     this.artworkUrl,
   });
@@ -28,6 +32,7 @@ class SubscriptionEntity {
       author: subscription.author,
       artworkUrl: subscription.artworkUrl,
       feedUrl: subscription.feedUrl,
+      totalEpisodes: subscription.totalEpisodes,
       subscribedAt: subscription.subscribedAt,
       lastListenAt: subscription.lastListenAt,
     );
@@ -45,6 +50,7 @@ class SubscriptionEntity {
       feedUrl: feedUrl,
       subscribedAt: DateTime.now(),
       lastListenAt: DateTime.now(),
+      totalEpisodes: feedInfo.episodes.length,
     );
   }
 
@@ -57,6 +63,7 @@ class SubscriptionEntity {
       feedUrl: Value(feedUrl),
       subscribedAt: Value(subscribedAt),
       lastListenAt: Value(lastListenAt),
+      totalEpisodes: Value(totalEpisodes),
     );
   }
 }

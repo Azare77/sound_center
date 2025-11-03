@@ -20,12 +20,17 @@ class SubscribeTemplate extends StatelessWidget {
           spacing: 10,
           children: [
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: NetworkCacheImage(
-                  url: podcast.artworkUrl,
-                  size: size,
-                  fit: BoxFit.contain,
+              child: Badge(
+                label: SizedBox.shrink(),
+                backgroundColor: Colors.red,
+                isLabelVisible: podcast.haveNewEpisode,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: NetworkCacheImage(
+                    url: podcast.artworkUrl,
+                    size: size,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),

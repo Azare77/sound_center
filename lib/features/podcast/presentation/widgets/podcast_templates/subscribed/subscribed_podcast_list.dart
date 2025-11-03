@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
-import 'package:sound_center/features/podcast/presentation/pages/episode/podcast_detail.dart';
+import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_detail.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/subscribed/subscribe_template.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 

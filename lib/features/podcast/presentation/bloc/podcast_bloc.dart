@@ -22,20 +22,34 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     final PodcastPlayerRepositoryImp player = PodcastPlayerRepositoryImp();
     player.setBloc(this);
-    on<GetSubscribedPodcasts>((event, emit) async {
+    Future<void> getSubscribedPodcasts(Emitter<PodcastState> emit) async {
       List<SubscriptionEntity> subs = await getPodcastUseCase.call();
+      emit(state.copyWith(SubscribedPodcasts(subs)));
+    }
+
+    on<GetSubscribedPodcasts>((event, emit) async {
+      await getSubscribedPodcasts(emit);
+      final subs = await getPodcastUseCase.haveUpdate();
       emit(state.copyWith(SubscribedPodcasts(subs)));
     });
     on<SubscribeToPodcast>((event, emit) async {
       bool success = await getPodcastUseCase.subscribe(event.podcast);
       if (success) {
-        add(GetSubscribedPodcasts());
+        await getSubscribedPodcasts(emit);
+      }
+    });
+    on<UpdateSubscribedPodcast>((event, emit) async {
+      bool success = await getPodcastUseCase.updateSubscribedPodcast(
+        event.podcast,
+      );
+      if (success) {
+        await getSubscribedPodcasts(emit);
       }
     });
     on<UnsubscribeFromPodcast>((event, emit) async {
       bool success = await getPodcastUseCase.unsubscribe(event.feedUrl);
       if (success) {
-        add(GetSubscribedPodcasts());
+        await getSubscribedPodcasts(emit);
       }
     });
 
@@ -62,11 +76,13 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     on<SearchPodcast>((event, emit) async {
       if (event.query.isEmpty) {
-        add(GetSubscribedPodcasts());
+        await getSubscribedPodcasts(emit);
       } else {
         emit(state.copyWith(LoadingPodcasts()));
         PodcastEntity podcasts = await getPodcastUseCase.find(event.query);
-        PodcastResultStatus status = PodcastResultStatus(podcasts: podcasts);
+        PodcastResultStatus status = PodcastResultStatus(
+          searchResult: podcasts,
+        );
         emit(state.copyWith(status));
       }
     });

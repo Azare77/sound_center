@@ -42,7 +42,7 @@ class _PodcastState extends State<Podcast> {
               if (state.status is PodcastResultStatus) {
                 PodcastResultStatus status =
                     state.status as PodcastResultStatus;
-                return PodcastListTemplate(status.podcasts.podcasts);
+                return PodcastListTemplate(status.searchResult.podcasts);
               }
 
               if (state.status is LoadingPodcasts) {

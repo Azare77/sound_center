@@ -6,8 +6,8 @@ import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_repository_imp.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
-import 'package:sound_center/features/podcast/presentation/pages/episode/episodes.dart';
-import 'package:sound_center/features/podcast/presentation/pages/episode/podcast_info.dart';
+import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/episodes.dart';
+import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_info.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
@@ -28,19 +28,20 @@ class _PodcastDetailState extends State<PodcastDetail>
   bool subscribed = false;
   Podcast? podcast;
 
-  void getEpisodes({bool retry = true}) async {
+  void _init({bool retry = true}) async {
     try {
       subscribed = await db.isSubscribed(widget.feedUrl);
       podcast = await Feed.loadFeed(url: widget.feedUrl);
+      if (subscribed) {
+        _update();
+      }
       if (podcast?.image == null) {}
-    } on PodcastFailedException catch (_) {
-      podcast = null;
     } catch (_) {
       podcast = null;
     } finally {
       if (podcast == null) {
         if (retry) {
-          getEpisodes(retry: false);
+          _init(retry: false);
         } else {
           // ignore: use_build_context_synchronously
           Navigator.pop(context);
@@ -54,7 +55,7 @@ class _PodcastDetailState extends State<PodcastDetail>
   void initState() {
     super.initState();
     _controller = TabController(length: 2, vsync: this);
-    getEpisodes();
+    _init();
   }
 
   @override
@@ -126,5 +127,16 @@ class _PodcastDetailState extends State<PodcastDetail>
     setState(() {
       subscribed = !subscribed;
     });
+  }
+
+  void _update() async {
+    SubscriptionEntity sub = SubscriptionEntity.fromPodcast(
+      widget.feedUrl,
+      podcast!,
+    );
+    if (subscribed) {
+      PodcastEvent event = UpdateSubscribedPodcast(sub);
+      BlocProvider.of<PodcastBloc>(context).add(event);
+    }
   }
 }

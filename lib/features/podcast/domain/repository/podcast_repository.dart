@@ -6,7 +6,11 @@ import 'package:sound_center/features/podcast/domain/entity/subscription_entity.
 abstract class PodcastRepository {
   Future<List<SubscriptionEntity>> getHome();
 
+  Future<List<SubscriptionEntity>> haveUpdate();
+
   Future<bool> subscribe(SubscriptionEntity podcast);
+
+  Future<bool> updateSubscribedPodcast(SubscriptionEntity podcast);
 
   Future<bool> unsubscribe(String feedUrl);
 

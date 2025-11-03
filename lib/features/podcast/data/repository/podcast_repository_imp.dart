@@ -18,10 +18,39 @@ class PodcastRepositoryImp implements PodcastRepository {
   }
 
   @override
+  Future<List<SubscriptionEntity>> haveUpdate() async {
+    final subs = await database.select(database.subscriptionTable).get();
+    final models = subs.map((s) => SubscriptionEntity.fromDrift(s)).toList();
+
+    final futures = models.map((item) async {
+      try {
+        final podcast = await loadPodcastInfo(item.feedUrl);
+        item.haveNewEpisode = podcast.episodes.length != item.totalEpisodes;
+      } catch (e) {
+        item.haveNewEpisode = false;
+      }
+    });
+    await Future.wait(futures);
+    return models;
+  }
+
+  @override
   Future<bool> subscribe(SubscriptionEntity podcast) async {
     bool exists = await isSubscribed(podcast.feedUrl);
     if (exists) return false;
     await database.into(database.subscriptionTable).insert(podcast.toDrift());
+    return true;
+  }
+
+  @override
+  Future<bool> updateSubscribedPodcast(SubscriptionEntity podcast) async {
+    final exists = await isSubscribed(podcast.feedUrl);
+    if (!exists) {
+      return false;
+    }
+    await (database.update(database.subscriptionTable)
+          ..where((tbl) => tbl.feedUrl.equals(podcast.feedUrl)))
+        .write(podcast.toDrift());
     return true;
   }
 

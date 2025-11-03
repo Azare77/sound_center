@@ -16,6 +16,12 @@ class SubscribeToPodcast extends PodcastEvent {
   SubscribeToPodcast(this.podcast);
 }
 
+class UpdateSubscribedPodcast extends PodcastEvent {
+  final SubscriptionEntity podcast;
+
+  UpdateSubscribedPodcast(this.podcast);
+}
+
 class UnsubscribeFromPodcast extends PodcastEvent {
   final String feedUrl;
 

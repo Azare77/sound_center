@@ -107,8 +107,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
     mediaItem.add(item);
   }
 
-  void setMediaItemFromEpisode(Episode episode) async {
-    final Uri? artUri = Uri.tryParse(episode.imageUrl ?? '');
+  void setMediaItemFromEpisode(Episode episode, Uri? cached) async {
+    final Uri? artUri = cached ?? Uri.tryParse(episode.imageUrl ?? '');
     MediaItem item = MediaItem(
       id: episode.contentUrl!,
       title: episode.title,

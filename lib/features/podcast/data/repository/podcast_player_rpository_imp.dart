@@ -6,6 +6,7 @@ import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 
@@ -101,6 +102,14 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     this.index = index;
     _currentEpisode = _episodes[index];
     final String? cacheFile = await _chach(_currentEpisode!.title);
+    File? file;
+    try {
+      file = await NetworkCacheImage.customCacheManager.getSingleFile("");
+    } catch (_) {}
+    (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
+      _episodes[index],
+      file?.uri,
+    );
     bloc.add(AutoPlayPodcast(_currentEpisode!));
     await _playerService.setSource(
       _episodes[index].contentUrl!,
@@ -109,9 +118,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     );
     _playerService.play();
     bloc.add(AutoPlayPodcast(_currentEpisode!));
-    (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
-      _episodes[index],
-    );
   }
 
   Future<String?> _chach(String filename) async {

@@ -28,20 +28,27 @@ class DarkTheme {
   static ThemeData themeData = ThemeData(
     fontFamily: "Vazir",
     brightness: Brightness.dark,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       elevation: 2,
       centerTitle: true,
       shadowColor: Color(0xFF601410),
       backgroundColor: Color(0xff202138),
     ),
 
-    elevatedButtonTheme: ElevatedButtonThemeData(
+    elevatedButtonTheme: const ElevatedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: WidgetStatePropertyAll(Colors.white),
         backgroundColor: WidgetStatePropertyAll(Color(0xFFE7AC2E)),
       ),
     ),
-    colorScheme: ColorScheme(
+    sliderTheme: const SliderThemeData(
+      trackHeight: 1,
+      activeTickMarkColor: Color(0xFFFFFFFF),
+      activeTrackColor: Color(0xFFFFFFFF),
+      thumbColor: Color(0xFFFFFFFF),
+    ),
+    scaffoldBackgroundColor: const Color(0xFF11121f),
+    colorScheme: const ColorScheme(
       brightness: Brightness.dark,
       primary: Color(0xFFD0BCFF),
       onPrimary: Color(0xff202138),

@@ -30,6 +30,7 @@ class SubscribedPodcastList extends StatelessWidget {
               MaterialPageRoute(
                 builder: (_) => PodcastDetail(
                   feedUrl: podcast.feedUrl,
+                  defaultImg: podcast.artworkUrl,
                   needToUpdate: podcast.haveNewEpisode,
                 ),
               ),

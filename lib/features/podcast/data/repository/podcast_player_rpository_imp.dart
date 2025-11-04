@@ -107,7 +107,8 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       AudioSource.online,
       cachedFilePath: cacheFile,
     );
-    await _playerService.play();
+    _playerService.play();
+    bloc.add(AutoPlayPodcast(_currentEpisode!));
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
       _episodes[index],
     );

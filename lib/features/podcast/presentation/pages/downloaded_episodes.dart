@@ -35,6 +35,9 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
         children: [
           Expanded(
             child: BlocBuilder<PodcastBloc, PodcastState>(
+              buildWhen: (previous, current) {
+                return current.status is DownloadedEpisodesStatus;
+              },
               builder: (BuildContext context, PodcastState state) {
                 if (state.status is DownloadedEpisodesStatus) {
                   DownloadedEpisodesStatus status =

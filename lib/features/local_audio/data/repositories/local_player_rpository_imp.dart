@@ -108,11 +108,15 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
+    _currentAudio = audios[index];
     if (direct && shuffleMode == ShuffleMode.shuffle) {
       _shuffleAudios();
     }
     if (!_initialized && audios[index].cover == null) {
-      await _loadChunk(index);
+      audios[index].cover = await AudioUtil.getCover(
+        _currentAudio!.id,
+        coverSize: CoverSize.banner,
+      );
     }
     await _playerService.setSource(audios[index].path, AudioSource.local);
     _playerService.play();
@@ -120,7 +124,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
       audios[index],
     );
-    _currentAudio = audios[index];
+    _loadChunk(index);
   }
 
   @override

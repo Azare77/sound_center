@@ -62,7 +62,7 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
                 MaterialPageRoute(builder: (_) => DownloadedEpisodes()),
               );
             },
-            icon: Icon(Icons.arrow_downward_rounded),
+            icon: Icon(Icons.download_rounded),
           ),
         ],
       ),

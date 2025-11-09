@@ -7,11 +7,15 @@ class MediaControllerButton extends StatelessWidget {
     required this.svg,
     this.onPressed,
     this.color = Colors.white,
+    this.width = 60,
+    this.height = 60,
   });
 
   final String svg;
   final VoidCallback? onPressed;
   final Color color;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +23,13 @@ class MediaControllerButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(100),
       onTap: onPressed,
       child: Container(
-        width: 60,
-        height: 60,
+        width: width,
+        height: height,
         alignment: Alignment.center,
         child: SvgPicture.asset(
           svg,
-          width: 30,
-          height: 30,
+          width: width / 2,
+          height: height / 2,
           colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
         ),
       ),

@@ -8,6 +8,7 @@ import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/player/header_image.dart';
 import 'package:sound_center/shared/widgets/confirm_dialog.dart';
+import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PlayerHeader extends StatefulWidget {
@@ -65,10 +66,16 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    IconButton(
+                    MediaControllerButton(
+                      width: 50,
+                      height: 50,
                       onPressed: () => _delete(),
-                      icon: Icon(Icons.delete_rounded),
+                      svg: "assets/icons/trash-can.svg",
                     ),
+                    // IconButton(
+                    //   onPressed: () => _delete(),
+                    //   icon: Icon(Icons.delete_rounded),
+                    // ),
                     const SizedBox(
                       width: 40,
                       height: 5,
@@ -79,7 +86,9 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                         ),
                       ),
                     ),
-                    IconButton(
+                    MediaControllerButton(
+                      width: 50,
+                      height: 50,
                       onPressed: () async {
                         if (!Platform.isLinux) {
                           await SharePlus.instance.share(
@@ -87,8 +96,18 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                           );
                         }
                       },
-                      icon: Icon(Icons.share_rounded),
+                      svg: "assets/icons/share.svg",
                     ),
+                    // IconButton(
+                    //   onPressed: () async {
+                    //     if (!Platform.isLinux) {
+                    //       await SharePlus.instance.share(
+                    //         ShareParams(files: [XFile(song.path)]),
+                    //       );
+                    //     }
+                    //   },
+                    //   icon: Icon(Icons.share_rounded),
+                    // ),
                   ],
                 ),
                 SizedBox(

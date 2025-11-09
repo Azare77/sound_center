@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
@@ -30,7 +29,6 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   List<int> _shuffle = [];
   int index = 0;
   int shuffleIndex = 0;
-  bool _initialized = false;
   RepeatMode repeatMode = RepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   late final LocalBloc bloc;
@@ -57,13 +55,12 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  void setPlayList(dynamic episodes) {
-    assert(episodes is List<AudioEntity>);
+  void setPlayList(dynamic tracks) {
+    assert(tracks is List<AudioEntity>);
     audios.clear();
-    for (AudioEntity audioEntity in episodes) {
-      audios.add(audioEntity);
+    for (AudioEntity track in tracks) {
+      audios.add(track);
     }
-    _preloadCoversInBackground();
   }
 
   List<AudioEntity> getPlayList() {
@@ -112,7 +109,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     if (direct && shuffleMode == ShuffleMode.shuffle) {
       _shuffleAudios();
     }
-    if (!_initialized && audios[index].cover == null) {
+    if (audios[index].cover == null) {
       audios[index].cover = await AudioUtil.getCover(
         _currentAudio!.id,
         coverSize: CoverSize.banner,
@@ -219,24 +216,6 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       index = (index + (forward ? 1 : -1) + audios.length) % audios.length;
       return index;
     }
-  }
-
-  Future<void> _preloadCoversInBackground() async {
-    for (final audio in audios) {
-      try {
-        final cover = await AudioUtil.getCover(
-          audio.id,
-          coverSize: CoverSize.banner,
-        );
-        if (cover != null) {
-          audio.cover = cover;
-        }
-        await Future.delayed(const Duration(milliseconds: 50));
-      } catch (e) {
-        debugPrint("Error loading cover for ${audio.id}: $e");
-      }
-    }
-    _initialized = true;
   }
 
   Future<void> _loadChunk(int index) async {

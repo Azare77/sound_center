@@ -22,8 +22,7 @@ class EpisodeTemplate extends StatelessWidget {
         ? toJalali(episode.publicationDate!)
         : '';
 
-    return Container(
-      height: 70,
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         spacing: 10,

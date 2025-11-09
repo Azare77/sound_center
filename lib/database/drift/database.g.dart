@@ -449,6 +449,18 @@ class $SubscriptionTableTable extends SubscriptionTable
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _updateTimeMeta = const VerificationMeta(
+    'updateTime',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updateTime = GeneratedColumn<DateTime>(
+    'update_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
   static const VerificationMeta _lastListenAtMeta = const VerificationMeta(
     'lastListenAt',
   );
@@ -472,6 +484,7 @@ class $SubscriptionTableTable extends SubscriptionTable
     feedUrl,
     totalEpisodes,
     subscribedAt,
+    updateTime,
     lastListenAt,
   ];
   @override
@@ -547,6 +560,12 @@ class $SubscriptionTableTable extends SubscriptionTable
         ),
       );
     }
+    if (data.containsKey('update_time')) {
+      context.handle(
+        _updateTimeMeta,
+        updateTime.isAcceptableOrUnknown(data['update_time']!, _updateTimeMeta),
+      );
+    }
     if (data.containsKey('last_listen_at')) {
       context.handle(
         _lastListenAtMeta,
@@ -601,6 +620,10 @@ class $SubscriptionTableTable extends SubscriptionTable
         DriftSqlType.dateTime,
         data['${effectivePrefix}subscribed_at'],
       )!,
+      updateTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}update_time'],
+      )!,
       lastListenAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_listen_at'],
@@ -625,6 +648,7 @@ class SubscriptionTableData extends DataClass
   final String feedUrl;
   final int totalEpisodes;
   final DateTime subscribedAt;
+  final DateTime updateTime;
   final DateTime lastListenAt;
   const SubscriptionTableData({
     required this.id,
@@ -636,6 +660,7 @@ class SubscriptionTableData extends DataClass
     required this.feedUrl,
     required this.totalEpisodes,
     required this.subscribedAt,
+    required this.updateTime,
     required this.lastListenAt,
   });
   @override
@@ -656,6 +681,7 @@ class SubscriptionTableData extends DataClass
     map['feed_url'] = Variable<String>(feedUrl);
     map['total_episodes'] = Variable<int>(totalEpisodes);
     map['subscribed_at'] = Variable<DateTime>(subscribedAt);
+    map['update_time'] = Variable<DateTime>(updateTime);
     map['last_listen_at'] = Variable<DateTime>(lastListenAt);
     return map;
   }
@@ -677,6 +703,7 @@ class SubscriptionTableData extends DataClass
       feedUrl: Value(feedUrl),
       totalEpisodes: Value(totalEpisodes),
       subscribedAt: Value(subscribedAt),
+      updateTime: Value(updateTime),
       lastListenAt: Value(lastListenAt),
     );
   }
@@ -696,6 +723,7 @@ class SubscriptionTableData extends DataClass
       feedUrl: serializer.fromJson<String>(json['feedUrl']),
       totalEpisodes: serializer.fromJson<int>(json['totalEpisodes']),
       subscribedAt: serializer.fromJson<DateTime>(json['subscribedAt']),
+      updateTime: serializer.fromJson<DateTime>(json['updateTime']),
       lastListenAt: serializer.fromJson<DateTime>(json['lastListenAt']),
     );
   }
@@ -712,6 +740,7 @@ class SubscriptionTableData extends DataClass
       'feedUrl': serializer.toJson<String>(feedUrl),
       'totalEpisodes': serializer.toJson<int>(totalEpisodes),
       'subscribedAt': serializer.toJson<DateTime>(subscribedAt),
+      'updateTime': serializer.toJson<DateTime>(updateTime),
       'lastListenAt': serializer.toJson<DateTime>(lastListenAt),
     };
   }
@@ -726,6 +755,7 @@ class SubscriptionTableData extends DataClass
     String? feedUrl,
     int? totalEpisodes,
     DateTime? subscribedAt,
+    DateTime? updateTime,
     DateTime? lastListenAt,
   }) => SubscriptionTableData(
     id: id ?? this.id,
@@ -737,6 +767,7 @@ class SubscriptionTableData extends DataClass
     feedUrl: feedUrl ?? this.feedUrl,
     totalEpisodes: totalEpisodes ?? this.totalEpisodes,
     subscribedAt: subscribedAt ?? this.subscribedAt,
+    updateTime: updateTime ?? this.updateTime,
     lastListenAt: lastListenAt ?? this.lastListenAt,
   );
   SubscriptionTableData copyWithCompanion(SubscriptionTableCompanion data) {
@@ -756,6 +787,9 @@ class SubscriptionTableData extends DataClass
       subscribedAt: data.subscribedAt.present
           ? data.subscribedAt.value
           : this.subscribedAt,
+      updateTime: data.updateTime.present
+          ? data.updateTime.value
+          : this.updateTime,
       lastListenAt: data.lastListenAt.present
           ? data.lastListenAt.value
           : this.lastListenAt,
@@ -774,6 +808,7 @@ class SubscriptionTableData extends DataClass
           ..write('feedUrl: $feedUrl, ')
           ..write('totalEpisodes: $totalEpisodes, ')
           ..write('subscribedAt: $subscribedAt, ')
+          ..write('updateTime: $updateTime, ')
           ..write('lastListenAt: $lastListenAt')
           ..write(')'))
         .toString();
@@ -790,6 +825,7 @@ class SubscriptionTableData extends DataClass
     feedUrl,
     totalEpisodes,
     subscribedAt,
+    updateTime,
     lastListenAt,
   );
   @override
@@ -805,6 +841,7 @@ class SubscriptionTableData extends DataClass
           other.feedUrl == this.feedUrl &&
           other.totalEpisodes == this.totalEpisodes &&
           other.subscribedAt == this.subscribedAt &&
+          other.updateTime == this.updateTime &&
           other.lastListenAt == this.lastListenAt);
 }
 
@@ -819,6 +856,7 @@ class SubscriptionTableCompanion
   final Value<String> feedUrl;
   final Value<int> totalEpisodes;
   final Value<DateTime> subscribedAt;
+  final Value<DateTime> updateTime;
   final Value<DateTime> lastListenAt;
   const SubscriptionTableCompanion({
     this.id = const Value.absent(),
@@ -830,6 +868,7 @@ class SubscriptionTableCompanion
     this.feedUrl = const Value.absent(),
     this.totalEpisodes = const Value.absent(),
     this.subscribedAt = const Value.absent(),
+    this.updateTime = const Value.absent(),
     this.lastListenAt = const Value.absent(),
   });
   SubscriptionTableCompanion.insert({
@@ -842,6 +881,7 @@ class SubscriptionTableCompanion
     required String feedUrl,
     this.totalEpisodes = const Value.absent(),
     this.subscribedAt = const Value.absent(),
+    this.updateTime = const Value.absent(),
     this.lastListenAt = const Value.absent(),
   }) : title = Value(title),
        feedUrl = Value(feedUrl);
@@ -855,6 +895,7 @@ class SubscriptionTableCompanion
     Expression<String>? feedUrl,
     Expression<int>? totalEpisodes,
     Expression<DateTime>? subscribedAt,
+    Expression<DateTime>? updateTime,
     Expression<DateTime>? lastListenAt,
   }) {
     return RawValuesInsertable({
@@ -867,6 +908,7 @@ class SubscriptionTableCompanion
       if (feedUrl != null) 'feed_url': feedUrl,
       if (totalEpisodes != null) 'total_episodes': totalEpisodes,
       if (subscribedAt != null) 'subscribed_at': subscribedAt,
+      if (updateTime != null) 'update_time': updateTime,
       if (lastListenAt != null) 'last_listen_at': lastListenAt,
     });
   }
@@ -881,6 +923,7 @@ class SubscriptionTableCompanion
     Value<String>? feedUrl,
     Value<int>? totalEpisodes,
     Value<DateTime>? subscribedAt,
+    Value<DateTime>? updateTime,
     Value<DateTime>? lastListenAt,
   }) {
     return SubscriptionTableCompanion(
@@ -893,6 +936,7 @@ class SubscriptionTableCompanion
       feedUrl: feedUrl ?? this.feedUrl,
       totalEpisodes: totalEpisodes ?? this.totalEpisodes,
       subscribedAt: subscribedAt ?? this.subscribedAt,
+      updateTime: updateTime ?? this.updateTime,
       lastListenAt: lastListenAt ?? this.lastListenAt,
     );
   }
@@ -927,6 +971,9 @@ class SubscriptionTableCompanion
     if (subscribedAt.present) {
       map['subscribed_at'] = Variable<DateTime>(subscribedAt.value);
     }
+    if (updateTime.present) {
+      map['update_time'] = Variable<DateTime>(updateTime.value);
+    }
     if (lastListenAt.present) {
       map['last_listen_at'] = Variable<DateTime>(lastListenAt.value);
     }
@@ -945,6 +992,7 @@ class SubscriptionTableCompanion
           ..write('feedUrl: $feedUrl, ')
           ..write('totalEpisodes: $totalEpisodes, ')
           ..write('subscribedAt: $subscribedAt, ')
+          ..write('updateTime: $updateTime, ')
           ..write('lastListenAt: $lastListenAt')
           ..write(')'))
         .toString();
@@ -1776,6 +1824,7 @@ typedef $$SubscriptionTableTableCreateCompanionBuilder =
       required String feedUrl,
       Value<int> totalEpisodes,
       Value<DateTime> subscribedAt,
+      Value<DateTime> updateTime,
       Value<DateTime> lastListenAt,
     });
 typedef $$SubscriptionTableTableUpdateCompanionBuilder =
@@ -1789,6 +1838,7 @@ typedef $$SubscriptionTableTableUpdateCompanionBuilder =
       Value<String> feedUrl,
       Value<int> totalEpisodes,
       Value<DateTime> subscribedAt,
+      Value<DateTime> updateTime,
       Value<DateTime> lastListenAt,
     });
 
@@ -1843,6 +1893,11 @@ class $$SubscriptionTableTableFilterComposer
 
   ColumnFilters<DateTime> get subscribedAt => $composableBuilder(
     column: $table.subscribedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updateTime => $composableBuilder(
+    column: $table.updateTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1906,6 +1961,11 @@ class $$SubscriptionTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get updateTime => $composableBuilder(
+    column: $table.updateTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get lastListenAt => $composableBuilder(
     column: $table.lastListenAt,
     builder: (column) => ColumnOrderings(column),
@@ -1951,6 +2011,11 @@ class $$SubscriptionTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get subscribedAt => $composableBuilder(
     column: $table.subscribedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updateTime => $composableBuilder(
+    column: $table.updateTime,
     builder: (column) => column,
   );
 
@@ -2009,6 +2074,7 @@ class $$SubscriptionTableTableTableManager
                 Value<String> feedUrl = const Value.absent(),
                 Value<int> totalEpisodes = const Value.absent(),
                 Value<DateTime> subscribedAt = const Value.absent(),
+                Value<DateTime> updateTime = const Value.absent(),
                 Value<DateTime> lastListenAt = const Value.absent(),
               }) => SubscriptionTableCompanion(
                 id: id,
@@ -2020,6 +2086,7 @@ class $$SubscriptionTableTableTableManager
                 feedUrl: feedUrl,
                 totalEpisodes: totalEpisodes,
                 subscribedAt: subscribedAt,
+                updateTime: updateTime,
                 lastListenAt: lastListenAt,
               ),
           createCompanionCallback:
@@ -2033,6 +2100,7 @@ class $$SubscriptionTableTableTableManager
                 required String feedUrl,
                 Value<int> totalEpisodes = const Value.absent(),
                 Value<DateTime> subscribedAt = const Value.absent(),
+                Value<DateTime> updateTime = const Value.absent(),
                 Value<DateTime> lastListenAt = const Value.absent(),
               }) => SubscriptionTableCompanion.insert(
                 id: id,
@@ -2044,6 +2112,7 @@ class $$SubscriptionTableTableTableManager
                 feedUrl: feedUrl,
                 totalEpisodes: totalEpisodes,
                 subscribedAt: subscribedAt,
+                updateTime: updateTime,
                 lastListenAt: lastListenAt,
               ),
           withReferenceMapper: (p0) => p0

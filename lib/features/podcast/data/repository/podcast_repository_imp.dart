@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
@@ -10,28 +11,48 @@ class PodcastRepositoryImp implements PodcastRepository {
 
   PodcastRepositoryImp(this.database);
 
+  Future<List<SubscriptionTableData>> getSubs() async {
+    final subs =
+        await (database.select(database.subscriptionTable)..orderBy([
+              (t) => drift.OrderingTerm(
+                expression: t.updateTime,
+                mode: drift.OrderingMode.desc,
+              ),
+            ]))
+            .get();
+    return subs;
+  }
+
   @override
   Future<List<SubscriptionEntity>> getHome() async {
-    final subs = await database.select(database.subscriptionTable).get();
+    final subs = await getSubs();
     final models = subs.map((s) => SubscriptionEntity.fromDrift(s)).toList();
     return models;
   }
 
   @override
   Future<List<SubscriptionEntity>> haveUpdate() async {
-    final subs = await database.select(database.subscriptionTable).get();
-    final models = subs.map((s) => SubscriptionEntity.fromDrift(s)).toList();
-
-    final futures = models.map((item) async {
+    List<SubscriptionTableData> subs = await getSubs();
+    List<SubscriptionEntity> models = subs
+        .map((s) => SubscriptionEntity.fromDrift(s))
+        .toList();
+    final futures = models.map((SubscriptionEntity item) async {
       try {
         final podcast = await loadPodcastInfo(item.feedUrl);
         item.haveNewEpisode = podcast.episodes.length != item.totalEpisodes;
+        DateTime updateTime = _getLastEpisodeDate(podcast.episodes);
+        item.updateTime = updateTime;
+        await (database.update(
+          database.subscriptionTable,
+        )..where((tbl) => tbl.feedUrl.equals(item.feedUrl))).write(
+          SubscriptionTableCompanion(updateTime: drift.Value(updateTime)),
+        );
       } catch (e) {
         item.haveNewEpisode = false;
       }
     });
     await Future.wait(futures);
-    return models;
+    return _sortByUpdateTimeDesc(models);
   }
 
   @override
@@ -109,5 +130,23 @@ class PodcastRepositoryImp implements PodcastRepository {
         .map((s) => DownloadedEpisodeEntity.fromDrift(s).toEpisode())
         .toList();
     return episodes;
+  }
+
+  DateTime _getLastEpisodeDate(List<Episode> episodes) {
+    DateTime updateTime = DateTime(1970);
+    for (Episode episode in episodes) {
+      if (episode.publicationDate == null) continue;
+      if (episode.publicationDate!.isAfter(updateTime)) {
+        updateTime = episode.publicationDate!;
+      }
+    }
+    return updateTime;
+  }
+
+  List<SubscriptionEntity> _sortByUpdateTimeDesc(
+    List<SubscriptionEntity> list,
+  ) {
+    list.sort((a, b) => b.updateTime.compareTo(a.updateTime));
+    return list;
   }
 }

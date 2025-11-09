@@ -11,6 +11,7 @@ class SubscriptionEntity {
   final int totalEpisodes;
   final DateTime subscribedAt;
   final DateTime lastListenAt;
+  DateTime updateTime;
   bool haveNewEpisode;
 
   SubscriptionEntity({
@@ -20,6 +21,7 @@ class SubscriptionEntity {
     required this.lastListenAt,
     required this.title,
     required this.totalEpisodes,
+    required this.updateTime,
     this.haveNewEpisode = false,
     this.author,
     this.artworkUrl,
@@ -29,6 +31,7 @@ class SubscriptionEntity {
     return SubscriptionEntity(
       podcastId: subscription.podcastId,
       title: subscription.title,
+      updateTime: subscription.updateTime,
       author: subscription.author,
       artworkUrl: subscription.artworkUrl,
       feedUrl: subscription.feedUrl,
@@ -42,6 +45,14 @@ class SubscriptionEntity {
     String feedUrl,
     search.Podcast feedInfo,
   ) {
+    List<search.Episode> episodes = feedInfo.episodes;
+    DateTime updateTime = DateTime(1970);
+    for (search.Episode episode in episodes) {
+      if (episode.publicationDate == null) continue;
+      if (episode.publicationDate!.isAfter(updateTime)) {
+        updateTime = episode.publicationDate!;
+      }
+    }
     return SubscriptionEntity(
       podcastId: feedInfo.guid,
       title: feedInfo.title ?? "WTF",
@@ -50,6 +61,7 @@ class SubscriptionEntity {
       feedUrl: feedUrl,
       subscribedAt: DateTime.now(),
       lastListenAt: DateTime.now(),
+      updateTime: updateTime,
       totalEpisodes: feedInfo.episodes.length,
     );
   }
@@ -58,6 +70,7 @@ class SubscriptionEntity {
     return SubscriptionTableCompanion(
       podcastId: Value(podcastId),
       title: Value(title),
+      updateTime: Value(updateTime),
       author: Value(author),
       artworkUrl: Value(artworkUrl),
       feedUrl: Value(feedUrl),

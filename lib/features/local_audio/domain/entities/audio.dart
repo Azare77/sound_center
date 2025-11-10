@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 class AudioEntity {
@@ -30,6 +31,43 @@ class AudioEntity {
   final bool isAlarm;
   final DateTime dateAdded;
   Uint8List? cover;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'uri': uri,
+      'path': path,
+      'title': title,
+      'duration': duration,
+      'album': album,
+      'artist': artist,
+      'genre': genre,
+      'trackNum': trackNum,
+      'isPodcast': isPodcast,
+      'isAlarm': isAlarm,
+      'dateAdded': dateAdded.toIso8601String(),
+    };
+  }
+
+  factory AudioEntity.fromJson(Map<String, dynamic> json) {
+    return AudioEntity(
+      id: json['id'] as int,
+      uri: json['uri'] as String?,
+      path: json['path'] as String,
+      title: json['title'] as String,
+      duration: json['duration'] as int,
+      album: json['album'] as String,
+      artist: json['artist'] as String,
+      genre: json['genre'] as String,
+      trackNum: json['trackNum'] as int,
+      isPodcast: json['isPodcast'] as bool,
+      isAlarm: json['isAlarm'] as bool,
+      dateAdded: DateTime.parse(json['dateAdded'] as String),
+      cover: json['cover'] != null
+          ? base64Decode(json['cover'] as String)
+          : null,
+    );
+  }
 
   @override
   bool operator ==(Object other) =>

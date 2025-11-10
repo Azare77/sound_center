@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
@@ -28,24 +29,53 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   final JustAudioService _playerService = JustAudioService();
-  final List<Episode> _episodes = [];
+  List<Episode> _episodes = [];
 
   Episode? _currentEpisode;
 
   Episode? get getCurrentEpisode => _currentEpisode;
 
-  // List<int> _shuffle = [];
   int index = 0;
 
-  // int shuffleIndex = 0;
   RepeatMode repeatMode = RepeatMode.repeatAll;
 
-  // ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   late final PodcastBloc bloc;
+
+  Future<void> init() async {
+    try {
+      if (PlayerStateStorage.getSource() != AudioSource.online) return;
+      _currentEpisode = PlayerStateStorage.getLastEpisode();
+      if (_currentEpisode == null) return;
+      if (_episodes.isEmpty) _episodes = [_currentEpisode!];
+      File? file;
+      try {
+        file = await NetworkCacheImage.customCacheManager.getSingleFile("");
+      } catch (_) {}
+      (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
+        _currentEpisode!,
+        file?.uri,
+      );
+      _playerService
+          .setSource(_currentEpisode!.contentUrl!, AudioSource.online)
+          .then((res) {
+            if (res) {
+              int position = PlayerStateStorage.getLastPosition();
+              _playerService.seek(Duration(milliseconds: position));
+            } else {
+              _currentEpisode = null;
+              bloc.add(AutoPlayPodcast());
+            }
+          });
+      index = 0;
+      _episodes[index] = _currentEpisode!;
+    } catch (e, st) {
+      debugPrint('init() failed: $e\n$st');
+      _currentEpisode = null;
+    }
+  }
 
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
-    // shuffleMode = PlayerStateStorage.getShuffleMode();
   }
 
   bool isPlaying() {
@@ -58,7 +88,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   bool isShuffle() {
     return false;
-    // return shuffleMode == ShuffleMode.shuffle;
   }
 
   void setBloc(PodcastBloc bloc) {
@@ -110,14 +139,16 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       _episodes[index],
       file?.uri,
     );
-    bloc.add(AutoPlayPodcast(_currentEpisode!));
+    bloc.add(AutoPlayPodcast());
     await _playerService.setSource(
       _episodes[index].contentUrl!,
       AudioSource.online,
       cachedFilePath: cacheFile,
     );
     _playerService.play();
-    bloc.add(AutoPlayPodcast(_currentEpisode!));
+    bloc.add(AutoPlayPodcast());
+    PlayerStateStorage.saveLastEpisode(_currentEpisode!);
+    PlayerStateStorage.saveSource(AudioSource.online);
   }
 
   Future<String?> _chach(String filename) async {
@@ -138,7 +169,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   Future<Episode> next() async {
     index = getIndex(true);
     await play(index);
-    // bloc.add(AutoPlayNext(audios[index]));
     return _episodes[index];
   }
 
@@ -146,7 +176,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   Future<Episode> previous() async {
     index = getIndex(false);
     await play(index);
-    // bloc.add(AutoPlayNext(audios[index]));
     return _episodes[index];
   }
 
@@ -185,22 +214,11 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   int getIndex(bool forward) {
-    // bool isShuffle = shuffleMode == ShuffleMode.shuffle;
     if (repeatMode == RepeatMode.repeatOne) {
-      // if (isShuffle) {
-      //   return _shuffle[shuffleIndex];
-      // } else {
       return index;
-      // }
     }
-    // if (isShuffle) {
-    //   shuffleIndex =
-    //       (shuffleIndex + (forward ? 1 : -1) + _shuffle.length) %
-    //       _shuffle.length;
-    //   return _shuffle[shuffleIndex];
-    // } else {
+
     index = (index + (forward ? 1 : -1) + _episodes.length) % _episodes.length;
     return index;
-    // }
   }
 }

@@ -28,7 +28,7 @@ void main() async {
     ),
   );
   await Storage.instance.init();
-  Future.microtask(_init);
+  await _init();
   runApp(const MyApp());
 }
 

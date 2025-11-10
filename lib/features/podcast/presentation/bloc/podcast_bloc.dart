@@ -22,9 +22,11 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     final PodcastPlayerRepositoryImp player = PodcastPlayerRepositoryImp();
     player.setBloc(this);
+    player.init().then((_) {
+      add(GetSubscribedPodcasts());
+    });
+
     Future<void> getSubscribedPodcasts() async {
-      // List<SubscriptionEntity> subs = await getPodcastUseCase.call();
-      // emit(state.copyWith(SubscribedPodcasts(subs)));
       add(GetSubscribedPodcasts());
     }
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/core_view/current_media.dart';
+import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
+import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/local_audios.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 
 class Home extends StatefulWidget {
@@ -10,8 +13,25 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   int index = 0;
+  late final LocalPlayerRepositoryImp _localPlayer;
+
+  late final PodcastPlayerRepositoryImp _podcastPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _localPlayer = LocalPlayerRepositoryImp();
+    _podcastPlayer = PodcastPlayerRepositoryImp();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,5 +71,23 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.detached || AppLifecycleState.inactive:
+        if (_localPlayer.hasSource()) {
+          int duration = await _localPlayer.getCurrentPosition();
+          PlayerStateStorage.saveLastPosition(duration);
+        } else if (_podcastPlayer.hasSource()) {
+          int duration = await _podcastPlayer.getCurrentPosition();
+          PlayerStateStorage.saveLastPosition(duration);
+        }
+        return;
+      default:
+        return;
+    }
   }
 }

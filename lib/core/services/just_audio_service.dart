@@ -58,7 +58,7 @@ class JustAudioService {
   }
 
   // Public API to set a single source (will clear any managed playlist unless using setPlaylist)
-  Future<void> setSource(
+  Future<bool> setSource(
     String path,
     AudioSource source, {
     String? cachedFilePath,
@@ -77,9 +77,11 @@ class JustAudioService {
       }
 
       await _player.setSpeed(1.0);
+      return true;
     } catch (e) {
       _source = null;
       debugPrint('خطا در setSource: $e');
+      return false;
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
@@ -21,6 +22,35 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   final JustAudioService _playerService = JustAudioService();
+
+  void init() async {
+    try {
+      audios.map((item) async {
+        AudioUtil.getCover(item.id, coverSize: CoverSize.thumbnail);
+        AudioUtil.getCover(item.id, coverSize: CoverSize.banner);
+      });
+      if (PlayerStateStorage.getSource() != AudioSource.local) return;
+      _currentAudio = PlayerStateStorage.getLastAudio();
+      if (_currentAudio == null) return;
+      if (shuffleMode == ShuffleMode.shuffle) _shuffleAudios();
+      await _playerService.setSource(_currentAudio!.path, AudioSource.local);
+      int position = PlayerStateStorage.getLastPosition();
+      await _playerService.seek(Duration(milliseconds: position));
+      _currentAudio!.cover = await AudioUtil.getCover(
+        _currentAudio!.id,
+        coverSize: CoverSize.banner,
+      );
+      index = audios.indexWhere((a) => a.id == _currentAudio!.id);
+      audios[index] = _currentAudio!;
+      (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
+        _currentAudio!,
+      );
+    } catch (e, st) {
+      debugPrint('init() failed: $e\n$st');
+      _currentAudio = null;
+    }
+  }
+
   List<AudioEntity> audios = [];
 
   AudioEntity? _currentAudio;
@@ -117,18 +147,19 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     }
     await _playerService.setSource(audios[index].path, AudioSource.local);
     _playerService.play();
-    bloc.add(AutoPlayNext(audios[index]));
+    bloc.add(AutoPlayNext());
     (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
       audios[index],
     );
     _loadChunk(index);
+    PlayerStateStorage.saveLastAudio(_currentAudio!);
+    PlayerStateStorage.saveSource(AudioSource.local);
   }
 
   @override
   Future<AudioEntity> next() async {
     index = _getIndex(true);
     await play(index);
-    bloc.add(AutoPlayNext(audios[index]));
     return audios[index];
   }
 
@@ -136,7 +167,6 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   Future<AudioEntity> previous() async {
     index = _getIndex(false);
     await play(index);
-    bloc.add(AutoPlayNext(audios[index]));
     return audios[index];
   }
 
@@ -219,10 +249,18 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   Future<void> _loadChunk(int index) async {
-    final start = (index - 5).clamp(0, audios.length - 1);
-    final end = (index + 5).clamp(0, audios.length - 1);
-    for (int i = start; i <= end; i++) {
-      final AudioEntity audio = audios[i];
+    int start = (index - 5).clamp(0, audios.length - 1);
+    int end = (index + 5).clamp(0, audios.length - 1);
+    List<int> indices;
+    if (isShuffle() && _shuffle.isNotEmpty) {
+      start = (shuffleIndex - 5).clamp(0, _shuffle.length - 1);
+      end = (shuffleIndex + 5).clamp(0, _shuffle.length - 1);
+      indices = _shuffle.sublist(start, end + 1);
+    } else {
+      indices = List.generate(end - start + 1, (i) => start + i);
+    }
+    for (final i in indices) {
+      final audio = audios[i];
       audio.cover ??= await AudioUtil.getCover(
         audio.id,
         coverSize: CoverSize.banner,

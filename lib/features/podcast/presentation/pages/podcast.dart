@@ -21,7 +21,7 @@ class _PodcastState extends State<Podcast> {
   void initState() {
     super.initState();
     podcastToolBar = PodcastToolBar();
-    BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());
+    // BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());
   }
 
   @override

@@ -76,9 +76,9 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             MediaControllerButton(
-              svg: 'assets/icons/30back.svg',
+              svg: 'assets/icons/10back.svg',
               onPressed: () async {
-                int dest = await imp.getCurrentPosition() - 30000;
+                int dest = await imp.getCurrentPosition() - 10000;
                 await imp.seek(Duration(milliseconds: dest));
                 await _updateDuration();
               },

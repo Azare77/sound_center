@@ -1,4 +1,5 @@
 import 'package:on_audio_query_forked/on_audio_query.dart';
+import 'package:sound_center/core/util/permission/permission_handler.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/data/sources/storage.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
@@ -7,6 +8,7 @@ import 'package:sound_center/features/local_audio/domain/repositories/audio_repo
 class LocalAudioRepository implements AudioRepository {
   final LocalStorageSource _localStorageSource = LocalStorageSource();
   List<SongModel> allSongs = [];
+  final PermissionHandler handler = PermissionHandler();
 
   @override
   Future<List<AudioModel>> fetchLocalAudios({
@@ -14,21 +16,33 @@ class LocalAudioRepository implements AudioRepository {
     required AudioColumns orderBy,
     required bool desc,
   }) async {
-    allSongs = await _localStorageSource.scanStorage();
-    if (like != null && like.trim().isNotEmpty) {
-      final query = like.toLowerCase().trim();
-      allSongs = allSongs.where((song) {
-        final title = song.title.toLowerCase();
-        final artist = (song.artist ?? '').toLowerCase();
-        final album = (song.album ?? '').toLowerCase();
+    try {
+      await handler.requestPermission(PermissionType.audio);
+      await handler.requestPermission(PermissionType.notification);
+      await handler.requestPermission(PermissionType.storage);
+      bool isStorageGranted = await handler.checkPermission(
+        PermissionType.storage,
+      );
+      bool isAudioGranted = await handler.checkPermission(PermissionType.audio);
+      if (!(isStorageGranted || isAudioGranted)) return [];
+      allSongs = await _localStorageSource.scanStorage();
+      if (like != null && like.trim().isNotEmpty) {
+        final query = like.toLowerCase().trim();
+        allSongs = allSongs.where((song) {
+          final title = song.title.toLowerCase();
+          final artist = (song.artist ?? '').toLowerCase();
+          final album = (song.album ?? '').toLowerCase();
 
-        return title.contains(query) ||
-            artist.contains(query) ||
-            album.contains(query);
-      }).toList();
+          return title.contains(query) ||
+              artist.contains(query) ||
+              album.contains(query);
+        }).toList();
+      }
+      allSongs = _sort(allSongs, orderBy, desc);
+      return allSongs.map(AudioModel.fromSongModel).toList();
+    } catch (_) {
+      return [];
     }
-    allSongs = _sort(allSongs, orderBy, desc);
-    return allSongs.map(AudioModel.fromSongModel).toList();
   }
 
   List<SongModel> _sort(List<SongModel> audios, AudioColumns order, bool desc) {

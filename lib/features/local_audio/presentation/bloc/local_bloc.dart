@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/database/shared_preferences/loca_order_storage.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/data/repositories/linux_audio_repository.dart';
@@ -25,16 +24,17 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     }
     final LocalPlayerRepositoryImp player = LocalPlayerRepositoryImp();
     player.setBloc(this);
+    getAudioUseCase.call().then((audios) {
+      player.setPlayList(audios);
+      player.init();
+      add(GetLocalAudios());
+    });
     on<GetLocalAudios>((event, emit) async {
       List<AudioEntity> audios = await getAudioUseCase.call(
         orderBy: event.column,
         desc: event.desc,
       );
       emit(state.copyWith(LocalAudioStatus(audios: audios)));
-      audios.map((item) async {
-        AudioUtil.getCover(item.id, coverSize: CoverSize.banner);
-        AudioUtil.getCover(item.id, coverSize: CoverSize.thumbnail);
-      });
     });
     on<PlayAudio>((event, emit) async {
       LocalAudioStatus status = state.status as LocalAudioStatus;

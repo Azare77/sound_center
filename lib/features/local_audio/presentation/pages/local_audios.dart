@@ -30,35 +30,12 @@ class _LocalAudiosState extends State<LocalAudios> with WidgetsBindingObserver {
     audioService = LocalAudioRepository();
     handler = PermissionHandler();
     toolBar = ToolBar();
-    getPermissions();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  Future<void> getPermissions() async {
-    try {
-      await handler.requestPermission(PermissionType.audio);
-      await handler.requestPermission(PermissionType.notification);
-      await handler.requestPermission(PermissionType.storage);
-    } catch (_) {
-    } finally {
-      loadAudios();
-    }
-  }
-
-  void loadAudios() async {
-    bool isStorageGranted = await handler.checkPermission(
-      PermissionType.storage,
-    );
-    bool isAudioGranted = await handler.checkPermission(PermissionType.audio);
-    if (isStorageGranted || isAudioGranted) {
-      // ignore: use_build_context_synchronously
-      BlocProvider.of<LocalBloc>(context).add(GetLocalAudios());
-    }
   }
 
   @override
@@ -86,7 +63,7 @@ class _LocalAudiosState extends State<LocalAudios> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
-        loadAudios();
+        BlocProvider.of<LocalBloc>(context).add(GetLocalAudios());
         return;
       default:
         return;

@@ -1,10 +1,12 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/database/drift/database.dart';
+import 'package:sound_center/database/shared_preferences/podcast_setting_storage.dart';
 import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/podcast_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
+import 'package:sound_center/features/settings/domain/settings_repository.dart';
 
 class PodcastRepositoryImp implements PodcastRepository {
   final AppDatabase database;
@@ -78,6 +80,19 @@ class PodcastRepositoryImp implements PodcastRepository {
   @override
   Future<PodcastEntity> find(String searchText, {bool retry = true}) async {
     Search search = Search();
+    PodcastProvider provider = PodcastSettingStorage.getSavedProvider();
+    if (provider == PodcastProvider.podcatIndex) {
+      Map<String, String>? podcastIndexInfo =
+          PodcastSettingStorage.getPodcastIndexKeys();
+      if (podcastIndexInfo != null) {
+        search = Search(
+          searchProvider: PodcastIndexProvider(
+            key: podcastIndexInfo['key']!,
+            secret: podcastIndexInfo['secret']!,
+          ),
+        );
+      }
+    }
     SearchResult results = await search.search(searchText, limit: 10);
     if (results.successful) {
       results.items.removeWhere(

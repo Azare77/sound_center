@@ -5,6 +5,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/presentation/pages/local_audios.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
+import 'package:sound_center/features/settings/presentation/settings.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -37,7 +38,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sound Center"),
+        title: InkWell(
+          focusColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onLongPress: () {
+            showDialog(context: context, builder: (_) => Settings());
+          },
+          child: Text("Sound Center"),
+        ),
         actions: [
           IconButton(
             tooltip: "local",

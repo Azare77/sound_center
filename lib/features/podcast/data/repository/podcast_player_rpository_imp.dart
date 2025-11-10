@@ -200,6 +200,10 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     await _playerService.setSpeed(speed);
   }
 
+  double getSpeed() {
+    return _playerService.getSpeed();
+  }
+
   @override
   Future<void> togglePlayState() async {
     bloc.add(TogglePlay());

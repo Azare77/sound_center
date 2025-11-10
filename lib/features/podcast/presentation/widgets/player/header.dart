@@ -47,8 +47,6 @@ class _PodcastHeaderState extends State<PodcastHeader> {
     return SizedBox(
       child: BlocBuilder<PodcastBloc, PodcastState>(
         builder: (BuildContext context, PodcastState state) {
-          // final PodcastResultStatus status =
-          //     state.status as PodcastResultStatus;
           Episode currentEpisode = playerRepository.getCurrentEpisode!;
           currentPlayList = playerRepository.getPlayList();
           _jumpToCorrectPage(currentPlayList, currentEpisode);

@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          locale: const Locale('en'),
+          locale: const Locale('fa'),
           supportedLocales: const [Locale("fa"), Locale("en")],
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,

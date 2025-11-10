@@ -3,12 +3,14 @@ import 'package:sound_center/features/podcast/data/repository/podcast_player_rpo
 import 'package:sound_center/features/podcast/presentation/widgets/player/description.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/header.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/podcast_navigation.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/player/speed_dialog.dart';
 
 class PlayPodcast extends StatelessWidget {
   const PlayPodcast({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
     return Container(
       margin: EdgeInsets.only(top: 10),
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -22,25 +24,25 @@ class PlayPodcast extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.close_rounded),
+                  onPressed: () {
+                    showDialog(context: context, builder: (_) => SpeedDialog());
+                  },
+                  icon: Icon(Icons.speed_rounded),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (_) => Description(
-                        description: PodcastPlayerRepositoryImp()
-                            .getCurrentEpisode!
-                            .description,
+                        description: imp.getCurrentEpisode!.description,
                       ),
                     );
                   },
                   child: Text("Description"),
                 ),
                 IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.more_vert_rounded),
+                  onPressed: () => {},
+                  icon: Icon(Icons.share_rounded),
                 ),
               ],
             ),

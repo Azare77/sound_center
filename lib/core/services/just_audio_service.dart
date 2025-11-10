@@ -103,6 +103,8 @@ class JustAudioService {
 
   Future<void> setSpeed(double speed) async => await _player.setSpeed(speed);
 
+  double getSpeed() => _player.speed;
+
   void setOnComplete(void Function()? onComplete) {
     _onComplete = onComplete;
   }

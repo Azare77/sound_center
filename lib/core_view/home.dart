@@ -37,37 +37,43 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: InkWell(
-          focusColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          onLongPress: () {
-            showDialog(context: context, builder: (_) => Settings());
-          },
-          child: Text("Sound Center"),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: AppBar(
+            title: InkWell(
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onLongPress: () {
+                showDialog(context: context, builder: (_) => Settings());
+              },
+              child: Text("Sound Center"),
+            ),
+            actions: [
+              IconButton(
+                tooltip: "local",
+                onPressed: () {
+                  setState(() {
+                    index = 0;
+                  });
+                },
+                icon: Icon(Icons.music_note),
+              ),
+              IconButton(
+                tooltip: "podcast",
+                onPressed: () {
+                  setState(() {
+                    index = 1;
+                  });
+                },
+                icon: Icon(Icons.podcasts_rounded),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          IconButton(
-            tooltip: "local",
-            onPressed: () {
-              setState(() {
-                index = 0;
-              });
-            },
-            icon: Icon(Icons.music_note),
-          ),
-          IconButton(
-            tooltip: "podcast",
-            onPressed: () {
-              setState(() {
-                index = 1;
-              });
-            },
-            icon: Icon(Icons.podcasts_rounded),
-          ),
-        ],
       ),
       body: Column(
         children: [

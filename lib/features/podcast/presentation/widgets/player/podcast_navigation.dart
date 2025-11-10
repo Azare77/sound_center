@@ -115,23 +115,6 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
             ),
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              onPressed: () {
-                PodcastPlayerRepositoryImp().setSpeed(1.8);
-              },
-              icon: Icon(Icons.arrow_upward_rounded),
-            ),
-            IconButton(
-              onPressed: () {
-                PodcastPlayerRepositoryImp().setSpeed(1);
-              },
-              icon: Icon(Icons.arrow_downward_rounded),
-            ),
-          ],
-        ),
       ],
     );
   }

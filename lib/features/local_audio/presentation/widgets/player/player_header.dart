@@ -72,10 +72,6 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                       onPressed: () => _delete(),
                       svg: "assets/icons/trash-can.svg",
                     ),
-                    // IconButton(
-                    //   onPressed: () => _delete(),
-                    //   icon: Icon(Icons.delete_rounded),
-                    // ),
                     const SizedBox(
                       width: 40,
                       height: 5,
@@ -98,16 +94,6 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                       },
                       svg: "assets/icons/share.svg",
                     ),
-                    // IconButton(
-                    //   onPressed: () async {
-                    //     if (!Platform.isLinux) {
-                    //       await SharePlus.instance.share(
-                    //         ShareParams(files: [XFile(song.path)]),
-                    //       );
-                    //     }
-                    //   },
-                    //   icon: Icon(Icons.share_rounded),
-                    // ),
                   ],
                 ),
                 SizedBox(

@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +19,14 @@ class NetworkCacheImage extends StatelessWidget {
     this.size = 50,
     this.memCacheSize = 400,
     this.fit = BoxFit.cover,
+    this.blur = 0,
   });
 
   final String? url;
   final double? size;
   final int memCacheSize;
   final BoxFit fit;
+  final double blur;
 
   // -----------------------------------------------------------------
   // CDN‑proxy (weserv.nl) – اگر کار نکرد به URL اصلی برمی‌گردد
@@ -53,35 +56,38 @@ class NetworkCacheImage extends StatelessWidget {
 
     final proxy = _proxyUrl(url!);
 
-    return CachedNetworkImage(
-      imageUrl: proxy,
-      cacheManager: customCacheManager,
-      cacheKey: url!,
-      // کش بر اساس URL اصلی (جلوگیری از کش تکراری)
-      width: size,
-      height: size,
-      fit: fit,
-      memCacheWidth: memCacheSize,
-      memCacheHeight: memCacheSize,
-      filterQuality: FilterQuality.high,
-      placeholder: (_, _) => const Loading(),
-      fadeInDuration: const Duration(milliseconds: 300),
-      errorWidget: (context, _, error) {
-        // CDN شکست → fallback به URL اصلی
-        debugPrint('CDN failed → fallback to original: $error');
-        return CachedNetworkImage(
-          imageUrl: url!,
-          cacheManager: customCacheManager,
-          cacheKey: url!,
-          width: size,
-          height: size,
-          fit: fit,
-          memCacheWidth: memCacheSize,
-          memCacheHeight: memCacheSize,
-          placeholder: (_, _) => const Loading(),
-          errorWidget: (_, _, _) => _fallback(),
-        );
-      },
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+      child: CachedNetworkImage(
+        imageUrl: proxy,
+        cacheManager: customCacheManager,
+        cacheKey: url!,
+        // کش بر اساس URL اصلی (جلوگیری از کش تکراری)
+        width: size,
+        height: size,
+        fit: fit,
+        memCacheWidth: memCacheSize,
+        memCacheHeight: memCacheSize,
+        filterQuality: FilterQuality.high,
+        placeholder: (_, _) => const Loading(),
+        fadeInDuration: const Duration(milliseconds: 300),
+        errorWidget: (context, _, error) {
+          // CDN شکست → fallback به URL اصلی
+          debugPrint('CDN failed → fallback to original: $error');
+          return CachedNetworkImage(
+            imageUrl: url!,
+            cacheManager: customCacheManager,
+            cacheKey: url!,
+            width: size,
+            height: size,
+            fit: fit,
+            memCacheWidth: memCacheSize,
+            memCacheHeight: memCacheSize,
+            placeholder: (_, _) => const Loading(),
+            errorWidget: (_, _, _) => _fallback(),
+          );
+        },
+      ),
     );
   }
 

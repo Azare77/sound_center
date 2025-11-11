@@ -49,8 +49,10 @@ class _PodcastDetailState extends State<PodcastDetail>
         if (retry) {
           _init(retry: false);
         } else {
-          // ignore: use_build_context_synchronously
-          Navigator.pop(context);
+          if (mounted) {
+            // ignore: use_build_context_synchronously
+            Navigator.pop(context);
+          }
         }
       }
     }
@@ -89,42 +91,40 @@ class _PodcastDetailState extends State<PodcastDetail>
           // TextButton(onPressed: () => _subscribe(), child: Text("Unsubscribe")),
         ],
       ),
-      body: podcast == null
-          ? Loading()
-          : Column(
-              spacing: 5,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // if (!subscribed)
-                //   Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: ElevatedButton(
-                //       onPressed: () => _subscribe(),
-                //       child: Text("Subscribe"),
-                //     ),
-                //   ),
-                TabBar(
-                  controller: _controller,
-                  tabs: const [
-                    Tab(text: 'Episodes'),
-                    Tab(text: "Info"),
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _controller,
+      body: Column(
+        children: [
+          Expanded(
+            child: podcast == null
+                ? Loading()
+                : Column(
+                    spacing: 5,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Episodes(
-                        episodes: podcast!.episodes,
-                        bestImageUrl: widget.defaultImg,
+                      TabBar(
+                        controller: _controller,
+                        tabs: const [
+                          Tab(text: 'Episodes'),
+                          Tab(text: "Info"),
+                        ],
                       ),
-                      PodcastInfo(info: podcast!.description ?? ""),
+                      Expanded(
+                        child: TabBarView(
+                          controller: _controller,
+                          children: [
+                            Episodes(
+                              episodes: podcast!.episodes,
+                              bestImageUrl: widget.defaultImg,
+                            ),
+                            PodcastInfo(info: podcast!.description ?? ""),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                CurrentMedia(),
-              ],
-            ),
+          ),
+          CurrentMedia(),
+        ],
+      ),
     );
   }
 

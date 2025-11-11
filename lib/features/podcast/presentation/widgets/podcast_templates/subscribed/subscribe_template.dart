@@ -34,7 +34,12 @@ class SubscribeTemplate extends StatelessWidget {
               ),
             ),
           ),
-          Text(podcast.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(
+            podcast.title,
+            maxLines: 1,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );

@@ -1,7 +1,11 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/podcast_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
+
+enum PodcastOrder { AZ, ZA, NEWEST, OLDEST }
 
 abstract class PodcastRepository {
   Future<List<SubscriptionEntity>> getHome();

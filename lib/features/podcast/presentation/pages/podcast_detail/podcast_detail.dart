@@ -9,10 +9,11 @@ import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_repository_imp.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
+import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/episodes.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_info.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episodes_tool_bar.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episodes_tool_bar.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class PodcastDetail extends StatefulWidget {
@@ -48,6 +49,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
       }
       if (podcast != null) {
         episodes = podcast!.episodes;
+        sort(PodcastOrder.NEWEST);
       }
     } catch (_) {
       podcast = null;
@@ -133,7 +135,10 @@ class _PodcastDetailState extends State<PodcastDetail> {
                           }
                         }
                       },
-                      child: EpisodesToolBar(onChange: filter),
+                      child: EpisodesToolBar(
+                        onChange: filter,
+                        onOrderChange: sort,
+                      ),
                     ),
                   ),
                 ),
@@ -188,6 +193,29 @@ class _PodcastDetailState extends State<PodcastDetail> {
           .where((item) => item.title.contains(name))
           .toList();
     }
+    setState(() {});
+  }
+
+  void sort(PodcastOrder order) {
+    episodes.sort((a, b) {
+      switch (order) {
+        case PodcastOrder.AZ:
+          return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+
+        case PodcastOrder.ZA:
+          return b.title.toLowerCase().compareTo(a.title.toLowerCase());
+
+        case PodcastOrder.NEWEST:
+          final aDate = a.publicationDate ?? DateTime(1970);
+          final bDate = b.publicationDate ?? DateTime(1970);
+          return bDate.compareTo(aDate);
+
+        case PodcastOrder.OLDEST:
+          final aDate = a.publicationDate ?? DateTime(1970);
+          final bDate = b.publicationDate ?? DateTime(1970);
+          return aDate.compareTo(bDate);
+      }
+    });
     setState(() {});
   }
 }

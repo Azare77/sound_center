@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/order_menu.dart';
+import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episodes_order_menu.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class EpisodesToolBar extends StatefulWidget {
-  const EpisodesToolBar({super.key, required this.onChange});
+  const EpisodesToolBar({
+    super.key,
+    required this.onChange,
+    required this.onOrderChange,
+  });
 
   final Function(String) onChange;
+  final Function(PodcastOrder) onOrderChange;
 
   @override
   State<EpisodesToolBar> createState() => _EpisodesToolBarState();
@@ -43,7 +49,7 @@ class _EpisodesToolBarState extends State<EpisodesToolBar> {
               ),
             ),
           if (!_showSearch) const Spacer(),
-          OrderMenu(),
+          EpisodesOrderMenu(onChange: widget.onOrderChange),
         ],
       ),
     );

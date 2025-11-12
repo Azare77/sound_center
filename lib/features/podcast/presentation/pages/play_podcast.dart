@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/header.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/podcast_navigation.dart';
 
@@ -8,7 +7,6 @@ class PlayPodcast extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
     return Container(
       margin: EdgeInsets.only(top: 10),
       padding: const EdgeInsets.symmetric(horizontal: 8.0),

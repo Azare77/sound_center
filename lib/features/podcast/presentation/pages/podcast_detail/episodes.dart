@@ -47,28 +47,5 @@ class _EpisodesState extends State<Episodes>
         );
       }, childCount: widget.episodes.length),
     );
-    return ListView.builder(
-      itemExtent: LIST_ITEM_HEIGHT,
-      cacheExtent: 700,
-      itemCount: widget.episodes.length,
-      itemBuilder: (context, index) {
-        Episode episode = widget.episodes[index];
-        episode.imageUrl ??= widget.bestImageUrl;
-        final isCurrent = currentAudio?.guid == episode.guid;
-        return Material(
-          key: ValueKey(episode.guid),
-          color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              setState(() {});
-              BlocProvider.of<PodcastBloc>(
-                context,
-              ).add(PlayPodcast(episodes: widget.episodes, index: index));
-            },
-            child: EpisodeTemplate(episode: episode),
-          ),
-        );
-      },
-    );
   }
 }

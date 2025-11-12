@@ -38,7 +38,7 @@ class DarkTheme {
     elevatedButtonTheme: const ElevatedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: WidgetStatePropertyAll(Colors.white),
-        backgroundColor: WidgetStatePropertyAll(Color(0xFFE7AC2E)),
+        backgroundColor: WidgetStatePropertyAll(Color(0xbe20213a)),
       ),
     ),
     sliderTheme: const SliderThemeData(

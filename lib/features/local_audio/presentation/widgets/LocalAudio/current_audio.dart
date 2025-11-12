@@ -74,7 +74,11 @@ class _CurrentAudioState extends State<CurrentAudio> {
           ),
         ),
       ),
-      title: Text(widget.audioEntity.title, maxLines: 1),
+      title: Text(
+        widget.audioEntity.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Text(widget.audioEntity.artist, maxLines: 1),
       trailing: PlayPauseButton(
         isPlaying: imp.isPlaying(),

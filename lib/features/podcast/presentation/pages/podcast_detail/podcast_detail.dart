@@ -14,6 +14,7 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/episodes.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_info.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episodes_tool_bar.dart';
+import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class PodcastDetail extends StatefulWidget {
@@ -44,12 +45,12 @@ class _PodcastDetailState extends State<PodcastDetail> {
     try {
       subscribed = await db.isSubscribed(widget.feedUrl);
       podcast = await Feed.loadFeed(url: widget.feedUrl);
-      if (subscribed) {
-        _update();
-      }
       if (podcast != null) {
         episodes = podcast!.episodes;
         sort(PodcastOrder.NEWEST);
+      }
+      if (subscribed) {
+        _update();
       }
     } catch (_) {
       podcast = null;
@@ -121,27 +122,27 @@ class _PodcastDetailState extends State<PodcastDetail> {
                     url: widget.defaultImg,
                   ),
                 ),
-                // if (podcast != null)
-                SliverPinnedHeader(
-                  child: Material(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    child: Focus(
-                      onFocusChange: (f) async {
-                        if (f) {
-                          final offset = _sliverScrollController.offset;
-                          for (int i = 0; i <= 500; i++) {
-                            _sliverScrollController.jumpTo(offset);
-                            await Future.delayed(Duration(milliseconds: 1));
+                if (podcast != null)
+                  SliverPinnedHeader(
+                    child: Material(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      child: Focus(
+                        onFocusChange: (f) async {
+                          if (f) {
+                            final offset = _sliverScrollController.offset;
+                            for (int i = 0; i <= 500; i++) {
+                              _sliverScrollController.jumpTo(offset);
+                              await Future.delayed(Duration(milliseconds: 1));
+                            }
                           }
-                        }
-                      },
-                      child: EpisodesToolBar(
-                        onChange: filter,
-                        onOrderChange: sort,
+                        },
+                        child: EpisodesToolBar(
+                          onChange: filter,
+                          onOrderChange: sort,
+                        ),
                       ),
                     ),
                   ),
-                ),
                 podcast == null
                     ? SliverFillRemaining(child: Loading())
                     : Episodes(
@@ -158,20 +159,23 @@ class _PodcastDetailState extends State<PodcastDetail> {
   }
 
   void _subscribe() async {
-    SubscriptionEntity sub = SubscriptionEntity.fromPodcast(
-      widget.feedUrl,
-      podcast!,
-    );
-    PodcastEvent event;
+    final sub = SubscriptionEntity.fromPodcast(widget.feedUrl, podcast!);
+    PodcastEvent? event;
     if (subscribed) {
+      final confirmed =
+          await showDialog<bool>(
+            context: context,
+            builder: (_) => const ConfirmDialog(),
+          ) ??
+          false;
+      if (!confirmed) return;
       event = UnsubscribeFromPodcast(sub.feedUrl);
     } else {
       event = SubscribeToPodcast(sub);
     }
+    // ignore: use_build_context_synchronously
     BlocProvider.of<PodcastBloc>(context).add(event);
-    setState(() {
-      subscribed = !subscribed;
-    });
+    setState(() => subscribed = !subscribed);
   }
 
   void _update() async {

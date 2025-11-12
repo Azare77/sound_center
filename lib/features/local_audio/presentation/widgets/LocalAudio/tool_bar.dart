@@ -6,6 +6,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/order_menu.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
@@ -43,7 +44,7 @@ class _ToolBarState extends State<ToolBar> {
               child: TextFieldBox(
                 controller: _controller,
                 autofocus: true,
-                hintText: 'what do you want?',
+                hintText: S.of(context).searchHint,
                 onChanged: (text) {
                   BlocProvider.of<LocalBloc>(
                     context,

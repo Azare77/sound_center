@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
+import 'package:sound_center/generated/l10n.dart';
 
 class SpeedDialog extends StatefulWidget {
   const SpeedDialog({super.key});
@@ -23,7 +24,7 @@ class _SpeedDialogState extends State<SpeedDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Play Speed"),
+                Text(S.of(context).playSpeed),
                 Text(
                   "${imp.getSpeed().toString()}x",
                   textDirection: TextDirection.ltr,

@@ -32,14 +32,10 @@ class AudioModel extends AudioEntity {
       isPodcast: song.isPodcast ?? false,
       isAlarm: song.isAlarm ?? false,
       cover: null,
-      album: song.album == "<unknown>" || song.album == null
-          ? "Who Knows"
-          : song.album!,
-      genre: song.genre == "<unknown>" || song.genre == null
-          ? "Who Knows"
-          : song.genre!,
+      album: song.album == "<unknown>" || song.album == null ? "" : song.album!,
+      genre: song.genre == "<unknown>" || song.genre == null ? "" : song.genre!,
       artist: song.artist == "<unknown>" || song.artist == null
-          ? "Who Knows"
+          ? ""
           : song.artist!,
     );
   }

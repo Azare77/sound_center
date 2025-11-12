@@ -3,6 +3,7 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/description.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastInfo extends StatelessWidget {
@@ -48,7 +49,9 @@ class PodcastInfo extends StatelessWidget {
                               ElevatedButton(
                                 onPressed: subscribe,
                                 child: Text(
-                                  subscribed ? "Unsubscribe" : "Subscribe",
+                                  subscribed
+                                      ? S.of(context).unsubscribe
+                                      : S.of(context).subscribe,
                                 ),
                               ),
                               if (podcast!.description != null)
@@ -61,7 +64,7 @@ class PodcastInfo extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  child: Text("Description"),
+                                  child: Text(S.of(context).description),
                                 ),
                             ],
                           ),

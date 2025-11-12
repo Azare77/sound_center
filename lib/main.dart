@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/download_manager.dart';
@@ -13,6 +14,7 @@ import 'package:sound_center/core_view/home.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 
 late final AudioHandler audioHandler;
@@ -70,9 +72,10 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          locale: const Locale('en'),
-          supportedLocales: const [Locale("fa"), Locale("en")],
+          locale: const Locale('fa'),
+          supportedLocales: S.delegate.supportedLocales,
           localizationsDelegates: const [
+            S.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
@@ -85,9 +88,11 @@ class MyApp extends StatelessWidget {
             }
             return const Locale('en'); // fallback
           },
-          title: 'Sound Center',
+          title: Intl.getCurrentLocale() == Locale("en")
+              ? "Sound Center"
+              : "مرکز صدا",
           theme: DarkTheme.themeData,
-          home: const MyHomePage(title: 'Sound Center'),
+          home: MyHomePage(),
         ),
       ),
     );
@@ -95,9 +100,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

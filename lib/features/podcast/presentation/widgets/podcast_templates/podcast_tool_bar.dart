@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/downloaded_episodes.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class PodcastToolBar extends StatefulWidget {
@@ -38,7 +39,7 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
               child: TextFieldBox(
                 controller: _controller,
                 textInputAction: TextInputAction.search,
-                hintText: 'what do you want?',
+                hintText: S.of(context).searchHint,
                 autofocus: true,
                 onChanged: (text) {
                   if (text.trim().isEmpty) {

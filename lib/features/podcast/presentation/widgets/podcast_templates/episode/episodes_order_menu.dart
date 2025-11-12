@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_view.dart'; // اگر TextView یک ویجت سفارشی‌ت باشه
 
 class EpisodesOrderMenu extends StatefulWidget {
@@ -26,10 +27,18 @@ class _EpisodesOrderMenuState extends State<EpisodesOrderMenu> {
       },
       itemBuilder: (context) {
         return <PopupMenuEntry<PodcastOrder>>[
-          _buildItem(PodcastOrder.NEWEST, currentColumn, 'Latest First'),
-          _buildItem(PodcastOrder.OLDEST, currentColumn, 'Oldest First'),
-          _buildItem(PodcastOrder.AZ, currentColumn, 'A-Z'),
-          _buildItem(PodcastOrder.ZA, currentColumn, 'Z-A'),
+          _buildItem(
+            PodcastOrder.NEWEST,
+            currentColumn,
+            S.of(context).latestFirst,
+          ),
+          _buildItem(
+            PodcastOrder.OLDEST,
+            currentColumn,
+            S.of(context).oldestFirst,
+          ),
+          _buildItem(PodcastOrder.AZ, currentColumn, S.of(context).az),
+          _buildItem(PodcastOrder.ZA, currentColumn, S.of(context).za),
         ];
       },
 

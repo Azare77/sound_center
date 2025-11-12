@@ -6,6 +6,7 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 import 'package:sound_center/features/podcast/presentation/widgets/player/description.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/header_image.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/speed_dialog.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastHeader extends StatefulWidget {
@@ -125,7 +126,7 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                     ),
                   );
                 },
-                child: Text("Description"),
+                child: Text(S.of(context).description),
               ),
             ],
           );

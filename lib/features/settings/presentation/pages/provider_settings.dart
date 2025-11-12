@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/settings/data/settings_repository_imp.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class ProviderSettings extends StatefulWidget {
@@ -48,7 +49,7 @@ class _ProviderSettingsState extends State<ProviderSettings> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Select Your Provider"),
+            Text(S.of(context).selectProvider),
             RadioGroup<PodcastProvider>(
               onChanged: (v) => setState(() => provider = v!),
               groupValue: provider,
@@ -91,7 +92,7 @@ class _ProviderSettingsState extends State<ProviderSettings> {
                   submit();
                   Navigator.pop(context);
                 },
-                child: Text('submit'),
+                child: Text(S.of(context).submit),
               ),
             ),
           ],

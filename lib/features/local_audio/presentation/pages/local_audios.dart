@@ -7,6 +7,7 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.d
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/tool_bar.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class LocalAudios extends StatefulWidget {
@@ -50,7 +51,7 @@ class _LocalAudiosState extends State<LocalAudios> with WidgetsBindingObserver {
                 LocalAudioStatus status = state.status as LocalAudioStatus;
                 return AudioListTemplate(status.audios);
               }
-              return Loading(label: "Scanning");
+              return Loading(label: S.of(context).scanning);
             },
           ),
         ),

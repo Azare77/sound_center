@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episodes_order_menu.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class EpisodesToolBar extends StatefulWidget {
@@ -44,7 +45,7 @@ class _EpisodesToolBarState extends State<EpisodesToolBar> {
               child: TextFieldBox(
                 controller: _controller,
                 autofocus: true,
-                hintText: 'what do you want?',
+                hintText: S.of(context).searchHint,
                 onChanged: widget.onChange,
               ),
             ),

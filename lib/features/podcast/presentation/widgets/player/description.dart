@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/html_parser.dart';
 
 class Description extends StatelessWidget {
@@ -25,7 +26,7 @@ class Description extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
+                child: Text(S.of(context).ok),
               ),
             ],
           ),

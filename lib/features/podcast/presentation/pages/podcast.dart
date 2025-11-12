@@ -5,6 +5,7 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.d
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_list_template.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_tool_bar.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/subscribed/subscribed_podcast_list.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class Podcast extends StatefulWidget {
@@ -26,6 +27,7 @@ class _PodcastState extends State<Podcast> {
 
   @override
   Widget build(BuildContext context) {
+    //
     return Column(
       children: [
         podcastToolBar,
@@ -46,9 +48,9 @@ class _PodcastState extends State<Podcast> {
               }
 
               if (state.status is LoadingPodcasts) {
-                return Loading(label: "waiting for your search input");
+                return Loading();
               }
-              return Center(child: Text("NO PODCAST"));
+              return Center(child: Text(S.of(context).noPodcast));
             },
           ),
         ),

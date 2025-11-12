@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sound_center/generated/l10n.dart';
 
 class ConfirmDialog extends StatelessWidget {
   const ConfirmDialog({super.key});
@@ -12,17 +13,17 @@ class ConfirmDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: 30,
           children: [
-            const Text("Are you sure about that?"),
+            Text(S.of(context).areYouSureAboutThat),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text("Yes"),
+                  child: Text(S.of(context).yes),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text("No"),
+                  child: Text(S.of(context).no),
                 ),
               ],
             ),

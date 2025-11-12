@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
+import 'package:sound_center/generated/l10n.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -14,7 +15,7 @@ class Settings extends StatelessWidget {
           child: Column(
             spacing: 5,
             children: [
-              Text("Settings"),
+              Text(S.of(context).settings),
               Divider(),
               TextButton(
                 onPressed: () {
@@ -23,7 +24,7 @@ class Settings extends StatelessWidget {
                     builder: (_) => ProviderSettings(),
                   );
                 },
-                child: Text("Podcast Api"),
+                child: Text(S.of(context).podcastApi),
               ),
             ],
           ),

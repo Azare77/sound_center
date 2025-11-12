@@ -4,6 +4,7 @@ import 'package:sound_center/database/shared_preferences/loca_order_storage.dart
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_view.dart'; // اگر TextView یک ویجت سفارشی‌ت باشه
 
 class OrderMenu extends StatelessWidget {
@@ -20,11 +21,15 @@ class OrderMenu extends StatelessWidget {
       itemBuilder: (context) {
         final currentColumn = LocalOrderStorage.getSavedColumn();
         return <PopupMenuEntry<AudioColumns>>[
-          _buildItem(AudioColumns.title, currentColumn, 'Title'),
-          _buildItem(AudioColumns.artist, currentColumn, 'Artist'),
-          _buildItem(AudioColumns.album, currentColumn, 'Album'),
-          _buildItem(AudioColumns.id, currentColumn, 'Create time'),
-          _buildItem(AudioColumns.duration, currentColumn, 'Duration'),
+          _buildItem(AudioColumns.title, currentColumn, S.of(context).title),
+          _buildItem(AudioColumns.artist, currentColumn, S.of(context).artist),
+          _buildItem(AudioColumns.album, currentColumn, S.of(context).album),
+          _buildItem(AudioColumns.id, currentColumn, S.of(context).createTime),
+          _buildItem(
+            AudioColumns.duration,
+            currentColumn,
+            S.of(context).duration,
+          ),
           const PopupMenuDivider(),
           PopupMenuItem(
             value: null,
@@ -34,7 +39,7 @@ class OrderMenu extends StatelessWidget {
                 final desc = LocalOrderStorage.getSavedDesc();
                 return Row(
                   children: [
-                    const TextView('Descending'),
+                    TextView(S.of(context).descending),
                     const Spacer(),
                     Switch(
                       value: desc,

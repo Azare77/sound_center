@@ -6,6 +6,7 @@ import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episode_template.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class DownloadedEpisodes extends StatefulWidget {
@@ -30,7 +31,7 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Downloaded Episodes")),
+      appBar: AppBar(title: Text(S.of(context).downloadedEpisodes)),
       body: Column(
         children: [
           Expanded(

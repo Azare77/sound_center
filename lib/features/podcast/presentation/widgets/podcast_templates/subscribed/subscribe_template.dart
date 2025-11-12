@@ -24,12 +24,15 @@ class SubscribeTemplate extends StatelessWidget {
               label: SizedBox.shrink(),
               backgroundColor: Colors.red,
               isLabelVisible: podcast.haveNewEpisode,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: NetworkCacheImage(
-                  url: podcast.artworkUrl,
-                  size: null,
-                  fit: BoxFit.cover,
+              child: Hero(
+                tag: podcast.artworkUrl ?? podcast.title,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: NetworkCacheImage(
+                    url: podcast.artworkUrl,
+                    size: null,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

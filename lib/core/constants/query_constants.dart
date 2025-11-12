@@ -8,3 +8,5 @@ const bool DEFAULT_DESC = true;
 const String APP_NAME = "sound_center";
 // ignore: constant_identifier_names
 const double LIST_ITEM_HEIGHT = 70;
+// ignore: constant_identifier_names
+const double EXPANDED_HEIGHT = 300;

@@ -26,6 +26,27 @@ class _EpisodesState extends State<Episodes>
   Widget build(BuildContext context) {
     super.build(context);
     final currentAudio = imp.getCurrentEpisode;
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        Episode episode = widget.episodes[index];
+        episode.imageUrl ??= widget.bestImageUrl;
+        final isCurrent = currentAudio?.guid == episode.guid;
+        return Container(
+          key: ValueKey(episode.guid),
+          height: LIST_ITEM_HEIGHT,
+          color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              setState(() {});
+              BlocProvider.of<PodcastBloc>(
+                context,
+              ).add(PlayPodcast(episodes: widget.episodes, index: index));
+            },
+            child: EpisodeTemplate(episode: episode),
+          ),
+        );
+      }, childCount: widget.episodes.length),
+    );
     return ListView.builder(
       itemExtent: LIST_ITEM_HEIGHT,
       cacheExtent: 700,

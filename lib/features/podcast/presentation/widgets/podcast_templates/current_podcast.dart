@@ -66,8 +66,16 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
           ),
         ),
       ),
-      title: Text(widget.episode.title, maxLines: 1),
-      subtitle: Text(widget.episode.author ?? "Who Knows", maxLines: 1),
+      title: Text(
+        widget.episode.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(
+        widget.episode.author ?? "",
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       trailing: PlayPauseButton(
         isLoading: isLoading,
         isPlaying: imp.isPlaying(),

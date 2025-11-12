@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_repository_imp.dart';
@@ -8,8 +12,8 @@ import 'package:sound_center/features/podcast/domain/entity/subscription_entity.
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/episodes.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_info.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episodes_tool_bar.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
-import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastDetail extends StatefulWidget {
   const PodcastDetail({
@@ -27,12 +31,13 @@ class PodcastDetail extends StatefulWidget {
   State<PodcastDetail> createState() => _PodcastDetailState();
 }
 
-class _PodcastDetailState extends State<PodcastDetail>
-    with SingleTickerProviderStateMixin {
-  late TabController _controller;
+class _PodcastDetailState extends State<PodcastDetail> {
   final PodcastRepositoryImp db = PodcastRepositoryImp(AppDatabase());
   bool subscribed = false;
+  bool toolbarCollapsed = false;
   Podcast? podcast;
+  List<Episode> episodes = [];
+  final ScrollController _sliverScrollController = ScrollController();
 
   void _init({bool retry = true}) async {
     try {
@@ -41,7 +46,9 @@ class _PodcastDetailState extends State<PodcastDetail>
       if (subscribed) {
         _update();
       }
-      if (podcast?.image == null) {}
+      if (podcast != null) {
+        episodes = podcast!.episodes;
+      }
     } catch (_) {
       podcast = null;
     } finally {
@@ -49,10 +56,8 @@ class _PodcastDetailState extends State<PodcastDetail>
         if (retry) {
           _init(retry: false);
         } else {
-          if (mounted) {
-            // ignore: use_build_context_synchronously
-            Navigator.pop(context);
-          }
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
         }
       }
     }
@@ -62,65 +67,84 @@ class _PodcastDetailState extends State<PodcastDetail>
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: 2, vsync: this);
+    double totalExpandableRange = EXPANDED_HEIGHT - kToolbarHeight;
+    _sliverScrollController.addListener(() {
+      bool hasClient = _sliverScrollController.hasClients;
+      bool isOffsetBigger =
+          _sliverScrollController.offset > totalExpandableRange;
+      setState(() {
+        if (!toolbarCollapsed && hasClient && isOffsetBigger) {
+          toolbarCollapsed = true;
+        } else if (toolbarCollapsed && hasClient && !isOffsetBigger) {
+          toolbarCollapsed = false;
+        }
+      });
+    });
     _init();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _sliverScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: ScrollingText(podcast?.title ?? ""),
-        actions: [
-          if (podcast != null)
-            IconButton(
-              tooltip: subscribed ? "Unsubscribe" : "Subscribe",
-              onPressed: () => _subscribe(),
-              icon: Icon(
-                subscribed
-                    ? Icons.bookmark_remove_rounded
-                    : Icons.bookmark_add_outlined,
-              ),
-            ),
-          // TextButton(onPressed: () => _subscribe(), child: Text("Unsubscribe")),
-        ],
-      ),
       body: Column(
         children: [
           Expanded(
-            child: podcast == null
-                ? Loading()
-                : Column(
-                    spacing: 5,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TabBar(
-                        controller: _controller,
-                        tabs: const [
-                          Tab(text: 'Episodes'),
-                          Tab(text: "Info"),
-                        ],
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _controller,
-                          children: [
-                            Episodes(
-                              episodes: podcast!.episodes,
-                              bestImageUrl: widget.defaultImg,
-                            ),
-                            PodcastInfo(info: podcast!.description ?? ""),
-                          ],
-                        ),
-                      ),
-                    ],
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: _sliverScrollController,
+              slivers: [
+                SliverAppBar(
+                  toolbarHeight: kToolbarHeight,
+                  elevation: 2,
+                  shadowColor: Color(0xFF601410),
+                  backgroundColor: Color(0xff202138),
+                  pinned: true,
+                  floating: false,
+                  title: AnimatedOpacity(
+                    opacity: toolbarCollapsed ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 500),
+                    child: Text(podcast?.title ?? ""),
                   ),
+                  expandedHeight: EXPANDED_HEIGHT,
+                  flexibleSpace: PodcastInfo(
+                    subscribe: _subscribe,
+                    subscribed: subscribed,
+                    podcast: podcast,
+                    url: widget.defaultImg,
+                  ),
+                ),
+                // if (podcast != null)
+                SliverPinnedHeader(
+                  child: Material(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: Focus(
+                      onFocusChange: (f) async {
+                        if (f) {
+                          final offset = _sliverScrollController.offset;
+                          for (int i = 0; i <= 500; i++) {
+                            _sliverScrollController.jumpTo(offset);
+                            await Future.delayed(Duration(milliseconds: 1));
+                          }
+                        }
+                      },
+                      child: EpisodesToolBar(onChange: filter),
+                    ),
+                  ),
+                ),
+                podcast == null
+                    ? SliverFillRemaining(child: Loading())
+                    : Episodes(
+                        episodes: episodes,
+                        bestImageUrl: widget.defaultImg,
+                      ),
+              ],
+            ),
           ),
           CurrentMedia(),
         ],
@@ -154,5 +178,59 @@ class _PodcastDetailState extends State<PodcastDetail>
       PodcastEvent event = UpdateSubscribedPodcast(sub);
       BlocProvider.of<PodcastBloc>(context).add(event);
     }
+  }
+
+  void filter(String name) {
+    if (name.isEmpty) {
+      episodes = podcast?.episodes ?? [];
+    } else {
+      episodes = podcast!.episodes
+          .where((item) => item.title.contains(name))
+          .toList();
+    }
+    setState(() {});
+  }
+}
+
+class SliverPinnedHeader extends SingleChildRenderObjectWidget {
+  const SliverPinnedHeader({super.key, required Widget super.child});
+
+  @override
+  RenderSliverPinnedHeader createRenderObject(BuildContext context) {
+    return RenderSliverPinnedHeader();
+  }
+}
+
+class RenderSliverPinnedHeader extends RenderSliverSingleBoxAdapter {
+  @override
+  void performLayout() {
+    child!.layout(constraints.asBoxConstraints(), parentUsesSize: true);
+    double childExtent;
+    switch (constraints.axis) {
+      case Axis.horizontal:
+        childExtent = child!.size.width;
+        break;
+      case Axis.vertical:
+        childExtent = child!.size.height;
+        break;
+    }
+    final paintedChildExtent = min(
+      childExtent,
+      constraints.remainingPaintExtent - constraints.overlap,
+    );
+    geometry = SliverGeometry(
+      paintExtent: paintedChildExtent,
+      maxPaintExtent: childExtent,
+      maxScrollObstructionExtent: childExtent,
+      paintOrigin: constraints.overlap,
+      scrollExtent: childExtent,
+      layoutExtent: max(0.0, paintedChildExtent - constraints.scrollOffset),
+      hasVisualOverflow: paintedChildExtent < childExtent,
+    );
+  }
+
+  @override
+  double childMainAxisPosition(RenderBox child) {
+    return 0;
   }
 }

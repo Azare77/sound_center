@@ -11,6 +11,7 @@ class HtmlBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Html(
       data: source,
+      style: {"body": Style(fontSize: FontSize(15.0))},
       onLinkTap: (String? link, _, _) async {
         if (link == null) return;
         final Uri url = Uri.parse(link);

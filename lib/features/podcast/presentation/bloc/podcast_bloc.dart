@@ -59,7 +59,10 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     on<PlayPodcast>((event, emit) async {
       player.setPlayList(event.episodes);
-      await player.play(event.index, direct: true);
+      if (player.getCurrentEpisode?.guid != event.episodes[event.index].guid ||
+          !player.hasSource()) {
+        await player.play(event.index, direct: true);
+      }
       emit(state.copyWith(state.status));
     });
     on<PlayNextPodcast>((event, emit) async {

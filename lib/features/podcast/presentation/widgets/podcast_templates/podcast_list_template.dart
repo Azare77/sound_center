@@ -13,8 +13,9 @@ class PodcastListTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (podcasts.isEmpty)
+    if (podcasts.isEmpty) {
       return Center(child: TextView(S.of(context).noPodcast));
+    }
 
     return ListView.builder(
       itemCount: podcasts.length,

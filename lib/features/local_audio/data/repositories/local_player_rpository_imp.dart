@@ -157,8 +157,13 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  Future<AudioEntity> next() async {
-    index = _getIndex(true);
+  Future<AudioEntity> next({bool force = false}) async {
+    int newIndex = _getIndex(true, force: force);
+    if (newIndex == -1) {
+      await stop();
+      return audios[index];
+    }
+    index = newIndex;
     await play(index);
     return audios[index];
   }
@@ -195,7 +200,6 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> stop() async {
-    _currentAudio = null;
     await _playerService.release();
     bloc.add(TogglePlay());
   }
@@ -228,13 +232,20 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     }
   }
 
-  int _getIndex(bool forward) {
+  int _getIndex(bool forward, {bool force = false}) {
     bool isShuffle = shuffleMode == ShuffleMode.shuffle;
     if (repeatMode == RepeatMode.repeatOne) {
       if (isShuffle) {
         return _shuffle[shuffleIndex];
       } else {
         return index;
+      }
+    }
+    if (forward && !force && repeatMode == RepeatMode.noRepeat) {
+      if (isShuffle && shuffleIndex + 1 == _shuffle.length) {
+        return -1;
+      } else if (index + 1 == audios.length) {
+        return -1;
       }
     }
     if (isShuffle) {

@@ -47,6 +47,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       _currentEpisode = PlayerStateStorage.getLastEpisode();
       if (_currentEpisode == null) return;
       if (_episodes.isEmpty) _episodes = [_currentEpisode!];
+      final String? cacheFile = await _chach(_currentEpisode!.title);
       File? file;
       try {
         file = await NetworkCacheImage.customCacheManager.getSingleFile("");
@@ -56,7 +57,11 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
         file?.uri,
       );
       _playerService
-          .setSource(_currentEpisode!.contentUrl!, AudioSource.online)
+          .setSource(
+            _currentEpisode!.contentUrl!,
+            AudioSource.online,
+            cachedFilePath: cacheFile,
+          )
           .then((res) {
             if (res) {
               int position = PlayerStateStorage.getLastPosition();

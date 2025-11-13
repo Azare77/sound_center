@@ -16,21 +16,17 @@ class Episodes extends StatefulWidget {
   State<Episodes> createState() => _EpisodesState();
 }
 
-class _EpisodesState extends State<Episodes>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class _EpisodesState extends State<Episodes> {
   final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    final currentAudio = imp.getCurrentEpisode;
+    final currentEpisode = imp.getCurrentEpisode;
     return SliverList(
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
         Episode episode = widget.episodes[index];
         episode.imageUrl ??= widget.bestImageUrl;
-        final isCurrent = currentAudio?.guid == episode.guid;
+        final isCurrent = currentEpisode?.guid == episode.guid;
         return Container(
           key: ValueKey(episode.guid),
           height: LIST_ITEM_HEIGHT,

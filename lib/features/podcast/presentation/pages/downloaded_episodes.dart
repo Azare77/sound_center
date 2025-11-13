@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/core_view/current_media.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episode_template.dart';
@@ -17,6 +18,8 @@ class DownloadedEpisodes extends StatefulWidget {
 }
 
 class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
+  PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
+
   @override
   void initState() {
     super.initState();
@@ -30,6 +33,7 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
 
   @override
   Widget build(BuildContext context) {
+    final currentEpisode = imp.getCurrentEpisode;
     return Scaffold(
       appBar: AppBar(title: Text(S.of(context).downloadedEpisodes)),
       body: Column(
@@ -49,18 +53,24 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
                     itemCount: status.episodes.length,
                     itemBuilder: (context, index) {
                       Episode episode = status.episodes[index];
-                      return InkWell(
-                        onTap: () {
-                          BlocProvider.of<PodcastBloc>(context).add(
-                            PlayPodcast(
-                              episodes: status.episodes,
-                              index: index,
-                            ),
-                          );
-                        },
-                        child: EpisodeTemplate(
-                          episode: episode,
-                          isDownloaded: true,
+                      final isCurrent = currentEpisode?.guid == episode.guid;
+                      return Material(
+                        color: isCurrent
+                            ? Color(0x1D1BF1D8)
+                            : Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            BlocProvider.of<PodcastBloc>(context).add(
+                              PlayPodcast(
+                                episodes: status.episodes,
+                                index: index,
+                              ),
+                            );
+                          },
+                          child: EpisodeTemplate(
+                            episode: episode,
+                            isDownloaded: true,
+                          ),
                         ),
                       );
                     },

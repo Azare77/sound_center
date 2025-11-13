@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:sound_center/database/shared_preferences/podcast_setting_storage.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
 
@@ -27,5 +29,15 @@ class SettingsRepositoryImp implements SettingRepository {
   @override
   Future<void> setPodcastProvider(PodcastProvider provider) async {
     await PodcastSettingStorage.saveProvider(provider);
+  }
+
+  @override
+  Locale getLocale() {
+    return PodcastSettingStorage.getLocale();
+  }
+
+  @override
+  Future<void> setLocale(Locale locale) async {
+    PodcastSettingStorage.saveLocale(locale);
   }
 }

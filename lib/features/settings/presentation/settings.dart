@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
 import 'package:sound_center/generated/l10n.dart';
 
@@ -25,6 +26,15 @@ class Settings extends StatelessWidget {
                   );
                 },
                 child: Text(S.of(context).podcastApi),
+              ),
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => LanguageSettings(),
+                  );
+                },
+                child: Text(S.of(context).language),
               ),
             ],
           ),

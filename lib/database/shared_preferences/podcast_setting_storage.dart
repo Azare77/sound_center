@@ -1,9 +1,20 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
 
 class PodcastSettingStorage {
+  static Locale getLocale() {
+    final String? locale = Storage.instance.prefs.getString('locale');
+    if (locale == null) return Locale("en");
+    return Locale(locale);
+  }
+
+  static Future<void> saveLocale(Locale locale) async {
+    await Storage.instance.prefs.setString('locale', locale.languageCode);
+  }
+
   static PodcastProvider getSavedProvider() {
     final String? provider = Storage.instance.prefs.getString('provider');
     return PodcastProvider.values.firstWhere(

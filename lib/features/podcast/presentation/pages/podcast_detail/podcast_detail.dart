@@ -190,6 +190,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
   }
 
   void filter(String name) {
+    name = name.trim();
     if (name.isEmpty) {
       episodes = podcast?.episodes ?? [];
     } else {

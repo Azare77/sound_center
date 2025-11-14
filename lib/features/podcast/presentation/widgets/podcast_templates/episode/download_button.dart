@@ -135,7 +135,7 @@ class _DownloadButtonState extends State<DownloadButton> {
 
   /// انتخاب آیکن مناسب با وضعیت دانلود
   Icon get _icon {
-    if (_task == null) return const Icon(Icons.arrow_downward_rounded);
+    if (_task == null) return const Icon(Icons.download_rounded);
     if (_progress >= 1) return const Icon(Icons.check, color: Colors.green);
     return Icon(_isRunning ? Icons.pause : Icons.play_arrow);
   }

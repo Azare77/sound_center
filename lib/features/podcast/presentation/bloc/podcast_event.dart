@@ -10,6 +10,12 @@ class SearchPodcast extends PodcastEvent {
 
 class GetSubscribedPodcasts extends PodcastEvent {}
 
+class CheckPodcastUpdates extends PodcastEvent {
+  RefreshController? controller;
+
+  CheckPodcastUpdates(this.controller);
+}
+
 class SubscribeToPodcast extends PodcastEvent {
   final SubscriptionEntity podcast;
 

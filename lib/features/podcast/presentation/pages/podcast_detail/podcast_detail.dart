@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -14,8 +16,10 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/episodes.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_info.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episodes_tool_bar.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/shared/widgets/toast_message.dart';
 
 class PodcastDetail extends StatefulWidget {
   const PodcastDetail({
@@ -57,9 +61,12 @@ class _PodcastDetailState extends State<PodcastDetail> {
     } finally {
       if (podcast == null) {
         if (retry) {
+          ToastMessage.showErrorMessage(
+            context: context,
+            title: S.of(context).loadFail,
+          );
           _init(retry: false);
         } else {
-          // ignore: use_build_context_synchronously
           Navigator.pop(context);
         }
       }
@@ -173,7 +180,6 @@ class _PodcastDetailState extends State<PodcastDetail> {
     } else {
       event = SubscribeToPodcast(sub);
     }
-    // ignore: use_build_context_synchronously
     BlocProvider.of<PodcastBloc>(context).add(event);
     setState(() => subscribed = !subscribed);
   }

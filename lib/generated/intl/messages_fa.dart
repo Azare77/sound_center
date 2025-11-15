@@ -37,6 +37,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "duration": MessageLookupByLibrary.simpleMessage("مدت"),
     "language": MessageLookupByLibrary.simpleMessage("زبان"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("جدید ترین"),
+    "loadFail": MessageLookupByLibrary.simpleMessage(
+      "خطا در بارگذاری پادکست، تلاش مجدد",
+    ),
     "no": MessageLookupByLibrary.simpleMessage("نه"),
     "noAudio": MessageLookupByLibrary.simpleMessage("بدون موسیقی!!"),
     "noPodcast": MessageLookupByLibrary.simpleMessage("بدون پادکست"),

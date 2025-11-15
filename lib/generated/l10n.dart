@@ -233,6 +233,16 @@ class S {
   String get language {
     return Intl.message('Language', name: 'language', desc: '', args: []);
   }
+
+  /// `Failed To load Trying Again`
+  String get loadFail {
+    return Intl.message(
+      'Failed To load Trying Again',
+      name: 'loadFail',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

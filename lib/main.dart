@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
+import 'package:sound_center/core/constants/query_constants.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/download_manager.dart';
 import 'package:sound_center/core_view/home.dart';
@@ -16,6 +17,7 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/theme/themes.dart';
+import 'package:toastification/toastification.dart';
 
 late final AudioHandler audioHandler;
 
@@ -73,19 +75,24 @@ class MyApp extends StatelessWidget {
         ],
         child: BlocBuilder<SettingBloc, SettingState>(
           builder: (BuildContext context, state) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              locale: state.locale,
-              supportedLocales: S.delegate.supportedLocales,
-              localizationsDelegates: const [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              title: state.locale == Locale("en") ? "Sound Center" : "مرکز صدا",
-              theme: DarkTheme.themeData,
-              home: MyHomePage(),
+            return ToastificationWrapper(
+              child: MaterialApp(
+                navigatorKey: NAVIGATOR_KEY,
+                debugShowCheckedModeBanner: false,
+                locale: state.locale,
+                supportedLocales: S.delegate.supportedLocales,
+                localizationsDelegates: const [
+                  S.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                title: state.locale == Locale("en")
+                    ? "Sound Center"
+                    : "مرکز صدا",
+                theme: DarkTheme.themeData,
+                home: MyHomePage(),
+              ),
             );
           },
         ),

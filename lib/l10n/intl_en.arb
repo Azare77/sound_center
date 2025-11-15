@@ -27,5 +27,6 @@
   "yes": "Yes",
   "no": "No",
   "soundCenter": "Sound Center",
-  "language": "Language"
+  "language": "Language",
+  "loadFail": "Failed To load Trying Again"
 }

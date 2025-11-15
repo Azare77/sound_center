@@ -26,6 +26,7 @@ class LocalAudioRepository implements AudioRepository {
       bool isAudioGranted = await handler.checkPermission(PermissionType.audio);
       if (!(isStorageGranted || isAudioGranted)) return [];
       allSongs = await _localStorageSource.scanStorage();
+      allSongs = allSongs.where((song) => !(song.isAlarm ?? false)).toList();
       if (like != null && like.trim().isNotEmpty) {
         final query = like.toLowerCase().trim();
         allSongs = allSongs.where((song) {

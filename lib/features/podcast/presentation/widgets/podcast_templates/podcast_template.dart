@@ -31,11 +31,14 @@ class PodcastTemplate extends StatelessWidget {
     return ListTile(
       leading: SizedBox(
         width: size,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: NetworkCacheImage(
-            url: artwork,
-            fit: artwork != null ? BoxFit.cover : BoxFit.scaleDown,
+        child: Hero(
+          tag: getArtwork() ?? "",
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: NetworkCacheImage(
+              url: artwork,
+              fit: artwork != null ? BoxFit.cover : BoxFit.scaleDown,
+            ),
           ),
         ),
       ),

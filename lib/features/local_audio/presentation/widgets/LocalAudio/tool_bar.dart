@@ -8,6 +8,7 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_status
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/order_menu.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class ToolBar extends StatefulWidget {
@@ -53,8 +54,10 @@ class _ToolBarState extends State<ToolBar> {
               ),
             ),
           if (!_showSearch) const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.shuffle_rounded),
+          MediaControllerButton(
+            svg: 'assets/icons/shuffle.svg',
+            height: 42,
+            width: 42,
             onPressed: _shufflePlay,
           ),
           OrderMenu(),

@@ -44,6 +44,8 @@ class _ToolBarState extends State<ToolBar> {
             Expanded(
               child: TextFieldBox(
                 controller: _controller,
+                textInputAction: TextInputAction.search,
+                maxLines: 1,
                 autofocus: true,
                 hintText: S.of(context).searchHint,
                 onChanged: (text) {

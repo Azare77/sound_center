@@ -45,6 +45,8 @@ class _EpisodesToolBarState extends State<EpisodesToolBar> {
               child: TextFieldBox(
                 controller: _controller,
                 autofocus: true,
+                textInputAction: TextInputAction.search,
+                maxLines: 1,
                 hintText: S.of(context).searchHint,
                 onChanged: widget.onChange,
               ),

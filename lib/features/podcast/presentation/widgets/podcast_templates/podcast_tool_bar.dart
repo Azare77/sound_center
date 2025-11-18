@@ -39,6 +39,7 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
               child: TextFieldBox(
                 controller: _controller,
                 textInputAction: TextInputAction.search,
+                maxLines: 1,
                 hintText: S.of(context).searchHint,
                 autofocus: true,
                 onChanged: (text) {

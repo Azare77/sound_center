@@ -17,7 +17,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   int index = 0;
   late final LocalPlayerRepositoryImp _localPlayer;
-
   late final PodcastPlayerRepositoryImp _podcastPlayer;
 
   @override
@@ -48,28 +47,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               hoverColor: Colors.transparent,
               splashColor: Colors.transparent,
               onLongPress: () {
-                showDialog(context: context, builder: (_) => Settings());
+                showDialog(context: context, builder: (_) => const Settings());
               },
-              child: Text("Sound Center"),
+              child: const Text("Sound Center"),
             ),
             actions: [
               IconButton(
                 tooltip: "local",
-                onPressed: () {
-                  setState(() {
-                    index = 0;
-                  });
-                },
-                icon: Icon(Icons.music_note),
+                onPressed: () => setState(() => index = 0),
+                icon: const Icon(Icons.music_note),
               ),
               IconButton(
                 tooltip: "podcast",
-                onPressed: () {
-                  setState(() {
-                    index = 1;
-                  });
-                },
-                icon: Icon(Icons.podcasts_rounded),
+                onPressed: () => setState(() => index = 1),
+                icon: const Icon(Icons.podcasts_rounded),
               ),
             ],
           ),
@@ -80,10 +71,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           Expanded(
             child: IndexedStack(
               index: index,
-              children: [LocalAudios(), Podcast()],
+              children: const [LocalAudios(), Podcast()],
             ),
           ),
-          CurrentMedia(),
+          const CurrentMedia(),
         ],
       ),
     );

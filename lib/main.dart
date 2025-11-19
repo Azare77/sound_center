@@ -91,21 +91,12 @@ class MyApp extends StatelessWidget {
                     ? "Sound Center"
                     : "مرکز صدا",
                 theme: DarkTheme.themeData,
-                home: MyHomePage(),
+                home: Home(),
               ),
             );
           },
         ),
       ),
     );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Home();
   }
 }

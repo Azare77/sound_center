@@ -1,12 +1,11 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/database/drift/database.dart';
-import 'package:sound_center/database/shared_preferences/podcast_setting_storage.dart';
+import 'package:sound_center/features/podcast/data/source/podcast_source.dart';
 import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/podcast_entity.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/domain/repository/podcast_repository.dart';
-import 'package:sound_center/features/settings/domain/settings_repository.dart';
 
 class PodcastRepositoryImp implements PodcastRepository {
   final AppDatabase database;
@@ -34,26 +33,36 @@ class PodcastRepositoryImp implements PodcastRepository {
 
   @override
   Future<List<SubscriptionEntity>> haveUpdate() async {
-    List<SubscriptionTableData> subs = await getSubs();
-    List<SubscriptionEntity> models = subs
-        .map((s) => SubscriptionEntity.fromDrift(s))
-        .toList();
-    final futures = models.map((SubscriptionEntity item) async {
+    final subs = await getSubs();
+
+    final futures = subs.map((s) async {
+      final item = SubscriptionEntity.fromDrift(s);
       try {
-        final podcast = await loadPodcastInfo(item.feedUrl);
-        item.haveNewEpisode = podcast.episodes.length != item.totalEpisodes;
-        DateTime updateTime = _getLastEpisodeDate(podcast.episodes);
-        item.updateTime = updateTime;
-        await (database.update(
-          database.subscriptionTable,
-        )..where((tbl) => tbl.feedUrl.equals(item.feedUrl))).write(
-          SubscriptionTableCompanion(updateTime: drift.Value(updateTime)),
-        );
-      } catch (e) {
+        final podcast = await loadPodcastInfo(item.feedUrl, force: true);
+
+        final latestEpisodeTime = _getLastEpisodeDate(podcast.episodes);
+        final hasNewEpisodes = podcast.episodes.length != item.totalEpisodes;
+        item
+          ..haveNewEpisode = hasNewEpisodes
+          ..updateTime = latestEpisodeTime;
+
+        if (!s.updateTime.isAtSameMomentAs(latestEpisodeTime)) {
+          await (database.update(
+            database.subscriptionTable,
+          )..where((tbl) => tbl.feedUrl.equals(item.feedUrl))).write(
+            SubscriptionTableCompanion(
+              updateTime: drift.Value(latestEpisodeTime),
+            ),
+          );
+        }
+      } catch (_) {
         item.haveNewEpisode = false;
       }
-    });
-    await Future.wait(futures);
+
+      return item;
+    }).toList();
+
+    final models = await Future.wait(futures);
     return _sortByUpdateTimeDesc(models);
   }
 
@@ -79,21 +88,7 @@ class PodcastRepositoryImp implements PodcastRepository {
 
   @override
   Future<PodcastEntity> find(String searchText, {bool retry = true}) async {
-    Search search = Search();
-    PodcastProvider provider = PodcastSettingStorage.getSavedProvider();
-    if (provider == PodcastProvider.podcatIndex) {
-      Map<String, String>? podcastIndexInfo =
-          PodcastSettingStorage.getPodcastIndexKeys();
-      if (podcastIndexInfo != null) {
-        search = Search(
-          searchProvider: PodcastIndexProvider(
-            key: podcastIndexInfo['key']!,
-            secret: podcastIndexInfo['secret']!,
-          ),
-        );
-      }
-    }
-    SearchResult results = await search.search(searchText, limit: 10);
+    SearchResult results = await PodcastSource.search(searchText);
     if (results.successful) {
       results.items.removeWhere(
         (item) => item.feedUrl == null || item.feedUrl!.trim().isEmpty,
@@ -109,8 +104,8 @@ class PodcastRepositoryImp implements PodcastRepository {
   }
 
   @override
-  Future<Podcast> loadPodcastInfo(String feedUrl) async {
-    var podcast = await Feed.loadFeed(url: feedUrl);
+  Future<Podcast> loadPodcastInfo(String feedUrl, {bool force = false}) async {
+    var podcast = await PodcastSource.loadPodcastInfo(feedUrl, force);
     return podcast;
   }
 

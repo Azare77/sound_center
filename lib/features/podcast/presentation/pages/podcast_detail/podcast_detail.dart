@@ -38,7 +38,7 @@ class PodcastDetail extends StatefulWidget {
 }
 
 class _PodcastDetailState extends State<PodcastDetail> {
-  final PodcastRepositoryImp db = PodcastRepositoryImp(AppDatabase());
+  final PodcastRepositoryImp repository = PodcastRepositoryImp(AppDatabase());
   bool subscribed = false;
   bool toolbarCollapsed = false;
   Podcast? podcast;
@@ -47,8 +47,8 @@ class _PodcastDetailState extends State<PodcastDetail> {
 
   void _init({bool retry = true}) async {
     try {
-      subscribed = await db.isSubscribed(widget.feedUrl);
-      podcast = await Feed.loadFeed(url: widget.feedUrl);
+      subscribed = await repository.isSubscribed(widget.feedUrl);
+      podcast = await repository.loadPodcastInfo(widget.feedUrl);
       if (podcast != null) {
         episodes = podcast!.episodes;
         sort(PodcastOrder.NEWEST);

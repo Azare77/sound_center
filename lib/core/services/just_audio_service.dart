@@ -65,7 +65,7 @@ class JustAudioService {
   }) async {
     try {
       _source = source;
-      // await release();
+      await release();
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
       } else {

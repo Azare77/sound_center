@@ -1,16 +1,26 @@
-# sound_center
+# sound_center 🎵
 
-A new Flutter project.
+![Flutter](https://img.shields.io/badge/Flutter-3.x-blue)
+![Platform](https://img.shields.io/badge/platform-Android%20|%20Linux-blueviolet)
 
-## Getting Started
+sound_center — a concise, cross-platform music & podcast player built with Flutter.
 
-This project is a starting point for a Flutter application.
+Local music and podcast playback are implemented. The app also targets playing from third‑party
+sources (e.g., SoundCloud) and live audio streams (internet radio).
 
-A few resources to get you started if this is your first Flutter project:
+| Feature                                    | Status / Notes                             |
+|--------------------------------------------|--------------------------------------------|
+| **Local audio scanning & playback**        | ✔ Playlists, queue, seek, shuffle          |
+| **Podcast search, streaming & downloads**  | ✔ Search, stream, offline resume           |
+| **Background playback & system controls**  | ✔ `audio_service`, MPRIS on desktop        |
+| **Downloads manager**                      | ✔ Background using `background_downloader` |
+| **Localization**                           | ✔ English & Farsi (`intl`)                 |
+| **Third-party sources (SoundCloud, etc.)** | 🔧 Planned — adapter-based architecture    |
+| **Live audio streams (internet radio)**    | 🔧 Supported at player level, UI pending   |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Short notes
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Architecture: modular features with BLoC for state management and a central `audio_handler` for
+  playback orchestration.
+- Permissions: the app requests storage/media permissions on first run to allow local scanning (
+  `permission_handler`).

@@ -1,9 +1,15 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:podcast_search/podcast_search.dart' as search;
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/local_audios.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 import 'package:sound_center/features/settings/presentation/settings.dart';
 
@@ -18,10 +24,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   int index = 0;
   late final LocalPlayerRepositoryImp _localPlayer;
   late final PodcastPlayerRepositoryImp _podcastPlayer;
+  late final AppLinks appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
 
   @override
   void initState() {
     super.initState();
+    appLinks = AppLinks();
+    initDeepLinks();
     _localPlayer = LocalPlayerRepositoryImp();
     _podcastPlayer = PodcastPlayerRepositoryImp();
     WidgetsBinding.instance.addObserver(this);
@@ -30,7 +40,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _linkSubscription?.cancel();
     super.dispose();
+  }
+
+  Future<void> initDeepLinks() async {
+    // Handle links
+    _linkSubscription = AppLinks().uriLinkStream.listen((uri) async {
+      Map<String, String> params = uri.queryParameters;
+      try {
+        search.Podcast? podcast = await search.Feed.loadFeed(
+          url: params['podcast'] ?? "",
+        );
+        final episode = podcast.episodes.firstWhere(
+          (item) => item.guid == params['guid'],
+        );
+        BlocProvider.of<PodcastBloc>(
+          context,
+        ).add(PlayPodcast(episodes: [episode], index: 0));
+      } catch (_) {}
+    });
   }
 
   @override

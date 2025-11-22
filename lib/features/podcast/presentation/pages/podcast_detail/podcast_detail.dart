@@ -153,6 +153,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
                 podcast == null
                     ? SliverFillRemaining(child: Loading())
                     : Episodes(
+                        feedUrl: widget.feedUrl,
                         episodes: episodes,
                         bestImageUrl: widget.defaultImg,
                       ),

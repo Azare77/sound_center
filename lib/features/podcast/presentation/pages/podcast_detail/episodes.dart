@@ -7,9 +7,15 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episode_template.dart';
 
 class Episodes extends StatefulWidget {
-  const Episodes({super.key, required this.episodes, this.bestImageUrl});
+  const Episodes({
+    super.key,
+    required this.episodes,
+    this.bestImageUrl,
+    required this.feedUrl,
+  });
 
   final List<Episode> episodes;
+  final String feedUrl;
   final String? bestImageUrl;
 
   @override
@@ -34,6 +40,8 @@ class _EpisodesState extends State<Episodes> {
           child: InkWell(
             onTap: () {
               setState(() {});
+              imp.feedUrl = widget.feedUrl;
+
               BlocProvider.of<PodcastBloc>(
                 context,
               ).add(PlayPodcast(episodes: widget.episodes, index: index));

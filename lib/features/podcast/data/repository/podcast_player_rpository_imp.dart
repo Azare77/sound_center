@@ -37,6 +37,8 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   int index = 0;
 
+  String feedUrl = "";
+
   RepeatMode repeatMode = RepeatMode.repeatAll;
 
   late final PodcastBloc bloc;

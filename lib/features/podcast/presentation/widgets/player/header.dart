@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/description.dart';
@@ -80,7 +81,19 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => {},
+                    onPressed: () async {
+                      final params = {
+                        'podcast': playerRepository.feedUrl,
+                        'guid': currentEpisode.guid,
+                      };
+                      final uri = Uri(
+                        scheme: 'soundcenter',
+                        host: 'open.sound.app',
+                        path: '/podcast',
+                        queryParameters: params,
+                      );
+                      await SharePlus.instance.share(ShareParams(uri: uri));
+                    },
                     icon: Icon(Icons.share_rounded),
                   ),
                 ],

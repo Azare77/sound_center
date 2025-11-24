@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/downloaded_episodes.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/rss_feed_dialog.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
@@ -57,6 +58,12 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
               ),
             ),
           if (!_showSearch) const Spacer(),
+          IconButton(
+            onPressed: () {
+              showDialog(context: context, builder: (_) => RssFeedDialog());
+            },
+            icon: Icon(Icons.rss_feed_rounded),
+          ),
           IconButton(
             onPressed: () {
               Navigator.push(

@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadFail": MessageLookupByLibrary.simpleMessage(
       "Failed To load Trying Again",
     ),
+    "loadPodcast": MessageLookupByLibrary.simpleMessage("Load Podcast"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noAudio": MessageLookupByLibrary.simpleMessage("NO AUDIO!!"),
     "noPodcast": MessageLookupByLibrary.simpleMessage("NO PODCAST"),
@@ -47,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "oldestFirst": MessageLookupByLibrary.simpleMessage("Oldest First"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("Play Speed"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("Podcast Api"),
+    "rssFeed": MessageLookupByLibrary.simpleMessage("Rss Feed"),
     "scanning": MessageLookupByLibrary.simpleMessage("Scanning"),
     "searchHint": MessageLookupByLibrary.simpleMessage("what do you want?"),
     "selectProvider": MessageLookupByLibrary.simpleMessage(

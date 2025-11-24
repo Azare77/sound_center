@@ -243,6 +243,21 @@ class S {
       args: [],
     );
   }
+
+  /// `Load Podcast`
+  String get loadPodcast {
+    return Intl.message(
+      'Load Podcast',
+      name: 'loadPodcast',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rss Feed`
+  String get rssFeed {
+    return Intl.message('Rss Feed', name: 'rssFeed', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

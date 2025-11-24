@@ -28,5 +28,7 @@
   "no": "No",
   "soundCenter": "Sound Center",
   "language": "Language",
-  "loadFail": "Failed To load Trying Again"
+  "loadFail": "Failed To load Trying Again",
+  "loadPodcast": "Load Podcast",
+  "rssFeed": "Rss Feed"
 }

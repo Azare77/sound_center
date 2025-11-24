@@ -43,15 +43,18 @@ class _PodcastDetailState extends State<PodcastDetail> {
   bool toolbarCollapsed = false;
   Podcast? podcast;
   List<Episode> episodes = [];
+  String? image;
   final ScrollController _sliverScrollController = ScrollController();
 
   void _init({bool retry = true}) async {
     try {
       subscribed = await repository.isSubscribed(widget.feedUrl);
       podcast = await repository.loadPodcastInfo(widget.feedUrl);
+
       if (podcast != null) {
         episodes = podcast!.episodes;
         sort(PodcastOrder.NEWEST);
+        image ??= podcast!.image;
       }
       if (subscribed) {
         _update();
@@ -61,10 +64,12 @@ class _PodcastDetailState extends State<PodcastDetail> {
     } finally {
       if (podcast == null) {
         if (retry) {
-          ToastMessage.showErrorMessage(
-            context: context,
-            title: S.of(context).loadFail,
-          );
+          if (mounted) {
+            ToastMessage.showErrorMessage(
+              context: context,
+              title: S.of(context).loadFail,
+            );
+          }
           _init(retry: false);
         } else {
           Navigator.pop(context);
@@ -77,6 +82,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
   @override
   void initState() {
     super.initState();
+    image = widget.defaultImg;
     double totalExpandableRange = EXPANDED_HEIGHT - kToolbarHeight;
     _sliverScrollController.addListener(() {
       bool hasClient = _sliverScrollController.hasClients;
@@ -126,7 +132,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
                     subscribe: _subscribe,
                     subscribed: subscribed,
                     podcast: podcast,
-                    url: widget.defaultImg,
+                    url: image,
                   ),
                 ),
                 if (podcast != null)
@@ -155,7 +161,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
                     : Episodes(
                         feedUrl: widget.feedUrl,
                         episodes: episodes,
-                        bestImageUrl: widget.defaultImg,
+                        bestImageUrl: image,
                       ),
               ],
             ),

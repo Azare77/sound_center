@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadFail": MessageLookupByLibrary.simpleMessage(
       "خطا در بارگذاری پادکست، تلاش مجدد",
     ),
+    "loadPodcast": MessageLookupByLibrary.simpleMessage("بارگذاری پادکست"),
     "no": MessageLookupByLibrary.simpleMessage("نه"),
     "noAudio": MessageLookupByLibrary.simpleMessage("بدون موسیقی!!"),
     "noPodcast": MessageLookupByLibrary.simpleMessage("بدون پادکست"),
@@ -47,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "oldestFirst": MessageLookupByLibrary.simpleMessage("قدیمی ترین"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("سرعت پخش"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("سرویس دهنده پادکست"),
+    "rssFeed": MessageLookupByLibrary.simpleMessage("آدرس فید"),
     "scanning": MessageLookupByLibrary.simpleMessage("در حال اسکن"),
     "searchHint": MessageLookupByLibrary.simpleMessage("دنبال چی هستی؟"),
     "selectProvider": MessageLookupByLibrary.simpleMessage(

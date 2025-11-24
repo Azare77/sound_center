@@ -37,9 +37,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("Latest First"),
-    "loadFail": MessageLookupByLibrary.simpleMessage(
-      "Failed To load Trying Again",
-    ),
+    "loadFail": MessageLookupByLibrary.simpleMessage("Failed To Load Podcast"),
     "loadPodcast": MessageLookupByLibrary.simpleMessage("Load Podcast"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noAudio": MessageLookupByLibrary.simpleMessage("NO AUDIO!!"),

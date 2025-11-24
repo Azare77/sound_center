@@ -234,10 +234,10 @@ class S {
     return Intl.message('Language', name: 'language', desc: '', args: []);
   }
 
-  /// `Failed To load Trying Again`
+  /// `Failed To Load Podcast`
   String get loadFail {
     return Intl.message(
-      'Failed To load Trying Again',
+      'Failed To Load Podcast',
       name: 'loadFail',
       desc: '',
       args: [],

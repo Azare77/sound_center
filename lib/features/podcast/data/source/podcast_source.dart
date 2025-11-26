@@ -26,12 +26,11 @@ class PodcastSource {
   }
 
   static Future<Podcast> loadPodcastInfo(
-    String feedUrl,
-    bool force, {
+    String feedUrl, {
     Duration ttl = const Duration(hours: 1),
   }) async {
     final cached = _podcastCache[feedUrl];
-    if (!force && cached != null) {
+    if (cached != null) {
       final cachedTime = _cachedTime[feedUrl]!;
       if (DateTime.now().difference(cachedTime) < ttl) {
         return cached;

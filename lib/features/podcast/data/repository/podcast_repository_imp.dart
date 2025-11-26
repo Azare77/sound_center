@@ -117,8 +117,8 @@ class PodcastRepositoryImp implements PodcastRepository {
   }
 
   @override
-  Future<Podcast> loadPodcastInfo(String feedUrl, {bool force = false}) async {
-    var podcast = await PodcastSource.loadPodcastInfo(feedUrl, force);
+  Future<Podcast> loadPodcastInfo(String feedUrl) async {
+    var podcast = await PodcastSource.loadPodcastInfo(feedUrl);
     return podcast;
   }
 
@@ -180,7 +180,7 @@ Future<Map<String, Podcast>> _checkSubscriptionsForUpdates(
   Map<String, Podcast> podcastCache = {};
   final futures = feeds.map((feed) async {
     try {
-      final podcast = await PodcastSource.loadPodcastInfo(feed.feedUrl, true);
+      final podcast = await Feed.loadFeed(url: feed.feedUrl);
       podcastCache[feed.feedUrl] = podcast;
     } catch (_) {}
   });

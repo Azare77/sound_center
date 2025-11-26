@@ -44,7 +44,7 @@ dependencies:
   #  audio_metadata_reader: ^1.4.2
   #  metadata_god: ^1.1.0
   #STATE MANAGEMENT
-  bloc: ^9.0.0
+  bloc: ^9.1.0
   flutter_bloc: ^9.1.1
   #AUDIO PLAYER
   just_audio: ^0.10.5
@@ -53,20 +53,20 @@ dependencies:
   audio_service: ^0.18.18
   audio_service_mpris: ^0.2.0
   #DATABASE
-  drift: ^2.28.1
-  drift_flutter: ^0.2.5
+  drift: ^2.29.0
+  drift_flutter: ^0.2.7
   path_provider: ^2.1.5
   shared_preferences: ^2.5.3
   #UI
-  flutter_svg: ^2.2.1
+  flutter_svg: ^2.2.3
   flutter_html: ^3.0.0
   text_scroll: ^0.2.1
   url_launcher: ^6.3.2
   toastification: ^3.0.3
   #PODCAST
-  podcast_search: ^0.7.11
+  podcast_search: ^0.7.12
   cached_network_image: ^3.4.1
-  background_downloader: ^9.2.6
+  background_downloader: ^9.4.0
   pull_to_refresh: ^2.0.0
   app_links: ^7.0.0
   #SHARE
@@ -75,8 +75,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  drift_dev: ^2.28.2
-  build_runner: ^2.7.2
+  drift_dev: ^2.29.0
+  build_runner: ^2.10.4
   flutter_launcher_icons: "^0.14.4"
 
   # The "flutter_lints" package below contains a set of recommended lints to

@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:podcast_search/podcast_search.dart' as search;
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
+import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_detail.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_list_template.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/podcast_tool_bar.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/subscribed/subscribed_podcast_list.dart';
@@ -13,6 +17,26 @@ class Podcast extends StatefulWidget {
 
   @override
   State<Podcast> createState() => _PodcastState();
+
+  void handleDeepLink(BuildContext context, Map<String, String> params) async {
+    try {
+      search.Podcast podcast = await search.Feed.loadFeed(
+        url: params['podcast'] ?? "",
+      );
+      final episode = podcast.episodes.firstWhere(
+        (item) => item.guid == params['guid'],
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PodcastDetail(feedUrl: params['podcast']!),
+        ),
+      );
+      BlocProvider.of<PodcastBloc>(
+        context,
+      ).add(PlayPodcast(episodes: [episode], index: 0));
+    } catch (_) {}
+  }
 }
 
 class _PodcastState extends State<Podcast> {
@@ -22,12 +46,10 @@ class _PodcastState extends State<Podcast> {
   void initState() {
     super.initState();
     podcastToolBar = PodcastToolBar();
-    // BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());
   }
 
   @override
   Widget build(BuildContext context) {
-    //
     return Column(
       children: [
         podcastToolBar,

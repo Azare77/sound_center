@@ -17,12 +17,12 @@ class PodcastNavigation extends StatefulWidget {
 
 class _PodcastNavigationState extends State<PodcastNavigation> {
   final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
-  late final Timer _timer;
   late Episode episode;
   int total = 1;
   int pass = 0;
   bool seeking = false;
   late PodcastBloc _podcastBloc;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 

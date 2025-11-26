@@ -1,15 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:podcast_search/podcast_search.dart' as search;
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/local_audios.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
-import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 import 'package:sound_center/features/settings/presentation/settings.dart';
 
@@ -24,12 +23,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   int index = 0;
   late final LocalPlayerRepositoryImp _localPlayer;
   late final PodcastPlayerRepositoryImp _podcastPlayer;
+  late final LocalAudios _localAudios;
+  late final Podcast _podcast;
   late final AppLinks appLinks;
   StreamSubscription<Uri>? _linkSubscription;
 
   @override
   void initState() {
     super.initState();
+    _localAudios = LocalAudios();
+    _podcast = Podcast();
     appLinks = AppLinks();
     initDeepLinks();
     _localPlayer = LocalPlayerRepositoryImp();
@@ -48,17 +51,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // Handle links
     _linkSubscription = AppLinks().uriLinkStream.listen((uri) async {
       Map<String, String> params = uri.queryParameters;
-      try {
-        search.Podcast? podcast = await search.Feed.loadFeed(
-          url: params['podcast'] ?? "",
-        );
-        final episode = podcast.episodes.firstWhere(
-          (item) => item.guid == params['guid'],
-        );
-        BlocProvider.of<PodcastBloc>(
-          context,
-        ).add(PlayPodcast(episodes: [episode], index: 0));
-      } catch (_) {}
+      _podcast.handleDeepLink(context, params);
     });
   }
 
@@ -100,7 +93,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           Expanded(
             child: IndexedStack(
               index: index,
-              children: const [LocalAudios(), Podcast()],
+              children: [_localAudios, _podcast],
             ),
           ),
           const CurrentMedia(),

@@ -40,28 +40,28 @@ class PodcastRepositoryImp implements PodcastRepository {
       subs,
     );
     PodcastSource.setCache(podcasts);
-    final futures = subs.map((s) async {
-      final item = SubscriptionEntity.fromDrift(s);
-      try {
-        final Podcast podcast = podcasts[s.feedUrl]!;
+    final List<SubscriptionEntity> models = [];
 
-        final latestEpisodeTime = _getLastEpisodeDate(podcast.episodes);
-        final hasNewEpisodes = podcast.episodes.length != item.totalEpisodes;
-        item
-          ..haveNewEpisode = hasNewEpisodes
-          ..updateTime = latestEpisodeTime
-          ..needsDatabaseUpdate = !s.updateTime.isAtSameMomentAs(
-            latestEpisodeTime,
-          );
-      } catch (_) {
+    for (final s in subs) {
+      final item = SubscriptionEntity.fromDrift(s);
+      final Podcast? podcast = podcasts[s.feedUrl];
+      if (podcast == null) {
         item.haveNewEpisode = false;
         item.needsDatabaseUpdate = false;
+        models.add(item);
+        continue;
       }
+      final latestEpisodeTime = _getLastEpisodeDate(podcast.episodes);
+      final hasNewEpisodes = podcast.episodes.length != item.totalEpisodes;
+      item
+        ..haveNewEpisode = hasNewEpisodes
+        ..updateTime = latestEpisodeTime
+        ..needsDatabaseUpdate = !s.updateTime.isAtSameMomentAs(
+          latestEpisodeTime,
+        );
+      models.add(item);
+    }
 
-      return item;
-    }).toList();
-
-    final models = await Future.wait(futures);
     final toUpdate = models.where((m) => m.needsDatabaseUpdate).toList();
     if (toUpdate.isNotEmpty) {
       await database.batch((batch) {

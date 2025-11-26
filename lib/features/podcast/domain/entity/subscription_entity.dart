@@ -13,6 +13,7 @@ class SubscriptionEntity {
   final DateTime lastListenAt;
   DateTime updateTime;
   bool haveNewEpisode;
+  bool needsDatabaseUpdate = false;
 
   SubscriptionEntity({
     this.podcastId,

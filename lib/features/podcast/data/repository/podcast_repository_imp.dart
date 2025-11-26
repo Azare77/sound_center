@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/foundation.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/data/source/podcast_source.dart';
@@ -34,36 +35,23 @@ class PodcastRepositoryImp implements PodcastRepository {
   @override
   Future<List<SubscriptionEntity>> haveUpdate() async {
     final subs = await getSubs();
-
-    final futures = subs.map((s) async {
-      final item = SubscriptionEntity.fromDrift(s);
-      try {
-        final podcast = await loadPodcastInfo(item.feedUrl, force: true);
-
-        final latestEpisodeTime = _getLastEpisodeDate(podcast.episodes);
-        final hasNewEpisodes = podcast.episodes.length != item.totalEpisodes;
-        item
-          ..haveNewEpisode = hasNewEpisodes
-          ..updateTime = latestEpisodeTime;
-
-        if (!s.updateTime.isAtSameMomentAs(latestEpisodeTime)) {
-          await (database.update(
+    if (subs.isEmpty) return [];
+    final models = await compute(_checkSubscriptionsForUpdatesIsolate, subs);
+    final toUpdate = models.where((m) => m.needsDatabaseUpdate).toList();
+    if (toUpdate.isNotEmpty) {
+      await database.batch((batch) {
+        for (final item in toUpdate) {
+          batch.update(
             database.subscriptionTable,
-          )..where((tbl) => tbl.feedUrl.equals(item.feedUrl))).write(
             SubscriptionTableCompanion(
-              updateTime: drift.Value(latestEpisodeTime),
+              updateTime: drift.Value(item.updateTime),
             ),
+            where: (t) => t.feedUrl.equals(item.feedUrl),
           );
         }
-      } catch (_) {
-        item.haveNewEpisode = false;
-      }
-
-      return item;
-    }).toList();
-
-    final models = await Future.wait(futures);
-    return _sortByUpdateTimeDesc(models);
+      });
+    }
+    return models;
   }
 
   @override
@@ -141,22 +129,43 @@ class PodcastRepositoryImp implements PodcastRepository {
         .toList();
     return episodes;
   }
+}
 
-  DateTime _getLastEpisodeDate(List<Episode> episodes) {
-    DateTime updateTime = DateTime(1970);
-    for (Episode episode in episodes) {
-      if (episode.publicationDate == null) continue;
-      if (episode.publicationDate!.isAfter(updateTime)) {
-        updateTime = episode.publicationDate!;
-      }
+Future<List<SubscriptionEntity>> _checkSubscriptionsForUpdatesIsolate(
+  List<SubscriptionTableData> subscriptions,
+) async {
+  final futures = subscriptions.map((s) async {
+    final item = SubscriptionEntity.fromDrift(s);
+    try {
+      final Podcast podcast = await PodcastSource.loadPodcastInfo(
+        item.feedUrl,
+        true,
+      );
+
+      final DateTime latestEpisodeTime = podcast.episodes.fold<DateTime>(
+        DateTime(1970),
+        (prev, ep) =>
+            ep.publicationDate != null && ep.publicationDate!.isAfter(prev)
+            ? ep.publicationDate!
+            : prev,
+      );
+
+      final bool hasNewEpisodes = podcast.episodes.length != item.totalEpisodes;
+      final bool needsDatabaseUpdate = !s.updateTime.isAtSameMomentAs(
+        latestEpisodeTime,
+      );
+
+      item
+        ..haveNewEpisode = hasNewEpisodes
+        ..updateTime = latestEpisodeTime
+        ..needsDatabaseUpdate = needsDatabaseUpdate;
+    } catch (e) {
+      item.haveNewEpisode = false;
+      item.needsDatabaseUpdate = false;
     }
-    return updateTime;
-  }
-
-  List<SubscriptionEntity> _sortByUpdateTimeDesc(
-    List<SubscriptionEntity> list,
-  ) {
-    list.sort((a, b) => b.updateTime.compareTo(a.updateTime));
-    return list;
-  }
+    return item;
+  }).toList();
+  final results = await Future.wait(futures);
+  results.sort((a, b) => b.updateTime.compareTo(a.updateTime));
+  return results;
 }

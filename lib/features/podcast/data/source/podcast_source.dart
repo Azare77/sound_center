@@ -43,4 +43,11 @@ class PodcastSource {
     _cachedTime[feedUrl] = DateTime.now();
     return podcast;
   }
+
+  static void setCache(Map<String, Podcast> podcasts) {
+    podcasts.forEach((feed, podcast) {
+      _podcastCache[feed] = podcast;
+      _cachedTime[feed] = DateTime.now();
+    });
+  }
 }

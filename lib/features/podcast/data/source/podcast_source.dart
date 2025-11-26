@@ -8,10 +8,10 @@ class PodcastSource {
 
   static Future<SearchResult> search(String searchText) async {
     Search search = Search();
-    PodcastProvider provider = PodcastSettingStorage.getSavedProvider();
+    PodcastProvider provider = AppSettingStorage.getSavedProvider();
     if (provider == PodcastProvider.podcatIndex) {
       Map<String, String>? podcastIndexInfo =
-          PodcastSettingStorage.getPodcastIndexKeys();
+          AppSettingStorage.getPodcastIndexKeys();
       if (podcastIndexInfo != null) {
         search = Search(
           searchProvider: PodcastIndexProvider(

@@ -56,6 +56,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "soundCenter": MessageLookupByLibrary.simpleMessage("مرکز صدا"),
     "submit": MessageLookupByLibrary.simpleMessage("تایید"),
     "subscribe": MessageLookupByLibrary.simpleMessage("مشترک شدن"),
+    "theme": MessageLookupByLibrary.simpleMessage("تم"),
     "title": MessageLookupByLibrary.simpleMessage("عنوان"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("لغو اشتراک"),
     "yes": MessageLookupByLibrary.simpleMessage("بله"),

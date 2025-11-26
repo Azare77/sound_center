@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:sound_center/database/shared_preferences/podcast_setting_storage.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 class SettingsRepositoryImp implements SettingRepository {
   static final SettingsRepositoryImp _instance =
@@ -13,31 +14,41 @@ class SettingsRepositoryImp implements SettingRepository {
 
   @override
   Map<String, String>? getPodcastIndexKeys() {
-    return PodcastSettingStorage.getPodcastIndexKeys();
+    return AppSettingStorage.getPodcastIndexKeys();
   }
 
   @override
   PodcastProvider getPodcastProvider() {
-    return PodcastSettingStorage.getSavedProvider();
+    return AppSettingStorage.getSavedProvider();
   }
 
   @override
   Future<void> setPodcastIndexKeys(String key, String secret) async {
-    await PodcastSettingStorage.setPodcastIndexKeys(key, secret);
+    await AppSettingStorage.setPodcastIndexKeys(key, secret);
   }
 
   @override
   Future<void> setPodcastProvider(PodcastProvider provider) async {
-    await PodcastSettingStorage.saveProvider(provider);
+    await AppSettingStorage.saveProvider(provider);
   }
 
   @override
   Locale getLocale() {
-    return PodcastSettingStorage.getLocale();
+    return AppSettingStorage.getLocale();
   }
 
   @override
   Future<void> setLocale(Locale locale) async {
-    PodcastSettingStorage.saveLocale(locale);
+    AppSettingStorage.saveLocale(locale);
+  }
+
+  @override
+  AppThemes getTheme() {
+    return AppSettingStorage.getTheme();
+  }
+
+  @override
+  Future<void> setTheme(String themeName) async {
+    AppSettingStorage.saveTheme(themeName);
   }
 }

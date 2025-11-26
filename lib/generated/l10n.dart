@@ -258,6 +258,11 @@ class S {
   String get rssFeed {
     return Intl.message('Rss Feed', name: 'rssFeed', desc: '', args: []);
   }
+
+  /// `Theme`
+  String get theme {
+    return Intl.message('Theme', name: 'theme', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

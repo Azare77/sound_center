@@ -56,6 +56,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "soundCenter": MessageLookupByLibrary.simpleMessage("Sound Center"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "subscribe": MessageLookupByLibrary.simpleMessage("Subscribe"),
+    "theme": MessageLookupByLibrary.simpleMessage("Theme"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("Unsubscribe"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),

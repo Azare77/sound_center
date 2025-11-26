@@ -30,5 +30,6 @@
   "language": "Language",
   "loadFail": "Failed To Load Podcast",
   "loadPodcast": "Load Podcast",
-  "rssFeed": "Rss Feed"
+  "rssFeed": "Rss Feed",
+  "theme": "Theme"
 }

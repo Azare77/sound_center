@@ -30,5 +30,6 @@
   "language": "زبان",
   "loadFail": "خطا در بارگذاری پادکست",
   "loadPodcast": "بارگذاری پادکست",
-  "rssFeed": "آدرس فید"
+  "rssFeed": "آدرس فید",
+  "theme": "تم"
 }

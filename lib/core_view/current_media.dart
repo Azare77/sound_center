@@ -8,6 +8,7 @@ import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudi
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/current_podcast.dart';
+import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 
 class CurrentMedia extends StatefulWidget {
@@ -47,6 +48,9 @@ class _CurrentMediaState extends State<CurrentMedia> {
         BlocListener<PodcastBloc, PodcastState>(
           listener: (_, _) => _updatePlayer(),
         ),
+        BlocListener<SettingBloc, SettingState>(
+          listener: (_, _) => _updatePlayer(),
+        ),
       ],
       child: _currentPlayer ?? const SizedBox.shrink(),
     );
@@ -78,7 +82,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
       width: double.infinity,
       padding: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: DarkTheme.currentMedia,
+        color: AppTheme.current.mediaColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: child,

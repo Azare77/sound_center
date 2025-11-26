@@ -56,7 +56,11 @@ class _PodcastState extends State<Podcast> {
         Expanded(
           child: BlocBuilder<PodcastBloc, PodcastState>(
             buildWhen: (previous, current) {
-              return current.status is! DownloadedEpisodesStatus;
+              bool notDownload = current.status is! DownloadedEpisodesStatus;
+              bool inSearch =
+                  previous.status is PodcastResultStatus &&
+                  current.status is SubscribedPodcasts;
+              return notDownload && !inSearch;
             },
             builder: (BuildContext context, PodcastState state) {
               if (state.status is SubscribedPodcasts) {

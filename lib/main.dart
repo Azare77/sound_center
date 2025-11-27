@@ -23,15 +23,6 @@ late final AudioHandler audioHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: AppTheme.current.themeData.appBarTheme.backgroundColor,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor:
-          AppTheme.current.themeData.scaffoldBackgroundColor,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ),
-  );
   await Storage.instance.init();
   await _init();
   runApp(const MyApp());
@@ -76,6 +67,17 @@ class MyApp extends StatelessWidget {
         ],
         child: BlocBuilder<SettingBloc, SettingState>(
           builder: (BuildContext context, state) {
+            SystemChrome.setSystemUIOverlayStyle(
+              SystemUiOverlayStyle(
+                statusBarColor:
+                    AppTheme.current.themeData.appBarTheme.backgroundColor,
+                statusBarIconBrightness: AppTheme.current.themeData.brightness,
+                systemNavigationBarColor:
+                    AppTheme.current.themeData.scaffoldBackgroundColor,
+                systemNavigationBarIconBrightness:
+                    AppTheme.current.themeData.brightness,
+              ),
+            );
             return ToastificationWrapper(
               child: MaterialApp(
                 navigatorKey: NAVIGATOR_KEY,

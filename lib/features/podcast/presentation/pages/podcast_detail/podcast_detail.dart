@@ -107,6 +107,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
     return Scaffold(
       body: Column(
         children: [
@@ -118,8 +119,8 @@ class _PodcastDetailState extends State<PodcastDetail> {
                 SliverAppBar(
                   toolbarHeight: kToolbarHeight,
                   elevation: 2,
-                  shadowColor: Color(0xFF601410),
-                  backgroundColor: Color(0xff202138),
+                  shadowColor: themeData.appBarTheme.shadowColor,
+                  backgroundColor: themeData.appBarTheme.backgroundColor,
                   pinned: true,
                   floating: false,
                   title: AnimatedOpacity(

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 class MediaControllerButton extends StatelessWidget {
   const MediaControllerButton({
     super.key,
     required this.svg,
     this.onPressed,
-    this.color = Colors.white,
+    this.color,
     this.width = 60,
     this.height = 60,
   });
 
   final String svg;
   final VoidCallback? onPressed;
-  final Color color;
+  final Color? color;
   final double width;
   final double height;
 
@@ -30,7 +31,10 @@ class MediaControllerButton extends StatelessWidget {
           svg,
           width: width / 2,
           height: height / 2,
-          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(
+            color ?? AppTheme.current.svgColor,
+            BlendMode.srcIn,
+          ),
         ),
       ),
     );

@@ -48,6 +48,9 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
                     BlocProvider.of<PodcastBloc>(
                       context,
                     ).add(GetSubscribedPodcasts());
+                    BlocProvider.of<PodcastBloc>(
+                      context,
+                    ).add(GetSubscribedPodcasts());
                   }
                 },
                 onSubmitted: (text) {
@@ -82,11 +85,9 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
     setState(() => _showSearch = !_showSearch);
 
     if (!_showSearch) {
-      final text = _controller.text.trim();
-      if (text.isNotEmpty) {
-        context.read<PodcastBloc>().add(GetSubscribedPodcasts());
-      }
       _controller.clear();
+      BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());
+      BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());
     }
   }
 }

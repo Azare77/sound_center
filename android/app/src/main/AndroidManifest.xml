@@ -41,6 +41,10 @@
             <meta-data
                 android:name="flutter_deeplinking_enabled"
                 android:value="false" />
+            <meta-data
+                android:name="notification_icon"
+                android:resource="@mipmap/ic_notification" />
+
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

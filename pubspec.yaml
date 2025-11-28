@@ -87,7 +87,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   intl_utils: ^2.8.12
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: "ic_launcher"
   ios: true
   image_path: "assets/app.png"
   min_sdk_android: 21 # android min sdk min:16, default 21

@@ -56,6 +56,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     });
   }
 
+  void onSwipe(DragEndDetails details) {
+    if (details.primaryVelocity == null) return;
+
+    if (details.primaryVelocity! < 0) {
+      // swipe به چپ → بعدی
+      setState(() => index = (index + 1) & 1);
+    } else if (details.primaryVelocity! > 0) {
+      // swipe به راست → قبلی
+      setState(() => index = (index - 1) & 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,31 +75,43 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Directionality(
           textDirection: TextDirection.ltr,
-          child: AppBar(
-            title: InkWell(
-              focusColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              hoverColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              onLongPress: () {
-                showDialog(context: context, builder: (_) => const Settings());
-              },
-              child: const Text("Sound Center"),
-            ),
-            actions: [
-              IconButton(
-                tooltip: index == 0
-                    ? S.of(context).local
-                    : S.of(context).podcast,
-                // use Bitwise Operations to change index between 0 and 1 (n)
-                onPressed: () => setState(() => index = (index + 1) & 1),
-                icon: Icon(
-                  index == 0
-                      ? Icons.music_note_rounded
-                      : Icons.podcasts_rounded,
+          child: GestureDetector(
+            onHorizontalDragEnd: onSwipe,
+            child: AppBar(
+              title: InkWell(
+                focusColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                onLongPress: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const Settings(),
+                  );
+                },
+                child: GestureDetector(
+                  onHorizontalDragEnd: onSwipe,
+                  child: AnimatedSwitcher(
+                    duration: Duration(milliseconds: 100),
+                    child: Text("Sound Center", textAlign: TextAlign.center),
+                  ),
                 ),
               ),
-            ],
+              actions: [
+                IconButton(
+                  tooltip: index == 0
+                      ? S.of(context).podcast
+                      : S.of(context).local,
+                  // use Bitwise Operations to change index between 0 and 1 (n)
+                  onPressed: () => setState(() => index = (index + 1) & 1),
+                  icon: Icon(
+                    index == 0
+                        ? Icons.podcasts_rounded
+                        : Icons.music_note_rounded,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

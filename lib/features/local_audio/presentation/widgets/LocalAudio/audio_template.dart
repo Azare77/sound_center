@@ -35,6 +35,12 @@ class _AudioTemplateState extends State<AudioTemplate> {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle infoTextStyle = TextStyle(
+      color: Theme.of(
+        context,
+      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+      fontSize: 13,
+    );
     return Container(
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -83,16 +89,14 @@ class _AudioTemplateState extends State<AudioTemplate> {
                   widget.audioEntity.artist,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                  style: infoTextStyle,
                 ),
               ],
             ),
           ),
-
-          // --- مدت زمان ---
           Text(
             AudioUtil.convertTime(widget.audioEntity.duration),
-            style: const TextStyle(color: Colors.grey, fontSize: 13),
+            style: infoTextStyle,
           ),
         ],
       ),

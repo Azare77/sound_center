@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
-import 'package:sound_center/features/local_audio/presentation/pages/play_audio.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
 class CurrentAudio extends StatefulWidget {
@@ -40,18 +39,6 @@ class _CurrentAudioState extends State<CurrentAudio> {
   Widget build(BuildContext context) {
     if (audioId != widget.audioEntity.id) getCover();
     return ListTile(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          requestFocus: true,
-          constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width,
-          ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          builder: (_) => PlayAudio(),
-        );
-      },
       leading: SizedBox(
         width: 50,
         child: ClipRRect(
@@ -79,7 +66,16 @@ class _CurrentAudioState extends State<CurrentAudio> {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: Text(widget.audioEntity.artist, maxLines: 1),
+      subtitle: Text(
+        widget.audioEntity.artist,
+        maxLines: 1,
+        style: TextStyle(
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          fontSize: 13,
+        ),
+      ),
       trailing: PlayPauseButton(
         isPlaying: imp.isPlaying(),
         onPressed: () async {

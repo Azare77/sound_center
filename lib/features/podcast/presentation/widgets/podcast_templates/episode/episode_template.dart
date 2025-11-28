@@ -21,7 +21,12 @@ class EpisodeTemplate extends StatelessWidget {
     final publishDate = episode.publicationDate != null
         ? toJalali(episode.publicationDate!)
         : '';
-
+    final TextStyle infoTextStyle = TextStyle(
+      color: Theme.of(
+        context,
+      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+      fontSize: 13,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
@@ -53,19 +58,12 @@ class EpisodeTemplate extends StatelessWidget {
                   spacing: 30,
                   children: [
                     if (publishDate.isNotEmpty)
-                      Text(
-                        publishDate,
-                        maxLines: 1,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 13,
-                        ),
-                      ),
+                      Text(publishDate, maxLines: 1, style: infoTextStyle),
                     Text(
                       AudioUtil.convertTime(
                         episode.duration?.inMilliseconds ?? 0,
                       ),
-                      style: const TextStyle(color: Colors.grey, fontSize: 13),
+                      style: infoTextStyle,
                     ),
                   ],
                 ),

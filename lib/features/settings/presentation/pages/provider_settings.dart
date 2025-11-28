@@ -74,6 +74,7 @@ class _ProviderSettingsState extends State<ProviderSettings> {
               TextFieldBox(
                 controller: key,
                 hintText: 'Key',
+                labelText: 'Key',
                 validator: (text) {
                   return text?.isNotEmpty ?? false;
                 },
@@ -82,6 +83,7 @@ class _ProviderSettingsState extends State<ProviderSettings> {
               TextFieldBox(
                 controller: secret,
                 hintText: 'secret',
+                labelText: 'secret',
                 validator: (text) {
                   return text?.isNotEmpty ?? false;
                 },

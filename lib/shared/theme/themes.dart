@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum AppThemes { dark, green }
 
@@ -18,21 +19,34 @@ abstract class AppTheme {
   ThemeData get themeData;
 
   Color get mediaColor;
-
-  Color get svgColor;
 }
 
 // تم تاریک
 class DarkTheme implements AppTheme {
+  final Color scaffoldBackground = const Color(0xFF11121f);
+  final Color thumbColor = const Color(0xFFFFFFFF);
+  final Color appBarBackground = const Color(0xff202138);
+
   @override
   ThemeData get themeData => ThemeData(
     fontFamily: "Vazir",
     brightness: Brightness.dark,
-    appBarTheme: const AppBarTheme(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Color(0xff202138),
+      brightness: Brightness.dark,
+    ),
+    appBarTheme: AppBarTheme(
       elevation: 2,
       centerTitle: true,
       shadowColor: Color(0xFF601410),
-      backgroundColor: Color(0xff202138),
+      backgroundColor: appBarBackground,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
     ),
     elevatedButtonTheme: const ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -40,24 +54,13 @@ class DarkTheme implements AppTheme {
         backgroundColor: WidgetStatePropertyAll(Color(0xbe20213a)),
       ),
     ),
-    sliderTheme: const SliderThemeData(
+    sliderTheme: SliderThemeData(
       trackHeight: 1,
-      activeTickMarkColor: Color(0xFFFFFFFF),
-      activeTrackColor: Color(0xFFFFFFFF),
-      thumbColor: Color(0xFFFFFFFF),
+      activeTickMarkColor: thumbColor,
+      activeTrackColor: thumbColor,
+      thumbColor: thumbColor,
     ),
-    scaffoldBackgroundColor: const Color(0xFF11121f),
-    colorScheme: const ColorScheme(
-      brightness: Brightness.dark,
-      primary: Color(0xFFD0BCFF),
-      onPrimary: Color(0xff202138),
-      secondary: Color(0xFFCCC2DC),
-      onSecondary: Color(0xFF332D41),
-      error: Color(0xFFF2B8B5),
-      onError: Color(0xFF601410),
-      surface: Color(0xFF11121f),
-      onSurface: Color(0xFFE6E0E9),
-    ),
+    scaffoldBackgroundColor: scaffoldBackground,
     iconTheme: IconThemeData(color: Colors.white),
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.white)),
@@ -66,22 +69,34 @@ class DarkTheme implements AppTheme {
 
   @override
   Color get mediaColor => const Color(0xff202138);
-
-  @override
-  Color get svgColor => Colors.white;
 }
 
 // تم سبز
 class GreenTheme implements AppTheme {
+  final Color scaffoldBackground = const Color(0xffdde7b1);
+  final Color thumbColor = const Color(0xff03c893);
+  final Color appBarBackground = const Color(0xff86E7B8);
+
   @override
   ThemeData get themeData => ThemeData(
     fontFamily: "Vazir",
     brightness: Brightness.light,
-    appBarTheme: const AppBarTheme(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: appBarBackground,
+      brightness: Brightness.light,
+    ),
+    appBarTheme: AppBarTheme(
       elevation: 2,
       centerTitle: true,
-      shadowColor: Color(0xFF601410),
-      backgroundColor: Color(0xff86E7B8),
+      shadowColor: const Color(0xFF601410),
+      backgroundColor: appBarBackground,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
     ),
     elevatedButtonTheme: const ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -89,16 +104,14 @@ class GreenTheme implements AppTheme {
         backgroundColor: WidgetStatePropertyAll(Color(0xbe20213a)),
       ),
     ),
-    sliderTheme: const SliderThemeData(
+    sliderTheme: SliderThemeData(
       trackHeight: 1,
-      activeTickMarkColor: Color(0xff03c893),
-      activeTrackColor: Color(0xff03c893),
-      thumbColor: Color(0xff03c893),
+      activeTickMarkColor: thumbColor,
+      activeTrackColor: thumbColor,
+      thumbColor: thumbColor,
     ),
-    scaffoldBackgroundColor: const Color(0xffdde7b1),
-    bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: const Color(0xffdde7b1),
-    ),
+    scaffoldBackgroundColor: scaffoldBackground,
+    bottomSheetTheme: BottomSheetThemeData(backgroundColor: scaffoldBackground),
     iconTheme: IconThemeData(color: Colors.black),
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black)),
@@ -107,7 +120,4 @@ class GreenTheme implements AppTheme {
 
   @override
   Color get mediaColor => const Color(0xff86E7B8);
-
-  @override
-  Color get svgColor => Colors.black;
 }

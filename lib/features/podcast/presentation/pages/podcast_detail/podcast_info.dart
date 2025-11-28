@@ -22,26 +22,34 @@ class PodcastInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final EdgeInsets edgeInsets = EdgeInsets.fromViewPadding(
+      WidgetsBinding.instance.platformDispatcher.views.first.padding,
+      WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio,
+    );
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         double appBarHeight = constraints.maxHeight;
-        double visibleHeight = appBarHeight - kToolbarHeight;
-        double totalExpandableRange = EXPANDED_HEIGHT - kToolbarHeight;
+        double toolbar = kToolbarHeight + edgeInsets.top;
+        double visibleHeight = appBarHeight - toolbar;
+        double totalExpandableRange = EXPANDED_HEIGHT - toolbar;
         double rawRatio = visibleHeight / totalExpandableRange;
         double t = rawRatio.clamp(0.0, 1.0);
         return Opacity(
-          opacity: rawRatio,
+          opacity: t,
           child: FlexibleSpaceBar(
             title: podcast == null
                 ? SizedBox.shrink()
                 : Padding(
-                    padding: const EdgeInsets.only(top: kToolbarHeight),
+                    padding: EdgeInsets.only(top: toolbar),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 5,
                       children: [
-                        ScrollingText(podcast!.title ?? ""),
+                        ScrollingText(
+                          podcast!.title ?? "",
+                          style: TextStyle(color: Colors.white),
+                        ),
                         if (t == 1)
                           Row(
                             spacing: 5,

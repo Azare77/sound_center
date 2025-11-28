@@ -43,7 +43,16 @@ class PodcastTemplate extends StatelessWidget {
         ),
       ),
       title: Text(podcast.trackName ?? '', maxLines: 1),
-      subtitle: Text(podcast.artistName ?? '', maxLines: 1),
+      subtitle: Text(
+        podcast.artistName ?? '',
+        maxLines: 1,
+        style: TextStyle(
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          fontSize: 13,
+        ),
+      ),
     );
   }
 }

@@ -32,6 +32,7 @@ class _RssFeedDialogState extends State<RssFeedDialog> {
               controller: _controller,
               textInputAction: TextInputAction.go,
               maxLines: 1,
+              labelText: S.of(context).rssFeed,
               hintText: S.of(context).rssFeed,
             ),
             TextButton(

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
@@ -34,6 +33,7 @@ Future<void> _init() async {
       audioHandler = await AudioService.init(
         builder: () => JustAudioNotificationHandler(),
         config: AudioServiceConfig(
+          androidNotificationIcon: "mipmap/ic_notification",
           androidNotificationChannelId:
               'com.example.sound_center.channel.audio',
           androidNotificationChannelName: 'Music Playback',
@@ -58,47 +58,37 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => LocalBloc()),
-          BlocProvider(create: (_) => PodcastBloc()),
-          BlocProvider(create: (_) => SettingBloc()),
-        ],
-        child: BlocBuilder<SettingBloc, SettingState>(
-          builder: (BuildContext context, state) {
-            SystemChrome.setSystemUIOverlayStyle(
-              SystemUiOverlayStyle(
-                statusBarColor:
-                    AppTheme.current.themeData.appBarTheme.backgroundColor,
-                statusBarIconBrightness: AppTheme.current.themeData.brightness,
-                systemNavigationBarColor:
-                    AppTheme.current.themeData.scaffoldBackgroundColor,
-                systemNavigationBarIconBrightness:
-                    AppTheme.current.themeData.brightness,
-              ),
-            );
-            return ToastificationWrapper(
-              child: MaterialApp(
-                navigatorKey: NAVIGATOR_KEY,
-                debugShowCheckedModeBanner: false,
-                locale: state.locale,
-                supportedLocales: S.delegate.supportedLocales,
-                localizationsDelegates: const [
-                  S.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                title: state.locale == Locale("en")
-                    ? "Sound Center"
-                    : "مرکز صدا",
-                theme: AppTheme.current.themeData,
-                home: Home(),
-              ),
-            );
-          },
-        ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => LocalBloc()),
+        BlocProvider(create: (_) => PodcastBloc()),
+        BlocProvider(create: (_) => SettingBloc()),
+      ],
+      child: BlocBuilder<SettingBloc, SettingState>(
+        builder: (BuildContext context, state) {
+          final currentTheme = AppTheme.current.themeData;
+          final isDarkMode = currentTheme.brightness == Brightness.dark;
+          ThemeMode themMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+          return ToastificationWrapper(
+            child: MaterialApp(
+              navigatorKey: NAVIGATOR_KEY,
+              debugShowCheckedModeBanner: false,
+              locale: state.locale,
+              supportedLocales: S.delegate.supportedLocales,
+              localizationsDelegates: const [
+                S.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              title: "Sound Center",
+              theme: AppTheme.current.themeData,
+              darkTheme: AppTheme.current.themeData,
+              themeMode: themMode,
+              home: Home(),
+            ),
+          );
+        },
       ),
     );
   }

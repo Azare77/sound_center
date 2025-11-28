@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sound_center/shared/theme/themes.dart';
 
 class MediaControllerButton extends StatelessWidget {
   const MediaControllerButton({
@@ -32,7 +31,7 @@ class MediaControllerButton extends StatelessWidget {
           width: width / 2,
           height: height / 2,
           colorFilter: ColorFilter.mode(
-            color ?? AppTheme.current.svgColor,
+            color ?? Theme.of(context).iconTheme.color!,
             BlendMode.srcIn,
           ),
         ),

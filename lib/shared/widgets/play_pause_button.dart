@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sound_center/shared/theme/themes.dart';
 
 class PlayPauseButton extends StatelessWidget {
   final bool isPlaying;
@@ -41,7 +40,7 @@ class PlayPauseButton extends StatelessWidget {
               width: 30,
               height: 30,
               colorFilter: ColorFilter.mode(
-                AppTheme.current.svgColor,
+                Theme.of(context).iconTheme.color!,
                 BlendMode.srcIn,
               ),
             ),

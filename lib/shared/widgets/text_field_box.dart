@@ -116,7 +116,6 @@ class _TextFieldBoxState extends State<TextFieldBox> {
         textDirection: textDirection,
         autofocus: widget.autofocus,
         autofillHints: widget.autofillHints,
-        style: const TextStyle(fontFamily: "Vazir", color: Colors.white),
         inputFormatters: widget.inputFormatters,
         onChanged: (String value) {
           _handleTextChange(value);
@@ -130,12 +129,8 @@ class _TextFieldBoxState extends State<TextFieldBox> {
           labelText: widget.labelText,
           contentPadding: const EdgeInsets.all(10.0),
           hintText: widget.hintText,
-          hintStyle: const TextStyle(fontFamily: "Vazir", color: Colors.grey),
-          helperStyle: const TextStyle(fontFamily: "Vazir", color: Colors.grey),
-          suffixStyle: const TextStyle(
-            fontFamily: "Vazir",
-            color: Colors.white,
-          ),
+          hintStyle: const TextStyle(color: Colors.grey),
+          helperStyle: const TextStyle(color: Colors.grey),
           counterText: '',
           isDense: false,
           // errorText: '',
@@ -146,7 +141,6 @@ class _TextFieldBoxState extends State<TextFieldBox> {
               : null,
           suffix: widget.suffix,
           prefixIcon: widget.prefixIcon,
-          labelStyle: const TextStyle(fontFamily: "Vazir", color: Colors.white),
           border: widget.useBorder
               ? const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -155,13 +149,11 @@ class _TextFieldBoxState extends State<TextFieldBox> {
           focusedBorder: widget.useBorder
               ? const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  borderSide: BorderSide(color: Colors.white),
                 )
               : InputBorder.none,
           enabledBorder: widget.useBorder
               ? const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  borderSide: BorderSide(color: Colors.white),
                 )
               : InputBorder.none,
         ),

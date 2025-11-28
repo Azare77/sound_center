@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
-import 'package:sound_center/features/podcast/presentation/pages/play_podcast.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
@@ -42,18 +41,6 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
       _updateStatus();
     }
     return ListTile(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          requestFocus: true,
-          constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width,
-          ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          builder: (_) => PlayPodcast(),
-        );
-      },
       leading: SizedBox(
         width: 50,
         child: ClipRRect(
@@ -75,6 +62,12 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
         widget.episode.author ?? "",
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          fontSize: 13,
+        ),
       ),
       trailing: PlayPauseButton(
         isLoading: isLoading,

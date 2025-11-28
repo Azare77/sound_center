@@ -153,8 +153,8 @@ class _DownloadButtonState extends State<DownloadButton> {
           child: CircularProgressIndicator(
             value: _progress, // 0.0 تا 1.0
             strokeWidth: 2,
-            color: Colors.amber, // رنگ دلخواه
-            backgroundColor: Colors.grey.shade300, // رنگ پس‌زمینه
+            // color: Colors.amber, // رنگ دلخواه
+            // backgroundColor: Colors.grey.shade300, // رنگ پس‌زمینه
           ),
         ),
 

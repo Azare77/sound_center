@@ -11,6 +11,7 @@ import 'package:sound_center/features/local_audio/presentation/pages/local_audio
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 import 'package:sound_center/features/settings/presentation/settings.dart';
+import 'package:sound_center/generated/l10n.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -75,14 +76,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             ),
             actions: [
               IconButton(
-                tooltip: "local",
-                onPressed: () => setState(() => index = 0),
-                icon: const Icon(Icons.music_note),
-              ),
-              IconButton(
-                tooltip: "podcast",
-                onPressed: () => setState(() => index = 1),
-                icon: const Icon(Icons.podcasts_rounded),
+                tooltip: index == 0
+                    ? S.of(context).local
+                    : S.of(context).podcast,
+                // use Bitwise Operations to change index between 0 and 1 (n)
+                onPressed: () => setState(() => index = (index + 1) & 1),
+                icon: Icon(
+                  index == 0
+                      ? Icons.music_note_rounded
+                      : Icons.podcasts_rounded,
+                ),
               ),
             ],
           ),

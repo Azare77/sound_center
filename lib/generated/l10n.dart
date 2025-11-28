@@ -263,6 +263,16 @@ class S {
   String get theme {
     return Intl.message('Theme', name: 'theme', desc: '', args: []);
   }
+
+  /// `Local`
+  String get local {
+    return Intl.message('Local', name: 'local', desc: '', args: []);
+  }
+
+  /// `Podcast`
+  String get podcast {
+    return Intl.message('Podcast', name: 'podcast', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

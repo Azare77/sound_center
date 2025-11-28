@@ -31,5 +31,7 @@
   "loadFail": "Failed To Load Podcast",
   "loadPodcast": "Load Podcast",
   "rssFeed": "Rss Feed",
-  "theme": "Theme"
+  "theme": "Theme",
+  "local": "Local",
+  "podcast": "Podcast"
 }

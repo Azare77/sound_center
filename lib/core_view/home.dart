@@ -133,7 +133,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
     switch (state) {
-      case AppLifecycleState.detached || AppLifecycleState.inactive:
+      case AppLifecycleState.paused ||
+          AppLifecycleState.detached ||
+          AppLifecycleState.inactive:
         if (_localPlayer.hasSource()) {
           int duration = await _localPlayer.getCurrentPosition();
           PlayerStateStorage.saveLastPosition(duration);

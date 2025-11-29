@@ -45,6 +45,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    pass = pass.clamp(0, total);
     return Column(
       children: [
         Row(
@@ -54,10 +55,9 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
               child: Slider(
                 value: pass.toDouble(),
                 inactiveColor: Colors.grey,
-                max: total.toDouble() + 0.1,
+                max: total.toDouble(),
                 onChanged: (val) async {
-                  pass = val.toInt();
-                  _updateUi(fn: () => pass = val.toInt());
+                  _updateUi(fn: () => pass = val.clamp(0, total).toInt());
                 },
                 onChangeStart: (_) {
                   seeking = true;

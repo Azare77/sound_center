@@ -1,7 +1,5 @@
 import 'dart:ui';
 
-import 'package:sound_center/shared/theme/themes.dart';
-
 enum PodcastProvider { itunes, podcatIndex }
 
 abstract class SettingRepository {
@@ -19,5 +17,5 @@ abstract class SettingRepository {
 
   Future<void> setTheme(String themeName);
 
-  AppThemes getTheme();
+  String getTheme();
 }

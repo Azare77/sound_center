@@ -8,26 +8,27 @@ part 'setting_event.dart';
 part 'setting_state.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
-  SettingBloc() : super(SettingState(Locale("en"), AppThemes.dark)) {
+  SettingBloc() : super(SettingState(Locale("en"), PresetTheme.dark.name)) {
     SettingsRepositoryImp settingsRepository = SettingsRepositoryImp();
 
     on<ChangeLocale>((event, emit) {
       emit(state.setLocale(event.locale));
       settingsRepository.setLocale(event.locale);
     });
-    on<ChangeTheme>((event, emit) {
-      AppTheme.current = event.theme == AppThemes.dark
-          ? DarkTheme()
-          : GreenTheme();
-      settingsRepository.setTheme(event.theme.name);
-      emit(state.setTheme(event.theme));
+    on<ChangeTheme>((event, emit) async {
+      final newThemeData = ThemeManager.fromId(event.themeId);
+
+      ThemeManager.current = newThemeData;
+
+      await settingsRepository.setTheme(event.themeId);
+
+      emit(state.setTheme(event.themeId));
     });
     on<LoadSetting>((event, emit) {
       Locale savedLocale = settingsRepository.getLocale();
-      AppThemes savedTheme = settingsRepository.getTheme();
-      AppTheme.current = savedTheme == AppThemes.dark
-          ? DarkTheme()
-          : GreenTheme();
+      String savedTheme = settingsRepository.getTheme();
+      final newThemeData = ThemeManager.fromId(savedTheme);
+      ThemeManager.current = newThemeData;
       emit(SettingState(savedLocale, savedTheme));
     });
     add(LoadSetting());

@@ -2,15 +2,15 @@ part of 'setting_bloc.dart';
 
 class SettingState {
   final Locale locale;
-  final AppThemes theme;
+  final String themeId;
 
-  const SettingState(this.locale, this.theme);
+  const SettingState(this.locale, this.themeId);
 
   SettingState setLocale(Locale locale) {
-    return SettingState(locale, theme);
+    return SettingState(locale, themeId);
   }
 
-  SettingState setTheme(AppThemes theme) {
-    return SettingState(locale, theme);
+  SettingState setTheme(String themeId) {
+    return SettingState(locale, themeId);
   }
 }

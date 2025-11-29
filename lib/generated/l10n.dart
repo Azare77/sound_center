@@ -273,6 +273,31 @@ class S {
   String get podcast {
     return Intl.message('Podcast', name: 'podcast', desc: '', args: []);
   }
+
+  /// `----------------- THEM NAMES ----------------`
+  String get THEME_NAMES {
+    return Intl.message(
+      '----------------- THEM NAMES ----------------',
+      name: 'THEME_NAMES',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dark`
+  String get dark {
+    return Intl.message('Dark', name: 'dark', desc: '', args: []);
+  }
+
+  /// `Green`
+  String get green {
+    return Intl.message('Green', name: 'green', desc: '', args: []);
+  }
+
+  /// `Purple`
+  String get purple {
+    return Intl.message('Purple', name: 'purple', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

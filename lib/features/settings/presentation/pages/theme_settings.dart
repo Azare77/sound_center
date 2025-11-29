@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sound_center/features/settings/data/settings_repository_imp.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/shared/theme/themes.dart';
@@ -13,7 +14,7 @@ class ThemeSettings extends StatefulWidget {
 
 class _ThemeSettingsState extends State<ThemeSettings> {
   late final SettingsRepositoryImp settingsRepository;
-  late AppThemes theme;
+  late String theme;
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _ThemeSettingsState extends State<ThemeSettings> {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12),
-        child: RadioGroup<AppThemes>(
+        child: RadioGroup<String>(
           onChanged: (v) {
             setState(() => theme = v!);
             bloc.add(ChangeTheme(theme));
@@ -42,35 +43,33 @@ class _ThemeSettingsState extends State<ThemeSettings> {
           child: Column(
             mainAxisSize: .min,
             children: [
-              InkWell(
-                onTap: () {
-                  setState(() => theme = AppThemes.dark);
-                  bloc.add(ChangeTheme(theme));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Radio<AppThemes>(value: AppThemes.dark),
-                      Text("Dark"),
-                    ],
+              ...ThemeManager.allThemes.map((item) {
+                final id = item.id;
+                return InkWell(
+                  onTap: () {
+                    setState(() => theme = id);
+                    bloc.add(ChangeTheme(theme));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Radio<String>(value: id),
+                        Text(Intl.message(id, name: id)),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              InkWell(
+                );
+              }),
+              const Divider(height: 32),
+              ListTile(
+                leading: const Icon(Icons.add_circle_outline),
+                title: const Text("ساخت تم جدید"),
                 onTap: () {
-                  setState(() => theme = AppThemes.green);
-                  bloc.add(ChangeTheme(theme));
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text("به زودی")));
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Radio<AppThemes>(value: AppThemes.green),
-                      Text("Green"),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),

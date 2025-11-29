@@ -11,7 +11,7 @@ class ChangeLocale extends SettingEvent {
 }
 
 class ChangeTheme extends SettingEvent {
-  AppThemes theme;
+  final String themeId; // مثلاً "green" یا "custom:1735689123456"
 
-  ChangeTheme(this.theme);
+  ChangeTheme(this.themeId);
 }

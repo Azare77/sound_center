@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "THEME_NAMES": MessageLookupByLibrary.simpleMessage(
+      "----------------- THEM NAMES ----------------",
+    ),
     "album": MessageLookupByLibrary.simpleMessage("آلبوم"),
     "areYouSureAboutThat": MessageLookupByLibrary.simpleMessage(
       "واقعا مطمئنی؟",
@@ -29,12 +32,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "artist": MessageLookupByLibrary.simpleMessage("هنرمند"),
     "az": MessageLookupByLibrary.simpleMessage("الف-ی"),
     "createTime": MessageLookupByLibrary.simpleMessage("تاریخ ایجاد"),
+    "dark": MessageLookupByLibrary.simpleMessage("تیره"),
     "descending": MessageLookupByLibrary.simpleMessage("نزولی"),
     "description": MessageLookupByLibrary.simpleMessage("توضیحات"),
     "downloadedEpisodes": MessageLookupByLibrary.simpleMessage(
       "اپیزود های دانلود شده",
     ),
     "duration": MessageLookupByLibrary.simpleMessage("مدت"),
+    "green": MessageLookupByLibrary.simpleMessage("سبز"),
     "language": MessageLookupByLibrary.simpleMessage("زبان"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("جدید ترین"),
     "loadFail": MessageLookupByLibrary.simpleMessage("خطا در بارگذاری پادکست"),
@@ -48,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "playSpeed": MessageLookupByLibrary.simpleMessage("سرعت پخش"),
     "podcast": MessageLookupByLibrary.simpleMessage("پادکست"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("سرویس دهنده پادکست"),
+    "purple": MessageLookupByLibrary.simpleMessage("بنفش"),
     "rssFeed": MessageLookupByLibrary.simpleMessage("آدرس فید"),
     "scanning": MessageLookupByLibrary.simpleMessage("در حال اسکن"),
     "searchHint": MessageLookupByLibrary.simpleMessage("دنبال چی هستی؟"),

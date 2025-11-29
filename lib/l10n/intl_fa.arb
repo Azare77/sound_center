@@ -33,5 +33,9 @@
   "rssFeed": "آدرس فید",
   "theme": "تم",
   "local": "محلی",
-  "podcast": "پادکست"
+  "podcast": "پادکست",
+  "THEME_NAMES": "----------------- THEM NAMES ----------------",
+  "dark": "تیره",
+  "green": "سبز",
+  "purple": "بنفش"
 }

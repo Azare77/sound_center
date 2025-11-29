@@ -6,10 +6,9 @@ import 'package:sound_center/features/settings/domain/settings_repository.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 
 class AppSettingStorage {
-  static AppThemes getTheme() {
+  static String getTheme() {
     final String? theme = Storage.instance.prefs.getString('theme');
-    if (theme == null) return AppThemes.dark;
-    return AppThemes.values.firstWhere((item) => item.name == theme);
+    return theme ?? PresetTheme.dark.name;
   }
 
   static Future<void> saveTheme(String theme) async {

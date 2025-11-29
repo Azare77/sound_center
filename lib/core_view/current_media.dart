@@ -116,7 +116,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
       height: 70,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppTheme.current.mediaColor,
+        color: ThemeManager.current.mediaColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: child,

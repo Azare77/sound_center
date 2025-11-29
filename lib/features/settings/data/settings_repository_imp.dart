@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:sound_center/database/shared_preferences/podcast_setting_storage.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
-import 'package:sound_center/shared/theme/themes.dart';
 
 class SettingsRepositoryImp implements SettingRepository {
   static final SettingsRepositoryImp _instance =
@@ -43,7 +42,7 @@ class SettingsRepositoryImp implements SettingRepository {
   }
 
   @override
-  AppThemes getTheme() {
+  String getTheme() {
     return AppSettingStorage.getTheme();
   }
 

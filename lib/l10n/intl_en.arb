@@ -33,5 +33,9 @@
   "rssFeed": "Rss Feed",
   "theme": "Theme",
   "local": "Local",
-  "podcast": "Podcast"
+  "podcast": "Podcast",
+  "THEME_NAMES": "----------------- THEM NAMES ----------------",
+  "dark": "Dark",
+  "green": "Green",
+  "purple": "Purple"
 }

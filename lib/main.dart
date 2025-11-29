@@ -65,8 +65,12 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SettingBloc()),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
+        buildWhen: (previous, current) {
+          return previous.locale.languageCode != current.locale.languageCode ||
+              previous.themeId != current.themeId;
+        },
         builder: (BuildContext context, state) {
-          final currentTheme = AppTheme.current.themeData;
+          final currentTheme = ThemeManager.current.themeData;
           final isDarkMode = currentTheme.brightness == Brightness.dark;
           ThemeMode themMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
           return ToastificationWrapper(
@@ -82,8 +86,8 @@ class MyApp extends StatelessWidget {
                 GlobalCupertinoLocalizations.delegate,
               ],
               title: "Sound Center",
-              theme: AppTheme.current.themeData,
-              darkTheme: AppTheme.current.themeData,
+              theme: ThemeManager.current.themeData,
+              darkTheme: ThemeManager.current.themeData,
               themeMode: themMode,
               home: Home(),
             ),

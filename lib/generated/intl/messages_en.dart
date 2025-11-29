@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "THEME_NAMES": MessageLookupByLibrary.simpleMessage(
+      "----------------- THEM NAMES ----------------",
+    ),
     "album": MessageLookupByLibrary.simpleMessage("Album"),
     "areYouSureAboutThat": MessageLookupByLibrary.simpleMessage(
       "Are you sure about that?",
@@ -29,12 +32,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "artist": MessageLookupByLibrary.simpleMessage("Artist"),
     "az": MessageLookupByLibrary.simpleMessage("A-Z"),
     "createTime": MessageLookupByLibrary.simpleMessage("Create time"),
+    "dark": MessageLookupByLibrary.simpleMessage("Dark"),
     "descending": MessageLookupByLibrary.simpleMessage("Descending"),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
     "downloadedEpisodes": MessageLookupByLibrary.simpleMessage(
       "Downloaded Episodes",
     ),
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
+    "green": MessageLookupByLibrary.simpleMessage("Green"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("Latest First"),
     "loadFail": MessageLookupByLibrary.simpleMessage("Failed To Load Podcast"),
@@ -48,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "playSpeed": MessageLookupByLibrary.simpleMessage("Play Speed"),
     "podcast": MessageLookupByLibrary.simpleMessage("Podcast"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("Podcast Api"),
+    "purple": MessageLookupByLibrary.simpleMessage("Purple"),
     "rssFeed": MessageLookupByLibrary.simpleMessage("Rss Feed"),
     "scanning": MessageLookupByLibrary.simpleMessage("Scanning"),
     "searchHint": MessageLookupByLibrary.simpleMessage("what do you want?"),

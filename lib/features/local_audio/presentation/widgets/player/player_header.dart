@@ -72,12 +72,12 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                       onPressed: () => _delete(),
                       svg: "assets/icons/trash-can.svg",
                     ),
-                    const SizedBox(
+                    SizedBox(
                       width: 40,
                       height: 5,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                       ),

@@ -70,12 +70,12 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                     },
                     icon: Icon(Icons.speed_rounded),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 40,
                     height: 5,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),
                     ),

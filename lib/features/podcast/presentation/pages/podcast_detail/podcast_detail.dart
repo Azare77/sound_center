@@ -55,21 +55,17 @@ class _PodcastDetailState extends State<PodcastDetail> {
         episodes = podcast!.episodes;
         sort(PodcastOrder.NEWEST);
         image ??= podcast!.image;
-      }
-      if (subscribed) {
-        _update();
+        if (subscribed) _update();
       }
     } catch (_) {
       podcast = null;
     } finally {
-      if (podcast == null) {
+      if (podcast == null && mounted) {
         if (retry) {
-          if (mounted) {
-            ToastMessage.showErrorMessage(
-              context: context,
-              title: S.of(context).loadFail,
-            );
-          }
+          ToastMessage.showErrorMessage(
+            context: context,
+            title: S.of(context).loadFail,
+          );
           _init(retry: false);
         } else {
           Navigator.pop(context);
@@ -123,6 +119,11 @@ class _PodcastDetailState extends State<PodcastDetail> {
                   backgroundColor: themeData.appBarTheme.backgroundColor,
                   pinned: true,
                   floating: false,
+                  leading: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                  ),
                   title: AnimatedOpacity(
                     opacity: toolbarCollapsed ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 500),

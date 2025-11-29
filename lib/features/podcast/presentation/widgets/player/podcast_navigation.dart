@@ -56,9 +56,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
                 max: total.toDouble() + 0.1,
                 onChanged: (val) async {
                   pass = val.toInt();
-                  setState(() {
-                    pass = val.toInt();
-                  });
+                  _updateUi(fn: () => pass = val.toInt());
                 },
                 onChangeStart: (_) {
                   seeking = true;
@@ -95,7 +93,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
               isPlaying: imp.isPlaying(),
               onPressed: () async {
                 await imp.togglePlayState();
-                setState(() {});
+                _updateUi();
               },
             ),
             MediaControllerButton(
@@ -136,16 +134,18 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
     pass = 0;
     total = await imp.getDuration();
     pass = await imp.getCurrentPosition();
-    if (mounted) setState(() {});
+    _updateUi();
   }
 
   Future<void> _setUpTimer() async {
     _timer = Timer.periodic(Duration(seconds: 1), (_) async {
       total = await imp.getDuration();
       pass = await imp.getCurrentPosition();
-      if (!seeking && mounted) {
-        setState(() {});
-      }
+      if (!seeking) _updateUi();
     });
+  }
+
+  void _updateUi({VoidCallback? fn}) {
+    if (mounted) setState(fn ?? () {});
   }
 }

@@ -57,9 +57,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
                 max: total.toDouble() + 0.1,
                 onChanged: (val) async {
                   pass = val.toInt();
-                  setState(() {
-                    pass = val.toInt();
-                  });
+                  _updateUi(fn: () => pass = val.toInt());
                 },
                 onChangeStart: (_) {
                   seeking = true;
@@ -83,9 +81,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
                   ? "assets/icons/repeat-one.svg"
                   : "assets/icons/repeat-all.svg",
               onPressed: () {
-                setState(() {
-                  imp.changeRepeatState();
-                });
+                _updateUi(fn: () => imp.changeRepeatState());
               },
             ),
             MediaControllerButton(
@@ -100,7 +96,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
               isPlaying: imp.isPlaying(),
               onPressed: () async {
                 await imp.togglePlayState();
-                setState(() {});
+                _updateUi();
               },
             ),
             MediaControllerButton(
@@ -114,9 +110,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
               svg: 'assets/icons/shuffle.svg',
               color: imp.isShuffle() ? Colors.blue : null,
               onPressed: () {
-                setState(() {
-                  imp.changeShuffleState();
-                });
+                _updateUi(fn: () => imp.changeShuffleState());
               },
             ),
           ],
@@ -142,7 +136,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
     pass = 0;
     total = await imp.getDuration();
     pass = await imp.getCurrentPosition();
-    setState(() {});
+    _updateUi();
   }
 
   Future<void> _setUpTimer() async {
@@ -150,8 +144,12 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
       total = await imp.getDuration();
       pass = await imp.getCurrentPosition();
       if (!seeking) {
-        setState(() {});
+        _updateUi();
       }
     });
+  }
+
+  void _updateUi({VoidCallback? fn}) {
+    if (mounted) setState(fn ?? () {});
   }
 }

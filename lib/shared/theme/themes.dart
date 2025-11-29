@@ -1,8 +1,6 @@
-// theme_manager.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// نوع تم‌های پیش‌فرض اپ
 enum PresetTheme { dark, green, purple }
 
 class AppThemeData {
@@ -18,18 +16,29 @@ class AppThemeData {
     required this.mediaColor,
   });
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AppThemeData &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
-
-  @override
-  int get hashCode => id.hashCode;
+  factory AppThemeData.fromSeed({
+    required String id,
+    required Brightness brightness,
+    required Color scaffoldBackground,
+    required Color thumbColor,
+    required Color appBarBackground,
+    required Color shadowColor,
+    required Color mediaColor,
+    required Color iconColor,
+  }) {
+    return _buildTheme(
+      id: id,
+      brightness: brightness,
+      scaffoldBackground: scaffoldBackground,
+      thumbColor: thumbColor,
+      appBarBackground: appBarBackground,
+      shadowColor: shadowColor,
+      mediaColor: mediaColor,
+      iconColor: iconColor,
+    );
+  }
 }
 
-/// مدیریت کامل تم‌های اپ (Singleton)
 class ThemeManager {
   ThemeManager._();
 
@@ -48,15 +57,10 @@ class ThemeManager {
   };
 
   static AppThemeData fromId(String themeId) {
-    if (themeId.startsWith('custom:')) {
-      final id = themeId.substring(7);
-      return _customThemes[id] ?? dark;
-    }
-    return switch (themeId) {
-      'green' => green,
-      'purple' => purple,
-      _ => dark,
-    };
+    return allThemes.firstWhere(
+      (theme) => theme.id == themeId,
+      orElse: () => dark,
+    );
   }
 
   static void addCustomTheme(AppThemeData theme) =>
@@ -64,7 +68,12 @@ class ThemeManager {
 
   static void removeCustomTheme(String id) => _customThemes.remove(id);
 
-  static AppThemeData? getCustomTheme(String id) => _customThemes[id];
+  static AppThemeData? getTheme(String id) {
+    for (AppThemeData theme in allThemes) {
+      if (theme.id == id) return theme;
+    }
+    return null;
+  }
 
   static List<AppThemeData> get allCustomThemes =>
       _customThemes.values.toList();
@@ -77,135 +86,95 @@ class ThemeManager {
   ];
 }
 
-// ---------------------------------------------------------------------------
-// ساخت تم‌های پیش‌فرض (یک بار و فقط اینجا)
-// ---------------------------------------------------------------------------
-
-AppThemeData _buildDarkTheme() => AppThemeData(
-  id: 'dark',
-  themeData: ThemeData(
-    fontFamily: "Vazir",
+AppThemeData _buildDarkTheme() {
+  return _buildTheme(
+    id: 'dark',
     brightness: Brightness.dark,
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xff202138),
-      brightness: Brightness.dark,
-    ),
-    scaffoldBackgroundColor: const Color(0xFF11121f),
-    appBarTheme: const AppBarTheme(
-      elevation: 2,
-      centerTitle: true,
-      shadowColor: Color(0xFF601410),
-      backgroundColor: Color(0xff202138),
-      foregroundColor: Colors.white,
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-    ),
-    sliderTheme: const SliderThemeData(
-      trackHeight: 1,
-      activeTrackColor: Colors.white,
-      thumbColor: Colors.white,
-      inactiveTrackColor: Colors.white24,
-    ),
-    iconTheme: const IconThemeData(color: Colors.white),
-    iconButtonTheme: IconButtonThemeData(
-      style: ButtonStyle(
-        foregroundColor: const WidgetStatePropertyAll(Colors.white),
-      ),
-    ),
-  ),
-  mediaColor: const Color(0xff202138),
-);
+    scaffoldBackground: const Color(0xFF11121f),
+    appBarBackground: const Color(0xff202138),
+    thumbColor: const Color(0xFFFFFFFF),
+    shadowColor: const Color(0xFF601410),
+    mediaColor: const Color(0xff202138),
+    iconColor: Colors.black,
+  );
+}
 
-AppThemeData _buildGreenTheme() => AppThemeData(
-  id: 'green',
-  themeData: ThemeData(
-    fontFamily: "Vazir",
+AppThemeData _buildGreenTheme() {
+  return _buildTheme(
+    id: 'green',
     brightness: Brightness.light,
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xff86E7B8),
-      brightness: Brightness.light,
-    ),
-    scaffoldBackgroundColor: const Color(0xfff3ffe9),
-    appBarTheme: const AppBarTheme(
-      elevation: 2,
-      centerTitle: true,
-      shadowColor: Color(0xFF601410),
-      backgroundColor: Color(0xff86E7B8),
-      foregroundColor: Colors.black87,
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-    ),
-    sliderTheme: const SliderThemeData(
-      trackHeight: 1,
-      activeTrackColor: Color(0xff03c893),
-      thumbColor: Color(0xff03c893),
-      inactiveTrackColor: Color(0x3303c893),
-    ),
-    bottomSheetTheme: const BottomSheetThemeData(
-      backgroundColor: Color(0xfff3ffe9),
-    ),
-    iconTheme: const IconThemeData(color: Colors.black),
-    iconButtonTheme: IconButtonThemeData(
-      style: ButtonStyle(
-        foregroundColor: const WidgetStatePropertyAll(Colors.black),
-      ),
-    ),
-  ),
-  mediaColor: const Color(0xff9ff3c7),
-);
+    scaffoldBackground: const Color(0xfff1f8dc),
+    thumbColor: const Color(0xff03c893),
+    appBarBackground: const Color(0xff86E7B8),
+    shadowColor: const Color(0xFF601410),
+    mediaColor: const Color(0xff9ff3c7),
+    iconColor: Colors.black,
+  );
+}
 
-AppThemeData _buildPurpleTheme() => AppThemeData(
-  id: 'purple',
-  themeData: ThemeData(
-    fontFamily: "Vazir",
+AppThemeData _buildPurpleTheme() {
+  return _buildTheme(
+    id: 'purple',
     brightness: Brightness.dark,
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xff1e2493),
-      brightness: Brightness.dark,
-    ),
-    scaffoldBackgroundColor: const Color(0xff4b4f9b),
-    appBarTheme: const AppBarTheme(
-      elevation: 2,
-      centerTitle: true,
-      shadowColor: Color(0xFF601410),
-      backgroundColor: Color(0xff1e2493),
-      foregroundColor: Colors.white,
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+    scaffoldBackground: const Color(0xff6d0f8f),
+    thumbColor: const Color(0xffab1c4b),
+    appBarBackground: const Color(0xffab1c4b),
+    shadowColor: const Color(0xFF601410),
+    mediaColor: const Color(0xffab1c4b),
+    iconColor: Colors.white,
+  );
+}
+
+AppThemeData _buildTheme({
+  required String id,
+  required Brightness brightness,
+  required Color scaffoldBackground,
+  required Color thumbColor,
+  required Color appBarBackground,
+  required Color shadowColor,
+  required Color mediaColor,
+  required Color iconColor,
+}) {
+  return AppThemeData(
+    id: id,
+    themeData: ThemeData(
+      fontFamily: "Vazir",
+      brightness: brightness,
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: appBarBackground,
+        brightness: brightness,
+      ),
+      scaffoldBackgroundColor: scaffoldBackground,
+      appBarTheme: AppBarTheme(
+        elevation: 2,
+        centerTitle: true,
+        shadowColor: shadowColor,
+        backgroundColor: appBarBackground,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: brightness == Brightness.dark
+              ? Brightness.light
+              : Brightness.dark,
+          statusBarBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+      ),
+      sliderTheme: SliderThemeData(
+        trackHeight: 1,
+        activeTrackColor: thumbColor,
+        thumbColor: thumbColor,
+        inactiveTrackColor: thumbColor,
+      ),
+      iconTheme: IconThemeData(color: iconColor),
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(iconColor)),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scaffoldBackground,
       ),
     ),
-    sliderTheme: const SliderThemeData(
-      trackHeight: 1,
-      activeTrackColor: Color(0xff0814ec),
-      thumbColor: Color(0xff0814ec),
-      inactiveTrackColor: Color(0x330814ec),
-    ),
-    bottomSheetTheme: const BottomSheetThemeData(
-      backgroundColor: Color(0xff4b4f9b),
-    ),
-    iconTheme: const IconThemeData(color: Colors.white),
-    iconButtonTheme: IconButtonThemeData(
-      style: ButtonStyle(
-        foregroundColor: const WidgetStatePropertyAll(Colors.white),
-      ),
-    ),
-  ),
-  mediaColor: const Color(0xff363dea),
-);
+    mediaColor: mediaColor,
+  );
+}

@@ -23,8 +23,10 @@ class TextFieldBox extends StatefulWidget {
     this.textDirection,
     this.useBorder = true,
     this.hintText,
+    this.errorText,
     this.onFocusChanged,
     this.autofillHints,
+    this.margin = const EdgeInsets.all(10),
   });
 
   final TextEditingController? controller;
@@ -33,6 +35,7 @@ class TextFieldBox extends StatefulWidget {
   final bool isPassword;
   final String? labelText;
   final String? hintText;
+  final String? errorText;
   final bool? enabled;
   final bool autofocus;
   final bool useBorder;
@@ -48,6 +51,7 @@ class TextFieldBox extends StatefulWidget {
   final Function(FocusNode focuseNode)? onFocusChanged;
   final TextDirection? textDirection;
   final List<String>? autofillHints;
+  final EdgeInsets margin;
 
   @override
   State<TextFieldBox> createState() => _TextFieldBoxState();
@@ -103,7 +107,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(10),
+      margin: widget.margin,
       child: TextField(
         controller: controller ?? widget.controller,
         obscureText: widget.isPassword,
@@ -133,10 +137,11 @@ class _TextFieldBoxState extends State<TextFieldBox> {
           helperStyle: const TextStyle(color: Colors.grey),
           counterText: '',
           isDense: false,
-          // errorText: '',
           error: widget.validator != null
               ? widget.validator!(widget.controller?.text)
                     ? null
+                    : widget.errorText != null
+                    ? Text(widget.errorText!)
                     : const SizedBox.shrink()
               : null,
           suffix: widget.suffix,

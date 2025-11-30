@@ -63,6 +63,8 @@ class ThemeManager {
     );
   }
 
+  static AppThemeData? getCustomTheme(String id) => _customThemes[id];
+
   static void addCustomTheme(AppThemeData theme) =>
       _customThemes[theme.id] = theme;
 
@@ -95,7 +97,7 @@ AppThemeData _buildDarkTheme() {
     thumbColor: const Color(0xFFFFFFFF),
     shadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff202138),
-    iconColor: Colors.black,
+    iconColor: Colors.white,
   );
 }
 

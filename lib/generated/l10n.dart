@@ -284,6 +284,21 @@ class S {
     );
   }
 
+  /// `Create New Theme`
+  String get createNewTheme {
+    return Intl.message(
+      'Create New Theme',
+      name: 'createNewTheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Light`
+  String get light {
+    return Intl.message('Light', name: 'light', desc: '', args: []);
+  }
+
   /// `Dark`
   String get dark {
     return Intl.message('Dark', name: 'dark', desc: '', args: []);
@@ -297,6 +312,66 @@ class S {
   /// `Purple`
   String get purple {
     return Intl.message('Purple', name: 'purple', desc: '', args: []);
+  }
+
+  /// `Appbar Background`
+  String get appBarBackground {
+    return Intl.message(
+      'Appbar Background',
+      name: 'appBarBackground',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `scaffold Background`
+  String get scaffoldBackground {
+    return Intl.message(
+      'scaffold Background',
+      name: 'scaffoldBackground',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `shadow`
+  String get shadowColor {
+    return Intl.message('shadow', name: 'shadowColor', desc: '', args: []);
+  }
+
+  /// `Slider`
+  String get thumbColor {
+    return Intl.message('Slider', name: 'thumbColor', desc: '', args: []);
+  }
+
+  /// `Icon`
+  String get iconColor {
+    return Intl.message('Icon', name: 'iconColor', desc: '', args: []);
+  }
+
+  /// `Current Media Background`
+  String get currentMediaColor {
+    return Intl.message(
+      'Current Media Background',
+      name: 'currentMediaColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This name is already used`
+  String get nameIsUsed {
+    return Intl.message(
+      'This name is already used',
+      name: 'nameIsUsed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme Name`
+  String get themeName {
+    return Intl.message('Theme Name', name: 'themeName', desc: '', args: []);
   }
 }
 

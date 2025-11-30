@@ -63,6 +63,7 @@ dependencies:
   text_scroll: ^0.2.1
   url_launcher: ^6.3.2
   toastification: ^3.0.3
+  flutter_colorpicker: ^1.1.0
   #PODCAST
   podcast_search: ^0.7.12
   cached_network_image: ^3.4.1
@@ -150,3 +151,7 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 flutter_intl:
   enabled: true
+  arb-dir: lib/l10n
+  supported-locales:
+    - en
+    - fa

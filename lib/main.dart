@@ -65,10 +65,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SettingBloc()),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
-        buildWhen: (previous, current) {
-          return previous.locale.languageCode != current.locale.languageCode ||
-              previous.themeId != current.themeId;
-        },
         builder: (BuildContext context, state) {
           final currentTheme = ThemeManager.current.themeData;
           final isDarkMode = currentTheme.brightness == Brightness.dark;

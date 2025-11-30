@@ -35,7 +35,17 @@
   "local": "Local",
   "podcast": "Podcast",
   "THEME_NAMES": "----------------- THEM NAMES ----------------",
+  "createNewTheme": "Create New Theme",
+  "light": "Light",
   "dark": "Dark",
   "green": "Green",
-  "purple": "Purple"
+  "purple": "Purple",
+  "appBarBackground": "Appbar Background",
+  "scaffoldBackground": "scaffold Background",
+  "shadowColor": "shadow",
+  "thumbColor": "Slider",
+  "iconColor": "Icon",
+  "currentMediaColor": "Current Media Background",
+  "nameIsUsed": "This name is already used",
+  "themeName": "Theme Name"
 }

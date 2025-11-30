@@ -16,7 +16,9 @@ import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.da
 import 'package:sound_center/shared/theme/themes.dart';
 
 class CurrentMedia extends StatefulWidget {
-  const CurrentMedia({super.key});
+  const CurrentMedia({super.key, this.color});
+
+  final Color? color;
 
   @override
   State<CurrentMedia> createState() => _CurrentMediaState();
@@ -51,6 +53,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
     );
     final paddingBottom = edgeInsets.bottom;
     final paddingTop = edgeInsets.top;
+
     return Padding(
       padding: EdgeInsets.only(bottom: paddingBottom),
       child: GestureDetector(
@@ -65,7 +68,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
             ),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
             builder: (_) => Padding(
-              padding: EdgeInsetsGeometry.only(top: paddingTop),
+              padding: EdgeInsets.only(top: paddingTop),
               child: _playerPage!,
             ),
           );
@@ -116,7 +119,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
       height: 70,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: ThemeManager.current.mediaColor,
+        color: widget.color ?? ThemeManager.current.mediaColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: child,

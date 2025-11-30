@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:sound_center/core_view/current_media.dart';
@@ -45,6 +48,26 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     shadowColor = themeData.appBarTheme.shadowColor ?? Colors.transparent;
     iconColor = themeData.iconTheme.color ?? Colors.white;
     mediaColor = theme.mediaColor;
+    _checkClipboard();
+  }
+
+  Future<void> _checkClipboard() async {
+    final data = await Clipboard.getData('text/plain');
+    if (data?.text == null) return;
+    try {
+      final decoded = jsonDecode(data!.text!);
+      final AppThemeData theme = AppThemeData.fromJsonForStorage(decoded);
+      final ThemeData themeData = theme.themeData;
+      _controller.text = theme.id;
+      brightness = themeData.brightness;
+      scaffoldBackground = themeData.scaffoldBackgroundColor;
+      thumbColor = themeData.sliderTheme.thumbColor ?? Colors.white;
+      appBarBackground = themeData.appBarTheme.backgroundColor ?? Colors.white;
+      shadowColor = themeData.appBarTheme.shadowColor ?? Colors.transparent;
+      iconColor = themeData.iconTheme.color ?? Colors.white;
+      mediaColor = theme.mediaColor;
+      setState(() {});
+    } catch (_) {}
   }
 
   @override

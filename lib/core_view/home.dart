@@ -70,61 +70,67 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: GestureDetector(
-            onHorizontalDragEnd: onSwipe,
-            child: AppBar(
-              title: InkWell(
-                focusColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onLongPress: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const Settings(),
-                  );
-                },
-                child: GestureDetector(
-                  onHorizontalDragEnd: onSwipe,
-                  child: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 100),
-                    child: Text("Sound Center", textAlign: TextAlign.center),
+    return PopScope(
+      canPop: index == 0,
+      onPopInvokedWithResult: (res, re) {
+        if (!res) setState(() => index = 0);
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: GestureDetector(
+              onHorizontalDragEnd: onSwipe,
+              child: AppBar(
+                title: InkWell(
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onLongPress: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const Settings(),
+                    );
+                  },
+                  child: GestureDetector(
+                    onHorizontalDragEnd: onSwipe,
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 100),
+                      child: Text("Sound Center", textAlign: TextAlign.center),
+                    ),
                   ),
                 ),
+                actions: [
+                  IconButton(
+                    tooltip: index == 0
+                        ? S.of(context).podcast
+                        : S.of(context).local,
+                    // use Bitwise Operations to change index between 0 and 1 (n)
+                    onPressed: () => setState(() => index = (index + 1) & 1),
+                    icon: Icon(
+                      index == 0
+                          ? Icons.podcasts_rounded
+                          : Icons.music_note_rounded,
+                    ),
+                  ),
+                ],
               ),
-              actions: [
-                IconButton(
-                  tooltip: index == 0
-                      ? S.of(context).podcast
-                      : S.of(context).local,
-                  // use Bitwise Operations to change index between 0 and 1 (n)
-                  onPressed: () => setState(() => index = (index + 1) & 1),
-                  icon: Icon(
-                    index == 0
-                        ? Icons.podcasts_rounded
-                        : Icons.music_note_rounded,
-                  ),
-                ),
-              ],
             ),
           ),
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: IndexedStack(
-              index: index,
-              children: [_localAudios, _podcast],
+        body: Column(
+          children: [
+            Expanded(
+              child: IndexedStack(
+                index: index,
+                children: [_localAudios, _podcast],
+              ),
             ),
-          ),
-          const CurrentMedia(),
-        ],
+            const CurrentMedia(),
+          ],
+        ),
       ),
     );
   }

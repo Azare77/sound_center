@@ -35,7 +35,11 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     _controller = CustomTextEditingController(
       validator: (text) {
         final name = text?.trim() ?? "";
-        return ThemeManager.getTheme(name) == null && name.isNotEmpty;
+        return ThemeManager.getTheme(name) == null &&
+            name.isNotEmpty &&
+            name != 'green' &&
+            name != 'dark' &&
+            name != 'light';
       },
     );
     if (widget.themeName != null) _controller.text = widget.themeName!;
@@ -107,7 +111,12 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                         margin: EdgeInsets.only(top: 10),
                         validator: (text) {
                           final name = text?.trim() ?? "";
-                          return ThemeManager.getTheme(name) == null;
+                          return ThemeManager.getTheme(name) == null &&
+                              name.isNotEmpty &&
+                              name != 'green' &&
+                              name != 'dark' &&
+                              name != 'light' &&
+                              name == widget.themeName;
                         },
                       ),
                       RadioGroup<Brightness>(

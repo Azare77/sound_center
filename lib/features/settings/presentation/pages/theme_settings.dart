@@ -6,6 +6,7 @@ import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.da
 import 'package:sound_center/features/settings/presentation/pages/theme_designer.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/theme/themes.dart';
+import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 
 class ThemeSettings extends StatefulWidget {
   const ThemeSettings({super.key});
@@ -38,73 +39,82 @@ class _ThemeSettingsState extends State<ThemeSettings> {
         theme = ThemeManager.current.id;
       }),
       child: Dialog(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12),
-          child: RadioGroup<String>(
-            onChanged: (v) {
-              setState(() => theme = v!);
-              bloc.add(ChangeTheme(theme));
-            },
-            groupValue: theme,
-            child: Column(
-              mainAxisSize: .min,
-              children: [
-                ...ThemeManager.allThemes.map((item) {
-                  final id = item.id;
-                  return InkWell(
-                    onTap: () {
-                      setState(() => theme = id);
-                      bloc.add(ChangeTheme(theme));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Radio<String>(value: id),
-                          Expanded(
-                            child: Text(
-                              Intl.message(id, name: id),
-                              maxLines: 1,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12),
+            child: RadioGroup<String>(
+              onChanged: (v) {
+                setState(() => theme = v!);
+                bloc.add(ChangeTheme(theme));
+              },
+              groupValue: theme,
+              child: Column(
+                mainAxisSize: .min,
+                children: [
+                  ...ThemeManager.allThemes.map((item) {
+                    final id = item.id;
+                    return InkWell(
+                      onTap: () {
+                        setState(() => theme = id);
+                        bloc.add(ChangeTheme(theme));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Radio<String>(value: id),
+                            Expanded(
+                              child: Text(
+                                Intl.message(id, name: id),
+                                maxLines: 1,
+                              ),
                             ),
-                          ),
-                          if (ThemeManager.getCustomTheme(id) != null)
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        ThemeDesigner(themeName: id),
-                                  ),
-                                );
-                              },
-                              icon: Icon(Icons.edit_rounded),
-                            ),
-                          if (ThemeManager.getCustomTheme(id) != null)
-                            IconButton(
-                              onPressed: () {
-                                ThemeManager.removeCustomTheme(id);
-                                setState(() {});
-                              },
-                              icon: Icon(Icons.delete_rounded),
-                            ),
-                        ],
+                            if (ThemeManager.getCustomTheme(id) != null)
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          ThemeDesigner(themeName: id),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(Icons.edit_rounded),
+                              ),
+                            if (ThemeManager.getCustomTheme(id) != null)
+                              IconButton(
+                                onPressed: () async {
+                                  final confirmed =
+                                      await showDialog<bool>(
+                                        context: context,
+                                        builder: (_) => const ConfirmDialog(),
+                                      ) ??
+                                      false;
+                                  if (!confirmed) return;
+                                  ThemeManager.removeCustomTheme(id);
+                                  setState(() {});
+                                },
+                                icon: Icon(Icons.delete_rounded),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
-                const Divider(height: 32),
-                ListTile(
-                  leading: const Icon(Icons.add_circle_outline),
-                  title: Text(S.of(context).createNewTheme),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => ThemeDesigner()),
                     );
-                  },
-                ),
-              ],
+                  }),
+                  const Divider(height: 32),
+                  ListTile(
+                    leading: const Icon(Icons.add_circle_outline),
+                    title: Text(S.of(context).createNewTheme),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => ThemeDesigner()),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

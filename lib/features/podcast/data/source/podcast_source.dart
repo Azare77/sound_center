@@ -1,5 +1,5 @@
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/database/shared_preferences/podcast_setting_storage.dart';
+import 'package:sound_center/database/shared_preferences/app_setting_storage.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
 
 class PodcastSource {

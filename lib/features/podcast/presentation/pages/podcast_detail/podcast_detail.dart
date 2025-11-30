@@ -122,7 +122,9 @@ class _PodcastDetailState extends State<PodcastDetail> {
                   leading: IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: Icon(Icons.arrow_back),
-                    color: Colors.white,
+                    color: toolbarCollapsed
+                        ? themeData.iconTheme.color
+                        : Colors.white,
                   ),
                   title: AnimatedOpacity(
                     opacity: toolbarCollapsed ? 1.0 : 0.0,

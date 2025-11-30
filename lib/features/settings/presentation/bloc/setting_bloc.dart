@@ -27,6 +27,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<LoadSetting>((event, emit) {
       Locale savedLocale = settingsRepository.getLocale();
       String savedTheme = settingsRepository.getTheme();
+      List<AppThemeData> customThemes = settingsRepository.getCustomThemes();
+      for (final theme in customThemes) {
+        ThemeManager.addCustomTheme(theme);
+      }
       final newThemeData = ThemeManager.fromId(savedTheme);
       ThemeManager.current = newThemeData;
       emit(SettingState(savedLocale, savedTheme));

@@ -42,7 +42,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     scaffoldBackground = themeData.scaffoldBackgroundColor;
     thumbColor = themeData.sliderTheme.thumbColor ?? Colors.white;
     appBarBackground = themeData.appBarTheme.backgroundColor ?? Colors.white;
-    shadowColor = themeData.shadowColor;
+    shadowColor = themeData.appBarTheme.shadowColor ?? Colors.transparent;
     iconColor = themeData.iconTheme.color ?? Colors.white;
     mediaColor = theme.mediaColor;
   }
@@ -55,7 +55,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
       scaffoldBackground: scaffoldBackground,
       thumbColor: thumbColor,
       appBarBackground: appBarBackground,
-      shadowColor: shadowColor,
+      appBarShadowColor: shadowColor,
       mediaColor: mediaColor,
       iconColor: iconColor,
     );
@@ -80,11 +80,9 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                         errorText: S.of(context).nameIsUsed,
                         labelText: S.of(context).themeName,
                         maxLines: 1,
-                        enabled: widget.themeName == null,
                         textInputAction: TextInputAction.done,
                         margin: EdgeInsets.only(top: 10),
                         validator: (text) {
-                          if (widget.themeName != null) return true;
                           final name = text?.trim() ?? "";
                           return ThemeManager.getTheme(name) == null;
                         },
@@ -163,30 +161,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                             setState(() => mediaColor = current),
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          if (widget.themeName == null &&
-                              !_controller.isValid()) {
-                            int allCustomThemes =
-                                ThemeManager.allCustomThemes.length;
-                            _controller.text =
-                                "Custom Theme-${allCustomThemes + 1}";
-                          }
-                          AppThemeData themeData = AppThemeData.fromSeed(
-                            id: _controller.text.trim(),
-                            brightness: brightness,
-                            scaffoldBackground: scaffoldBackground,
-                            thumbColor: thumbColor,
-                            appBarBackground: appBarBackground,
-                            shadowColor: shadowColor,
-                            mediaColor: mediaColor,
-                            iconColor: iconColor,
-                          );
-                          ThemeManager.addCustomTheme(themeData);
-                          BlocProvider.of<SettingBloc>(
-                            context,
-                          ).add(ChangeTheme(themeData.id));
-                          Navigator.pop(context);
-                        },
+                        onPressed: saveTheme,
                         child: Text(S.of(context).ok),
                       ),
                     ],
@@ -199,6 +174,29 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
         ),
       ),
     );
+  }
+
+  void saveTheme() {
+    if (widget.themeName != null) {
+      ThemeManager.removeCustomTheme(widget.themeName!);
+    }
+    if (!_controller.isValid()) {
+      int allCustomThemes = ThemeManager.allCustomThemes.length;
+      _controller.text = "Custom Theme-${allCustomThemes + 1}";
+    }
+    AppThemeData themeData = AppThemeData.fromSeed(
+      id: _controller.text.trim(),
+      brightness: brightness,
+      scaffoldBackground: scaffoldBackground,
+      thumbColor: thumbColor,
+      appBarBackground: appBarBackground,
+      appBarShadowColor: shadowColor,
+      mediaColor: mediaColor,
+      iconColor: iconColor,
+    );
+    ThemeManager.addCustomTheme(themeData);
+    BlocProvider.of<SettingBloc>(context).add(ChangeTheme(themeData.id));
+    Navigator.pop(context);
   }
 }
 

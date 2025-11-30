@@ -11,7 +11,7 @@ class ConfirmDialog extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          spacing: 30,
+          spacing: 20,
           children: [
             Text(S.of(context).areYouSureAboutThat),
             Row(

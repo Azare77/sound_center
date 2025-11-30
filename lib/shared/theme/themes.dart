@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-enum PresetTheme { dark, green, purple }
+enum PresetTheme { dark, green, light }
 
 class AppThemeData {
   final String id;
@@ -16,13 +16,45 @@ class AppThemeData {
     required this.mediaColor,
   });
 
+  Map<String, dynamic> toJsonForStorage() {
+    return {
+      'id': id,
+      'displayName': displayName,
+      'brightness': themeData.brightness.name,
+      'scaffoldBackground': themeData.scaffoldBackgroundColor.toARGB32(),
+      'thumbColor': (themeData.sliderTheme.thumbColor ?? Colors.white)
+          .toARGB32(),
+      'appBarBackground':
+          (themeData.appBarTheme.backgroundColor ?? Colors.white).toARGB32(),
+      'appBarShadowColor':
+          (themeData.appBarTheme.shadowColor ?? Colors.transparent).toARGB32(),
+      'mediaColor': mediaColor.toARGB32(),
+      'iconColor': (themeData.iconTheme.color ?? Colors.white).toARGB32(),
+    };
+  }
+
+  factory AppThemeData.fromJsonForStorage(Map<String, dynamic> json) {
+    return AppThemeData.fromSeed(
+      id: json['id'],
+      brightness: json['brightness'] == 'dark'
+          ? Brightness.dark
+          : Brightness.light,
+      scaffoldBackground: Color(json['scaffoldBackground']),
+      thumbColor: Color(json['thumbColor']),
+      appBarBackground: Color(json['appBarBackground']),
+      appBarShadowColor: Color(json['appBarShadowColor']),
+      mediaColor: Color(json['mediaColor']),
+      iconColor: Color(json['iconColor']),
+    );
+  }
+
   factory AppThemeData.fromSeed({
     required String id,
     required Brightness brightness,
     required Color scaffoldBackground,
     required Color thumbColor,
     required Color appBarBackground,
-    required Color shadowColor,
+    required Color appBarShadowColor,
     required Color mediaColor,
     required Color iconColor,
   }) {
@@ -32,7 +64,7 @@ class AppThemeData {
       scaffoldBackground: scaffoldBackground,
       thumbColor: thumbColor,
       appBarBackground: appBarBackground,
-      shadowColor: shadowColor,
+      appBarShadowColor: appBarShadowColor,
       mediaColor: mediaColor,
       iconColor: iconColor,
     );
@@ -44,7 +76,7 @@ class ThemeManager {
 
   static final AppThemeData dark = _buildDarkTheme();
   static final AppThemeData green = _buildGreenTheme();
-  static final AppThemeData purple = _buildPurpleTheme();
+  static final AppThemeData light = _buildLightTheme();
 
   static final Map<String, AppThemeData> _customThemes = {};
 
@@ -53,7 +85,7 @@ class ThemeManager {
   static AppThemeData fromPreset(PresetTheme preset) => switch (preset) {
     PresetTheme.dark => dark,
     PresetTheme.green => green,
-    PresetTheme.purple => purple,
+    PresetTheme.light => light,
   };
 
   static AppThemeData fromId(String themeId) {
@@ -82,8 +114,8 @@ class ThemeManager {
 
   static List<AppThemeData> get allThemes => [
     dark,
+    light,
     green,
-    purple,
     ..._customThemes.values,
   ];
 }
@@ -95,7 +127,7 @@ AppThemeData _buildDarkTheme() {
     scaffoldBackground: const Color(0xFF11121f),
     appBarBackground: const Color(0xff202138),
     thumbColor: const Color(0xFFFFFFFF),
-    shadowColor: const Color(0xFF601410),
+    appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff202138),
     iconColor: Colors.white,
   );
@@ -108,22 +140,22 @@ AppThemeData _buildGreenTheme() {
     scaffoldBackground: const Color(0xfff1f8dc),
     thumbColor: const Color(0xff03c893),
     appBarBackground: const Color(0xff86E7B8),
-    shadowColor: const Color(0xFF601410),
+    appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff9ff3c7),
     iconColor: Colors.black,
   );
 }
 
-AppThemeData _buildPurpleTheme() {
+AppThemeData _buildLightTheme() {
   return _buildTheme(
-    id: 'purple',
-    brightness: Brightness.dark,
-    scaffoldBackground: const Color(0xff6d0f8f),
-    thumbColor: const Color(0xffab1c4b),
-    appBarBackground: const Color(0xffab1c4b),
-    shadowColor: const Color(0xFF601410),
-    mediaColor: const Color(0xffab1c4b),
-    iconColor: Colors.white,
+    id: 'light',
+    brightness: Brightness.light,
+    scaffoldBackground: Colors.grey.shade200,
+    thumbColor: const Color(0xff183054),
+    appBarBackground: const Color(0xfff5ffd6),
+    appBarShadowColor: const Color(0xFF601410),
+    mediaColor: const Color(0xfff1f8dc),
+    iconColor: Colors.black,
   );
 }
 
@@ -133,7 +165,7 @@ AppThemeData _buildTheme({
   required Color scaffoldBackground,
   required Color thumbColor,
   required Color appBarBackground,
-  required Color shadowColor,
+  required Color appBarShadowColor,
   required Color mediaColor,
   required Color iconColor,
 }) {
@@ -151,7 +183,7 @@ AppThemeData _buildTheme({
       appBarTheme: AppBarTheme(
         elevation: 2,
         centerTitle: true,
-        shadowColor: shadowColor,
+        shadowColor: appBarShadowColor,
         backgroundColor: appBarBackground,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,

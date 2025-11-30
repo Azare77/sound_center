@@ -40,6 +40,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
 
   void _updatePlayer() {
     final newPlayer = _buildMediaPlayer();
+    _playerPage ??= audio_page.PlayAudio();
     if (newPlayer != null && !identical(_currentPlayer, newPlayer)) {
       setState(() => _currentPlayer = newPlayer);
     }

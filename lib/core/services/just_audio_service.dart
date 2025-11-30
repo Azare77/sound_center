@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -58,14 +59,13 @@ class JustAudioService {
   }
 
   // Public API to set a single source (will clear any managed playlist unless using setPlaylist)
-  Future<bool> setSource(
+  Future<bool> _setSource(
     String path,
     AudioSource source, {
     String? cachedFilePath,
   }) async {
     try {
       _source = source;
-      await release();
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
       } else {
@@ -86,6 +86,23 @@ class JustAudioService {
   }
 
   Future<void> play() async => await _player.play();
+
+  CancelableOperation<bool>? _setSourceOperation;
+
+  Future<bool> setSource(
+    String path,
+    AudioSource source, {
+    String? cachedFilePath,
+  }) async {
+    _setSourceOperation?.cancel();
+    final operation = CancelableOperation.fromFuture(
+      _setSource(path, source, cachedFilePath: cachedFilePath),
+    );
+
+    _setSourceOperation = operation;
+
+    return (await operation.valueOrCancellation(false)) ?? false;
+  }
 
   Future<void> togglePlaying() async {
     if (_player.playing) {

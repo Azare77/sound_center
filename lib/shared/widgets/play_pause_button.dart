@@ -24,10 +24,9 @@ class PlayPauseButton extends StatelessWidget {
             height: 55,
             child: CircularProgressIndicator(
               strokeWidth: 2.5,
-              color: Colors.white,
+              color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.5),
             ),
           ),
-        // آیکون پلی/پاز
         InkWell(
           borderRadius: BorderRadius.circular(100),
           onTap: onPressed,
@@ -46,8 +45,6 @@ class PlayPauseButton extends StatelessWidget {
             ),
           ),
         ),
-
-        // لودینگ دایره‌ای (فقط اگه isLoading == true)
       ],
     );
   }

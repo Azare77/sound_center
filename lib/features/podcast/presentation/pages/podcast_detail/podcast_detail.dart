@@ -207,12 +207,12 @@ class _PodcastDetailState extends State<PodcastDetail> {
   }
 
   void filter(String name) {
-    name = name.trim();
+    name = name.trim().toLowerCase();
     if (name.isEmpty) {
       episodes = podcast?.episodes ?? [];
     } else {
       episodes = podcast!.episodes
-          .where((item) => item.title.contains(name))
+          .where((item) => item.title.toLowerCase().contains(name))
           .toList();
     }
     setState(() {});

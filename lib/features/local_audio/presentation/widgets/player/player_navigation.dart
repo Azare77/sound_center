@@ -39,7 +39,9 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    try {
+      _timer.cancel();
+    } catch (_) {}
     super.dispose();
   }
 

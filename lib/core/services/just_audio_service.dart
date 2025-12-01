@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -29,6 +31,10 @@ class JustAudioService {
   bool _handlingError = false;
 
   AudioPlayer getPlayer() => _player;
+
+  Stream<Duration> get position => _player.positionStream;
+
+  Stream<Duration?> get duration => _player.durationStream;
 
   void _init() {
     // listen for errors
@@ -104,6 +110,10 @@ class JustAudioService {
     return (await operation.valueOrCancellation(false)) ?? false;
   }
 
+  bool isPlaying() {
+    return _player.playing;
+  }
+
   Future<void> togglePlaying() async {
     if (_player.playing) {
       await _player.pause();
@@ -143,7 +153,7 @@ class JustAudioService {
         _player.processingState == ProcessingState.buffering;
   }
 
-  Future<int> getCurrentPosition() async {
+  int getCurrentPosition() {
     final Duration currentPosition = _player.position;
     return currentPosition.inMilliseconds;
   }
@@ -164,9 +174,6 @@ class JustAudioService {
   bool hasSource(AudioSource source) {
     if (_source == null || _source != source) return false;
     return true;
-    // final duration = _player.duration;
-    // final processingState = _player.processingState;
-    // return duration != null || processingState != ProcessingState.idle;
   }
 
   // ========= error handling & advancing logic =========

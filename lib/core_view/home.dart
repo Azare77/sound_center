@@ -138,20 +138,40 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.detached) {
+      Navigator.of(context).pushAndRemoveUntil(
+        NoAnimationPageRoute(page: Home()),
+        (Route<dynamic> route) => false,
+      );
+      await saveLastPosition();
+    }
     switch (state) {
-      case AppLifecycleState.paused ||
-          AppLifecycleState.detached ||
-          AppLifecycleState.inactive:
-        if (_localPlayer.hasSource()) {
-          int duration = await _localPlayer.getCurrentPosition();
-          PlayerStateStorage.saveLastPosition(duration);
-        } else if (_podcastPlayer.hasSource()) {
-          int duration = await _podcastPlayer.getCurrentPosition();
-          PlayerStateStorage.saveLastPosition(duration);
-        }
-        return;
+      case AppLifecycleState.paused || AppLifecycleState.inactive:
+        saveLastPosition();
+        break;
       default:
-        return;
+        break;
     }
   }
+
+  Future<void> saveLastPosition() async {
+    if (_localPlayer.hasSource()) {
+      int duration = _localPlayer.getCurrentPosition();
+      await PlayerStateStorage.saveLastPosition(duration);
+    } else if (_podcastPlayer.hasSource()) {
+      int duration = _podcastPlayer.getCurrentPosition();
+      await PlayerStateStorage.saveLastPosition(duration);
+    }
+  }
+}
+
+class NoAnimationPageRoute<T> extends PageRouteBuilder<T> {
+  final Widget page;
+
+  NoAnimationPageRoute({required this.page})
+    : super(
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+        pageBuilder: (context, animation, secondaryAnimation) => page,
+      );
 }

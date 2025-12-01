@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
@@ -61,11 +63,25 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   int shuffleIndex = 0;
   RepeatMode repeatMode = RepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
+  final _positionController = StreamController<int>.broadcast();
+  final _durationController = StreamController<int>.broadcast();
+
+  Stream<int> get positionStream => _positionController.stream;
+
+  Stream<int> get durationStream => _durationController.stream;
   late final LocalBloc bloc;
 
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
     shuffleMode = PlayerStateStorage.getShuffleMode();
+    _playerService.position.listen((pos) {
+      _positionController.add(pos.inMilliseconds);
+    });
+    _playerService.duration.listen((dur) {
+      if (dur != null) {
+        _durationController.add(dur.inMilliseconds);
+      }
+    });
   }
 
   bool isPlaying() {
@@ -176,8 +192,8 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  Future<int> getCurrentPosition() async {
-    int currentPosition = await _playerService.getCurrentPosition();
+  int getCurrentPosition() {
+    int currentPosition = _playerService.getCurrentPosition();
     return currentPosition;
   }
 

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
-import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
@@ -18,36 +18,57 @@ class PlayerNavigation extends StatefulWidget {
 
 class _PlayerNavigationState extends State<PlayerNavigation> {
   final LocalPlayerRepositoryImp imp = LocalPlayerRepositoryImp();
-  late final Timer _timer;
+
   late final LocalBloc _localBloc;
-  late AudioEntity song;
+
   int total = 1;
   int pass = 0;
   bool seeking = false;
 
+  StreamSubscription<int>? _posSub;
+  StreamSubscription<int>? _durSub;
+
   @override
   void initState() {
-    setupPage();
-    _localBloc = BlocProvider.of<LocalBloc>(context);
     super.initState();
-  }
-
-  void setupPage() async {
-    await _updateDuration();
-    await _setUpTimer();
+    _localBloc = BlocProvider.of<LocalBloc>(context);
+    _setupStreams();
   }
 
   @override
   void dispose() {
-    try {
-      _timer.cancel();
-    } catch (_) {}
+    _posSub?.cancel();
+    _durSub?.cancel();
     super.dispose();
+  }
+
+  void _setupStreams() {
+    // Duration Stream
+    _durSub = imp.durationStream.listen((ms) {
+      total = ms;
+      if (!seeking) _updateUi();
+    });
+
+    // Position Stream
+    _posSub = imp.positionStream.listen((ms) {
+      if (!seeking) {
+        pass = ms;
+        _updateUi();
+      }
+    });
+
+    // Init values once
+    Future.microtask(() async {
+      total = await imp.getDuration();
+      pass = imp.getCurrentPosition();
+      _updateUi();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     pass = pass.clamp(0, total);
+
     return Column(
       children: [
         Row(
@@ -56,14 +77,17 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             Expanded(
               child: Slider(
                 value: pass.toDouble(),
-                inactiveColor: Colors.grey,
                 max: total.toDouble(),
-                onChanged: (val) async {
-                  _updateUi(fn: () => pass = val.clamp(0, total).toInt());
-                },
-                onChangeStart: (_) {
+                inactiveColor: Colors.grey,
+
+                onChanged: (val) {
                   seeking = true;
+                  pass = val.toInt();
+                  _updateUi();
                 },
+
+                onChangeStart: (_) => seeking = true,
+
                 onChangeEnd: (val) {
                   seeking = false;
                   imp.seek(Duration(milliseconds: val.floor()));
@@ -73,6 +97,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             convertTime(total),
           ],
         ),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -83,14 +108,16 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
                   ? "assets/icons/repeat-one.svg"
                   : "assets/icons/repeat-all.svg",
               onPressed: () {
-                _updateUi(fn: () => imp.changeRepeatState());
+                imp.changeRepeatState();
+                _updateUi();
               },
             ),
+
             MediaControllerButton(
               svg: 'assets/icons/previous.svg',
               onPressed: () async {
                 _localBloc.add(PlayPreviousAudio());
-                await _updateDuration();
+                await _refreshAfterTrackChange();
               },
             ),
 
@@ -101,18 +128,21 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
                 _updateUi();
               },
             ),
+
             MediaControllerButton(
               svg: 'assets/icons/next.svg',
               onPressed: () async {
                 _localBloc.add(PlayNextAudio());
-                await _updateDuration();
+                await _refreshAfterTrackChange();
               },
             ),
+
             MediaControllerButton(
               svg: 'assets/icons/shuffle.svg',
               color: imp.isShuffle() ? Colors.blue : null,
               onPressed: () {
-                _updateUi(fn: () => imp.changeShuffleState());
+                imp.changeShuffleState();
+                _updateUi();
               },
             ),
           ],
@@ -121,37 +151,17 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
     );
   }
 
-  Widget convertTime(int input) {
-    final duration = Duration(milliseconds: input);
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes % 60;
-    final seconds = duration.inSeconds % 60;
-
-    final timeStr = hours > 0
-        ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
-        : "${minutes.toString()}:${seconds.toString().padLeft(2, '0')}";
-
-    return Text(timeStr);
-  }
-
-  Future<void> _updateDuration() async {
+  Future<void> _refreshAfterTrackChange() async {
     pass = 0;
     total = await imp.getDuration();
-    pass = await imp.getCurrentPosition();
     _updateUi();
   }
 
-  Future<void> _setUpTimer() async {
-    _timer = Timer.periodic(Duration(seconds: 1), (_) async {
-      total = await imp.getDuration();
-      pass = await imp.getCurrentPosition();
-      if (!seeking) {
-        _updateUi();
-      }
-    });
+  Widget convertTime(int input) {
+    return Text(AudioUtil.convertTime(input));
   }
 
-  void _updateUi({VoidCallback? fn}) {
-    if (mounted) setState(fn ?? () {});
+  void _updateUi() {
+    if (mounted) setState(() {});
   }
 }

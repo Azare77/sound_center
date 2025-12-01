@@ -1,5 +1,3 @@
-
-
 enum RepeatMode { repeatAll, repeatOne, noRepeat }
 
 enum ShuffleMode { shuffle, noShuffle }
@@ -7,7 +5,7 @@ enum ShuffleMode { shuffle, noShuffle }
 abstract class PlayerRepository {
   void setPlayList(dynamic episodes);
 
-  Future<int> getCurrentPosition();
+  int getCurrentPosition();
 
   Future<int> getDuration();
 

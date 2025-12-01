@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -40,6 +41,12 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   String feedUrl = "";
 
   RepeatMode repeatMode = RepeatMode.repeatAll;
+  final _positionController = StreamController<int>.broadcast();
+  final _durationController = StreamController<int>.broadcast();
+
+  Stream<int> get positionStream => _positionController.stream;
+
+  Stream<int> get durationStream => _durationController.stream;
 
   late final PodcastBloc bloc;
 
@@ -83,6 +90,15 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
+    _playerService.position.listen((pos) {
+      _positionController.add(pos.inMilliseconds);
+    });
+
+    _playerService.duration.listen((dur) {
+      if (dur != null) {
+        _durationController.add(dur.inMilliseconds);
+      }
+    });
   }
 
   bool isPlaying() {
@@ -187,8 +203,8 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  Future<int> getCurrentPosition() async {
-    int currentPosition = await _playerService.getCurrentPosition();
+  int getCurrentPosition() {
+    int currentPosition = _playerService.getCurrentPosition();
     return currentPosition;
   }
 

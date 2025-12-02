@@ -42,8 +42,13 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
             name != 'light';
       },
     );
-    if (widget.themeName != null) _controller.text = widget.themeName!;
-    final AppThemeData theme = ThemeManager.current;
+    AppThemeData theme;
+    if (widget.themeName != null) {
+      _controller.text = widget.themeName!;
+      theme = ThemeManager.fromId(widget.themeName!);
+    } else {
+      theme = ThemeManager.current;
+    }
     final ThemeData themeData = theme.themeData;
     brightness = themeData.brightness;
     scaffoldBackground = themeData.scaffoldBackgroundColor;
@@ -56,6 +61,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
   }
 
   Future<void> _checkClipboard() async {
+    if (widget.themeName != null) return;
     final data = await Clipboard.getData('text/plain');
     if (data?.text == null) return;
     try {
@@ -111,12 +117,11 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                         margin: EdgeInsets.only(top: 10),
                         validator: (text) {
                           final name = text?.trim() ?? "";
-                          return ThemeManager.getTheme(name) == null &&
-                              name.isNotEmpty &&
-                              name != 'green' &&
-                              name != 'dark' &&
-                              name != 'light' &&
-                              name == widget.themeName;
+                          return name == widget.themeName ||
+                              (ThemeManager.getTheme(name) == null &&
+                                  name != 'green' &&
+                                  name != 'dark' &&
+                                  name != 'light');
                         },
                       ),
                       RadioGroup<Brightness>(

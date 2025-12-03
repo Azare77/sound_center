@@ -12,11 +12,8 @@ import 'package:sound_center/features/podcast/presentation/widgets/podcast_templ
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
-class Podcast extends StatefulWidget {
+class Podcast extends StatelessWidget {
   const Podcast({super.key});
-
-  @override
-  State<Podcast> createState() => _PodcastState();
 
   void handleDeepLink(BuildContext context, Map<String, String> params) async {
     try {
@@ -37,22 +34,12 @@ class Podcast extends StatefulWidget {
       ).add(PlayPodcast(episodes: [episode], index: 0));
     } catch (_) {}
   }
-}
-
-class _PodcastState extends State<Podcast> {
-  late final PodcastToolBar podcastToolBar;
-
-  @override
-  void initState() {
-    super.initState();
-    podcastToolBar = PodcastToolBar();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        podcastToolBar,
+        PodcastToolBar(),
         Expanded(
           child: BlocBuilder<PodcastBloc, PodcastState>(
             buildWhen: (previous, current) {

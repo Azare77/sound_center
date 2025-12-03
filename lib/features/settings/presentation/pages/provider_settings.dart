@@ -20,8 +20,16 @@ class _ProviderSettingsState extends State<ProviderSettings> {
   @override
   void initState() {
     super.initState();
-    key = CustomTextEditingController();
-    secret = CustomTextEditingController();
+    key = CustomTextEditingController(
+      validator: (text) {
+        return text?.isNotEmpty ?? false;
+      },
+    );
+    secret = CustomTextEditingController(
+      validator: (text) {
+        return text?.isNotEmpty ?? false;
+      },
+    );
     settingsRepository = SettingsRepositoryImp();
     provider = settingsRepository.getPodcastProvider();
     Map<String, String>? podcastIndexInfo = settingsRepository
@@ -71,23 +79,9 @@ class _ProviderSettingsState extends State<ProviderSettings> {
               ),
             ),
             if (provider == PodcastProvider.podcatIndex)
-              TextFieldBox(
-                controller: key,
-                hintText: 'Key',
-                labelText: 'Key',
-                validator: (text) {
-                  return text?.isNotEmpty ?? false;
-                },
-              ),
+              TextFieldBox(controller: key, labelText: 'Key'),
             if (provider == PodcastProvider.podcatIndex)
-              TextFieldBox(
-                controller: secret,
-                hintText: 'secret',
-                labelText: 'secret',
-                validator: (text) {
-                  return text?.isNotEmpty ?? false;
-                },
-              ),
+              TextFieldBox(controller: secret, labelText: 'secret'),
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -104,12 +98,9 @@ class _ProviderSettingsState extends State<ProviderSettings> {
   }
 
   void submit() {
+    settingsRepository.setPodcastIndexKeys(key.text.trim(), secret.text.trim());
     if (provider == PodcastProvider.podcatIndex) {
       if (!(key.isValid() && secret.isValid())) return;
-      settingsRepository.setPodcastIndexKeys(
-        key.text.trim(),
-        secret.text.trim(),
-      );
     }
     settingsRepository.setPodcastProvider(provider);
   }

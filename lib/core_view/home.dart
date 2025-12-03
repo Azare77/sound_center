@@ -83,25 +83,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             child: GestureDetector(
               onHorizontalDragEnd: onSwipe,
               child: AppBar(
-                title: InkWell(
-                  focusColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
+                title: GestureDetector(
                   onLongPress: () {
                     showDialog(
                       context: context,
                       builder: (_) => const Settings(),
                     );
                   },
-                  child: GestureDetector(
-                    onHorizontalDragEnd: onSwipe,
-                    child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 100),
-                      child: Text("Sound Center", textAlign: TextAlign.center),
-                    ),
-                  ),
+                  child: Text("Sound Center", textAlign: TextAlign.center),
                 ),
+
                 actions: [
                   IconButton(
                     tooltip: index == 0

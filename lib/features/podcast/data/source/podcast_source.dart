@@ -21,7 +21,7 @@ class PodcastSource {
         );
       }
     }
-    SearchResult results = await search.search(searchText, limit: 10);
+    SearchResult results = await search.search(searchText, limit: 50);
     return results;
   }
 

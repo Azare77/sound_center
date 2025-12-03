@@ -84,6 +84,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               onHorizontalDragEnd: onSwipe,
               child: AppBar(
                 title: GestureDetector(
+                  onHorizontalDragEnd: onSwipe,
                   onLongPress: () {
                     showDialog(
                       context: context,

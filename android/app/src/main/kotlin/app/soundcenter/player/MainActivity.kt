@@ -1,4 +1,4 @@
-package com.example.sound_center
+package app.soundcenter.player
 
 import com.ryanheise.audioservice.AudioServiceActivity
 

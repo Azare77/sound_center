@@ -34,9 +34,9 @@ Future<void> _init() async {
         builder: () => JustAudioNotificationHandler(),
         config: AudioServiceConfig(
           androidNotificationIcon: "mipmap/ic_notification",
-          androidNotificationChannelId:
-              'com.example.sound_center.channel.audio',
-          androidNotificationChannelName: 'Music Playback',
+          androidNotificationChannelId: 'app.soundcenter.player.channel.audio',
+          androidNotificationChannelName: 'Playback',
+          androidNotificationChannelDescription: "Show Current player status",
           androidNotificationOngoing: false,
           androidStopForegroundOnPause: false,
         ),

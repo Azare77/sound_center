@@ -1,32 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/features/settings/data/settings_repository_imp.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 
-class LanguageSettings extends StatelessWidget {
+class LanguageSettings extends StatefulWidget {
   const LanguageSettings({super.key});
 
   @override
+  State<LanguageSettings> createState() => _LanguageSettingsState();
+}
+
+class _LanguageSettingsState extends State<LanguageSettings> {
+  late final SettingsRepositoryImp settingsRepository;
+  late Locale locale;
+  late final SettingBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = BlocProvider.of<SettingBloc>(context);
+    settingsRepository = SettingsRepositoryImp();
+    locale = settingsRepository.getLocale();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    SettingBloc bloc = BlocProvider.of<SettingBloc>(context);
-    return Dialog(
-      insetPadding: const EdgeInsets.all(18.0),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 5,
-            children: [
-              TextButton(
-                onPressed: () => bloc.add(ChangeLocale(Locale("en"))),
-                child: Text("English"),
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Dialog(
+        insetPadding: const EdgeInsets.all(18.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: RadioGroup<Locale>(
+              onChanged: (v) {
+                setState(() => locale = v!);
+                bloc.add(ChangeLocale(locale));
+              },
+              groupValue: locale,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 5,
+                children: [
+                  radioItem(Locale("en"), "English"),
+                  radioItem(Locale("fa"), "فارسی"),
+                ],
               ),
-              TextButton(
-                onPressed: () => bloc.add(ChangeLocale(Locale("fa"))),
-                child: Text("فارسی"),
-              ),
-            ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget radioItem(Locale locale, String languageName) {
+    return InkWell(
+      onTap: () {
+        setState(() => this.locale = locale);
+        bloc.add(ChangeLocale(locale));
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Radio<Locale>(value: locale),
+          Text(languageName),
+        ],
       ),
     );
   }

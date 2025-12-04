@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sound_center/core/constants/query_constants.dart';
+import 'package:sound_center/core/constants/constants.dart';
 import 'package:toastification/toastification.dart';
 
 class ToastMessage {

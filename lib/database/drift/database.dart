@@ -5,7 +5,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:sound_center/core/constants/query_constants.dart';
+import 'package:sound_center/core/constants/constants.dart';
 
 import 'local/playlist.dart';
 import 'podcast/download.dart';

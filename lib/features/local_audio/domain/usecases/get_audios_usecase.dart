@@ -1,4 +1,4 @@
-import 'package:sound_center/core/constants/query_constants.dart';
+import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/usecase/usecase.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';

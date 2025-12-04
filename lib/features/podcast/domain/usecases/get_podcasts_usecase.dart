@@ -1,5 +1,5 @@
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/core/constants/query_constants.dart';
+import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/usecase/usecase.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';

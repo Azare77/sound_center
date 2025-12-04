@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/core/constants/query_constants.dart';
+import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_repository_imp.dart';

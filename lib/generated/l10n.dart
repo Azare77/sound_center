@@ -194,6 +194,11 @@ class S {
     return Intl.message('Podcast Api', name: 'podcastApi', desc: '', args: []);
   }
 
+  /// `More Info`
+  String get moreInfo {
+    return Intl.message('More Info', name: 'moreInfo', desc: '', args: []);
+  }
+
   /// `Submit`
   String get submit {
     return Intl.message('Submit', name: 'submit', desc: '', args: []);

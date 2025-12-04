@@ -13,4 +13,6 @@ const double LIST_ITEM_HEIGHT = 70;
 
 const double EXPANDED_HEIGHT = 300;
 
+const String VERSION_NAME = "1.0.0";
+
 final GlobalKey<NavigatorState> NAVIGATOR_KEY = GlobalKey<NavigatorState>();

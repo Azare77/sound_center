@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/downloaded_episodes.dart';
+import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/rss_feed_dialog.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
@@ -16,6 +17,17 @@ class PodcastToolBar extends StatefulWidget {
 class _PodcastToolBarState extends State<PodcastToolBar> {
   bool _showSearch = false;
   final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    PodcastSearchController.show.addListener(() {
+      if (_showSearch) {
+        _controller.clear();
+        setState(() => _showSearch = PodcastSearchController.show.value);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -83,7 +95,7 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
 
   void _toggleSearch() {
     setState(() => _showSearch = !_showSearch);
-
+    PodcastSearchController.show.value = _showSearch;
     if (!_showSearch) {
       _controller.clear();
       BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());

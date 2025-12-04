@@ -12,6 +12,10 @@ import 'package:sound_center/features/podcast/presentation/widgets/podcast_templ
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
+class PodcastSearchController {
+  static final ValueNotifier<bool> show = ValueNotifier(true);
+}
+
 class Podcast extends StatelessWidget {
   const Podcast({super.key});
 
@@ -33,6 +37,19 @@ class Podcast extends StatelessWidget {
         context,
       ).add(PlayPodcast(episodes: [episode], index: 0));
     } catch (_) {}
+  }
+
+  bool isInSubscribed(BuildContext context) {
+    final bloc = BlocProvider.of<PodcastBloc>(context);
+    final status = bloc.state.status;
+    if (status is PodcastResultStatus) {
+      bloc.add(GetSubscribedPodcasts());
+      bloc.add(GetSubscribedPodcasts());
+      PodcastSearchController.show.value = false;
+      return false;
+    }
+    PodcastSearchController.show.value = true;
+    return true;
   }
 
   @override
@@ -59,7 +76,6 @@ class Podcast extends StatelessWidget {
                     state.status as PodcastResultStatus;
                 return PodcastListTemplate(status.searchResult.podcasts);
               }
-
               if (state.status is LoadingPodcasts) {
                 return Loading();
               }

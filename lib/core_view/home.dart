@@ -73,7 +73,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     return PopScope(
       canPop: index == 0,
       onPopInvokedWithResult: (res, re) {
-        if (!res) setState(() => index = 0);
+        if (!res) {
+          if (index == 1 && !_podcast.isInSubscribed(context)) return;
+          setState(() => index = 0);
+        }
       },
       child: Scaffold(
         appBar: PreferredSize(
@@ -93,7 +96,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   },
                   child: Text("Sound Center", textAlign: TextAlign.center),
                 ),
-
+                leading: IconButton(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => const Settings(),
+                  ),
+                  icon: Icon(Icons.settings_rounded),
+                ),
                 actions: [
                   IconButton(
                     tooltip: index == 0

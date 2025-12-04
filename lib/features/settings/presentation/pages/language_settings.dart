@@ -28,24 +28,22 @@ class _LanguageSettingsState extends State<LanguageSettings> {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Dialog(
-        insetPadding: const EdgeInsets.all(18.0),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: RadioGroup<Locale>(
-              onChanged: (v) {
-                setState(() => locale = v!);
-                bloc.add(ChangeLocale(locale));
-              },
-              groupValue: locale,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 5,
-                children: [
-                  radioItem(Locale("en"), "English"),
-                  radioItem(Locale("fa"), "فارسی"),
-                ],
-              ),
+          child: RadioGroup<Locale>(
+            onChanged: (v) {
+              setState(() => locale = v!);
+              bloc.add(ChangeLocale(locale));
+            },
+            groupValue: locale,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 5,
+              children: [
+                radioItem(Locale("en"), "English"),
+                radioItem(Locale("fa"), "فارسی"),
+              ],
             ),
           ),
         ),
@@ -54,7 +52,7 @@ class _LanguageSettingsState extends State<LanguageSettings> {
   }
 
   Widget radioItem(Locale locale, String languageName) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         setState(() => this.locale = locale);
         bloc.add(ChangeLocale(locale));
@@ -63,7 +61,7 @@ class _LanguageSettingsState extends State<LanguageSettings> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Radio<Locale>(value: locale),
-          Text(languageName),
+          Expanded(child: Text(languageName)),
         ],
       ),
     );

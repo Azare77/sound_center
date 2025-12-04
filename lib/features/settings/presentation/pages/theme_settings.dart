@@ -56,7 +56,7 @@ class _ThemeSettingsState extends State<ThemeSettings> {
                 children: [
                   ...ThemeManager.allThemes.map((item) {
                     final id = item.id;
-                    return InkWell(
+                    return GestureDetector(
                       onTap: () {
                         setState(() => theme = id);
                         bloc.add(ChangeTheme(theme));

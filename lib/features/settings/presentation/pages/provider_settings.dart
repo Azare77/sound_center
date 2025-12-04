@@ -63,7 +63,7 @@ class _ProviderSettingsState extends State<ProviderSettings> {
               groupValue: provider,
               child: Row(
                 children: PodcastProvider.values.map((p) {
-                  return InkWell(
+                  return GestureDetector(
                     onTap: () => setState(() => provider = p),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

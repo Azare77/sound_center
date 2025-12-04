@@ -52,6 +52,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadFail": MessageLookupByLibrary.simpleMessage("خطا در بارگذاری پادکست"),
     "loadPodcast": MessageLookupByLibrary.simpleMessage("بارگذاری پادکست"),
     "local": MessageLookupByLibrary.simpleMessage("محلی"),
+    "moreInfo": MessageLookupByLibrary.simpleMessage("اطلاعات بیشتر"),
     "nameIsUsed": MessageLookupByLibrary.simpleMessage(
       "این نام قبلا استفاده شده است",
     ),

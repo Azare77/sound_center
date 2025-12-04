@@ -54,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadFail": MessageLookupByLibrary.simpleMessage("Failed To Load Podcast"),
     "loadPodcast": MessageLookupByLibrary.simpleMessage("Load Podcast"),
     "local": MessageLookupByLibrary.simpleMessage("Local"),
+    "moreInfo": MessageLookupByLibrary.simpleMessage("More Info"),
     "nameIsUsed": MessageLookupByLibrary.simpleMessage(
       "This name is already used",
     ),

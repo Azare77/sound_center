@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/theme_settings.dart';
@@ -42,6 +43,29 @@ class Settings extends StatelessWidget {
                   showDialog(context: context, builder: (_) => ThemeSettings());
                 },
                 child: Text(S.of(context).theme),
+              ),
+              TextButton(
+                onPressed: () {
+                  showAboutDialog(
+                    context: context,
+                    applicationVersion: VERSION_NAME,
+                    applicationName: "Sound Center",
+                    applicationLegalese:
+                        "© 2025 Ali Zare\nReleased under the GNU GPLv3 License.",
+                    applicationIcon: Image.asset(
+                      'assets/app.png',
+                      width: 30,
+                      height: 30,
+                    ),
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Text("Support Project"),
+                      ),
+                    ],
+                  );
+                },
+                child: Text(S.of(context).moreInfo),
               ),
             ],
           ),

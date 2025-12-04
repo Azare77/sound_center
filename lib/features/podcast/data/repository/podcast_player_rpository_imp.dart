@@ -65,26 +65,21 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
         _currentEpisode!,
         file?.uri,
       );
-      _playerService
-          .setSource(
-            _currentEpisode!.contentUrl!,
-            AudioSource.online,
-            cachedFilePath: cacheFile,
-          )
-          .then((res) {
-            if (res) {
-              int position = PlayerStateStorage.getLastPosition();
-              _playerService.seek(Duration(milliseconds: position));
-            } else {
-              _currentEpisode = null;
-              bloc.add(AutoPlayPodcast());
-            }
-          });
       index = 0;
       _episodes[index] = _currentEpisode!;
+      bool res = await _playerService.setSource(
+        _currentEpisode!.contentUrl!,
+        AudioSource.online,
+        cachedFilePath: cacheFile,
+      );
+      if (res) {
+        int position = PlayerStateStorage.getLastPosition();
+        _playerService.seek(Duration(milliseconds: position));
+      } else {
+        bloc.add(AutoPlayPodcast());
+      }
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
-      _currentEpisode = null;
     }
   }
 

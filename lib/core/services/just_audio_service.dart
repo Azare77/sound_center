@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:sound_center/ManualTest.dart';
+import 'package:sound_center/core/constants/constants.dart';
 
 enum AudioSource { local, online }
 
@@ -36,6 +37,10 @@ class JustAudioService {
 
   Stream<Duration?> get duration => _player.durationStream;
 
+  bool _loadingSource = false;
+
+  bool get isLoadingSource => _loadingSource;
+
   void _init() {
     // listen for errors
     _player.playbackEventStream.listen((event) async {
@@ -65,12 +70,14 @@ class JustAudioService {
   }
 
   // Public API to set a single source (will clear any managed playlist unless using setPlaylist)
-  Future<bool> _setSource(
+  Future<bool> setSource(
     String path,
     AudioSource source, {
     String? cachedFilePath,
   }) async {
     try {
+      if (_loadingSource) return false;
+      _loadingSource = true;
       _source = source;
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
@@ -81,34 +88,18 @@ class JustAudioService {
           await _player.setUrl(path);
         }
       }
-
       await _player.setSpeed(1.0);
+      _loadingSource = false;
       return true;
     } catch (e) {
       _source = null;
       debugPrint('خطا در setSource: $e');
+      _loadingSource = false;
       return false;
     }
   }
 
   Future<void> play() async => await _player.play();
-
-  CancelableOperation<bool>? _setSourceOperation;
-
-  Future<bool> setSource(
-    String path,
-    AudioSource source, {
-    String? cachedFilePath,
-  }) async {
-    _setSourceOperation?.cancel();
-    final operation = CancelableOperation.fromFuture(
-      _setSource(path, source, cachedFilePath: cachedFilePath),
-    );
-
-    _setSourceOperation = operation;
-
-    return (await operation.valueOrCancellation(false)) ?? false;
-  }
 
   bool isPlaying() {
     return _player.playing;

@@ -32,7 +32,7 @@ class _CurrentAudioState extends State<CurrentAudio> {
   void getCover() async {
     audioId = widget.audioEntity.id;
     cover = await AudioUtil.getCover(audioId, coverSize: CoverSize.thumbnail);
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override

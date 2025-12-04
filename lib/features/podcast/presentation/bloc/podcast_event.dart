@@ -13,9 +13,9 @@ class SearchPodcast extends PodcastEvent {
 class GetSubscribedPodcasts extends PodcastEvent {}
 
 class CheckPodcastUpdates extends PodcastEvent {
-  RefreshController? controller;
+  final Completer<void>? refreshCompleter;
 
-  CheckPodcastUpdates(this.controller);
+  CheckPodcastUpdates(this.refreshCompleter);
 }
 
 class SubscribeToPodcast extends PodcastEvent {

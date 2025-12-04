@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_repository_imp.dart';
@@ -40,9 +41,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     });
     on<CheckPodcastUpdates>((event, emit) async {
       List<SubscriptionEntity> subs = await getPodcastUseCase.haveUpdate();
-      if (event.controller != null) {
-        event.controller!.refreshCompleted();
-      }
+      event.refreshCompleter?.complete();
       emit(state.copyWith(SubscribedPodcasts(subs)));
     });
 

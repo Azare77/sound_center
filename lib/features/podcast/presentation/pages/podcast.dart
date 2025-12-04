@@ -43,7 +43,7 @@ class Podcast extends StatelessWidget {
     final bloc = BlocProvider.of<PodcastBloc>(context);
     final status = bloc.state.status;
     if (status is PodcastResultStatus) {
-      bloc.add(GetSubscribedPodcasts());
+      bloc.add(ShowLoading());
       bloc.add(GetSubscribedPodcasts());
       PodcastSearchController.show.value = false;
       return false;

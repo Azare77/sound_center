@@ -2,6 +2,8 @@ part of 'podcast_bloc.dart';
 
 sealed class PodcastEvent {}
 
+class ShowLoading extends PodcastEvent {}
+
 class SearchPodcast extends PodcastEvent {
   final String query;
 

@@ -33,6 +33,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       add(GetSubscribedPodcasts());
     }
 
+    on<ShowLoading>((event, emit) => emit(state.copyWith(LoadingPodcasts())));
     on<GetSubscribedPodcasts>((event, emit) async {
       List<SubscriptionEntity> subs = await getPodcastUseCase.call();
       emit(state.copyWith(SubscribedPodcasts(subs)));

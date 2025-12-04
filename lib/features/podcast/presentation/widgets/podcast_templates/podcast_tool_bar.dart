@@ -57,7 +57,6 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
                 autofocus: true,
                 onChanged: (text) {
                   if (text.trim().isEmpty) {
-                    BlocProvider.of<PodcastBloc>(context).add(ShowLoading());
                     BlocProvider.of<PodcastBloc>(
                       context,
                     ).add(GetSubscribedPodcasts());
@@ -96,7 +95,6 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
     PodcastSearchController.show.value = _showSearch;
     if (!_showSearch) {
       _controller.clear();
-      BlocProvider.of<PodcastBloc>(context).add(ShowLoading());
       BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());
     }
   }

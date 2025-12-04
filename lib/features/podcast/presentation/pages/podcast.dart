@@ -21,21 +21,21 @@ class Podcast extends StatelessWidget {
 
   void handleDeepLink(BuildContext context, Map<String, String> params) async {
     try {
+      PodcastBloc bloc = BlocProvider.of<PodcastBloc>(context);
       search.Podcast podcast = await search.Feed.loadFeed(
         url: params['podcast'] ?? "",
       );
       final episode = podcast.episodes.firstWhere(
         (item) => item.guid == params['guid'],
       );
-      Navigator.push(
+      bloc.add(PlayPodcast(episodes: [episode], index: 0));
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => PodcastDetail(feedUrl: params['podcast']!),
         ),
       );
-      BlocProvider.of<PodcastBloc>(
-        context,
-      ).add(PlayPodcast(episodes: [episode], index: 0));
+      bloc.add(GetSubscribedPodcasts());
     } catch (_) {}
   }
 
@@ -43,7 +43,6 @@ class Podcast extends StatelessWidget {
     final bloc = BlocProvider.of<PodcastBloc>(context);
     final status = bloc.state.status;
     if (status is PodcastResultStatus) {
-      bloc.add(ShowLoading());
       bloc.add(GetSubscribedPodcasts());
       PodcastSearchController.show.value = false;
       return false;
@@ -61,10 +60,7 @@ class Podcast extends StatelessWidget {
           child: BlocBuilder<PodcastBloc, PodcastState>(
             buildWhen: (previous, current) {
               bool notDownload = current.status is! DownloadedEpisodesStatus;
-              bool inSearch =
-                  previous.status is PodcastResultStatus &&
-                  current.status is SubscribedPodcasts;
-              return notDownload && !inSearch;
+              return notDownload;
             },
             builder: (BuildContext context, PodcastState state) {
               if (state.status is SubscribedPodcasts) {

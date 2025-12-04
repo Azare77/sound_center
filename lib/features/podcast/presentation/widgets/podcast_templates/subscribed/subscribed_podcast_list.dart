@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_detail.dart';
@@ -19,13 +18,13 @@ class SubscribedPodcastList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Completer<void>? refreshCompleter;
+    final bloc = BlocProvider.of<PodcastBloc>(context);
     int count = math.max(3, MediaQuery.widthOf(context) ~/ 130);
     if (podcasts.isEmpty) {
       return Center(child: TextView(S.of(context).noPodcast));
     }
     return RefreshIndicator(
       onRefresh: () async {
-        final bloc = BlocProvider.of<PodcastBloc>(context);
         refreshCompleter = Completer<void>();
         bloc.add(CheckPodcastUpdates(refreshCompleter));
         return refreshCompleter!.future;
@@ -42,8 +41,8 @@ class SubscribedPodcastList extends StatelessWidget {
           final podcast = podcasts[index];
           return InkWell(
             key: Key(podcast.feedUrl),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => PodcastDetail(
@@ -53,6 +52,7 @@ class SubscribedPodcastList extends StatelessWidget {
                   ),
                 ),
               );
+              bloc.add(GetSubscribedPodcasts());
             },
             child: SubscribeTemplate(podcast: podcast),
           );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_detail.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
@@ -12,6 +14,13 @@ class RssFeedDialog extends StatefulWidget {
 
 class _RssFeedDialogState extends State<RssFeedDialog> {
   final TextEditingController _controller = TextEditingController();
+  late final PodcastBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = BlocProvider.of<PodcastBloc>(context);
+  }
 
   @override
   void dispose() {
@@ -36,15 +45,16 @@ class _RssFeedDialogState extends State<RssFeedDialog> {
               hintText: S.of(context).rssFeed,
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
                         PodcastDetail(feedUrl: _controller.text.trim()),
                   ),
                 );
+                bloc.add(GetSubscribedPodcasts());
               },
               child: Text(S.of(context).loadPodcast),
             ),

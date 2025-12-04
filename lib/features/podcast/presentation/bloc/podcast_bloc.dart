@@ -34,7 +34,6 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       add(GetSubscribedPodcasts());
     }
 
-    on<ShowLoading>((event, emit) => emit(state.copyWith(LoadingPodcasts())));
     on<GetSubscribedPodcasts>((event, emit) async {
       List<SubscriptionEntity> subs = await getPodcastUseCase.call();
       emit(state.copyWith(SubscribedPodcasts(subs)));
@@ -46,10 +45,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     });
 
     on<SubscribeToPodcast>((event, emit) async {
-      bool success = await getPodcastUseCase.subscribe(event.podcast);
-      if (success) {
-        await getSubscribedPodcasts();
-      }
+      await getPodcastUseCase.subscribe(event.podcast);
     });
     on<UpdateSubscribedPodcast>((event, emit) async {
       bool success = await getPodcastUseCase.updateSubscribedPodcast(
@@ -60,10 +56,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       }
     });
     on<UnsubscribeFromPodcast>((event, emit) async {
-      bool success = await getPodcastUseCase.unsubscribe(event.feedUrl);
-      if (success) {
-        await getSubscribedPodcasts();
-      }
+      await getPodcastUseCase.unsubscribe(event.feedUrl);
     });
 
     on<PlayPodcast>((event, emit) async {

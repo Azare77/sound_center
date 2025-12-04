@@ -178,6 +178,12 @@ class JustAudioService {
 
   // ========= error handling & advancing logic =========
   Future<void> _handlePlaybackError(String error) async {
+    ManualTest.justAudioErrors.add(
+      "${ManualTest.justAudioErrors.length + 1} : $error",
+    );
+    if (NAVIGATOR_KEY.currentContext != null) {
+      ManualTest.showJustAdioErrors(NAVIGATOR_KEY.currentContext!);
+    }
     if (_handlingError) {
       debugPrint('Already handling an error, skipping re-entry');
       return;

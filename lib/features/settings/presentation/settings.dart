@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sound_center/ManualTest.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
@@ -66,6 +67,12 @@ class Settings extends StatelessWidget {
                   );
                 },
                 child: Text(S.of(context).moreInfo),
+              ),
+              TextButton(
+                onPressed: () {
+                  ManualTest.showJustAdioErrors(context);
+                },
+                child: Text("Show Errors"),
               ),
             ],
           ),

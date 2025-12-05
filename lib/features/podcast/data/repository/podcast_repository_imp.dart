@@ -35,47 +35,44 @@ class PodcastRepositoryImp implements PodcastRepository {
   @override
   Future<List<SubscriptionEntity>> haveUpdate() async {
     final subs = await getSubs();
-    Map<String, Podcast> podcasts = await compute(
-      _checkSubscriptionsForUpdates,
-      subs,
-    );
+    final podcasts = await compute(_checkSubscriptionsForUpdates, subs);
     PodcastSource.setCache(podcasts);
-    final List<SubscriptionEntity> models = [];
 
-    for (final s in subs) {
-      final item = SubscriptionEntity.fromDrift(s);
-      final Podcast? podcast = podcasts[s.feedUrl];
-      if (podcast == null) {
-        item.haveNewEpisode = false;
-        item.needsDatabaseUpdate = false;
-        models.add(item);
-        continue;
+    final models = <SubscriptionEntity>[];
+    final updates = <SubscriptionEntity>[];
+
+    for (final sub in subs) {
+      final entity = SubscriptionEntity.fromDrift(sub);
+      final podcast = podcasts[sub.feedUrl];
+      if (podcast == null) continue;
+
+      final latestTime = _getLastEpisodeDate(podcast.episodes);
+
+      final hasNewEpisodes = podcast.episodes.length != entity.totalEpisodes;
+      final needToUpdate = !sub.updateTime.isAtSameMomentAs(latestTime);
+
+      if (hasNewEpisodes || needToUpdate) {
+        updates.add(entity);
       }
-      final latestEpisodeTime = _getLastEpisodeDate(podcast.episodes);
-      final hasNewEpisodes = podcast.episodes.length != item.totalEpisodes;
-      item
-        ..haveNewEpisode = hasNewEpisodes
-        ..updateTime = latestEpisodeTime
-        ..needsDatabaseUpdate = !s.updateTime.isAtSameMomentAs(
-          latestEpisodeTime,
-        );
-      models.add(item);
+
+      models.add(entity);
     }
 
-    final toUpdate = models.where((m) => m.needsDatabaseUpdate).toList();
-    if (toUpdate.isNotEmpty) {
+    if (updates.isNotEmpty) {
       await database.batch((batch) {
-        for (final item in toUpdate) {
+        for (final item in updates) {
           batch.update(
             database.subscriptionTable,
             SubscriptionTableCompanion(
               updateTime: drift.Value(item.updateTime),
+              haveNewEpisode: const drift.Value(true),
             ),
             where: (t) => t.feedUrl.equals(item.feedUrl),
           );
         }
       });
     }
+
     return _sortByUpdateTimeDesc(models);
   }
 

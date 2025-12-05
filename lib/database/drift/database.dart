@@ -23,7 +23,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnectionSync());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 1;
 
   static QueryExecutor _openConnectionSync() {
     // Call the synchronous method to get the database path

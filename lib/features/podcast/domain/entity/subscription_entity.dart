@@ -11,9 +11,8 @@ class SubscriptionEntity {
   final int totalEpisodes;
   final DateTime subscribedAt;
   final DateTime lastListenAt;
-  DateTime updateTime;
-  bool haveNewEpisode;
-  bool needsDatabaseUpdate = false;
+  final DateTime updateTime;
+  final bool haveNewEpisode;
 
   SubscriptionEntity({
     this.podcastId,
@@ -23,7 +22,7 @@ class SubscriptionEntity {
     required this.title,
     required this.totalEpisodes,
     required this.updateTime,
-    this.haveNewEpisode = false,
+    required this.haveNewEpisode,
     this.author,
     this.artworkUrl,
   });
@@ -39,6 +38,7 @@ class SubscriptionEntity {
       totalEpisodes: subscription.totalEpisodes,
       subscribedAt: subscription.subscribedAt,
       lastListenAt: subscription.lastListenAt,
+      haveNewEpisode: subscription.haveNewEpisode,
     );
   }
 
@@ -64,6 +64,7 @@ class SubscriptionEntity {
       lastListenAt: DateTime.now(),
       updateTime: updateTime,
       totalEpisodes: feedInfo.episodes.length,
+      haveNewEpisode: false,
     );
   }
 
@@ -78,6 +79,7 @@ class SubscriptionEntity {
       subscribedAt: Value(subscribedAt),
       lastListenAt: Value(lastListenAt),
       totalEpisodes: Value(totalEpisodes),
+      haveNewEpisode: Value(false),
     );
   }
 }

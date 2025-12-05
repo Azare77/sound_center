@@ -17,6 +17,9 @@ class SubscriptionTable extends Table with TableMixin {
   DateTimeColumn get subscribedAt =>
       dateTime().withDefault(currentDateAndTime)();
 
+  BoolColumn get haveNewEpisode =>
+      boolean().withDefault(const Constant(false))();
+
   DateTimeColumn get updateTime => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get lastListenAt =>

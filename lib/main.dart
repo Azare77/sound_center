@@ -39,6 +39,8 @@ Future<void> _init() async {
           androidNotificationChannelDescription: "Show Current player status",
           androidNotificationOngoing: false,
           androidStopForegroundOnPause: false,
+          fastForwardInterval: Duration(seconds: 30),
+          rewindInterval: Duration(seconds: 10),
         ),
       );
     }

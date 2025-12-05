@@ -44,6 +44,12 @@
             <meta-data
                 android:name="notification_icon"
                 android:resource="@mipmap/ic_notification" />
+            <meta-data
+                android:name="jump_forward_icon"
+                android:resource="@drawable/ic_jump_forward" />
+            <meta-data
+                android:name="jump_backward_icon"
+                android:resource="@drawable/ic_jump_backward" />
 
 
             <intent-filter>
@@ -58,8 +64,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="soundcenter"
-                    android:host="open.sound.app" />
+                    android:host="open.sound.app"
+                    android:scheme="soundcenter" />
             </intent-filter>
 
         </activity>

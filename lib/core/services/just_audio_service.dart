@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:sound_center/ManualTest.dart';
-import 'package:sound_center/core/constants/constants.dart';
 
 enum AudioSource { local, online }
 
@@ -169,12 +167,6 @@ class JustAudioService {
 
   // ========= error handling & advancing logic =========
   Future<void> _handlePlaybackError(String error) async {
-    ManualTest.justAudioErrors.add(
-      "${ManualTest.justAudioErrors.length + 1} : $error",
-    );
-    if (NAVIGATOR_KEY.currentContext != null) {
-      ManualTest.showJustAdioErrors(NAVIGATOR_KEY.currentContext!);
-    }
     if (_handlingError) {
       debugPrint('Already handling an error, skipping re-entry');
       return;

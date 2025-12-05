@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("هنرمند"),
     "az": MessageLookupByLibrary.simpleMessage("الف-ی"),
+    "copy": MessageLookupByLibrary.simpleMessage("کپی تم"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("ساخت تم جدید"),
     "createTime": MessageLookupByLibrary.simpleMessage("تاریخ ایجاد"),
     "currentMediaColor": MessageLookupByLibrary.simpleMessage(

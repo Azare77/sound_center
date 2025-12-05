@@ -48,5 +48,6 @@
   "iconColor": "Icon",
   "currentMediaColor": "Current Media Background",
   "nameIsUsed": "This name is already used",
-  "themeName": "Theme Name"
+  "themeName": "Theme Name",
+  "copy": "Copy"
 }

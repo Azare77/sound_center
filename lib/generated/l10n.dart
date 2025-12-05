@@ -378,6 +378,11 @@ class S {
   String get themeName {
     return Intl.message('Theme Name', name: 'themeName', desc: '', args: []);
   }
+
+  /// `Copy`
+  String get copy {
+    return Intl.message('Copy', name: 'copy', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

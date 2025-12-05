@@ -34,6 +34,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("Artist"),
     "az": MessageLookupByLibrary.simpleMessage("A-Z"),
+    "copy": MessageLookupByLibrary.simpleMessage("Copy"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("Create New Theme"),
     "createTime": MessageLookupByLibrary.simpleMessage("Create time"),
     "currentMediaColor": MessageLookupByLibrary.simpleMessage(

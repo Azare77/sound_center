@@ -29,7 +29,7 @@ class _LanguageSettingsState extends State<LanguageSettings> {
       textDirection: TextDirection.ltr,
       child: Dialog(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12),
           child: RadioGroup<Locale>(
             onChanged: (v) {
               setState(() => locale = v!);
@@ -57,12 +57,15 @@ class _LanguageSettingsState extends State<LanguageSettings> {
         setState(() => this.locale = locale);
         bloc.add(ChangeLocale(locale));
       },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Radio<Locale>(value: locale),
-          Expanded(child: Text(languageName)),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Radio<Locale>(value: locale),
+            Expanded(child: Text(languageName)),
+          ],
+        ),
       ),
     );
   }

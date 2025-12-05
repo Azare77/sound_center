@@ -80,9 +80,11 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     } catch (_) {}
   }
 
+  late AppThemeData themeData;
+
   @override
   Widget build(BuildContext context) {
-    AppThemeData themeData = AppThemeData.fromSeed(
+    themeData = AppThemeData.fromSeed(
       id: _controller.text.trim(),
       brightness: brightness,
       scaffoldBackground: scaffoldBackground,
@@ -197,10 +199,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                         onChanged: (current) =>
                             setState(() => mediaColor = current),
                       ),
-                      ElevatedButton(
-                        onPressed: saveTheme,
-                        child: Text(S.of(context).ok),
-                      ),
+                      _buildButtonRow(),
                     ],
                   ),
                 ),
@@ -210,6 +209,33 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildButtonRow() {
+    return Row(
+      mainAxisAlignment: .spaceEvenly,
+      children: [
+        ElevatedButton(onPressed: saveTheme, child: Text(S.of(context).ok)),
+        ElevatedButton(
+          onPressed: () {
+            AppThemeData themeData = AppThemeData.fromSeed(
+              id: _controller.text.trim(),
+              brightness: brightness,
+              scaffoldBackground: scaffoldBackground,
+              thumbColor: thumbColor,
+              appBarBackground: appBarBackground,
+              appBarShadowColor: shadowColor,
+              mediaColor: mediaColor,
+              iconColor: iconColor,
+            );
+            Clipboard.setData(
+              ClipboardData(text: jsonEncode(themeData.toJsonForStorage())),
+            );
+          },
+          child: Text(S.of(context).copy),
+        ),
+      ],
     );
   }
 

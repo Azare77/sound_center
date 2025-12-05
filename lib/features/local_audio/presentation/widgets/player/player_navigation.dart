@@ -139,7 +139,9 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
 
             MediaControllerButton(
               svg: 'assets/icons/shuffle.svg',
-              color: imp.isShuffle() ? Colors.blue : null,
+              color: imp.isShuffle()
+                  ? Theme.of(context).sliderTheme.thumbColor
+                  : Theme.of(context).iconTheme.color!.withValues(alpha: 0.5),
               onPressed: () {
                 imp.changeShuffleState();
                 _updateUi();

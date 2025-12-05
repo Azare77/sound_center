@@ -5,13 +5,11 @@ enum PresetTheme { dark, green, light }
 
 class AppThemeData {
   final String id;
-  final String? displayName;
   final ThemeData themeData;
   final Color mediaColor;
 
   const AppThemeData({
     required this.id,
-    this.displayName,
     required this.themeData,
     required this.mediaColor,
   });
@@ -19,7 +17,6 @@ class AppThemeData {
   Map<String, dynamic> toJsonForStorage() {
     return {
       'id': id,
-      'displayName': displayName,
       'brightness': themeData.brightness.name,
       'scaffoldBackground': themeData.scaffoldBackgroundColor.toARGB32(),
       'thumbColor': (themeData.sliderTheme.thumbColor ?? Colors.white)

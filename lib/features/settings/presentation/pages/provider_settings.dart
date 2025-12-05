@@ -79,9 +79,23 @@ class _ProviderSettingsState extends State<ProviderSettings> {
               ),
             ),
             if (provider == PodcastProvider.podcatIndex)
-              TextFieldBox(controller: key, labelText: 'Key'),
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: TextFieldBox(
+                  controller: key,
+                  labelText: 'Key',
+                  textDirection: TextDirection.ltr,
+                ),
+              ),
             if (provider == PodcastProvider.podcatIndex)
-              TextFieldBox(controller: secret, labelText: 'secret'),
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: TextFieldBox(
+                  controller: secret,
+                  labelText: 'secret',
+                  textDirection: TextDirection.ltr,
+                ),
+              ),
             Center(
               child: ElevatedButton(
                 onPressed: () {

@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sound_center/features/settings/data/settings_repository_imp.dart';
@@ -60,13 +57,6 @@ class _ThemeSettingsState extends State<ThemeSettings> {
                       onTap: () {
                         setState(() => theme = id);
                         bloc.add(ChangeTheme(theme));
-                      },
-                      onLongPress: () {
-                        Clipboard.setData(
-                          ClipboardData(
-                            text: jsonEncode(item.toJsonForStorage()),
-                          ),
-                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),

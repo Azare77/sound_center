@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -21,6 +23,9 @@ class _PodcastHeaderState extends State<PodcastHeader> {
   late final PageController controller;
   int currentIndex = 0;
   List<Episode> currentPlayList = [];
+  int _startPage = 0;
+  bool _isScrolling = false;
+  Timer? _scrollDebounce;
   late final PodcastPlayerRepositoryImp playerRepository;
 
   @override
@@ -38,12 +43,10 @@ class _PodcastHeaderState extends State<PodcastHeader> {
 
   void onScrollEnd() {
     int page = controller.page?.round() ?? 0;
-    int change = page - currentIndex;
-    PodcastEvent event;
-    for (int i = 0; i < change.abs(); i++) {
-      event = change > 0 ? PlayNextPodcast() : PlayPreviousPodcast();
-      BlocProvider.of<PodcastBloc>(context).add(event);
-    }
+    int change = page - _startPage;
+    if (change == 0) return;
+    playerRepository.index += change;
+    playerRepository.play(playerRepository.index);
   }
 
   @override
@@ -103,8 +106,22 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                 height: MediaQuery.of(context).size.width * 0.8 - 30,
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification notification) {
+                    if (notification is ScrollStartNotification) {
+                      if (!_isScrolling) {
+                        _startPage = controller.page?.round() ?? 0;
+                      }
+                      _isScrolling = true;
+                      _scrollDebounce?.cancel();
+                    }
                     if (notification is ScrollEndNotification) {
-                      onScrollEnd();
+                      _scrollDebounce?.cancel();
+                      _scrollDebounce = Timer(
+                        const Duration(milliseconds: 250),
+                        () {
+                          onScrollEnd();
+                          _isScrolling = false;
+                        },
+                      );
                     }
                     return false;
                   },

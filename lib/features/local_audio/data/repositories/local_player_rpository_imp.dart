@@ -63,6 +63,8 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   AudioEntity? get getCurrentAudio => _currentAudio;
   List<int> _shuffle = [];
+
+  List<int> get shuffleList => _shuffle;
   int index = 0;
   int shuffleIndex = 0;
   RepeatMode repeatMode = RepeatMode.repeatAll;

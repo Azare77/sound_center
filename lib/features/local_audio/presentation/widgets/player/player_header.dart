@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ class _PlayerHeaderState extends State<PlayerHeader> {
   late final PageController controller;
 
   int currentIndex = 0;
+  int _startPage = 0;
+  bool _isScrolling = false;
+  Timer? _scrollDebounce;
   List<AudioEntity> currentPlayList = [];
   late final LocalPlayerRepositoryImp imp;
 
@@ -40,11 +44,14 @@ class _PlayerHeaderState extends State<PlayerHeader> {
 
   void onScrollEnd() {
     int page = controller.page?.round() ?? 0;
-    int change = page - currentIndex;
-    for (int i = 0; i < change.abs(); i++) {
-      BlocProvider.of<LocalBloc>(
-        context,
-      ).add(change > 0 ? PlayNextAudio() : PlayPreviousAudio());
+    int change = page - _startPage;
+    if (change == 0) return;
+    if (imp.isShuffle()) {
+      imp.shuffleIndex += change;
+      imp.play(imp.shuffleList[imp.shuffleIndex]);
+    } else {
+      imp.index += change;
+      imp.play(imp.index);
     }
   }
 
@@ -53,7 +60,6 @@ class _PlayerHeaderState extends State<PlayerHeader> {
     return SizedBox(
       child: BlocBuilder<LocalBloc, LocalState>(
         builder: (BuildContext context, LocalState state) {
-          // final LocalAudioStatus status = state.status as LocalAudioStatus;
           final AudioEntity song = imp.getCurrentAudio!;
           currentPlayList = imp.getPlayList();
           _jumpToCorrectPage(currentPlayList, song);
@@ -101,8 +107,22 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                   height: MediaQuery.of(context).size.width * 0.8 - 30,
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (ScrollNotification notification) {
+                      if (notification is ScrollStartNotification) {
+                        if (!_isScrolling) {
+                          _startPage = controller.page?.round() ?? 0;
+                        }
+                        _isScrolling = true;
+                        _scrollDebounce?.cancel();
+                      }
                       if (notification is ScrollEndNotification) {
-                        onScrollEnd();
+                        _scrollDebounce?.cancel();
+                        _scrollDebounce = Timer(
+                          const Duration(milliseconds: 250),
+                          () {
+                            onScrollEnd();
+                            _isScrolling = false;
+                          },
+                        );
                       }
                       return false;
                     },

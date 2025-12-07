@@ -4,11 +4,13 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/local_audios.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 import 'package:sound_center/features/settings/presentation/settings.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -110,10 +112,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         : S.of(context).local,
                     // use Bitwise Operations to change index between 0 and 1 (n)
                     onPressed: () => setState(() => index = (index + 1) & 1),
-                    icon: Icon(
-                      index == 0
-                          ? Icons.podcasts_rounded
-                          : Icons.music_note_rounded,
+                    icon: BlocBuilder<PodcastBloc, PodcastState>(
+                      builder: (BuildContext context, PodcastState state) {
+                        return Badge(
+                          label: SizedBox.shrink(),
+                          backgroundColor: Colors.red,
+                          isLabelVisible:
+                              index == 0 && _podcast.haveNewEpisode(context),
+                          child: Icon(
+                            index == 0
+                                ? Icons.podcasts_rounded
+                                : Icons.music_note_rounded,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

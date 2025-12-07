@@ -73,7 +73,7 @@ class PodcastRepositoryImp implements PodcastRepository {
       });
     }
 
-    return _sortByUpdateTimeDesc(models);
+    return _sortByUpdateTimeDesc(await getHome());
   }
 
   @override

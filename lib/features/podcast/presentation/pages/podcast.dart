@@ -19,6 +19,14 @@ class PodcastSearchController {
 class Podcast extends StatelessWidget {
   const Podcast({super.key});
 
+  bool haveNewEpisode(BuildContext context) {
+    final status = BlocProvider.of<PodcastBloc>(context).state.status;
+    if (status is SubscribedPodcasts) {
+      return status.podcasts.any((p) => p.haveNewEpisode);
+    }
+    return false;
+  }
+
   void handleDeepLink(BuildContext context, Map<String, String> params) async {
     try {
       PodcastBloc bloc = BlocProvider.of<PodcastBloc>(context);

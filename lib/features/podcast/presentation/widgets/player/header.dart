@@ -23,9 +23,7 @@ class _PodcastHeaderState extends State<PodcastHeader> {
   late final PageController controller;
   int currentIndex = 0;
   List<Episode> currentPlayList = [];
-  int _startPage = 0;
   bool _isScrolling = false;
-  Timer? _scrollDebounce;
   late final PodcastPlayerRepositoryImp playerRepository;
 
   @override
@@ -41,9 +39,12 @@ class _PodcastHeaderState extends State<PodcastHeader> {
     super.dispose();
   }
 
-  void onScrollEnd() {
+  void onScrollEnd() async {
+    _isScrolling = false;
+    await Future.delayed(Duration(milliseconds: 250));
+    if (_isScrolling) return;
     int page = controller.page?.round() ?? 0;
-    int change = page - _startPage;
+    int change = page - currentIndex;
     if (change == 0) return;
     playerRepository.index += change;
     playerRepository.play(playerRepository.index);
@@ -56,7 +57,8 @@ class _PodcastHeaderState extends State<PodcastHeader> {
         builder: (BuildContext context, PodcastState state) {
           Episode currentEpisode = playerRepository.getCurrentEpisode!;
           currentPlayList = playerRepository.getPlayList();
-          _jumpToCorrectPage(currentPlayList, currentEpisode);
+          currentIndex = playerRepository.index;
+          _jumpToCorrectPage();
           return Column(
             spacing: 20,
             mainAxisSize: MainAxisSize.min,
@@ -107,21 +109,10 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification notification) {
                     if (notification is ScrollStartNotification) {
-                      if (!_isScrolling) {
-                        _startPage = controller.page?.round() ?? 0;
-                      }
                       _isScrolling = true;
-                      _scrollDebounce?.cancel();
                     }
                     if (notification is ScrollEndNotification) {
-                      _scrollDebounce?.cancel();
-                      _scrollDebounce = Timer(
-                        const Duration(milliseconds: 250),
-                        () {
-                          onScrollEnd();
-                          _isScrolling = false;
-                        },
-                      );
+                      onScrollEnd();
                     }
                     return false;
                   },
@@ -140,7 +131,6 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),
-              // if (currentEpisode.author != null)
               ScrollingText(
                 currentEpisode.author ?? "",
                 textAlign: TextAlign.center,
@@ -165,16 +155,18 @@ class _PodcastHeaderState extends State<PodcastHeader> {
     );
   }
 
-  void _jumpToCorrectPage(List<Episode> currentPlayList, Episode song) {
-    for (var entry in currentPlayList.asMap().entries) {
-      if (entry.value.contentUrl == song.contentUrl) {
-        currentIndex = entry.key;
-        break;
-      }
+  void _jumpToCorrectPage() {
+    if (controller.hasClients) {
+      _isScrolling = true;
+      controller.jumpToPage(currentIndex);
+      _isScrolling = false;
+      return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.hasClients) {
+        _isScrolling = true;
         controller.jumpToPage(currentIndex);
+        _isScrolling = false;
       }
     });
   }

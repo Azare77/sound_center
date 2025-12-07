@@ -27,10 +27,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   void init() async {
     try {
-      audios.map((item) async {
-        AudioUtil.getCover(item.id, coverSize: CoverSize.thumbnail);
-        AudioUtil.getCover(item.id, coverSize: CoverSize.banner);
-      });
+      _loadBanner();
       if (PlayerStateStorage.getSource() != AudioSource.local) return;
       _currentAudio = PlayerStateStorage.getLastAudio();
       if (_currentAudio == null) return;
@@ -113,6 +110,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     for (AudioEntity track in tracks) {
       audios.add(track);
     }
+    _loadBanner();
   }
 
   List<AudioEntity> getPlayList() {
@@ -145,6 +143,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       _shuffleAudios();
     }
     await PlayerStateStorage.saveShuffleMode(shuffleMode);
+    bloc.add(AutoPlayNext());
   }
 
   void _shuffleAudios() {
@@ -303,6 +302,18 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
         coverSize: CoverSize.banner,
       );
       audios[i] = audio;
+    }
+  }
+
+  Future<void> _loadBanner() async {
+    for (int i = 0; i < audios.length; i++) {
+      final audio = audios[i];
+      audio.cover ??= await AudioUtil.getCover(
+        audio.id,
+        coverSize: CoverSize.banner,
+      );
+      audios[i] = audio;
+      AudioUtil.getCover(audio.id, coverSize: CoverSize.thumbnail);
     }
   }
 }

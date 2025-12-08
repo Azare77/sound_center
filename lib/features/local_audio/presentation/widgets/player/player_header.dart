@@ -22,7 +22,7 @@ class PlayerHeader extends StatefulWidget {
 class _PlayerHeaderState extends State<PlayerHeader> {
   late final PageController controller;
 
-  int currentIndex = 0;
+  int _currentIndex = 0;
   bool _isScrolling = false;
   List<AudioEntity> currentPlayList = [];
   late final LocalPlayerRepositoryImp imp;
@@ -45,7 +45,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
     await Future.delayed(Duration(milliseconds: 250));
     if (_isScrolling) return;
     int page = controller.page?.round() ?? 0;
-    int change = page - currentIndex;
+    int change = page - _currentIndex;
     if (change == 0) return;
     if (imp.isShuffle()) {
       imp.shuffleIndex += change;
@@ -62,7 +62,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
       builder: (BuildContext context, LocalState state) {
         AudioEntity song = imp.getCurrentAudio!;
         currentPlayList = imp.getPlayList();
-        currentIndex = imp.isShuffle() ? imp.shuffleIndex : imp.index;
+        _currentIndex = imp.isShuffle() ? imp.shuffleIndex : imp.index;
         _jumpToCorrectPage();
         return Column(
           spacing: 20,
@@ -143,14 +143,14 @@ class _PlayerHeaderState extends State<PlayerHeader> {
   void _jumpToCorrectPage() {
     if (controller.hasClients) {
       _isScrolling = true;
-      controller.jumpToPage(currentIndex);
+      controller.jumpToPage(_currentIndex);
       _isScrolling = false;
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.hasClients) {
         _isScrolling = true;
-        controller.jumpToPage(currentIndex);
+        controller.jumpToPage(_currentIndex);
         _isScrolling = false;
       }
     });

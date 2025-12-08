@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/foundation.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -36,6 +38,7 @@ class PodcastRepositoryImp implements PodcastRepository {
   Future<List<SubscriptionEntity>> haveUpdate() async {
     final subs = await getSubs();
     final podcasts = await compute(_checkSubscriptionsForUpdates, subs);
+
     PodcastSource.setCache(podcasts);
 
     final updates = <Map<String, dynamic>>[];
@@ -164,16 +167,48 @@ class PodcastRepositoryImp implements PodcastRepository {
   }
 }
 
+// Future<Map<String, Podcast>> _checkSubscriptionsForUpdates(
+//   List<SubscriptionTableData> feeds,
+// ) async {
+//   Map<String, Podcast> podcastCache = {};
+//   final futures = feeds.map((feed) async {
+//     try {
+//       final podcast = await Feed.loadFeed(url: feed.feedUrl);
+//       podcastCache[feed.feedUrl] = podcast;
+//     } catch (_) {}
+//   });
+//   await Future.wait(futures);
+//   return podcastCache;
+// }
+
 Future<Map<String, Podcast>> _checkSubscriptionsForUpdates(
   List<SubscriptionTableData> feeds,
 ) async {
-  Map<String, Podcast> podcastCache = {};
-  final futures = feeds.map((feed) async {
+  final cache = <String, Podcast>{};
+
+  const maxConcurrent = 6;
+
+  final pool = <Completer<void>>[];
+
+  Future<void> runOne(String url, Completer<void> c) async {
     try {
-      final podcast = await Feed.loadFeed(url: feed.feedUrl);
-      podcastCache[feed.feedUrl] = podcast;
+      final podcast = await Feed.loadFeed(url: url);
+      cache[url] = podcast;
     } catch (_) {}
-  });
-  await Future.wait(futures);
-  return podcastCache;
+    c.complete();
+  }
+
+  for (final feed in feeds) {
+    if (pool.length >= maxConcurrent) {
+      await Future.any(pool.map((c) => c.future));
+      pool.removeWhere((c) => c.isCompleted);
+    }
+
+    final completer = Completer<void>();
+    pool.add(completer);
+    runOne(feed.feedUrl, completer);
+  }
+  await Future.wait(pool.map((c) => c.future));
+
+  return cache;
 }

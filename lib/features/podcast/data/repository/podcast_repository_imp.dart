@@ -38,8 +38,7 @@ class PodcastRepositoryImp implements PodcastRepository {
     final podcasts = await compute(_checkSubscriptionsForUpdates, subs);
     PodcastSource.setCache(podcasts);
 
-    final models = <SubscriptionEntity>[];
-    final updates = <SubscriptionEntity>[];
+    final updates = <Map<String, dynamic>>[];
 
     for (final sub in subs) {
       final entity = SubscriptionEntity.fromDrift(sub);
@@ -47,15 +46,16 @@ class PodcastRepositoryImp implements PodcastRepository {
       if (podcast == null) continue;
 
       final latestTime = _getLastEpisodeDate(podcast.episodes);
-
-      final hasNewEpisodes = podcast.episodes.length != entity.totalEpisodes;
+      final hasNewEpisodes = podcast.episodes.length > entity.totalEpisodes;
       final needToUpdate = !sub.updateTime.isAtSameMomentAs(latestTime);
 
       if (hasNewEpisodes || needToUpdate) {
-        updates.add(entity);
+        updates.add({
+          "feedUrl": entity.feedUrl,
+          "latestTime": latestTime,
+          "haveNewEpisode": hasNewEpisodes,
+        });
       }
-
-      models.add(entity);
     }
 
     if (updates.isNotEmpty) {
@@ -64,16 +64,16 @@ class PodcastRepositoryImp implements PodcastRepository {
           batch.update(
             database.subscriptionTable,
             SubscriptionTableCompanion(
-              updateTime: drift.Value(item.updateTime),
-              haveNewEpisode: const drift.Value(true),
+              updateTime: drift.Value(item["latestTime"]),
+              haveNewEpisode: drift.Value(item["haveNewEpisode"]),
             ),
-            where: (t) => t.feedUrl.equals(item.feedUrl),
+            where: (t) => t.feedUrl.equals(item["feedUrl"]),
           );
         }
       });
     }
 
-    return _sortByUpdateTimeDesc(await getHome());
+    return await getHome();
   }
 
   @override
@@ -161,13 +161,6 @@ class PodcastRepositoryImp implements PodcastRepository {
       }
     }
     return updateTime;
-  }
-
-  List<SubscriptionEntity> _sortByUpdateTimeDesc(
-    List<SubscriptionEntity> list,
-  ) {
-    list.sort((a, b) => b.updateTime.compareTo(a.updateTime));
-    return list;
   }
 }
 

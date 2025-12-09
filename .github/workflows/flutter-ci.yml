@@ -16,6 +16,9 @@ jobs:
         with:
           channel: stable
 
+      - name: Accept Android SDK licenses
+        run: yes | /usr/local/lib/android/sdk/tools/bin/sdkmanager --licenses
+
       - name: Flutter Pub Get
         run: flutter pub get
 

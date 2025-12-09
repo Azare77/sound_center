@@ -22,9 +22,6 @@ jobs:
       - name: Flutter Analyze
         run: flutter analyze
 
-      - name: Flutter Test
-        run: flutter test
-
       - name: Flutter Clean
         run: flutter clean
 

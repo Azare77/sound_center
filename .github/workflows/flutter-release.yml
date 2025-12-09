@@ -18,6 +18,9 @@ jobs:
         with:
           channel: stable
 
+      - name: Flutter Doctor Licences
+        run: yes | flutter doctor --android-licenses
+
       - name: Flutter Pub Get
         run: flutter pub get
 

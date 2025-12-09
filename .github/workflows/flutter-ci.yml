@@ -1,0 +1,35 @@
+name: Manual Flutter Test & Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  flutter-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Flutter Analyze
+        run: flutter analyze
+
+      - name: Flutter Test
+        run: flutter test
+
+      - name: Flutter Clean
+        run: flutter clean
+
+      - name: Build APK (split-per-abi)
+        run: flutter build apk --release --split-per-abi
+
+      - name: Remove build folder
+        run: rm -rf build/

@@ -104,6 +104,16 @@ class S {
     return Intl.message('NO AUDIO!!', name: 'noAudio', desc: '', args: []);
   }
 
+  /// `Delete`
+  String get delete {
+    return Intl.message('Delete', name: 'delete', desc: '', args: []);
+  }
+
+  /// `Share`
+  String get share {
+    return Intl.message('Share', name: 'share', desc: '', args: []);
+  }
+
   /// `Unsubscribe`
   String get unsubscribe {
     return Intl.message('Unsubscribe', name: 'unsubscribe', desc: '', args: []);

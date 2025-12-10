@@ -5,6 +5,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart'
     as event;
+import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_action_menu.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_template.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
@@ -51,6 +52,12 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
             child: InkWell(
               onTap: () =>
                   context.read<event.LocalBloc>().add(event.PlayAudio(index)),
+              onLongPress: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => AudioActionMenu(audio: audio),
+                );
+              },
               child: AudioTemplate(audioEntity: audio),
             ),
           );

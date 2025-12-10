@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "مدیا در حال پخش",
     ),
     "dark": MessageLookupByLibrary.simpleMessage("تیره"),
+    "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "descending": MessageLookupByLibrary.simpleMessage("نزولی"),
     "description": MessageLookupByLibrary.simpleMessage("توضیحات"),
     "downloadedEpisodes": MessageLookupByLibrary.simpleMessage(
@@ -75,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settings": MessageLookupByLibrary.simpleMessage("تنظیمات"),
     "shadowColor": MessageLookupByLibrary.simpleMessage("سایه"),
+    "share": MessageLookupByLibrary.simpleMessage("به اشتراک گذاری"),
     "soundCenter": MessageLookupByLibrary.simpleMessage("مرکز صدا"),
     "submit": MessageLookupByLibrary.simpleMessage("تایید"),
     "subscribe": MessageLookupByLibrary.simpleMessage("مشترک شدن"),

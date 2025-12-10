@@ -41,6 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Current Media Background",
     ),
     "dark": MessageLookupByLibrary.simpleMessage("Dark"),
+    "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "descending": MessageLookupByLibrary.simpleMessage("Descending"),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
     "downloadedEpisodes": MessageLookupByLibrary.simpleMessage(
@@ -79,6 +80,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "shadowColor": MessageLookupByLibrary.simpleMessage("shadow"),
+    "share": MessageLookupByLibrary.simpleMessage("Share"),
     "soundCenter": MessageLookupByLibrary.simpleMessage("Sound Center"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "subscribe": MessageLookupByLibrary.simpleMessage("Subscribe"),

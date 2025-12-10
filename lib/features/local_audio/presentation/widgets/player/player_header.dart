@@ -93,7 +93,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                   height: 50,
                   onPressed: () async {
                     if (!Platform.isLinux) {
-                      await SharePlus.instance.share(
+                      SharePlus.instance.share(
                         ShareParams(files: [XFile(song.path)]),
                       );
                     }
@@ -118,8 +118,10 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                 child: PageView.builder(
                   controller: controller,
                   restorationId: song.title,
+                  itemCount: currentPlayList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return HeaderImage(img: currentPlayList[index].cover);
+                    AudioEntity audio = currentPlayList[index];
+                    return HeaderImage(id: audio.id, cover: audio.cover);
                   },
                 ),
               ),

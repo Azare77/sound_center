@@ -1,11 +1,32 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
 
-class HeaderImage extends StatelessWidget {
-  const HeaderImage({super.key, this.img});
+class HeaderImage extends StatefulWidget {
+  const HeaderImage({super.key, required this.id, this.cover});
 
-  final Uint8List? img;
+  final int id;
+  final Uint8List? cover;
+
+  @override
+  State<HeaderImage> createState() => _HeaderImageState();
+}
+
+class _HeaderImageState extends State<HeaderImage> {
+  Uint8List? img;
+
+  @override
+  void initState() {
+    super.initState();
+    img = widget.cover;
+    if (img == null) loadImage();
+  }
+
+  void loadImage() async {
+    img = await AudioUtil.getCover(widget.id, coverSize: CoverSize.banner);
+    if (img != null && mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

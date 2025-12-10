@@ -44,6 +44,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
         coverSize: CoverSize.banner,
       );
       index = audios.indexWhere((a) => a.id == _currentAudio!.id);
+      shuffleIndex = shuffleList.indexWhere((a) => a == index);
       audios[index] = _currentAudio!;
       (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
         _currentAudio!,
@@ -285,6 +286,10 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   Future<void> _loadChunk(int index) async {
+    audios[index].cover ??= await AudioUtil.getCover(
+      audios[index].id,
+      coverSize: CoverSize.banner,
+    );
     int start = (index - 5).clamp(0, audios.length - 1);
     int end = (index + 5).clamp(0, audios.length - 1);
     List<int> indices;

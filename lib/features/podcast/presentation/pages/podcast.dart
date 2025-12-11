@@ -47,7 +47,7 @@ class Podcast extends StatelessWidget {
     } catch (_) {}
   }
 
-  bool isInSubscribed(BuildContext context) {
+  bool resetPodcastPage(BuildContext context) {
     final bloc = BlocProvider.of<PodcastBloc>(context);
     final status = bloc.state.status;
     if (status is PodcastResultStatus) {

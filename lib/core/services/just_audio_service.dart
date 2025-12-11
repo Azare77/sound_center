@@ -84,6 +84,10 @@ class JustAudioService {
     String? cachedFilePath,
   }) async {
     try {
+      if (source != _source) {
+        _loadingSource = false;
+        await release();
+      }
       if (_loadingSource) return false;
       _loadingSource = true;
       _source = source;

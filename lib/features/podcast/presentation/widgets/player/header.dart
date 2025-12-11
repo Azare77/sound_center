@@ -92,8 +92,8 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                         'guid': currentEpisode.guid,
                       };
                       final uri = Uri(
-                        scheme: 'soundcenter',
-                        host: 'open.sound.app',
+                        scheme: 'https',
+                        host: 'azare77.github.io',
                         path: '/podcast',
                         queryParameters: params,
                       );

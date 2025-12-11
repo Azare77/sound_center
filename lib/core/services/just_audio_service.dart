@@ -23,7 +23,17 @@ class JustAudioService {
   void Function()? _onLoading;
   void Function()? _onReady;
 
-  final AudioPlayer _player = AudioPlayer();
+  final AudioPlayer _player = AudioPlayer(
+    audioLoadConfiguration: AudioLoadConfiguration(
+      androidLoadControl: AndroidLoadControl(
+        minBufferDuration: const Duration(seconds: 30),
+        maxBufferDuration: const Duration(seconds: 60),
+        bufferForPlaybackDuration: const Duration(seconds: 3),
+        bufferForPlaybackAfterRebufferDuration: const Duration(seconds: 5),
+        backBufferDuration: const Duration(seconds: 20),
+      ),
+    ),
+  );
   AudioSource? _source;
 
   // prevent re-entrant error handling loops

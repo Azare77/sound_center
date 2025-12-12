@@ -117,7 +117,8 @@ class JustAudioService {
     return _player.playing;
   }
 
-  Future<void> togglePlaying() async {
+  Future<void> togglePlaying(AudioSource source) async {
+    _source = source;
     if (_player.playing) {
       await _player.pause();
     } else {

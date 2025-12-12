@@ -28,6 +28,10 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       add(GetSubscribedPodcasts());
       await Future.delayed(Duration(milliseconds: 500));
       add(CheckPodcastUpdates(null));
+      Timer.periodic(
+        Duration(minutes: 30),
+        (_) => add(CheckPodcastUpdates(null)),
+      );
     });
 
     Future<void> getSubscribedPodcasts() async {
@@ -41,7 +45,9 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     on<CheckPodcastUpdates>((event, emit) async {
       List<SubscriptionEntity> subs = await getPodcastUseCase.haveUpdate();
       event.refreshCompleter?.complete();
-      emit(state.copyWith(SubscribedPodcasts(subs)));
+      if (state.status is SubscribedPodcasts) {
+        emit(state.copyWith(SubscribedPodcasts(subs)));
+      }
     });
 
     on<SubscribeToPodcast>((event, emit) async {

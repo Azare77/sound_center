@@ -147,6 +147,14 @@ class PodcastRepositoryImp implements PodcastRepository {
   }
 
   @override
+  Future<bool> deleteEpisode(String guid) async {
+    await (database.delete(
+      database.downloadTable,
+    )..where((tbl) => tbl.guid.equals(guid))).go();
+    return true;
+  }
+
+  @override
   Future<List<Episode>> getDownloadedEpisodes() async {
     final subs = await database.select(database.downloadTable).get();
     final List<Episode> episodes = subs

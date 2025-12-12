@@ -22,6 +22,8 @@ abstract class PodcastRepository {
 
   Future<bool> downloadEpisode(DownloadedEpisodeEntity episode);
 
+  Future<bool> deleteEpisode(String guid);
+
   Future<PodcastEntity> find(String searchText);
 
   Future<Podcast> loadPodcastInfo(String feedUrl);

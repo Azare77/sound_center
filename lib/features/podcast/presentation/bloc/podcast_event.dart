@@ -57,3 +57,9 @@ class DownloadEpisode extends PodcastEvent {
 
   DownloadEpisode(this.episode);
 }
+
+class DeleteDownloadedEpisode extends PodcastEvent {
+  String guid;
+
+  DeleteDownloadedEpisode(this.guid);
+}

@@ -67,10 +67,7 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
                               ),
                             );
                           },
-                          child: EpisodeTemplate(
-                            episode: episode,
-                            isDownloaded: true,
-                          ),
+                          child: EpisodeTemplate(episode: episode),
                         ),
                       );
                     },

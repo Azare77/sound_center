@@ -11,6 +11,7 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/download_manager.dart';
 import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 
 class DownloadButton extends StatefulWidget {
   final Episode episode;
@@ -27,10 +28,12 @@ class _DownloadButtonState extends State<DownloadButton> {
   bool _isRunning = false;
   StreamSubscription? _sub;
   late final FileDownloader downloader;
+  late final PodcastBloc bloc;
 
   @override
   void initState() {
     super.initState();
+    bloc = BlocProvider.of<PodcastBloc>(context);
     downloader = FileDownloader();
     _loadTask();
   }
@@ -112,8 +115,7 @@ class _DownloadButtonState extends State<DownloadButton> {
             _progress = 1.0;
             final DownloadedEpisodeEntity downloadEntity =
                 DownloadedEpisodeEntity.fromEpisode(widget.episode);
-            final DownloadEpisode event = DownloadEpisode(downloadEntity);
-            BlocProvider.of<PodcastBloc>(context).add(event);
+            bloc.add(DownloadEpisode(downloadEntity));
           }
         }
       });
@@ -133,35 +135,60 @@ class _DownloadButtonState extends State<DownloadButton> {
     }
   }
 
+  Future<void> _delete() async {
+    if (_task == null) return;
+    bool confirmed =
+        await showDialog(context: context, builder: (_) => ConfirmDialog()) ??
+        false;
+    if (!confirmed) return;
+    final Directory baseDir = await getApplicationDocumentsDirectory();
+    final String filePath =
+        '${baseDir.path}/${_task!.directory}/${_task!.filename}';
+    final file = File(filePath);
+    if (await file.exists()) {
+      await file.delete();
+    }
+    await downloader.database.deleteRecordsWithIds([_task!.taskId]);
+    bloc.add(DeleteDownloadedEpisode(widget.episode.guid));
+    _task = null;
+    _progress = 0.0;
+    _isRunning = false;
+    if (mounted) setState(() {});
+  }
+
   /// انتخاب آیکن مناسب با وضعیت دانلود
   Icon get _icon {
     if (_task == null) return const Icon(Icons.download_rounded);
-    if (_progress >= 1) return const Icon(Icons.check, color: Colors.green);
+    if (_progress >= 1) return const Icon(Icons.delete_rounded);
     return Icon(_isRunning ? Icons.pause : Icons.play_arrow);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_progress >= 1) return SizedBox.shrink();
     return Stack(
       alignment: Alignment.center,
       children: [
         // دایره progress
-        SizedBox(
-          width: 30,
-          height: 30,
-          child: CircularProgressIndicator(
-            value: _progress, // 0.0 تا 1.0
-            strokeWidth: 2,
-            // color: Colors.amber, // رنگ دلخواه
-            // backgroundColor: Colors.grey.shade300, // رنگ پس‌زمینه
+        if (_progress != 1.0)
+          SizedBox(
+            width: 30,
+            height: 30,
+            child: CircularProgressIndicator(
+              value: _progress, // 0.0 تا 1.0
+              strokeWidth: 2,
+            ),
           ),
-        ),
-
-        // دکمه دانلود / ادامه / توقف
         IconButton(
           iconSize: 20,
-          onPressed: _task == null ? _start : _toggle,
+          onPressed: () {
+            if (_task == null) {
+              _start();
+            } else if (_progress >= 1) {
+              _delete();
+            } else {
+              _toggle();
+            }
+          },
           icon: _icon,
         ),
       ],

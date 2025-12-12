@@ -6,15 +6,9 @@ import 'package:sound_center/features/podcast/presentation/widgets/network_image
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/download_button.dart';
 
 class EpisodeTemplate extends StatelessWidget {
-  const EpisodeTemplate({
-    super.key,
-    required this.episode,
-    this.isDownloaded = false,
-  });
+  const EpisodeTemplate({super.key, required this.episode});
 
   final Episode episode;
-
-  final bool isDownloaded;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +65,7 @@ class EpisodeTemplate extends StatelessWidget {
               ],
             ),
           ),
-          if (!isDownloaded) DownloadButton(episode: episode),
+          DownloadButton(episode: episode),
         ],
       ),
     );

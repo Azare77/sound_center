@@ -45,6 +45,10 @@ class GetPodcastsUseCase implements UseCase {
     return await _audioRepository.downloadEpisode(episode);
   }
 
+  Future<bool> deleteEpisode(String guid) async {
+    return await _audioRepository.deleteEpisode(guid);
+  }
+
   Future<List<Episode>> getDownloadedEpisodes() async {
     return await _audioRepository.getDownloadedEpisodes();
   }

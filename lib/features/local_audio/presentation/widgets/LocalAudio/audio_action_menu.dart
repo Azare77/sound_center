@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -32,10 +34,7 @@ class AudioActionMenu extends StatelessWidget {
                       ) ??
                       false;
                   if (res) {
-                    BlocProvider.of<LocalBloc>(
-                      // ignore: use_build_context_synchronously
-                      context,
-                    ).add(DeleteAudio(audio));
+                    BlocProvider.of<LocalBloc>(context).add(DeleteAudio(audio));
                   }
                   Navigator.pop(context);
                 },

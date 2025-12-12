@@ -111,5 +111,10 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       getPodcastUseCase.downloadEpisode(event.episode);
       add(GetDownloadedEpisodes());
     });
+
+    on<DeleteDownloadedEpisode>((event, emit) async {
+      getPodcastUseCase.deleteEpisode(event.guid);
+      add(GetDownloadedEpisodes());
+    });
   }
 }

@@ -4,6 +4,7 @@ import 'package:sound_center/features/settings/presentation/pages/language_setti
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/theme_settings.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -59,8 +60,13 @@ class Settings extends StatelessWidget {
                     ),
                     children: [
                       TextButton(
-                        onPressed: () {},
-                        child: Text("Support Project"),
+                        onPressed: () async {
+                          final Uri url = Uri.parse(
+                            "https://github.com/Azare77/sound_center",
+                          );
+                          launchUrl(url, mode: LaunchMode.externalApplication);
+                        },
+                        child: Text(S.of(context).sourceCode),
                       ),
                     ],
                   );

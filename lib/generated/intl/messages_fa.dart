@@ -78,6 +78,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "shadowColor": MessageLookupByLibrary.simpleMessage("سایه"),
     "share": MessageLookupByLibrary.simpleMessage("به اشتراک گذاری"),
     "soundCenter": MessageLookupByLibrary.simpleMessage("مرکز صدا"),
+    "sourceCode": MessageLookupByLibrary.simpleMessage("کد منبع"),
     "submit": MessageLookupByLibrary.simpleMessage("تایید"),
     "subscribe": MessageLookupByLibrary.simpleMessage("مشترک شدن"),
     "theme": MessageLookupByLibrary.simpleMessage("تم"),

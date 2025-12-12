@@ -51,5 +51,6 @@
   "currentMediaColor": "Current Media Background",
   "nameIsUsed": "This name is already used",
   "themeName": "Theme Name",
-  "copy": "Copy"
+  "copy": "Copy",
+  "sourceCode": "Source Code"
 }

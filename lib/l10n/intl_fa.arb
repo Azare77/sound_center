@@ -51,5 +51,6 @@
   "currentMediaColor": "مدیا در حال پخش",
   "nameIsUsed": "این نام قبلا استفاده شده است",
   "themeName": "نام تم",
-  "copy": "کپی تم"
+  "copy": "کپی تم",
+  "sourceCode": "کد منبع"
 }

@@ -393,6 +393,11 @@ class S {
   String get copy {
     return Intl.message('Copy', name: 'copy', desc: '', args: []);
   }
+
+  /// `Source Code`
+  String get sourceCode {
+    return Intl.message('Source Code', name: 'sourceCode', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

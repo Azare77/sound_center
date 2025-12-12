@@ -82,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "shadowColor": MessageLookupByLibrary.simpleMessage("shadow"),
     "share": MessageLookupByLibrary.simpleMessage("Share"),
     "soundCenter": MessageLookupByLibrary.simpleMessage("Sound Center"),
+    "sourceCode": MessageLookupByLibrary.simpleMessage("Source Code"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "subscribe": MessageLookupByLibrary.simpleMessage("Subscribe"),
     "theme": MessageLookupByLibrary.simpleMessage("Theme"),

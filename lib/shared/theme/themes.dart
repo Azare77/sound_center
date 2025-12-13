@@ -123,7 +123,7 @@ AppThemeData _buildDarkTheme() {
     brightness: Brightness.dark,
     scaffoldBackground: const Color(0xFF11121f),
     appBarBackground: const Color(0xff202138),
-    thumbColor: const Color(0xFFFFFFFF),
+    thumbColor: const Color(0xFF0F9ED2),
     appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff202138),
     iconColor: Colors.white,

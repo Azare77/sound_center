@@ -198,7 +198,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
         } catch (_) {}
       }
 
-      data ??= await getImageBytesFromAsset('assets/logo.png');
+      data ??= await getImageBytesFromAsset('assets/default-cover.png');
       if (data.isNotEmpty) {
         final file = File('${dir.path}/$fileName.png');
         await file.writeAsBytes(data, flush: true);

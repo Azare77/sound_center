@@ -56,13 +56,14 @@ class _AudioTemplateState extends State<AudioTemplate> {
               child: Image(
                 image: cover != null
                     ? MemoryImage(cover!)
-                    : const AssetImage('assets/logo.png') as ImageProvider,
+                    : const AssetImage('assets/default-cover.png')
+                          as ImageProvider,
                 width: size,
                 height: size,
                 fit: cover != null ? BoxFit.cover : BoxFit.scaleDown,
                 filterQuality: FilterQuality.high,
                 errorBuilder: (ctx, error, stack) => Image.asset(
-                  'assets/logo.png',
+                  'assets/default-cover.png',
                   width: size,
                   height: size,
                   fit: BoxFit.scaleDown,

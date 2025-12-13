@@ -37,11 +37,11 @@ class _HeaderImageState extends State<HeaderImage> {
         child: Image(
           image: img != null
               ? MemoryImage(img!)
-              : const AssetImage('assets/logo.png') as ImageProvider,
+              : const AssetImage('assets/default-cover.png') as ImageProvider,
           fit: img != null ? BoxFit.cover : BoxFit.scaleDown,
           filterQuality: FilterQuality.high,
           errorBuilder: (ctx, error, stack) => Image.asset(
-            'assets/logo.png',
+            'assets/default-cover.png',
             fit: BoxFit.scaleDown,
             filterQuality: FilterQuality.high,
           ),

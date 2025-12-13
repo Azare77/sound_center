@@ -83,6 +83,9 @@ class Podcast extends StatelessWidget {
               if (state.status is LoadingPodcasts) {
                 return Loading();
               }
+              BlocProvider.of<PodcastBloc>(
+                context,
+              ).add(GetSubscribedPodcasts());
               return Center(child: Text(S.of(context).noPodcast));
             },
           ),

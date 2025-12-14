@@ -196,7 +196,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<AudioEntity> previous() async {
-    index = _getIndex(false);
+    index = _getIndex(false, force: true);
     await play(index);
     return audios[index];
   }
@@ -260,7 +260,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   int _getIndex(bool forward, {bool force = false}) {
     bool isShuffle = shuffleMode == ShuffleMode.shuffle;
-    if (repeatMode == RepeatMode.repeatOne) {
+    if (repeatMode == RepeatMode.repeatOne && !force) {
       if (isShuffle) {
         return _shuffle[shuffleIndex];
       } else {

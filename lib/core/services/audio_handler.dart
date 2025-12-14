@@ -127,7 +127,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   @override
   Future<void> skipToNext() async {
     if (_source == service.AudioSource.local) {
-      _localPlayer.next();
+      _localPlayer.next(force: true);
     } else if (_source == service.AudioSource.online) {
       _podcastPlayer.next();
     }

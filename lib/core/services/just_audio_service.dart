@@ -86,11 +86,11 @@ class JustAudioService {
     try {
       if (source != _source) {
         _loadingSource = false;
+        _source = source;
         await release();
       }
       if (_loadingSource) return false;
       _loadingSource = true;
-      _source = source;
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
       } else {

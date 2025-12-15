@@ -70,6 +70,8 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       if (player.getCurrentEpisode?.guid != event.episodes[event.index].guid ||
           !player.hasSource()) {
         await player.play(event.index, direct: true);
+      } else if (!player.isPlaying()) {
+        player.togglePlayState();
       }
       emit(state.copyWith(state.status));
     });

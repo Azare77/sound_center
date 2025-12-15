@@ -47,6 +47,8 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       if (player.getCurrentAudio?.id != status.audios[event.index].id ||
           !player.hasSource()) {
         await player.play(event.index, direct: true);
+      } else if (!player.isPlaying()) {
+        player.togglePlayState();
       }
     });
 

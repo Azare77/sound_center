@@ -51,28 +51,23 @@ class _DownloadButtonState extends State<DownloadButton> {
     final record = records.firstWhereOrNull(
       (r) =>
           r.task is DownloadTask &&
-          (r.task as DownloadTask).url == widget.episode.contentUrl &&
-          (r.task as DownloadTask).filename == '${widget.episode.title}.mp3',
+          (r.task as DownloadTask).url == widget.episode.contentUrl,
     );
 
     if (record != null) {
       final DownloadTask task = record.task as DownloadTask;
       final Directory baseDir = await getApplicationDocumentsDirectory();
-
       // مسیر نهایی فایل
       final String fullPath =
-          '${baseDir.path}/${task.directory}/${task.filename}';
-
+          '${baseDir.path}/Podcasts/${widget.episode.title}.mp3';
       // 🔍 چک وجود فایل روی دیسک
       final bool exists = await File(fullPath).exists();
-
       if (!exists && record.progress >= 1) {
         // 🚮 حذف رکورد از دیتابیس چون فایل وجود ندارد
         await downloader.database.deleteRecordsWithIds([task.taskId]);
         debugPrint("🧹 ${task.filename} ** $fullPath");
         return;
       }
-
       // ✅ در غیر این صورت، رکورد معتبر است → مقداردهی کن
       _task = task;
       _progress = record.progress;
@@ -136,27 +131,28 @@ class _DownloadButtonState extends State<DownloadButton> {
   }
 
   Future<void> _delete() async {
-    if (_task == null) return;
     bool confirmed =
         await showDialog(context: context, builder: (_) => ConfirmDialog()) ??
         false;
     if (!confirmed) return;
     final Directory baseDir = await getApplicationDocumentsDirectory();
     final String filePath =
-        '${baseDir.path}/${_task!.directory}/${_task!.filename}';
+        '${baseDir.path}/Podcasts/${widget.episode.title}.mp3';
     final file = File(filePath);
     if (await file.exists()) {
       await file.delete();
     }
-    await downloader.database.deleteRecordsWithIds([_task!.taskId]);
+    if (await file.exists()) return;
     bloc.add(DeleteDownloadedEpisode(widget.episode.guid));
+    if (_task != null) {
+      await downloader.database.deleteRecordsWithIds([_task!.taskId]);
+    }
     _task = null;
     _progress = 0.0;
     _isRunning = false;
     if (mounted) setState(() {});
   }
 
-  /// انتخاب آیکن مناسب با وضعیت دانلود
   Icon get _icon {
     if (_task == null) return const Icon(Icons.download_rounded);
     if (_progress >= 1) return const Icon(Icons.delete_rounded);

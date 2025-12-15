@@ -22,6 +22,7 @@ class PodcastDownloader {
     // فقط یک بار به stream اصلی پکیج گوش بده
     _downloader.updates.listen((u) {
       _updateController.add(u);
+      onPodcastDownloadFinished(u);
     });
 
     _downloader.configureNotification(
@@ -37,7 +38,6 @@ class PodcastDownloader {
   /// شروع دانلود اپیزود جدید
   static Future<DownloadTask?> downloadEpisode(String url, String title) async {
     final directory = await _ensureDirectory();
-
     final task = DownloadTask(
       url: url,
       filename: '$title.mp3',
@@ -48,8 +48,8 @@ class PodcastDownloader {
       retries: 3,
       allowPause: true,
       group: 'podcasts',
+      metaData: '$title.mp3',
     );
-
     final success = await _downloader.enqueue(task);
     return success ? task : null;
   }
@@ -73,4 +73,22 @@ class PodcastDownloader {
   static Future<bool> resume(DownloadTask task) => _downloader.resume(task);
 
   static Future<void> cancel(DownloadTask task) => _downloader.cancel(task);
+
+  static void onPodcastDownloadFinished(TaskUpdate update) async {
+    if (update is! TaskStatusUpdate) return;
+    if (update.status != TaskStatus.complete) return null;
+    final task = update.task;
+    if (task is! DownloadTask) return null;
+    final baseDirectory = await getApplicationDocumentsDirectory();
+    final path = "${baseDirectory.path}/${task.directory}/${task.filename}";
+    final file = File(path);
+    if (!await file.exists()) return null;
+    final title = task.metaData as String?;
+    if (title == null || title.isEmpty) return null;
+    final safeName = title;
+    final newPath = '${file.parent.path}/$safeName';
+    if (file.path != newPath) {
+      await file.rename(newPath);
+    }
+  }
 }

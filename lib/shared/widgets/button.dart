@@ -4,14 +4,15 @@ import 'loading.dart';
 import 'text_view.dart';
 
 class Button extends StatefulWidget {
-  const Button(
-      {super.key,
-      required this.buttonText,
-      required this.onPressed,
-      this.backgroundColor,
-      this.textColor=Colors.white,
-      this.width,
-      this.style});
+  const Button({
+    super.key,
+    required this.buttonText,
+    required this.onPressed,
+    this.backgroundColor,
+    this.textColor = Colors.white,
+    this.width,
+    this.style,
+  });
 
   final String buttonText;
   final Color? backgroundColor;
@@ -29,23 +30,23 @@ class _ButtonState extends State<Button> {
 
   @override
   Widget build(BuildContext context) {
-    ButtonStyle correctStyle = widget.style ??
+    ButtonStyle correctStyle =
+        widget.style ??
         ButtonStyle(
           backgroundColor: WidgetStateProperty.all(widget.backgroundColor),
         );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SizedBox(
-        // height: height(4),
         width: widget.width,
         child: ElevatedButton(
           onPressed: () async {
             setState(() {
-              sending=true;
+              sending = true;
             });
-          await  widget.onPressed();
+            await widget.onPressed();
             setState(() {
-              sending=false;
+              sending = false;
             });
           },
           style: correctStyle,
@@ -55,7 +56,7 @@ class _ButtonState extends State<Button> {
                 ? const Loading()
                 : TextView(
                     widget.buttonText,
-                    style: TextStyle(fontFamily: "Vazir", color: widget.textColor),
+                    style: TextStyle(color: widget.textColor),
                   ),
           ),
         ),

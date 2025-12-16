@@ -29,6 +29,7 @@ class AudioUtil {
   }
 
   static String convertTime(int input) {
+    if (input == 0) return '';
     final duration = Duration(milliseconds: input);
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;

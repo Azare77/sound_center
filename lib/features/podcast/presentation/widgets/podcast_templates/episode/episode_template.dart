@@ -54,12 +54,11 @@ class EpisodeTemplate extends StatelessWidget {
                   children: [
                     if (publishDate.isNotEmpty)
                       Text(publishDate, maxLines: 1, style: infoTextStyle),
-                    Text(
-                      AudioUtil.convertTime(
-                        episode.duration?.inMilliseconds ?? 0,
+                    if (episode.duration != null)
+                      Text(
+                        AudioUtil.convertTime(episode.duration!.inMilliseconds),
+                        style: infoTextStyle,
                       ),
-                      style: infoTextStyle,
-                    ),
                   ],
                 ),
               ],

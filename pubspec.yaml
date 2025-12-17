@@ -65,7 +65,7 @@ dependencies:
   toastification: ^3.0.3
   flutter_colorpicker: ^1.1.0
   #PODCAST
-  podcast_search: ^0.7.12
+  podcast_search: ^0.7.13
   cached_network_image: ^3.4.1
   background_downloader: ^9.4.0
   app_links: ^7.0.0

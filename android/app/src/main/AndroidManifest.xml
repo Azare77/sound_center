@@ -19,6 +19,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:label="Sound Center"
+        android:enableOnBackInvokedCallback="true"
         android:requestLegacyExternalStorage="true">
         <!--            -->
 

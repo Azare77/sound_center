@@ -82,6 +82,7 @@ class JustAudioService {
     String path,
     AudioSource source, {
     String? cachedFilePath,
+    void Function()? onSourceSet,
   }) async {
     try {
       if (source != _source) {
@@ -91,13 +92,14 @@ class JustAudioService {
       }
       if (_loadingSource) return false;
       _loadingSource = true;
+      onSourceSet?.call();
       if (source == AudioSource.local) {
         await _player.setFilePath(path);
       } else {
         if (cachedFilePath != null) {
           await _player.setFilePath(cachedFilePath);
         } else {
-          await _player.setUrl(path);
+          await _player.setUrl(path).timeout(const Duration(seconds: 30));
         }
       }
       await _player.setSpeed(1.0);
@@ -107,6 +109,7 @@ class JustAudioService {
       _source = null;
       debugPrint('خطا در setSource: $e');
       _loadingSource = false;
+      await release();
       return false;
     }
   }

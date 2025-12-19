@@ -71,12 +71,11 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
         _currentEpisode!.contentUrl!,
         AudioSource.online,
         cachedFilePath: cacheFile,
+        onSourceSet: () => bloc.add(AutoPlayPodcast()),
       );
       if (res) {
         int position = PlayerStateStorage.getLastPosition();
         _playerService.seek(Duration(milliseconds: position));
-      } else {
-        bloc.add(AutoPlayPodcast());
       }
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
@@ -157,14 +156,13 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       _episodes[index],
       file?.uri,
     );
-    bloc.add(AutoPlayPodcast());
     await _playerService.setSource(
       _episodes[index].contentUrl!,
       AudioSource.online,
       cachedFilePath: cacheFile,
       onSourceSet: () => bloc.add(AutoPlayPodcast()),
     );
-    await _playerService.play();
+    _playerService.play();
     bloc.add(AutoPlayPodcast());
     PlayerStateStorage.saveLastEpisode(_currentEpisode!);
     PlayerStateStorage.saveSource(AudioSource.online);

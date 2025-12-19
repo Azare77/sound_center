@@ -49,6 +49,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
         _currentAudio!,
       );
+      bloc.add(AutoPlayNext());
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
       _currentAudio = null;

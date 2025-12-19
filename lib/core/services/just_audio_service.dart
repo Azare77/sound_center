@@ -47,7 +47,7 @@ class JustAudioService {
 
   bool _loadingSource = false;
 
-  bool get isLoadingSource => _loadingSource;
+  // bool get isLoadingSource => _loadingSource;
 
   void _init() {
     // listen for errors
@@ -157,7 +157,8 @@ class JustAudioService {
 
   bool isLoading() {
     return _player.processingState == ProcessingState.loading ||
-        _player.processingState == ProcessingState.buffering;
+        _player.processingState == ProcessingState.buffering ||
+        _loadingSource;
   }
 
   int getCurrentPosition() {

@@ -45,6 +45,8 @@ class JustAudioService {
 
   Stream<Duration?> get duration => _player.durationStream;
 
+  AudioSource? get source => _source;
+
   bool _loadingSource = false;
 
   // bool get isLoadingSource => _loadingSource;
@@ -106,8 +108,9 @@ class JustAudioService {
       _loadingSource = false;
       return true;
     } catch (e) {
-      _source = null;
       debugPrint('خطا در setSource: $e');
+      if (source != _source) return false;
+      _source = null;
       _loadingSource = false;
       await release();
       return false;

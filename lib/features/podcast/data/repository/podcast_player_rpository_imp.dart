@@ -77,6 +77,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
         int position = PlayerStateStorage.getLastPosition();
         _playerService.seek(Duration(milliseconds: position));
       }
+      bloc.add(AutoPlayPodcast());
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
     }

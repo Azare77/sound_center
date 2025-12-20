@@ -121,7 +121,11 @@ class _PlayerHeaderState extends State<PlayerHeader> {
                   itemCount: currentPlayList.length,
                   itemBuilder: (BuildContext context, int index) {
                     AudioEntity audio = currentPlayList[index];
-                    return HeaderImage(id: audio.id, cover: audio.cover);
+                    return HeaderImage(
+                      key: ValueKey(audio.id),
+                      id: audio.id,
+                      cover: audio.cover,
+                    );
                   },
                 ),
               ),

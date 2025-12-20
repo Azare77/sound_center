@@ -398,6 +398,21 @@ class S {
   String get sourceCode {
     return Intl.message('Source Code', name: 'sourceCode', desc: '', args: []);
   }
+
+  /// `There is a new update`
+  String get thereIsANewUpdate {
+    return Intl.message(
+      'There is a new update',
+      name: 'thereIsANewUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Now`
+  String get updateNow {
+    return Intl.message('Update Now', name: 'updateNow', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

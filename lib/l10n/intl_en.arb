@@ -52,5 +52,7 @@
   "nameIsUsed": "This name is already used",
   "themeName": "Theme Name",
   "copy": "Copy",
-  "sourceCode": "Source Code"
+  "sourceCode": "Source Code",
+  "thereIsANewUpdate": "There is a new update",
+  "updateNow": "Update Now"
 }

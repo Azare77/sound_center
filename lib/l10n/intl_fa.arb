@@ -52,5 +52,7 @@
   "nameIsUsed": "این نام قبلا استفاده شده است",
   "themeName": "نام تم",
   "copy": "کپی تم",
-  "sourceCode": "کد منبع"
+  "sourceCode": "کد منبع",
+  "thereIsANewUpdate": "به روزسانی جدیدی در دسترس است",
+  "updateNow": "به روزرسانی"
 }

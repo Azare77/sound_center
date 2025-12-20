@@ -87,9 +87,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscribe": MessageLookupByLibrary.simpleMessage("Subscribe"),
     "theme": MessageLookupByLibrary.simpleMessage("Theme"),
     "themeName": MessageLookupByLibrary.simpleMessage("Theme Name"),
+    "thereIsANewUpdate": MessageLookupByLibrary.simpleMessage(
+      "There is a new update",
+    ),
     "thumbColor": MessageLookupByLibrary.simpleMessage("Slider"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("Unsubscribe"),
+    "updateNow": MessageLookupByLibrary.simpleMessage("Update Now"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "za": MessageLookupByLibrary.simpleMessage("Z-A"),
   };

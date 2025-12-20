@@ -24,4 +24,30 @@ class ToastMessage {
       dragToClose: true,
     );
   }
+
+  static void showInfoMessage({
+    required Widget title,
+    BuildContext? context,
+    String? description,
+    Widget? icon,
+    int autoCloseIn = 2,
+  }) {
+    if (NAVIGATOR_KEY.currentContext == null) return;
+    ThemeData themeData = Theme.of(NAVIGATOR_KEY.currentContext!);
+    toastification.show(
+      context: context,
+      overlayState: NAVIGATOR_KEY.currentState?.overlay,
+      type: ToastificationType.info,
+      title: title,
+      showIcon: false,
+      description: description != null ? Text(description) : null,
+      alignment: Alignment.bottomCenter,
+      backgroundColor: themeData.cardColor.withValues(alpha: 0.9),
+      autoCloseDuration: Duration(seconds: autoCloseIn),
+      icon: icon,
+      borderRadius: BorderRadius.circular(12.0),
+      closeButton: ToastCloseButton(showType: CloseButtonShowType.none),
+      dragToClose: true,
+    );
+  }
 }

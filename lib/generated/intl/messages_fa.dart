@@ -83,9 +83,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscribe": MessageLookupByLibrary.simpleMessage("مشترک شدن"),
     "theme": MessageLookupByLibrary.simpleMessage("تم"),
     "themeName": MessageLookupByLibrary.simpleMessage("نام تم"),
+    "thereIsANewUpdate": MessageLookupByLibrary.simpleMessage(
+      "به روزسانی جدیدی در دسترس است",
+    ),
     "thumbColor": MessageLookupByLibrary.simpleMessage("اسلایدر"),
     "title": MessageLookupByLibrary.simpleMessage("عنوان"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("لغو اشتراک"),
+    "updateNow": MessageLookupByLibrary.simpleMessage("به روزرسانی"),
     "yes": MessageLookupByLibrary.simpleMessage("بله"),
     "za": MessageLookupByLibrary.simpleMessage("ی-الف"),
   };

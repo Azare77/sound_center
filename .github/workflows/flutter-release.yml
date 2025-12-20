@@ -24,6 +24,17 @@ jobs:
       - name: Flutter Doctor Licences
         run: yes | flutter doctor --android-licenses
 
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=$(pwd)/android/app/release.jks" >> android/key.properties
+
       - name: Flutter Pub Get
         run: flutter pub get
 

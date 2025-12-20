@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write   # اجازه دسترسی به کد و ساخت Release
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +31,7 @@ jobs:
         run: flutter build apk --release --split-per-abi
 
       - name: Upload Release APK
-        uses: actions/upload-artifact@v2
+        uses: softprops/action-gh-release@v1
         with:
           files: build/app/outputs/flutter-apk/*.apk
         env:

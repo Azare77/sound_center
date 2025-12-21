@@ -7,7 +7,7 @@ const AudioColumns QUERY_DEFAULT_COLUMN_ORDER = AudioColumns.id;
 
 const bool DEFAULT_DESC = true;
 
-const String APP_NAME = "sound_center";
+const String APP_CONFIG_FOLDER_LINUX = "sound_center";
 
 const double LIST_ITEM_HEIGHT = 70;
 

@@ -5,7 +5,7 @@ import 'package:sound_center/features/local_audio/domain/repositories/audio_repo
 
 const AudioColumns QUERY_DEFAULT_COLUMN_ORDER = AudioColumns.id;
 
-const bool DEFAULT_DESC = true;
+const bool QUERY_DEFAULT_DESC = true;
 
 const String APP_CONFIG_FOLDER_LINUX = "sound_center";
 

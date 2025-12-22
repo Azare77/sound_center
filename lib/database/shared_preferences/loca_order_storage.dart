@@ -13,6 +13,6 @@ class LocalOrderStorage {
 
   static bool getSavedDesc() {
     final bool? desc = Storage.instance.prefs.getBool('desc');
-    return desc ?? DEFAULT_DESC;
+    return desc ?? QUERY_DEFAULT_DESC;
   }
 }

@@ -46,7 +46,7 @@ class _DownloadButtonState extends State<DownloadButton> {
   }
 
   Future<void> _loadTask() async {
-    final List<TaskRecord> records = await downloader.database.allRecords();
+    final records = await downloader.database.allRecords();
 
     final record = records.firstWhereOrNull(
       (r) =>
@@ -62,12 +62,16 @@ class _DownloadButtonState extends State<DownloadButton> {
           '${baseDir.path}/Podcasts/${widget.episode.title}.mp3';
       // 🔍 چک وجود فایل روی دیسک
       final bool exists = await File(fullPath).exists();
-      if (!exists && record.progress >= 1) {
+      if (!exists && record.progress > 0) {
         // 🚮 حذف رکورد از دیتابیس چون فایل وجود ندارد
         await downloader.database.deleteRecordsWithIds([task.taskId]);
-        debugPrint("🧹 ${task.filename} ** $fullPath");
+        _task = null;
+        _progress = 0.0;
+        _isRunning = false;
+        if (mounted) setState(() {});
         return;
       }
+
       // ✅ در غیر این صورت، رکورد معتبر است → مقداردهی کن
       _task = task;
       _progress = record.progress;
@@ -117,15 +121,20 @@ class _DownloadButtonState extends State<DownloadButton> {
     });
   }
 
-  /// تغییر وضعیت بین pause و resume
+  bool _retrying = false;
+
   void _toggle() async {
     if (_isRunning) {
       PodcastDownloader.pause(_task!);
     } else {
+      if (_retrying) return;
+
       bool res = await PodcastDownloader.resume(_task!);
       if (!res) {
+        _retrying = true;
         await downloader.database.deleteRecordsWithIds([_task!.taskId]);
-        _start();
+        await _start();
+        _retrying = false;
       }
     }
   }

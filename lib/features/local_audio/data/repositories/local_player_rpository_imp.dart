@@ -179,8 +179,8 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       audios[index],
     );
     _loadChunk(index);
-    PlayerStateStorage.saveLastAudio(_currentAudio!);
-    PlayerStateStorage.saveSource(AudioSource.local);
+    await PlayerStateStorage.saveLastAudio(_currentAudio!);
+    await PlayerStateStorage.saveSource(AudioSource.local);
   }
 
   @override

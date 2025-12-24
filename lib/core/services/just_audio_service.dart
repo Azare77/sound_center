@@ -45,6 +45,10 @@ class JustAudioService {
 
   Stream<Duration?> get duration => _player.durationStream;
 
+  final _loadingController = StreamController<bool>.broadcast();
+
+  Stream<bool?> get processState => _loadingController.stream;
+
   AudioSource? get source => _source;
 
   bool _loadingSource = false;
@@ -52,6 +56,9 @@ class JustAudioService {
   // bool get isLoadingSource => _loadingSource;
 
   void _init() {
+    _player.processingStateStream.listen((state) {
+      _loadingController.add(isLoading());
+    });
     // listen for errors
     _player.playbackEventStream.listen((event) async {
       final playerError = event.errorMessage;
@@ -106,6 +113,7 @@ class JustAudioService {
       }
       await _player.setSpeed(1.0);
       _loadingSource = false;
+      _loadingController.add(isLoading());
       return true;
     } catch (e) {
       debugPrint('خطا در setSource: $e');

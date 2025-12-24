@@ -43,10 +43,13 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   RepeatMode repeatMode = RepeatMode.repeatAll;
   final _positionController = StreamController<int>.broadcast();
   final _durationController = StreamController<int>.broadcast();
+  final _loadingController = StreamController<bool>.broadcast();
 
   Stream<int> get positionStream => _positionController.stream;
 
   Stream<int> get durationStream => _durationController.stream;
+
+  Stream<bool> get loadingStream => _loadingController.stream;
 
   late final PodcastBloc bloc;
 
@@ -87,6 +90,9 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     repeatMode = PlayerStateStorage.getRepeatMode();
     _playerService.position.listen((pos) {
       _positionController.add(pos.inMilliseconds);
+    });
+    _playerService.processState.listen((state) {
+      _loadingController.add(isLoading());
     });
 
     _playerService.duration.listen((dur) {
@@ -163,10 +169,10 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       cachedFilePath: cacheFile,
       onSourceSet: () => bloc.add(AutoPlayPodcast()),
     );
-    _playerService.play();
+    await _playerService.play();
     bloc.add(AutoPlayPodcast());
-    PlayerStateStorage.saveLastEpisode(_currentEpisode!);
-    PlayerStateStorage.saveSource(AudioSource.online);
+    await PlayerStateStorage.saveLastEpisode(_currentEpisode!);
+    await PlayerStateStorage.saveSource(AudioSource.online);
   }
 
   Future<String?> _chach(String filename) async {

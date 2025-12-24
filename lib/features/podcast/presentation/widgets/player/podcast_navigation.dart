@@ -21,9 +21,11 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
   int total = 1;
   int pass = 0;
   bool seeking = false;
+  bool loading = false;
 
   late PodcastBloc _podcastBloc;
 
+  StreamSubscription<bool>? _loadingSub;
   StreamSubscription<int>? _posSub;
   StreamSubscription<int>? _durSub;
 
@@ -37,11 +39,16 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
   void dispose() {
     _posSub?.cancel();
     _durSub?.cancel();
+    _loadingSub?.cancel();
     super.dispose();
   }
 
   Future<void> _setupPage() async {
     _podcastBloc = BlocProvider.of<PodcastBloc>(context);
+    _loadingSub = imp.loadingStream.listen((loading) {
+      this.loading = loading;
+      _updateUi();
+    });
 
     // Listen for duration updates
     _durSub = imp.durationStream.listen((ms) {
@@ -116,7 +123,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
             ),
 
             PlayPauseButton(
-              isLoading: imp.isLoading(),
+              isLoading: loading,
               isPlaying: imp.isPlaying(),
               onPressed: () async {
                 await imp.togglePlayState();

@@ -94,7 +94,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     _playerService.processState.listen((state) {
       _loadingController.add(isLoading());
     });
-
     _playerService.duration.listen((dur) {
       if (dur != null) {
         _durationController.add(dur.inMilliseconds);

@@ -24,10 +24,21 @@ class Episodes extends StatefulWidget {
 
 class _EpisodesState extends State<Episodes> {
   final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
+  Episode? currentEpisode;
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<PodcastBloc>(context).stream.listen((state) {
+      if (currentEpisode?.guid != imp.getCurrentEpisode?.guid) {
+        setState(() {});
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentEpisode = imp.getCurrentEpisode;
+    currentEpisode = imp.getCurrentEpisode;
     return SliverList(
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
         Episode episode = widget.episodes[index];

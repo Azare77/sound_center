@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
+import 'dart:ui';
 
 import 'package:background_downloader/background_downloader.dart';
 // ignore: depend_on_referenced_packages
@@ -48,9 +48,13 @@ class _DownloadButtonState extends State<DownloadButton> {
   }
 
   Future<void> _loadTask() async {
+    String key = widget.episode.title.trim();
+    if (widget.episode.author != null) {
+      key += "-${widget.episode.author?.trim()}";
+    }
     final records = await downloader.database.allRecords();
     final Directory baseDir = await getApplicationDocumentsDirectory();
-    fullPath = '${baseDir.path}/Podcasts/${widget.episode.title}.mp3';
+    fullPath = '${baseDir.path}/Podcasts/$key.mp3';
     final record = records.firstWhereOrNull(
       (r) =>
           r.task is DownloadTask &&
@@ -95,7 +99,7 @@ class _DownloadButtonState extends State<DownloadButton> {
       if (!mounted) return;
 
       setState(() {
-        if (u is TaskProgressUpdate) _progress = max(u.progress, _progress);
+        if (u is TaskProgressUpdate) _progress = clampDouble(u.progress, 0, 1);
         if (u is TaskStatusUpdate) {
           _isRunning = u.status == TaskStatus.running;
           _progress = u.status == TaskStatus.complete ? 1.0 : _progress;

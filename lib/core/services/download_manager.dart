@@ -64,10 +64,14 @@ class PodcastDownloader {
 
   static Future<DownloadTask?> downloadEpisode(Episode episode) async {
     final directory = await _ensureDirectory();
-    _downloads['${episode.title}.mp3'] = episode;
+    String key = episode.title.trim();
+    if (episode.author != null) {
+      key += "-${episode.author?.trim()}";
+    }
+    _downloads['$key.mp3'] = episode;
     final task = DownloadTask(
       url: episode.contentUrl!,
-      filename: '${episode.title}.mp3',
+      filename: episode.title,
       directory: directory,
       baseDirectory: BaseDirectory.applicationDocuments,
       updates: Updates.statusAndProgress,
@@ -75,7 +79,7 @@ class PodcastDownloader {
       retries: 3,
       allowPause: true,
       group: 'podcasts',
-      metaData: '${episode.title}.mp3',
+      metaData: '$key.mp3',
     );
     final success = await _downloader.enqueue(task);
     return success ? task : null;

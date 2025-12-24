@@ -13,7 +13,7 @@ import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class PodcastSearchController {
-  static final ValueNotifier<bool> show = ValueNotifier(true);
+  static final ValueNotifier<bool> showSearchField = ValueNotifier(true);
 }
 
 class Podcast extends StatelessWidget {
@@ -50,12 +50,11 @@ class Podcast extends StatelessWidget {
   bool resetPodcastPage(BuildContext context) {
     final bloc = BlocProvider.of<PodcastBloc>(context);
     final status = bloc.state.status;
-    if (status is PodcastResultStatus) {
+    PodcastSearchController.showSearchField.value = false;
+    if (status is! SubscribedPodcasts) {
       bloc.add(GetSubscribedPodcasts());
-      PodcastSearchController.show.value = false;
       return false;
     }
-    PodcastSearchController.show.value = true;
     return true;
   }
 

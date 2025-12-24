@@ -17,14 +17,18 @@ class PodcastToolBar extends StatefulWidget {
 class _PodcastToolBarState extends State<PodcastToolBar> {
   bool _showSearch = false;
   final _controller = TextEditingController();
+  late ValueNotifier searchNotifier;
 
   @override
   void initState() {
     super.initState();
-    PodcastSearchController.show.addListener(() {
+    searchNotifier = PodcastSearchController.showSearchField;
+    searchNotifier.addListener(() {
       if (_showSearch) {
         _controller.clear();
-        setState(() => _showSearch = PodcastSearchController.show.value);
+        setState(() {
+          _showSearch = PodcastSearchController.showSearchField.value;
+        });
       }
     });
   }
@@ -32,6 +36,7 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
   @override
   void dispose() {
     _controller.dispose();
+    searchNotifier.dispose();
     super.dispose();
   }
 
@@ -92,7 +97,7 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
 
   void _toggleSearch() {
     setState(() => _showSearch = !_showSearch);
-    PodcastSearchController.show.value = _showSearch;
+    PodcastSearchController.showSearchField.value = _showSearch;
     if (!_showSearch) {
       _controller.clear();
       BlocProvider.of<PodcastBloc>(context).add(GetSubscribedPodcasts());

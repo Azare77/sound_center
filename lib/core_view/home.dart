@@ -76,8 +76,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       canPop: index == 0,
       onPopInvokedWithResult: (res, re) {
         if (!res) {
-          _podcast.resetPodcastPage(context);
-          if (index == 1) setState(() => index = 0);
+          final canSwitchPage = _podcast.resetPodcastPage(context);
+          if (index == 1 && canSwitchPage) setState(() => index = 0);
         }
       },
       child: Scaffold(

@@ -3,6 +3,7 @@ import 'package:sound_center/features/settings/data/settings_repository_imp.dart
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProviderSettings extends StatefulWidget {
   const ProviderSettings({super.key});
@@ -96,14 +97,26 @@ class _ProviderSettingsState extends State<ProviderSettings> {
                   textDirection: TextDirection.ltr,
                 ),
               ),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  submit();
-                  Navigator.pop(context);
-                },
-                child: Text(S.of(context).submit),
-              ),
+            Row(
+              mainAxisAlignment: .center,
+              spacing: 10,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    submit();
+                    Navigator.pop(context);
+                  },
+                  child: Text(S.of(context).submit),
+                ),
+                if (provider == PodcastProvider.podcatIndex)
+                  ElevatedButton(
+                    onPressed: () async {
+                      final Uri url = Uri.parse("https://api.podcastindex.org");
+                      launchUrl(url, mode: LaunchMode.externalApplication);
+                    },
+                    child: Text("Get Api Key"),
+                  ),
+              ],
             ),
           ],
         ),

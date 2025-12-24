@@ -28,8 +28,16 @@ class AudioUtil {
     return cover;
   }
 
+  static String convertSeekBarTime(int input) {
+    return _covert(input);
+  }
+
   static String convertTime(int input) {
     if (input == 0) return '';
+    return _covert(input);
+  }
+
+  static String _covert(int input) {
     final duration = Duration(milliseconds: input);
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;

@@ -147,7 +147,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
   }
 
   Widget convertTime(int input) {
-    return Text(AudioUtil.convertTime(input));
+    return Text(AudioUtil.convertSeekBarTime(input));
   }
 
   Future<void> _refreshAfterTrackChange() async {

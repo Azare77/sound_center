@@ -160,7 +160,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   }
 
   Widget convertTime(int input) {
-    return Text(AudioUtil.convertTime(input));
+    return Text(AudioUtil.convertSeekBarTime(input));
   }
 
   void _updateUi() {

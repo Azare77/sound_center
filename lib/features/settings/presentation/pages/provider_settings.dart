@@ -114,7 +114,7 @@ class _ProviderSettingsState extends State<ProviderSettings> {
                       final Uri url = Uri.parse("https://api.podcastindex.org");
                       launchUrl(url, mode: LaunchMode.externalApplication);
                     },
-                    child: Text("Get Api Key"),
+                    child: Text(S.of(context).getApiKey),
                   ),
               ],
             ),

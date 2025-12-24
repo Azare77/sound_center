@@ -50,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloading": MessageLookupByLibrary.simpleMessage("در حال دانلود"),
     "duration": MessageLookupByLibrary.simpleMessage("مدت"),
     "errorInDownload": MessageLookupByLibrary.simpleMessage("خطا در دانلود"),
+    "getApiKey": MessageLookupByLibrary.simpleMessage("دریافت کلید API"),
     "green": MessageLookupByLibrary.simpleMessage("سبز"),
     "iconColor": MessageLookupByLibrary.simpleMessage("آیکون"),
     "language": MessageLookupByLibrary.simpleMessage("زبان"),

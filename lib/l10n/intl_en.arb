@@ -22,6 +22,7 @@
   "az": "A-Z",
   "za": "Z-A",
   "selectProvider": "Select Your Provider",
+  "getApiKey": "Get Api Key",
   "settings": "Settings",
   "podcastApi": "Podcast Api",
   "moreInfo": "More Info",

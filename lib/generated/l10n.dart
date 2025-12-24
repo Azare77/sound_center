@@ -194,6 +194,11 @@ class S {
     );
   }
 
+  /// `Get Api Key`
+  String get getApiKey {
+    return Intl.message('Get Api Key', name: 'getApiKey', desc: '', args: []);
+  }
+
   /// `Settings`
   String get settings {
     return Intl.message('Settings', name: 'settings', desc: '', args: []);

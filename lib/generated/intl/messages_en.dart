@@ -56,6 +56,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorInDownload": MessageLookupByLibrary.simpleMessage(
       "Error In Download",
     ),
+    "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
     "iconColor": MessageLookupByLibrary.simpleMessage("Icon"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),

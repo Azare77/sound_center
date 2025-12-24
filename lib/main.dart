@@ -124,6 +124,7 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (BuildContext context, state) {
+          PodcastDownloader.setupNotification();
           final currentTheme = ThemeManager.current.themeData;
           final isDarkMode = currentTheme.brightness == Brightness.dark;
           ThemeMode themMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;

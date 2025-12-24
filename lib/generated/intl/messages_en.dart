@@ -44,10 +44,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "descending": MessageLookupByLibrary.simpleMessage("Descending"),
     "description": MessageLookupByLibrary.simpleMessage("Description"),
+    "downloadCompleted": MessageLookupByLibrary.simpleMessage(
+      "Download Completed",
+    ),
+    "downloadStopped": MessageLookupByLibrary.simpleMessage("Download Stopped"),
     "downloadedEpisodes": MessageLookupByLibrary.simpleMessage(
       "Downloaded Episodes",
     ),
+    "downloading": MessageLookupByLibrary.simpleMessage("Downloading"),
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
+    "errorInDownload": MessageLookupByLibrary.simpleMessage(
+      "Error In Download",
+    ),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
     "iconColor": MessageLookupByLibrary.simpleMessage("Icon"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),

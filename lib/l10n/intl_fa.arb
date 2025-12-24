@@ -54,5 +54,9 @@
   "copy": "کپی تم",
   "sourceCode": "کد منبع",
   "thereIsANewUpdate": "به روزسانی جدیدی در دسترس است",
-  "updateNow": "به روزرسانی"
+  "updateNow": "به روزرسانی",
+  "downloading": "در حال دانلود",
+  "downloadCompleted": "دانلود کامل شد",
+  "downloadStopped": "دانلود متوقف شد",
+  "errorInDownload": "خطا در دانلود"
 }

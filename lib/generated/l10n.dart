@@ -413,6 +413,41 @@ class S {
   String get updateNow {
     return Intl.message('Update Now', name: 'updateNow', desc: '', args: []);
   }
+
+  /// `Downloading`
+  String get downloading {
+    return Intl.message('Downloading', name: 'downloading', desc: '', args: []);
+  }
+
+  /// `Download Completed`
+  String get downloadCompleted {
+    return Intl.message(
+      'Download Completed',
+      name: 'downloadCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download Stopped`
+  String get downloadStopped {
+    return Intl.message(
+      'Download Stopped',
+      name: 'downloadStopped',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error In Download`
+  String get errorInDownload {
+    return Intl.message(
+      'Error In Download',
+      name: 'errorInDownload',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

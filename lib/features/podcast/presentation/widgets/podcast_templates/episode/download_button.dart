@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:background_downloader/background_downloader.dart';
 // ignore: depend_on_referenced_packages
@@ -9,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/download_manager.dart';
-import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 
@@ -30,6 +30,8 @@ class _DownloadButtonState extends State<DownloadButton> {
   late final FileDownloader downloader;
   late final PodcastBloc bloc;
 
+  late final String fullPath;
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +49,8 @@ class _DownloadButtonState extends State<DownloadButton> {
 
   Future<void> _loadTask() async {
     final records = await downloader.database.allRecords();
-
+    final Directory baseDir = await getApplicationDocumentsDirectory();
+    fullPath = '${baseDir.path}/Podcasts/${widget.episode.title}.mp3';
     final record = records.firstWhereOrNull(
       (r) =>
           r.task is DownloadTask &&
@@ -56,15 +59,9 @@ class _DownloadButtonState extends State<DownloadButton> {
 
     if (record != null) {
       final DownloadTask task = record.task as DownloadTask;
-      final Directory baseDir = await getApplicationDocumentsDirectory();
-      // مسیر نهایی فایل
-      final String fullPath =
-          '${baseDir.path}/Podcasts/${widget.episode.title}.mp3';
-      // 🔍 چک وجود فایل روی دیسک
       final bool exists = await File(fullPath).exists();
-      if (!exists && record.progress > 0) {
-        // 🚮 حذف رکورد از دیتابیس چون فایل وجود ندارد
-        await downloader.database.deleteRecordsWithIds([task.taskId]);
+      if (!exists && record.progress == 1) {
+        await downloader.database.deleteRecordWithId(task.taskId);
         _task = null;
         _progress = 0.0;
         _isRunning = false;
@@ -72,7 +69,6 @@ class _DownloadButtonState extends State<DownloadButton> {
         return;
       }
 
-      // ✅ در غیر این صورت، رکورد معتبر است → مقداردهی کن
       _task = task;
       _progress = record.progress;
       _isRunning = record.status == TaskStatus.running;
@@ -81,12 +77,8 @@ class _DownloadButtonState extends State<DownloadButton> {
     }
   }
 
-  /// شروع دانلود جدید
   Future<void> _start() async {
-    final task = await PodcastDownloader.downloadEpisode(
-      widget.episode.contentUrl!,
-      widget.episode.title,
-    );
+    final task = await PodcastDownloader.downloadEpisode(widget.episode);
 
     if (task != null) {
       _task = task;
@@ -96,26 +88,17 @@ class _DownloadButtonState extends State<DownloadButton> {
     }
   }
 
-  /// گوش دادن به آپدیت‌های دانلود
   void _listen() {
     _sub?.cancel();
     _sub = PodcastDownloader.updates.listen((u) {
       if (u.task.taskId != _task?.taskId) return;
-      if (!mounted) return; // ✅ جلوگیری از setState بعد از dispose
+      if (!mounted) return;
 
       setState(() {
-        // if (u is TaskProgressUpdate) _progress = u.progress;
-        if (u is TaskProgressUpdate && u.progress > _progress) {
-          _progress = u.progress;
-        }
+        if (u is TaskProgressUpdate) _progress = max(u.progress, _progress);
         if (u is TaskStatusUpdate) {
           _isRunning = u.status == TaskStatus.running;
-          if (u.status == TaskStatus.complete) {
-            _progress = 1.0;
-            final DownloadedEpisodeEntity downloadEntity =
-                DownloadedEpisodeEntity.fromEpisode(widget.episode);
-            bloc.add(DownloadEpisode(downloadEntity));
-          }
+          _progress = u.status == TaskStatus.complete ? 1.0 : _progress;
         }
       });
     });
@@ -132,7 +115,7 @@ class _DownloadButtonState extends State<DownloadButton> {
       bool res = await PodcastDownloader.resume(_task!);
       if (!res) {
         _retrying = true;
-        await downloader.database.deleteRecordsWithIds([_task!.taskId]);
+        await downloader.database.deleteRecordWithId(_task!.taskId);
         await _start();
         _retrying = false;
       }
@@ -144,17 +127,11 @@ class _DownloadButtonState extends State<DownloadButton> {
         await showDialog(context: context, builder: (_) => ConfirmDialog()) ??
         false;
     if (!confirmed) return;
-    final Directory baseDir = await getApplicationDocumentsDirectory();
-    final String filePath =
-        '${baseDir.path}/Podcasts/${widget.episode.title}.mp3';
-    final file = File(filePath);
-    if (await file.exists()) {
-      await file.delete();
-    }
-    if (await file.exists()) return;
+    final file = File(fullPath);
+    if (await file.exists()) await file.delete();
     bloc.add(DeleteDownloadedEpisode(widget.episode.guid));
     if (_task != null) {
-      await downloader.database.deleteRecordsWithIds([_task!.taskId]);
+      await downloader.database.deleteRecordWithId(_task!.taskId);
     }
     _task = null;
     _progress = 0.0;
@@ -173,15 +150,11 @@ class _DownloadButtonState extends State<DownloadButton> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // دایره progress
         if (_progress != 1.0)
           SizedBox(
             width: 30,
             height: 30,
-            child: CircularProgressIndicator(
-              value: _progress, // 0.0 تا 1.0
-              strokeWidth: 2,
-            ),
+            child: CircularProgressIndicator(value: _progress, strokeWidth: 2),
           ),
         IconButton(
           iconSize: 20,

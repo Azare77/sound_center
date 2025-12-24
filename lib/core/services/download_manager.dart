@@ -2,45 +2,72 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:background_downloader/background_downloader.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/core/constants/constants.dart';
+import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
+import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 
 class PodcastDownloader {
   static final FileDownloader _downloader = FileDownloader();
 
-  // یک StreamController مرکزی برای انتشار آپدیت‌ها
   static final StreamController<TaskUpdate> _updateController =
       StreamController<TaskUpdate>.broadcast();
 
-  /// استریم عمومی برای گوش دادن در ویجت‌ها
   static Stream<TaskUpdate> get updates => _updateController.stream;
 
-  /// مقداردهی اولیهٔ دانلودر
+  static final Map<String, Episode> _downloads = {};
+
   static Future<void> init() async {
     await _downloader.start();
     await _downloader.trackTasks();
 
-    // فقط یک بار به stream اصلی پکیج گوش بده
     _downloader.updates.listen((u) {
       _updateController.add(u);
+      if (u is TaskStatusUpdate) {
+        final status = u;
+        if (status.status == TaskStatus.canceled) {
+          _downloader.database.deleteRecordWithId(u.task.taskId);
+          return;
+        }
+      }
       onPodcastDownloadFinished(u);
     });
+  }
 
+  static void setupNotification() {
+    String downloading = Intl.message("Downloading", name: "downloading");
+    String downloadCompleted = Intl.message(
+      "Download Completed",
+      name: "downloadCompleted",
+    );
+    String downloadStopped = Intl.message(
+      "Download Stopped",
+      name: "downloadStopped",
+    );
+    String errorInDownload = Intl.message(
+      "Error In Download",
+      name: "errorInDownload",
+    );
     _downloader.configureNotification(
-      running: const TaskNotification('در حال دانلود', 'فایل: {filename}'),
-      complete: const TaskNotification('دانلود کامل شد', 'فایل: {filename}'),
-      paused: const TaskNotification('متوقف شد', 'فایل: {filename}'),
-      error: const TaskNotification('خطا', 'فایل: {filename}'),
+      running: TaskNotification(downloading, '{filename}'),
+      complete: TaskNotification(downloadCompleted, '{filename}'),
+      paused: TaskNotification(downloadStopped, '{filename}'),
+      error: TaskNotification(errorInDownload, '{filename}'),
       progressBar: true,
       tapOpensFile: true,
     );
   }
 
-  /// شروع دانلود اپیزود جدید
-  static Future<DownloadTask?> downloadEpisode(String url, String title) async {
+  static Future<DownloadTask?> downloadEpisode(Episode episode) async {
     final directory = await _ensureDirectory();
+    _downloads['${episode.title}.mp3'] = episode;
     final task = DownloadTask(
-      url: url,
-      filename: '$title.mp3',
+      url: episode.contentUrl!,
+      filename: '${episode.title}.mp3',
       directory: directory,
       baseDirectory: BaseDirectory.applicationDocuments,
       updates: Updates.statusAndProgress,
@@ -48,13 +75,12 @@ class PodcastDownloader {
       retries: 3,
       allowPause: true,
       group: 'podcasts',
-      metaData: '$title.mp3',
+      metaData: '${episode.title}.mp3',
     );
     final success = await _downloader.enqueue(task);
     return success ? task : null;
   }
 
-  /// اطمینان از ساخت مسیر ذخیره‌سازی Podcasts
   static Future<String> _ensureDirectory() async {
     final dir = await getDownloadsDirectory();
     if (dir != null) {
@@ -67,12 +93,14 @@ class PodcastDownloader {
     return 'Podcasts';
   }
 
-  /// متدهای کنترلی
   static Future<void> pause(DownloadTask task) => _downloader.pause(task);
 
   static Future<bool> resume(DownloadTask task) => _downloader.resume(task);
 
-  static Future<void> cancel(DownloadTask task) => _downloader.cancel(task);
+  static Future<void> cancel(DownloadTask task) async {
+    _downloader.cancel(task);
+    _downloader.database.deleteRecordWithId(task.taskId);
+  }
 
   static void onPodcastDownloadFinished(TaskUpdate update) async {
     if (update is! TaskStatusUpdate) return;
@@ -89,6 +117,17 @@ class PodcastDownloader {
     final newPath = '${file.parent.path}/$safeName';
     if (file.path != newPath) {
       await file.rename(newPath);
+    }
+    Episode? episode = _downloads[task.metaData];
+    BuildContext? context = NAVIGATOR_KEY.currentContext;
+
+    if (episode != null && context != null) {
+      final bloc = BlocProvider.of<PodcastBloc>(NAVIGATOR_KEY.currentContext!);
+      final downloadEntity = DownloadedEpisodeEntity.fromEpisode(
+        _downloads[task.metaData]!,
+      );
+      bloc.add(DownloadEpisode(downloadEntity));
+      _downloads.remove(task.metaData);
     }
   }
 }

@@ -88,16 +88,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             child: GestureDetector(
               onHorizontalDragEnd: onSwipe,
               child: AppBar(
-                title: GestureDetector(
-                  onHorizontalDragEnd: onSwipe,
-                  onLongPress: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const Settings(),
-                    );
-                  },
-                  child: Text("Sound Center", textAlign: TextAlign.center),
-                ),
+                title: Text("Sound Center", textAlign: TextAlign.center),
                 leading: IconButton(
                   onPressed: () => showDialog(
                     context: context,

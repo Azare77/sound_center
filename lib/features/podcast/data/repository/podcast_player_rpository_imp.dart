@@ -40,7 +40,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   String feedUrl = "";
 
-  RepeatMode repeatMode = RepeatMode.repeatAll;
   final _positionController = StreamController<int>.broadcast();
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
@@ -87,7 +86,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   void _initialPlayerState() {
-    repeatMode = PlayerStateStorage.getRepeatMode();
     _playerService.position.listen((pos) {
       _positionController.add(pos.inMilliseconds);
     });
@@ -109,10 +107,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     return _playerService.hasSource(AudioSource.online);
   }
 
-  bool isShuffle() {
-    return false;
-  }
-
   void setBloc(PodcastBloc bloc) {
     this.bloc = bloc;
   }
@@ -131,20 +125,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  Future<void> changeRepeatState() async {
-    switch (repeatMode) {
-      case RepeatMode.noRepeat:
-        repeatMode = RepeatMode.repeatAll;
-        break;
-      case RepeatMode.repeatAll:
-        repeatMode = RepeatMode.repeatOne;
-        break;
-      case RepeatMode.repeatOne:
-        repeatMode = RepeatMode.noRepeat;
-        break;
-    }
-    await PlayerStateStorage.saveRepeatMode(repeatMode);
-  }
+  Future<void> changeRepeatState() async {}
 
   @override
   Future<void> changeShuffleState() async {}
@@ -241,10 +222,6 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   int getIndex(bool forward) {
-    if (repeatMode == RepeatMode.repeatOne) {
-      return index;
-    }
-
     index = (index + (forward ? 1 : -1) + _episodes.length) % _episodes.length;
     return index;
   }

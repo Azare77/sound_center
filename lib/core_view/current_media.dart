@@ -52,8 +52,8 @@ class _CurrentMediaState extends State<CurrentMedia> {
       WidgetsBinding.instance.platformDispatcher.views.first.padding,
       WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio,
     );
-    final paddingBottom = edgeInsets.bottom;
     final paddingTop = edgeInsets.top;
+    final paddingBottom = MediaQuery.of(context).padding.bottom;
 
     return Padding(
       padding: EdgeInsets.only(bottom: paddingBottom),

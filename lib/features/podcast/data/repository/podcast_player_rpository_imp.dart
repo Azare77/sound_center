@@ -58,7 +58,11 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       _currentEpisode = PlayerStateStorage.getLastEpisode();
       if (_currentEpisode == null) return;
       if (_episodes.isEmpty) _episodes = [_currentEpisode!];
-      final String? cacheFile = await _chach(_currentEpisode!.title);
+      String key = _currentEpisode!.title.trim();
+      if (_currentEpisode!.author != null) {
+        key += "-${_currentEpisode!.author?.trim()}";
+      }
+      final String? cacheFile = await _chach(key);
       File? file;
       try {
         file = await NetworkCacheImage.customCacheManager.getSingleFile("");
@@ -134,7 +138,11 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
     _currentEpisode = _episodes[index];
-    final String? cacheFile = await _chach(_currentEpisode!.title);
+    String key = _currentEpisode!.title.trim();
+    if (_currentEpisode!.author != null) {
+      key += "-${_currentEpisode!.author?.trim()}";
+    }
+    final String? cacheFile = await _chach(key);
     File? file;
     try {
       file = await NetworkCacheImage.customCacheManager.getSingleFile("");

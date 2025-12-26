@@ -157,10 +157,10 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       cachedFilePath: cacheFile,
       onSourceSet: () => bloc.add(AutoPlayPodcast()),
     );
-    await _playerService.play();
-    bloc.add(AutoPlayPodcast());
     await PlayerStateStorage.saveLastEpisode(_currentEpisode!);
     await PlayerStateStorage.saveSource(AudioSource.online);
+    await _playerService.play();
+    bloc.add(AutoPlayPodcast());
   }
 
   Future<String?> _chach(String filename) async {

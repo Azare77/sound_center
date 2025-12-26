@@ -86,13 +86,10 @@ class PodcastDownloader {
   }
 
   static Future<String> _ensureDirectory() async {
-    final dir = await getDownloadsDirectory();
-    if (dir != null) {
-      final podcastDir = Directory('${dir.path}/Podcasts');
-      if (!await podcastDir.exists()) {
-        await podcastDir.create(recursive: true);
-      }
-      return 'Podcasts';
+    final dir = await getApplicationDocumentsDirectory();
+    final podcastDir = Directory('${dir.path}/Podcasts');
+    if (!await podcastDir.exists()) {
+      await podcastDir.create(recursive: true);
     }
     return 'Podcasts';
   }

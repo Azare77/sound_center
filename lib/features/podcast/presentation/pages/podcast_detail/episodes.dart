@@ -30,7 +30,7 @@ class _EpisodesState extends State<Episodes> {
   void initState() {
     super.initState();
     BlocProvider.of<PodcastBloc>(context).stream.listen((state) {
-      if (currentEpisode?.guid != imp.getCurrentEpisode?.guid) {
+      if (currentEpisode?.guid != imp.getCurrentEpisode?.guid && mounted) {
         setState(() {});
       }
     });

@@ -125,10 +125,10 @@ packages:
     dependency: "direct main"
     description:
       name: background_downloader
-      sha256: efe41340f6518449f6c5f116d9bcecc97bbff7708efe47d7a645478117ce15fd
+      sha256: "2d17c211eb9bf1f947f154fb85d1bea96944fb1efb1b0714851caac993c02dc8"
       url: "https://pub.dev"
     source: hosted
-    version: "9.4.1"
+    version: "9.4.3"
   bloc:
     dependency: "direct main"
     description:
@@ -561,10 +561,10 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: "51555e36056541237b15b57afc31a0f53d4f9aefd9bd00873a6dc0090e54e332"
+      sha256: "492bd52f6c4fbb6ee41f781ff27765ce5f627910e1e0cbecfa3d9add5562604c"
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.0"
+    version: "4.7.2"
   intl:
     dependency: "direct main"
     description:

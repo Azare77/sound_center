@@ -53,8 +53,6 @@ class JustAudioService {
 
   bool _loadingSource = false;
 
-  // bool get isLoadingSource => _loadingSource;
-
   void _init() {
     _player.processingStateStream.listen((state) {
       _loadingController.add(isLoading());
@@ -86,7 +84,6 @@ class JustAudioService {
     });
   }
 
-  // Public API to set a single source (will clear any managed playlist unless using setPlaylist)
   Future<bool> setSource(
     String path,
     AudioSource source, {

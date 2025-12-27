@@ -165,11 +165,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   Future<String?> _chach(String filename) async {
     final Directory baseDir = await getApplicationDocumentsDirectory();
-
-    // مسیر نهایی فایل
     final String fullPath = '${baseDir.path}/Podcasts/$filename.mp3';
-
-    // 🔍 چک وجود فایل روی دیسک
     final bool exists = await File(fullPath).exists();
     if (exists) {
       return fullPath;

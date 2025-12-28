@@ -1,6 +1,7 @@
 <div align="center">
-  
+
 # Sound Center 🎵
+
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-blue)
 ![Platform](https://img.shields.io/badge/platform-Android%20|%20Linux-green)
 [![GitHub release](https://img.shields.io/github/v/release/azare77/sound_center?color=D3BEAB)](https://github.com/azare77/sound_center/releases)
@@ -19,12 +20,10 @@
 | **Third-party sources (SoundCloud, etc.)** | 🔧 Planned — adapter-based architecture    |
 | **Live audio streams (internet radio)**    | 🔧 Supported at player level, UI pending   |
 
-
 ## Feedback & Support
 
 Found a bug? Have a feature request?  
 Please open an [Issue](https://github.com/azare77/sound_center/issues) or join the discussion!
-
 
 ### Short notes
 

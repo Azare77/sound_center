@@ -134,6 +134,9 @@ flutter:
     - family: Vazir
       fonts:
         - asset: assets/fonts/Vazir-FD-WOL.ttf
+    - family: VazirEn
+      fonts:
+        - asset: assets/fonts/Vazirmatn-Regular.ttf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

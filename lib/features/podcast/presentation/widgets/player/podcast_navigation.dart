@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
@@ -22,8 +23,11 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
   int pass = 0;
   bool seeking = false;
   bool loading = false;
+  String svg10Back = "assets/icons/10backEn.svg";
+  String svg30Forward = "assets/icons/30forwardEn.svg";
 
   late PodcastBloc _podcastBloc;
+  late SettingBloc _settingBloc;
 
   StreamSubscription<bool>? _loadingSub;
   StreamSubscription<int>? _posSub;
@@ -45,6 +49,11 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
 
   Future<void> _setupPage() async {
     _podcastBloc = BlocProvider.of<PodcastBloc>(context);
+    _settingBloc = BlocProvider.of<SettingBloc>(context);
+    if (_settingBloc.state.locale == Locale("fa")) {
+      svg10Back = "assets/icons/10back.svg";
+      svg30Forward = "assets/icons/30forward.svg";
+    }
     _loadingSub = imp.loadingStream.listen((loading) {
       this.loading = loading;
       _updateUi();
@@ -106,7 +115,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             MediaControllerButton(
-              svg: 'assets/icons/10back.svg',
+              svg: svg10Back,
               onPressed: () async {
                 int dest = pass - 10000;
                 if (dest < 0) dest = 0;
@@ -140,7 +149,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
             ),
 
             MediaControllerButton(
-              svg: 'assets/icons/30forward.svg',
+              svg: svg30Forward,
               onPressed: () async {
                 int dest = pass + 30000;
                 if (dest > total) dest = total;

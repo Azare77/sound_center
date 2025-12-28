@@ -12,14 +12,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     SettingsRepositoryImp settingsRepository = SettingsRepositoryImp();
 
     on<ChangeLocale>((event, emit) {
+      ThemeManager.setTheme(state.themeId, event.locale);
       emit(state.setLocale(event.locale));
       settingsRepository.setLocale(event.locale);
     });
     on<ChangeTheme>((event, emit) async {
-      final newThemeData = ThemeManager.fromId(event.themeId);
-
-      ThemeManager.current = newThemeData;
-
+      ThemeManager.setTheme(event.themeId, state.locale);
       await settingsRepository.setTheme(event.themeId);
 
       emit(state.setTheme(event.themeId));
@@ -31,8 +29,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       for (final theme in customThemes) {
         ThemeManager.addCustomTheme(theme);
       }
-      final newThemeData = ThemeManager.fromId(savedTheme);
-      ThemeManager.current = newThemeData;
+      ThemeManager.setTheme(savedTheme, savedLocale);
       emit(SettingState(savedLocale, savedTheme));
     });
     add(LoadSetting());

@@ -91,7 +91,9 @@ Future<void> _checkForUpdate() async {
           children: [
             Text(
               Intl.message("There is a new update", name: "thereIsANewUpdate"),
-              style: ThemeManager.current.themeData.textTheme.bodyMedium,
+              style: ThemeManager.getThemeData(
+                ThemeManager.current,
+              ).textTheme.bodyMedium,
             ),
             TextButton(
               onPressed: () async {
@@ -125,7 +127,7 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (BuildContext context, state) {
           PodcastDownloader.setupNotification();
-          final currentTheme = ThemeManager.current.themeData;
+          final currentTheme = ThemeManager.current;
           final isDarkMode = currentTheme.brightness == Brightness.dark;
           ThemeMode themMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
           return ToastificationWrapper(
@@ -141,8 +143,8 @@ class MyApp extends StatelessWidget {
                 GlobalCupertinoLocalizations.delegate,
               ],
               title: "Sound Center",
-              theme: ThemeManager.current.themeData,
-              darkTheme: ThemeManager.current.themeData,
+              theme: ThemeManager.getThemeData(currentTheme),
+              darkTheme: ThemeManager.getThemeData(currentTheme),
               themeMode: themMode,
               home: Home(),
             ),

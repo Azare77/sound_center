@@ -49,7 +49,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     } else {
       theme = ThemeManager.current;
     }
-    final ThemeData themeData = theme.themeData;
+    final ThemeData themeData = ThemeManager.getThemeData(theme);
     brightness = themeData.brightness;
     scaffoldBackground = themeData.scaffoldBackgroundColor;
     thumbColor = themeData.sliderTheme.thumbColor ?? Colors.white;
@@ -67,7 +67,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     try {
       final decoded = jsonDecode(data!.text!);
       final AppThemeData theme = AppThemeData.fromJsonForStorage(decoded);
-      final ThemeData themeData = theme.themeData;
+      final ThemeData themeData = ThemeManager.getThemeData(theme);
       _controller.text = theme.id;
       brightness = themeData.brightness;
       scaffoldBackground = themeData.scaffoldBackgroundColor;
@@ -80,11 +80,11 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     } catch (_) {}
   }
 
-  late AppThemeData themeData;
+  late AppThemeData theme;
 
   @override
   Widget build(BuildContext context) {
-    themeData = AppThemeData.fromSeed(
+    theme = AppThemeData(
       id: _controller.text.trim(),
       brightness: brightness,
       scaffoldBackground: scaffoldBackground,
@@ -95,7 +95,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
       iconColor: iconColor,
     );
     return Theme(
-      data: themeData.themeData,
+      data: ThemeManager.getThemeData(theme),
       child: Scaffold(
         appBar: AppBar(),
         body: Column(
@@ -219,7 +219,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
         ElevatedButton(onPressed: saveTheme, child: Text(S.of(context).ok)),
         ElevatedButton(
           onPressed: () {
-            AppThemeData themeData = AppThemeData.fromSeed(
+            AppThemeData themeData = AppThemeData(
               id: _controller.text.trim(),
               brightness: brightness,
               scaffoldBackground: scaffoldBackground,
@@ -247,7 +247,7 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
       int allCustomThemes = ThemeManager.allCustomThemes.length;
       _controller.text = "Custom Theme-${allCustomThemes + 1}";
     }
-    AppThemeData themeData = AppThemeData.fromSeed(
+    AppThemeData themeData = AppThemeData(
       id: _controller.text.trim(),
       brightness: brightness,
       scaffoldBackground: scaffoldBackground,

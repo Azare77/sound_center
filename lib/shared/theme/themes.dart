@@ -5,33 +5,40 @@ enum PresetTheme { dark, green, light }
 
 class AppThemeData {
   final String id;
-  final ThemeData themeData;
+  final Brightness brightness;
+  final Color scaffoldBackground;
+  final Color thumbColor;
+  final Color appBarBackground;
+  final Color appBarShadowColor;
+  final Color iconColor;
   final Color mediaColor;
 
   const AppThemeData({
     required this.id,
-    required this.themeData,
     required this.mediaColor,
+    required this.brightness,
+    required this.scaffoldBackground,
+    required this.thumbColor,
+    required this.appBarBackground,
+    required this.appBarShadowColor,
+    required this.iconColor,
   });
 
   Map<String, dynamic> toJsonForStorage() {
     return {
       'id': id,
-      'brightness': themeData.brightness.name,
-      'scaffoldBackground': themeData.scaffoldBackgroundColor.toARGB32(),
-      'thumbColor': (themeData.sliderTheme.thumbColor ?? Colors.white)
-          .toARGB32(),
-      'appBarBackground':
-          (themeData.appBarTheme.backgroundColor ?? Colors.white).toARGB32(),
-      'appBarShadowColor':
-          (themeData.appBarTheme.shadowColor ?? Colors.transparent).toARGB32(),
+      'brightness': brightness.name,
+      'scaffoldBackground': scaffoldBackground.toARGB32(),
+      'thumbColor': (thumbColor).toARGB32(),
+      'appBarBackground': (appBarBackground).toARGB32(),
+      'appBarShadowColor': (appBarShadowColor).toARGB32(),
       'mediaColor': mediaColor.toARGB32(),
-      'iconColor': (themeData.iconTheme.color ?? Colors.white).toARGB32(),
+      'iconColor': (iconColor).toARGB32(),
     };
   }
 
   factory AppThemeData.fromJsonForStorage(Map<String, dynamic> json) {
-    return AppThemeData.fromSeed(
+    return AppThemeData(
       id: json['id'],
       brightness: json['brightness'] == 'dark'
           ? Brightness.dark
@@ -42,28 +49,6 @@ class AppThemeData {
       appBarShadowColor: Color(json['appBarShadowColor']),
       mediaColor: Color(json['mediaColor']),
       iconColor: Color(json['iconColor']),
-    );
-  }
-
-  factory AppThemeData.fromSeed({
-    required String id,
-    required Brightness brightness,
-    required Color scaffoldBackground,
-    required Color thumbColor,
-    required Color appBarBackground,
-    required Color appBarShadowColor,
-    required Color mediaColor,
-    required Color iconColor,
-  }) {
-    return _buildTheme(
-      id: id,
-      brightness: brightness,
-      scaffoldBackground: scaffoldBackground,
-      thumbColor: thumbColor,
-      appBarBackground: appBarBackground,
-      appBarShadowColor: appBarShadowColor,
-      mediaColor: mediaColor,
-      iconColor: iconColor,
     );
   }
 }
@@ -77,18 +62,61 @@ class ThemeManager {
 
   static final Map<String, AppThemeData> _customThemes = {};
 
-  static AppThemeData current = dark;
+  static Locale _locale = Locale("en");
 
-  static AppThemeData fromPreset(PresetTheme preset) => switch (preset) {
-    PresetTheme.dark => dark,
-    PresetTheme.green => green,
-    PresetTheme.light => light,
-  };
+  static AppThemeData _current = dark;
+
+  static AppThemeData get current => _current;
 
   static AppThemeData fromId(String themeId) {
-    return allThemes.firstWhere(
+    AppThemeData theme = allThemes.firstWhere(
       (theme) => theme.id == themeId,
-      orElse: () => dark,
+      orElse: () => _current,
+    );
+
+    return theme;
+  }
+
+  static ThemeData getThemeData(AppThemeData theme) {
+    return ThemeData(
+      fontFamily: _getFontFamily(),
+      brightness: theme.brightness,
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: theme.appBarBackground,
+        brightness: theme.brightness,
+      ),
+      scaffoldBackgroundColor: theme.scaffoldBackground,
+      appBarTheme: AppBarTheme(
+        elevation: 2,
+        centerTitle: true,
+        shadowColor: theme.appBarShadowColor,
+        backgroundColor: theme.appBarBackground,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: theme.brightness == Brightness.dark
+              ? Brightness.light
+              : Brightness.dark,
+          statusBarBrightness: theme.brightness,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+      ),
+      sliderTheme: SliderThemeData(
+        trackHeight: 1,
+        activeTrackColor: theme.thumbColor,
+        inactiveTrackColor: theme.thumbColor,
+        thumbColor: theme.thumbColor,
+      ),
+      iconTheme: IconThemeData(color: theme.iconColor),
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: WidgetStatePropertyAll(theme.iconColor),
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: theme.scaffoldBackground,
+      ),
     );
   }
 
@@ -98,6 +126,11 @@ class ThemeManager {
       _customThemes[theme.id] = theme;
 
   static void removeCustomTheme(String id) => _customThemes.remove(id);
+
+  static void setTheme(String themeId, Locale locale) {
+    _locale = locale;
+    _current = fromId(themeId);
+  }
 
   static AppThemeData? getTheme(String id) {
     for (AppThemeData theme in allThemes) {
@@ -168,44 +201,21 @@ AppThemeData _buildTheme({
 }) {
   return AppThemeData(
     id: id,
-    themeData: ThemeData(
-      fontFamily: "Vazir",
-      brightness: brightness,
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: appBarBackground,
-        brightness: brightness,
-      ),
-      scaffoldBackgroundColor: scaffoldBackground,
-      appBarTheme: AppBarTheme(
-        elevation: 2,
-        centerTitle: true,
-        shadowColor: appBarShadowColor,
-        backgroundColor: appBarBackground,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: brightness == Brightness.dark
-              ? Brightness.light
-              : Brightness.dark,
-          statusBarBrightness: Brightness.dark,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarIconBrightness: Brightness.light,
-        ),
-      ),
-      sliderTheme: SliderThemeData(
-        trackHeight: 1,
-        activeTrackColor: thumbColor,
-        thumbColor: thumbColor,
-        inactiveTrackColor: thumbColor,
-      ),
-      iconTheme: IconThemeData(color: iconColor),
-      iconButtonTheme: IconButtonThemeData(
-        style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(iconColor)),
-      ),
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: scaffoldBackground,
-      ),
-    ),
+    brightness: brightness,
+    appBarBackground: appBarBackground,
+    appBarShadowColor: appBarBackground,
+    iconColor: iconColor,
+    scaffoldBackground: scaffoldBackground,
+    thumbColor: thumbColor,
     mediaColor: mediaColor,
   );
+}
+
+String _getFontFamily() {
+  switch (ThemeManager._locale.languageCode) {
+    case "fa":
+      return "Vazir";
+    default:
+      return "VazirEn";
+  }
 }

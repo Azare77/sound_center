@@ -34,9 +34,9 @@ Currently available on Android and Linux desktop, with support for English and F
 
 ## Screenshots
 
-| ![Screenshot 1](https://github.com/user-attachments/assets/01ac412d-c29d-4828-801b-e7d62646e9e7) | ![Screenshot 2](https://github.com/user-attachments/assets/84d1368d-340d-458c-9d31-6c3a4bc2a79b) | ![Screenshot 3](https://github.com/user-attachments/assets/3a7fd777-a20a-4802-a439-11e5cbcebb25) | ![Screenshot 4](https://github.com/user-attachments/assets/9f3d2559-691c-4d8d-9f1c-77a10863faa1) |
-|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| ![Screenshot 5](https://github.com/user-attachments/assets/295464ca-a0dd-4d15-afc9-eaaacfd43002) | ![Screenshot 6](https://github.com/user-attachments/assets/beb8e7aa-68b9-4dba-b718-011f81443bfa) | ![Screenshot 7](https://github.com/user-attachments/assets/81a8e723-87fd-4a75-b919-00c30e69a478) | ![Screenshot 8](https://github.com/user-attachments/assets/0e1ee8d7-ffb6-4258-8a69-1f44b2007f2b) |
+| ![Screenshot 1](info/screenshots/1.jpeg) | ![Screenshot 2](info/screenshots/2.jpeg) | ![Screenshot 3](info/screenshots/3.jpeg) | ![Screenshot 4](info/screenshots/4.jpeg) |
+|------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|
+| ![Screenshot 5](info/screenshots/5.jpeg) | ![Screenshot 6](info/screenshots/6.jpeg) | ![Screenshot 7](info/screenshots/7.jpeg) | ![Screenshot 8](info/screenshots/8.jpeg) |
 
 ## Feedback & Support
 

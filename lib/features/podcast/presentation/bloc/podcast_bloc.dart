@@ -24,8 +24,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     final PodcastPlayerRepositoryImp player = PodcastPlayerRepositoryImp();
     player.setBloc(this);
-    Timer(Duration(milliseconds: 500), () => add(GetSubscribedPodcasts()));
-    player.init().then((_) {
+    player.init().then((_) async {
       add(CheckPodcastUpdates(null));
       Timer.periodic(
         Duration(minutes: 30),
@@ -41,6 +40,7 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       List<SubscriptionEntity> subs = await getPodcastUseCase.call();
       emit(state.copyWith(SubscribedPodcasts(subs)));
     });
+    add(GetSubscribedPodcasts());
     on<CheckPodcastUpdates>((event, emit) async {
       List<SubscriptionEntity> subs = await getPodcastUseCase.haveUpdate();
       event.refreshCompleter?.complete();
@@ -85,7 +85,6 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
     on<AutoPlayPodcast>((event, emit) async {
       emit(state.copyWith(state.status));
     });
-    //
     on<TogglePlay>((event, emit) async {
       emit(state.copyWith(state.status));
     });
@@ -107,12 +106,10 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       List<Episode> episodes = await getPodcastUseCase.getDownloadedEpisodes();
       emit(state.copyWith(DownloadedEpisodesStatus(episodes)));
     });
-
     on<DownloadEpisode>((event, emit) async {
       getPodcastUseCase.downloadEpisode(event.episode);
       add(GetDownloadedEpisodes());
     });
-
     on<DeleteDownloadedEpisode>((event, emit) async {
       getPodcastUseCase.deleteEpisode(event.guid);
       add(GetDownloadedEpisodes());

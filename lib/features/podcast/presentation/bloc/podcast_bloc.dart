@@ -24,9 +24,8 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
 
     final PodcastPlayerRepositoryImp player = PodcastPlayerRepositoryImp();
     player.setBloc(this);
-    player.init().then((_) async {
-      add(GetSubscribedPodcasts());
-      await Future.delayed(Duration(milliseconds: 500));
+    Timer(Duration(milliseconds: 500), () => add(GetSubscribedPodcasts()));
+    player.init().then((_) {
       add(CheckPodcastUpdates(null));
       Timer.periodic(
         Duration(minutes: 30),

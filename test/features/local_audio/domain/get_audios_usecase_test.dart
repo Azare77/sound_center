@@ -30,11 +30,13 @@ void main() {
       dateAdded: DateTime.utc(2020, 1, 1),
     );
 
-    when(() => repo.fetchLocalAudios(
-          like: any(named: 'like'),
-          orderBy: AudioColumns.id,
-          desc: false,
-        )).thenAnswer((_) async => [audio]);
+    when(
+      () => repo.fetchLocalAudios(
+        like: any(named: 'like'),
+        orderBy: AudioColumns.id,
+        desc: false,
+      ),
+    ).thenAnswer((_) async => [audio]);
 
     final res = await usecase.call(orderBy: AudioColumns.id, desc: false);
     expect(res.length, equals(1));
@@ -56,15 +58,23 @@ void main() {
       dateAdded: DateTime.utc(2021, 1, 1),
     );
 
-    when(() => repo.fetchLocalAudios(
-          like: any(named: 'like'),
-          orderBy: AudioColumns.id,
-          desc: any(named: 'desc'),
-        )).thenAnswer((_) async => [audio]);
+    when(
+      () => repo.fetchLocalAudios(
+        like: any(named: 'like'),
+        orderBy: AudioColumns.id,
+        desc: any(named: 'desc'),
+      ),
+    ).thenAnswer((_) async => [audio]);
 
     final res = await usecase.search(params: 'needle');
     expect(res.length, equals(1));
     expect(res.first.id, equals(2));
-    verify(() => repo.fetchLocalAudios(like: any(named: 'like'), orderBy: AudioColumns.id, desc: any(named: 'desc'))).called(1);
+    verify(
+      () => repo.fetchLocalAudios(
+        like: any(named: 'like'),
+        orderBy: AudioColumns.id,
+        desc: any(named: 'desc'),
+      ),
+    ).called(1);
   });
 }

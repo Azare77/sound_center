@@ -34,7 +34,10 @@ void main() {
       // ensure font family changes to Vazir for fa
       final data = ThemeManager.getThemeData(ThemeManager.current);
       // bodyText1 was removed in newer Flutter versions; check a modern accessor
-      expect(data.textTheme.bodyMedium?.fontFamily ?? 'VazirEn', equals('Vazir'));
+      expect(
+        data.textTheme.bodyMedium?.fontFamily ?? 'VazirEn',
+        equals('Vazir'),
+      );
     });
   });
 }

@@ -5,7 +5,9 @@ import 'package:sound_center/features/settings/presentation/settings.dart';
 import 'package:sound_center/generated/l10n.dart';
 
 void main() {
-  testWidgets('Settings dialog contains expected buttons and texts', (tester) async {
+  testWidgets('Settings dialog contains expected buttons and texts', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: const [

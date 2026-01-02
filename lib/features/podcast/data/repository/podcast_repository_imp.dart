@@ -175,20 +175,6 @@ class PodcastRepositoryImp implements PodcastRepository {
   }
 }
 
-// Future<Map<String, Podcast>> _checkSubscriptionsForUpdates(
-//   List<SubscriptionTableData> feeds,
-// ) async {
-//   Map<String, Podcast> podcastCache = {};
-//   final futures = feeds.map((feed) async {
-//     try {
-//       final podcast = await Feed.loadFeed(url: feed.feedUrl);
-//       podcastCache[feed.feedUrl] = podcast;
-//     } catch (_) {}
-//   });
-//   await Future.wait(futures);
-//   return podcastCache;
-// }
-
 Future<Map<String, Podcast>> _checkSubscriptionsForUpdates(
   List<SubscriptionTableData> feeds,
 ) async {

@@ -222,7 +222,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> togglePlayState() async {
     bloc.add(TogglePlay());
-    await _playerService.togglePlaying(AudioSource.local);
+    await _playerService.togglePlaying();
   }
 
   @override

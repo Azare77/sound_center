@@ -114,9 +114,9 @@ class JustAudioService {
       return true;
     } catch (e) {
       debugPrint('خطا در setSource: $e');
+      _loadingSource = false;
       if (source != _source) return false;
       _source = null;
-      _loadingSource = false;
       await release();
       return false;
     }
@@ -128,8 +128,7 @@ class JustAudioService {
     return _player.playing;
   }
 
-  Future<void> togglePlaying(AudioSource source) async {
-    _source = source;
+  Future<void> togglePlaying() async {
     if (_player.playing) {
       await _player.pause();
     } else {

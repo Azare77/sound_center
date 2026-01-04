@@ -215,7 +215,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> togglePlayState() async {
     bloc.add(TogglePlay());
-    await _playerService.togglePlaying(AudioSource.online);
+    await _playerService.togglePlaying();
   }
 
   @override

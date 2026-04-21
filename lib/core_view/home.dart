@@ -13,6 +13,7 @@ import 'package:sound_center/features/podcast/data/repository/podcast_player_rpo
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 import 'package:sound_center/features/settings/presentation/settings.dart';
+import 'package:sound_center/features/stream/presentation/pages/stream.dart';
 import 'package:sound_center/generated/l10n.dart';
 
 class Home extends StatefulWidget {
@@ -28,6 +29,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late final PodcastPlayerRepositoryImp _podcastPlayer;
   late final LocalAudios _localAudios;
   late final Podcast _podcast;
+  late final StreamPage _stream;
   late final AppLinks appLinks;
   StreamSubscription<Uri>? _linkSubscription;
 
@@ -36,6 +38,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     super.initState();
     _localAudios = LocalAudios();
     _podcast = Podcast();
+    _stream = StreamPage();
     appLinks = AppLinks();
     initDeepLinks();
     _localPlayer = LocalPlayerRepositoryImp();
@@ -60,14 +63,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   void onSwipe(DragEndDetails details) {
     if (details.primaryVelocity == null) return;
-
-    if (details.primaryVelocity! < 0) {
-      // swipe به چپ → بعدی
-      setState(() => index = (index + 1) & 1);
-    } else if (details.primaryVelocity! > 0) {
-      // swipe به راست → قبلی
-      setState(() => index = (index - 1) & 1);
-    }
+    setState(() {
+      if (details.primaryVelocity! < 0) {
+        // swipe به چپ → بعدی
+        index++;
+      } else if (details.primaryVelocity! > 0) {
+        // swipe به راست → قبلی
+        index--;
+      }
+      if (index == 3) index = 0;
+      if (index < 0) index = 2;
+    });
   }
 
   @override
@@ -100,9 +106,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   IconButton(
                     tooltip: index == 0
                         ? S.of(context).podcast
+                        : index == 1
+                        ? S.of(context).stream
                         : S.of(context).local,
                     // use Bitwise Operations to change index between 0 and 1 (n)
-                    onPressed: () => setState(() => index = (index + 1) & 1),
+                    onPressed: () {
+                      setState(() {
+                        index++;
+                        if (index == 3) index = 0;
+                      });
+                    },
                     icon: BlocBuilder<PodcastBloc, PodcastState>(
                       builder: (BuildContext context, PodcastState state) {
                         return Badge(
@@ -113,6 +126,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           child: Icon(
                             index == 0
                                 ? Icons.podcasts_rounded
+                                : index == 1
+                                ? Icons.radio_rounded
                                 : Icons.music_note_rounded,
                           ),
                         );
@@ -129,7 +144,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             Expanded(
               child: IndexedStack(
                 index: index,
-                children: [_localAudios, _podcast],
+                children: [_localAudios, _podcast, _stream],
               ),
             ),
             const CurrentMedia(),

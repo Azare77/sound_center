@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
@@ -13,6 +14,12 @@ import 'package:sound_center/features/podcast/presentation/pages/play_podcast.da
     as podcast_page;
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/current_podcast.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
+import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
+import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
+import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
+import 'package:sound_center/features/stream/presentation/pages/play_stream.dart'
+    as stream_page;
+import 'package:sound_center/features/stream/presentation/widgets/current_stream.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 
 class CurrentMedia extends StatefulWidget {
@@ -28,6 +35,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
   final LocalPlayerRepositoryImp _localPlayer = LocalPlayerRepositoryImp();
   final PodcastPlayerRepositoryImp _podcastPlayer =
       PodcastPlayerRepositoryImp();
+  final StreamPlayerRepositoryImp _streamPlayer = StreamPlayerRepositoryImp();
 
   Widget? _currentPlayer;
   Widget? _playerPage;
@@ -60,6 +68,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
       child: GestureDetector(
         onTap: () {
           if (_playerPage == null) return;
+
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
@@ -82,6 +91,9 @@ class _CurrentMediaState extends State<CurrentMedia> {
             BlocListener<PodcastBloc, PodcastState>(
               listener: (_, _) => _updatePlayer(),
             ),
+            BlocListener<StreamBloc, StreamState>(
+              listener: (_, _) => _updatePlayer(),
+            ),
             BlocListener<SettingBloc, SettingState>(
               listener: (_, _) => _updatePlayer(),
             ),
@@ -95,14 +107,23 @@ class _CurrentMediaState extends State<CurrentMedia> {
   Widget? _buildMediaPlayer() {
     final AudioEntity? audioEntity = _localPlayer.getCurrentAudio;
     final Episode? episode = _podcastPlayer.getCurrentEpisode;
+    final dynamic stream = _streamPlayer.getCurrentStream;
 
-    final Widget? playerContent = _selectPlayerContent(audioEntity, episode);
+    final Widget? playerContent = _selectPlayerContent(
+      audioEntity,
+      episode,
+      stream,
+    );
     if (playerContent == null) return null;
 
     return _buildPlayerContainer(playerContent);
   }
 
-  Widget? _selectPlayerContent(AudioEntity? audio, Episode? episode) {
+  Widget? _selectPlayerContent(
+    AudioEntity? audio,
+    Episode? episode,
+    dynamic stream,
+  ) {
     _playerPage = null;
     if (_localPlayer.hasSource() && audio != null) {
       _playerPage = audio_page.PlayAudio();
@@ -111,6 +132,20 @@ class _CurrentMediaState extends State<CurrentMedia> {
     if (_podcastPlayer.hasSource() && episode != null) {
       _playerPage = podcast_page.PlayPodcast();
       return CurrentPodcast(key: Key(episode.guid), episode: episode);
+    }
+    if (_streamPlayer.hasSource() && stream != null) {
+      final stream = _streamPlayer.getCurrentStream;
+      late String url;
+      late String title;
+      if (stream is AudioModel) {
+        url = stream.path;
+        title = stream.title;
+      } else if (stream is Source) {
+        url = stream.listenUrl;
+        title = stream.title ?? '';
+      }
+      _playerPage = stream_page.PlayStream();
+      return CurrentStream(key: Key("$url-$title"), streamEntity: stream);
     }
     return null;
   }

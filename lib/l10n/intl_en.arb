@@ -59,5 +59,6 @@
   "downloading": "Downloading",
   "downloadCompleted": "Download Completed",
   "downloadStopped": "Download Stopped",
-  "errorInDownload": "Error In Download"
+  "errorInDownload": "Error In Download",
+  "stream": "Stream"
 }

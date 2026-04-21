@@ -3,23 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
-import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/shared/Repository/player_repository.dart';
-import 'package:sound_center/shared/widgets/media_controller_button.dart';
+import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
+import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
-class PlayerNavigation extends StatefulWidget {
-  const PlayerNavigation({super.key});
+class StreamNavigation extends StatefulWidget {
+  const StreamNavigation({super.key});
 
   @override
-  State<PlayerNavigation> createState() => _PlayerNavigationState();
+  State<StreamNavigation> createState() => _StreamNavigationState();
 }
 
-class _PlayerNavigationState extends State<PlayerNavigation> {
-  final LocalPlayerRepositoryImp imp = LocalPlayerRepositoryImp();
+class _StreamNavigationState extends State<StreamNavigation> {
+  final StreamPlayerRepositoryImp imp = StreamPlayerRepositoryImp();
 
-  late final LocalBloc _localBloc;
+  late final StreamBloc _streamBloc;
 
   int total = 1;
   int pass = 0;
@@ -31,7 +29,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   @override
   void initState() {
     super.initState();
-    _localBloc = BlocProvider.of<LocalBloc>(context);
+    _streamBloc = BlocProvider.of<StreamBloc>(context);
     _setupStreams();
   }
 
@@ -101,49 +99,10 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            MediaControllerButton(
-              svg: imp.repeatMode == AudioRepeatMode.noRepeat
-                  ? "assets/icons/no-repeat.svg"
-                  : imp.repeatMode == AudioRepeatMode.repeatOne
-                  ? "assets/icons/repeat-one.svg"
-                  : "assets/icons/repeat-all.svg",
-              onPressed: () {
-                imp.changeRepeatState();
-                _updateUi();
-              },
-            ),
-
-            MediaControllerButton(
-              svg: 'assets/icons/previous.svg',
-              onPressed: () async {
-                _localBloc.add(PlayPreviousAudio());
-                await _refreshAfterTrackChange();
-              },
-            ),
-
             PlayPauseButton(
               isPlaying: imp.isPlaying(),
               onPressed: () async {
                 await imp.togglePlayState();
-                _updateUi();
-              },
-            ),
-
-            MediaControllerButton(
-              svg: 'assets/icons/next.svg',
-              onPressed: () async {
-                _localBloc.add(PlayNextAudio());
-                await _refreshAfterTrackChange();
-              },
-            ),
-
-            MediaControllerButton(
-              svg: 'assets/icons/shuffle.svg',
-              color: imp.isShuffle()
-                  ? Theme.of(context).sliderTheme.thumbColor
-                  : Theme.of(context).iconTheme.color!.withValues(alpha: 0.5),
-              onPressed: () {
-                imp.changeShuffleState();
                 _updateUi();
               },
             ),

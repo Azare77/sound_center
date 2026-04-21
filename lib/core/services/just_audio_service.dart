@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
-enum AudioSource { local, online }
+enum AudioSource { local, online, stream }
 
 class JustAudioService {
   static JustAudioService? _instance;
@@ -20,6 +20,7 @@ class JustAudioService {
   // Callbacks
   void Function()? _onComplete;
   void Function()? _onPodcastComplete;
+  void Function()? _onStreamComplete;
   void Function()? _onLoading;
   void Function()? _onReady;
 
@@ -73,8 +74,10 @@ class JustAudioService {
       if (state == ProcessingState.completed) {
         if (_source == AudioSource.local) {
           _onComplete?.call();
-        } else {
+        } else if (_source == AudioSource.online) {
           _onPodcastComplete?.call();
+        } else {
+          _onStreamComplete?.call();
         }
       } else if (state == ProcessingState.loading) {
         _onLoading?.call();
@@ -152,6 +155,10 @@ class JustAudioService {
 
   void setOnPodcastComplete(void Function()? onPodcastComplete) {
     _onPodcastComplete = onPodcastComplete;
+  }
+
+  void setOnStreamComplete(void Function()? onStreamComplete) {
+    _onStreamComplete = onStreamComplete;
   }
 
   void setOnLoading(void Function()? onLoading) {

@@ -66,7 +66,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   List<int> get shuffleList => _shuffle;
   int index = 0;
   int shuffleIndex = 0;
-  RepeatMode repeatMode = RepeatMode.repeatAll;
+  AudioRepeatMode repeatMode = AudioRepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
   final _positionController = StreamController<int>.broadcast();
   final _durationController = StreamController<int>.broadcast();
@@ -123,14 +123,14 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> changeRepeatState() async {
     switch (repeatMode) {
-      case RepeatMode.noRepeat:
-        repeatMode = RepeatMode.repeatAll;
+      case AudioRepeatMode.noRepeat:
+        repeatMode = AudioRepeatMode.repeatAll;
         break;
-      case RepeatMode.repeatAll:
-        repeatMode = RepeatMode.repeatOne;
+      case AudioRepeatMode.repeatAll:
+        repeatMode = AudioRepeatMode.repeatOne;
         break;
-      case RepeatMode.repeatOne:
-        repeatMode = RepeatMode.noRepeat;
+      case AudioRepeatMode.repeatOne:
+        repeatMode = AudioRepeatMode.noRepeat;
         break;
     }
     await PlayerStateStorage.saveRepeatMode(repeatMode);
@@ -261,14 +261,14 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   int _getIndex(bool forward, {bool force = false}) {
     bool isShuffle = shuffleMode == ShuffleMode.shuffle;
-    if (repeatMode == RepeatMode.repeatOne && !force) {
+    if (repeatMode == AudioRepeatMode.repeatOne && !force) {
       if (isShuffle) {
         return _shuffle[shuffleIndex];
       } else {
         return index;
       }
     }
-    if (forward && !force && repeatMode == RepeatMode.noRepeat) {
+    if (forward && !force && repeatMode == AudioRepeatMode.noRepeat) {
       if (isShuffle && shuffleIndex + 1 == _shuffle.length) {
         return -1;
       } else if (index + 1 == audios.length) {

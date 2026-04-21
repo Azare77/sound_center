@@ -18,6 +18,7 @@ import 'package:sound_center/database/shared_preferences/shared_preferences.dart
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
+import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/toast_message.dart';
@@ -123,6 +124,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => LocalBloc()),
         BlocProvider(create: (_) => PodcastBloc()),
         BlocProvider(create: (_) => SettingBloc()),
+        BlocProvider(create: (_) => StreamBloc()),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (BuildContext context, state) {

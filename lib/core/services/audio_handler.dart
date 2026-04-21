@@ -10,11 +10,13 @@ import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
+import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 
 class JustAudioNotificationHandler extends BaseAudioHandler
     with QueueHandler, SeekHandler {
   final AudioPlayer _player = service.JustAudioService().getPlayer();
   final LocalPlayerRepositoryImp _localPlayer = LocalPlayerRepositoryImp();
+  final StreamPlayerRepositoryImp _streamPlayer = StreamPlayerRepositoryImp();
   final PodcastPlayerRepositoryImp _podcastPlayer =
       PodcastPlayerRepositoryImp();
   service.AudioSource? _source;
@@ -49,6 +51,10 @@ class JustAudioNotificationHandler extends BaseAudioHandler
           ),
         ];
         compactIndices = const [0, 2, 4];
+      }
+      if (_source == service.AudioSource.stream) {
+        controls = [_player.playing ? MediaControl.pause : MediaControl.play];
+        compactIndices = const [0];
       }
 
       playbackState.add(
@@ -93,6 +99,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _localPlayer.togglePlayState();
     } else if (_source == service.AudioSource.online) {
       _podcastPlayer.togglePlayState();
+    } else if (_source == service.AudioSource.stream) {
+      _streamPlayer.togglePlayState();
     }
   }
 
@@ -102,6 +110,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _localPlayer.togglePlayState();
     } else if (_source == service.AudioSource.online) {
       _podcastPlayer.togglePlayState();
+    } else if (_source == service.AudioSource.stream) {
+      _streamPlayer.togglePlayState();
     }
   }
 
@@ -121,6 +131,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _localPlayer.seek(position);
     } else if (_source == service.AudioSource.online) {
       _podcastPlayer.seek(position);
+    } else if (_source == service.AudioSource.stream) {
+      _streamPlayer.seek(position);
     }
   }
 
@@ -183,6 +195,26 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       duration: Duration(milliseconds: episode.duration?.inMilliseconds ?? 0),
     );
     _source = service.AudioSource.online;
+    mediaItem.add(item);
+  }
+
+  void setMediaItemFromStream({
+    required String url,
+    required String title,
+    String? artist,
+    Duration? duration,
+    Uint8List? cover,
+    Uri? cached,
+  }) async {
+    final Uri? artUri = await saveCoverToFile(cover, "cover_$title");
+    MediaItem item = MediaItem(
+      id: url,
+      title: title,
+      artist: artist,
+      artUri: artUri,
+      duration: duration,
+    );
+    _source = service.AudioSource.stream;
     mediaItem.add(item);
   }
 

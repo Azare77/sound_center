@@ -1,4 +1,4 @@
-enum RepeatMode { repeatAll, repeatOne, noRepeat }
+enum AudioRepeatMode { repeatAll, repeatOne, noRepeat }
 
 enum ShuffleMode { shuffle, noShuffle }
 

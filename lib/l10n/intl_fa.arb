@@ -59,5 +59,6 @@
   "downloading": "در حال دانلود",
   "downloadCompleted": "دانلود کامل شد",
   "downloadStopped": "دانلود متوقف شد",
-  "errorInDownload": "خطا در دانلود"
+  "errorInDownload": "خطا در دانلود",
+  "stream": "استریم"
 }

@@ -15,11 +15,11 @@ class PlayerStateStorage {
     );
   }
 
-  static RepeatMode getRepeatMode() {
+  static AudioRepeatMode getRepeatMode() {
     final String? repeatMode = Storage.instance.prefs.getString('repeat');
-    return RepeatMode.values.firstWhere(
+    return AudioRepeatMode.values.firstWhere(
       (e) => e.name == repeatMode,
-      orElse: () => RepeatMode.repeatAll,
+      orElse: () => AudioRepeatMode.repeatAll,
     );
   }
 
@@ -64,7 +64,7 @@ class PlayerStateStorage {
     await Storage.instance.prefs.setString("shuffle", mode.name);
   }
 
-  static Future<void> saveRepeatMode(RepeatMode mode) async {
+  static Future<void> saveRepeatMode(AudioRepeatMode mode) async {
     await Storage.instance.prefs.setString("repeat", mode.name);
   }
 

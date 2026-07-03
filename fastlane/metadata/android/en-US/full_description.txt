@@ -1,0 +1,19 @@
+<p>Sound Center is your ultimate open-source audio companion, designed to merge local playback with modern streaming features. Whether you are managing your personal offline library or tuning into your favorite shows, Sound Center handles it all simultaneously with a seamless, intuitive interface.</p>
+
+<p><b>Current Features:</b></p>
+<ul>
+  <li><b>Local Music Player:</b> High-quality playback for all your offline audio tracks.</li>
+  <li><b>Podcast Player:</b> Seamlessly stream and manage your favorite podcasts alongside your local music.</li>
+  <li><b>100% FOSS:</b> Completely free and open-source with absolute privacy—no proprietary trackers or analytics.</li>
+</ul>
+
+<p><b>Roadmap &amp; Upcoming Features:</b></p>
+
+<p>We are actively developing Sound Center to become an all-in-one audio hub. Future releases will include:</p>
+
+<ul>
+  <li><b>Direct Live Streaming:</b> Tune into live audio streams and internet radio stations directly.</li>
+  <li><b>Online Music Integration:</b> Stream your favorite playlists straight from popular online platforms like YouTube Music and SoundCloud.</li>
+</ul>
+
+<p>Join us on GitHub to contribute, report issues, or follow our development journey!</p>

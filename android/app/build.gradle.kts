@@ -43,6 +43,11 @@ android {
         versionName = flutter.versionName
     }
 
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")

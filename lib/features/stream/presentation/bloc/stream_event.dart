@@ -2,6 +2,26 @@ part of 'stream_bloc.dart';
 
 sealed class StreamEvent {}
 
+class GetSubscribedStreams extends StreamEvent {}
+
+class CheckStreamsStatus extends StreamEvent {
+  final Completer<void>? refreshCompleter;
+
+  CheckStreamsStatus(this.refreshCompleter);
+}
+
+class SubscribeToStream extends StreamEvent {
+  final StreamSubEntity stream;
+
+  SubscribeToStream(this.stream);
+}
+
+class UnSubscribeFromStream extends StreamEvent {
+  final StreamSubEntity stream;
+
+  UnSubscribeFromStream(this.stream);
+}
+
 class LoadStream extends StreamEvent {
   final String streamUrl;
 

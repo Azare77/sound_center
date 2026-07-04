@@ -3,8 +3,8 @@ class IcecastStream {
 
   IcecastStream({required this.icestats});
 
-  factory IcecastStream.fromJson(Map<String, dynamic> json) {
-    return IcecastStream(icestats: IceStats.fromJson(json['icestats']));
+  factory IcecastStream.fromJson(Map<String, dynamic> json, String server) {
+    return IcecastStream(icestats: IceStats.fromJson(json['icestats'], server));
   }
 
   Map<String, dynamic> toJson() {
@@ -13,15 +13,19 @@ class IcecastStream {
 }
 
 class IceStats {
+  String? title;
+  final String? url;
   final String? admin;
   final String? host;
   final String? location;
   final String? serverId;
   final String? serverStart;
   final DateTime? serverStartIso8601;
-  final List<Source> source;
+  List<Source> source;
 
   IceStats({
+    this.title,
+    this.url,
     this.admin,
     this.host,
     this.location,
@@ -31,7 +35,7 @@ class IceStats {
     required this.source,
   });
 
-  factory IceStats.fromJson(Map<String, dynamic> json) {
+  factory IceStats.fromJson(Map<String, dynamic> json, String server) {
     final rawSource = json['source'];
     late final DateTime? serverStartIso8601;
     try {
@@ -51,6 +55,8 @@ class IceStats {
     }
 
     return IceStats(
+      title: json['title'],
+      url: server,
       admin: json['admin'],
       host: json['host'],
       location: json['location'],
@@ -63,6 +69,7 @@ class IceStats {
 
   Map<String, dynamic> toJson() {
     return {
+      'title': title,
       'admin': admin,
       'host': host,
       'location': location,

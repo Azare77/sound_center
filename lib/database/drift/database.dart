@@ -10,11 +10,19 @@ import 'package:sound_center/core/constants/constants.dart';
 import 'local/playlist.dart';
 import 'podcast/download.dart';
 import 'podcast/subscription.dart';
+import 'stream/stream_subscription.dart';
 
 part 'database.g.dart';
 
 // @DriftDatabase(tables: [LocalAudiosTable, PlaylistTable])
-@DriftDatabase(tables: [PlaylistTable, SubscriptionTable, DownloadTable])
+@DriftDatabase(
+  tables: [
+    PlaylistTable,
+    SubscriptionTable,
+    DownloadTable,
+    StreamSubscriptionTable,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase _instance = AppDatabase._internal();
 
@@ -23,7 +31,19 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnectionSync());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from < 2) {
+        await m.createTable(streamSubscriptionTable);
+      }
+    },
+  );
 
   static QueryExecutor _openConnectionSync() {
     // Call the synchronous method to get the database path

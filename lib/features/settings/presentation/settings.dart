@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
+import 'package:sound_center/features/settings/presentation/pages/notification_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/theme_settings.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -44,6 +45,15 @@ class Settings extends StatelessWidget {
                   showDialog(context: context, builder: (_) => ThemeSettings());
                 },
                 child: Text(S.of(context).theme),
+              ),
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => NotificationSettings(),
+                  );
+                },
+                child: Text(S.of(context).notification),
               ),
               TextButton(
                 onPressed: () {

@@ -8,6 +8,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/player/header_image.dart';
+import 'package:sound_center/features/podcast/presentation/widgets/player/speed_dialog.dart';
 import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
@@ -72,11 +73,17 @@ class _PlayerHeaderState extends State<PlayerHeader> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                MediaControllerButton(
-                  width: 50,
-                  height: 50,
-                  onPressed: () => _delete(),
-                  svg: "assets/icons/trash-can.svg",
+                //TODO remove GestureDetector
+                GestureDetector(
+                  onDoubleTap: () {
+                    showDialog(context: context, builder: (_) => SpeedDialog());
+                  },
+                  child: MediaControllerButton(
+                    width: 50,
+                    height: 50,
+                    onPressed: () => _delete(),
+                    svg: "assets/icons/trash-can.svg",
+                  ),
                 ),
                 SizedBox(
                   width: 40,

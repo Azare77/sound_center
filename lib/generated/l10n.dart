@@ -1,7 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -295,11 +294,6 @@ class S {
     return Intl.message('Podcast', name: 'podcast', desc: '', args: []);
   }
 
-  /// `Stream`
-  String get stream {
-    return Intl.message('Podcast', name: 'podcast', desc: '', args: []);
-  }
-
   /// `----------------- THEM NAMES ----------------`
   String get THEME_NAMES {
     return Intl.message(
@@ -459,6 +453,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Stream`
+  String get stream {
+    return Intl.message('Stream', name: 'stream', desc: '', args: []);
+  }
+
+  /// `Url Link`
+  String get urlLink {
+    return Intl.message('Url Link', name: 'urlLink', desc: '', args: []);
+  }
+
+  /// `Load Stream`
+  String get loadStream {
+    return Intl.message('Load Stream', name: 'loadStream', desc: '', args: []);
+  }
+
+  /// `Link is wrong or server is stopped`
+  String get linkIsWrongOrServerIsStopped {
+    return Intl.message(
+      'Link is wrong or server is stopped',
+      name: 'linkIsWrongOrServerIsStopped',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play`
+  String get play {
+    return Intl.message('Play', name: 'play', desc: '', args: []);
+  }
+
+  /// `No Stream`
+  String get noStream {
+    return Intl.message('No Stream', name: 'noStream', desc: '', args: []);
+  }
+
+  /// `Host`
+  String get host {
+    return Intl.message('Host', name: 'host', desc: '', args: []);
+  }
+
+  /// `server ID`
+  String get serverId {
+    return Intl.message('server ID', name: 'serverId', desc: '', args: []);
+  }
+
+  /// `Location`
+  String get location {
+    return Intl.message('Location', name: 'location', desc: '', args: []);
+  }
+
+  /// `Admin Info`
+  String get adminInfo {
+    return Intl.message('Admin Info', name: 'adminInfo', desc: '', args: []);
+  }
+
+  /// `Started At`
+  String get startedAt {
+    return Intl.message('Started At', name: 'startedAt', desc: '', args: []);
+  }
+
+  /// `Notification`
+  String get notification {
+    return Intl.message(
+      'Notification',
+      name: 'notification',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -473,10 +537,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   @override
   bool isSupported(Locale locale) => _isSupported(locale);
-
   @override
   Future<S> load(Locale locale) => S.load(locale);
-
   @override
   bool shouldReload(AppLocalizationDelegate old) => false;
 

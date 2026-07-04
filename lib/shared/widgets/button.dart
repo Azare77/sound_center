@@ -10,6 +10,7 @@ class Button extends StatefulWidget {
     required this.onPressed,
     this.backgroundColor,
     this.textColor = Colors.white,
+    this.showLoading = true,
     this.width,
     this.style,
   });
@@ -18,6 +19,7 @@ class Button extends StatefulWidget {
   final Color? backgroundColor;
   final Color? textColor;
   final double? width;
+  final bool showLoading;
   final Function() onPressed;
   final ButtonStyle? style;
 
@@ -52,7 +54,7 @@ class _ButtonState extends State<Button> {
           style: correctStyle,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 7),
-            child: sending
+            child: sending && widget.showLoading
                 ? const Loading()
                 : TextView(
                     widget.buttonText,

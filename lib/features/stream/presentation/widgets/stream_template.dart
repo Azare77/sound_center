@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+import 'package:sound_center/core/constants/constants.dart';
+import 'package:sound_center/core/util/date_util.dart';
+import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
+
+class StreamTemplate extends StatelessWidget {
+  const StreamTemplate({super.key, required this.stats});
+
+  final StreamSubEntity stats;
+  final double size = 50;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle infoTextStyle = TextStyle(
+      color: Theme.of(
+        context,
+      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+      fontSize: 13,
+    );
+    return Container(
+      height: LIST_ITEM_HEIGHT,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        spacing: 10,
+        children: [
+          // --- متن‌ها ---
+          Expanded(
+            child: Column(
+              spacing: 2,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  stats.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  stats.isOnline ? "Live 🔴" : '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: infoTextStyle,
+                ),
+              ],
+            ),
+          ),
+          if (!stats.startAt.isAtSameMomentAs(DateTime(1970)))
+            Text(toJalaliDateTime(stats.startAt), style: infoTextStyle),
+        ],
+      ),
+    );
+  }
+}

@@ -68,7 +68,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
           );
           _init(retry: false);
         } else {
-          Navigator.pop(context);
+          if (mounted) Navigator.pop(context);
         }
       }
     }

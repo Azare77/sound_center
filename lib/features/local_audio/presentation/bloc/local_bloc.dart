@@ -65,7 +65,7 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     });
 
     on<AutoPlayNext>((event, emit) async {
-      LocalAudioStatus status = state.status as LocalAudioStatus;
+      LocalStatus status = state.status;
       emit(state.copyWith(status));
     });
 

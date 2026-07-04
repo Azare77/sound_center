@@ -28,6 +28,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   final JustAudioService _playerService = JustAudioService();
 
+  // final MpvService _playerService = MpvService();
   dynamic _currentStream;
 
   dynamic get getCurrentStream => _currentStream;
@@ -42,6 +43,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   Stream<bool> get loadingStream => _loadingController.stream;
 
+  Timer? _updateTimer;
   late final StreamBloc bloc;
 
   void _initialPlayerState() {
@@ -59,7 +61,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   }
 
   bool isPlaying() {
-    return _playerService.getPlayer().playing;
+    return _playerService.isPlaying();
   }
 
   bool hasSource() {
@@ -191,10 +193,23 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> stop() async {
     await _playerService.release();
+    await Future.delayed(Duration(milliseconds: 100));
     bloc.add(TogglePlay());
   }
 
-  int getIndex(bool forward) {
-    return 0;
+  Future<void> addMetadataListener(Function onMetadata) async {
+    if (_updateTimer != null) {
+      _updateTimer?.cancel();
+      _updateTimer = null;
+    }
+    if (hasSource() && (_currentStream is Source)) onMetadata.call();
+    _updateTimer = Timer.periodic(Duration(seconds: 10), (_) {
+      if (hasSource() && (_currentStream is Source)) {
+        onMetadata.call();
+      } else {
+        _updateTimer?.cancel();
+        _updateTimer = null;
+      }
+    });
   }
 }

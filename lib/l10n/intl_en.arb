@@ -60,5 +60,16 @@
   "downloadCompleted": "Download Completed",
   "downloadStopped": "Download Stopped",
   "errorInDownload": "Error In Download",
-  "stream": "Stream"
+  "stream": "Stream",
+  "urlLink": "Url Link",
+  "loadStream": "Load Stream",
+  "linkIsWrongOrServerIsStopped": "Link is wrong or server is stopped",
+  "play": "Play",
+  "noStream": "No Stream",
+  "host": "Host",
+  "serverId": "server ID",
+  "location": "Location",
+  "adminInfo": "Admin Info",
+  "startedAt": "Started At",
+  "notification": "Notification"
 }

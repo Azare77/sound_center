@@ -10,6 +10,12 @@ class ChangeLocale extends SettingEvent {
   ChangeLocale(this.locale);
 }
 
+class ChangeNotificationState extends SettingEvent {
+  bool notificationState;
+
+  ChangeNotificationState(this.notificationState);
+}
+
 class ChangeTheme extends SettingEvent {
   final String themeId; // مثلاً "green" یا "custom:1735689123456"
 

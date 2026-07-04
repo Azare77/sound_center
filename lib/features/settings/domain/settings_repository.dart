@@ -24,4 +24,8 @@ abstract class SettingRepository {
   Future<void> saveCustomThemes(List<AppThemeData> themes);
 
   List<AppThemeData> getCustomThemes();
+
+  bool getNotificationState();
+
+  Future<void> setNotificationState(bool persist);
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:flutter/cupertino.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 class MetadataExtractor {

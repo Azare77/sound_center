@@ -62,4 +62,14 @@ class SettingsRepositoryImp implements SettingRepository {
   Future<void> saveCustomThemes(List<AppThemeData> themes) async {
     AppSettingStorage.saveCustomThemes(themes);
   }
+
+  @override
+  bool getNotificationState() {
+    return AppSettingStorage.getNotificationState();
+  }
+
+  @override
+  Future<void> setNotificationState(bool persist) {
+    return AppSettingStorage.setNotificationState(persist);
+  }
 }

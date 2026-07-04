@@ -22,6 +22,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
       emit(state.setTheme(event.themeId));
     });
+    on<ChangeNotificationState>((event, emit) async {
+      await settingsRepository.setNotificationState(event.notificationState);
+    });
     on<LoadSetting>((event, emit) {
       Locale savedLocale = settingsRepository.getLocale();
       String savedTheme = settingsRepository.getTheme();

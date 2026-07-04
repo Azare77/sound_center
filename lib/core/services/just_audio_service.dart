@@ -102,18 +102,31 @@ class JustAudioService {
       if (_loadingSource) return false;
       _loadingSource = true;
       onSourceSet?.call();
-      if (source == AudioSource.local) {
-        await _player.setFilePath(path);
-      } else {
-        if (cachedFilePath != null) {
-          await _player.setFilePath(cachedFilePath);
-        } else {
-          await _player.setUrl(path).timeout(const Duration(seconds: 30));
-        }
+      switch (source) {
+        case AudioSource.local:
+          await _player.setFilePath(path);
+          break;
+        case AudioSource.online:
+          if (cachedFilePath != null) {
+            await _player.setFilePath(cachedFilePath);
+          } else {
+            await _player.setUrl(path).timeout(const Duration(seconds: 30));
+          }
+          break;
+        case AudioSource.stream:
+          final address = ProgressiveAudioSource(
+            Uri.parse(path),
+            headers: {'Icy-MetaData': '1'},
+          );
+          await _player
+              .setAudioSource(address)
+              .timeout(const Duration(seconds: 30));
+          break;
       }
       await _player.setSpeed(1.0);
       _loadingSource = false;
       _loadingController.add(isLoading());
+      onSourceSet?.call();
       return true;
     } catch (e) {
       debugPrint('خطا در setSource: $e');
@@ -140,7 +153,11 @@ class JustAudioService {
   }
 
   Future<void> release() async {
-    await _player.stop();
+    try {
+      await _player.stop();
+    } catch (e) {
+      return;
+    }
   }
 
   Future<void> seek(Duration position) async => await _player.seek(position);
@@ -207,8 +224,10 @@ class JustAudioService {
     _handlingError = true;
     if (_source == AudioSource.local) {
       _onComplete?.call();
-    } else {
+    } else if (_source == AudioSource.online) {
       _onPodcastComplete?.call();
+    } else if (_source == AudioSource.stream) {
+      play().onError((e, s) => _onStreamComplete?.call());
     }
     await Future.delayed(const Duration(milliseconds: 200));
     _handlingError = false;

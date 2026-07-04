@@ -1,97 +1,99 @@
-import 'dart:developer';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sound_center/features/stream/domain/repository/stream_repository.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
+import 'package:sound_center/features/stream/presentation/bloc/stream_status.dart';
 import 'package:sound_center/features/stream/presentation/pages/stream_detail.dart';
-import 'package:sound_center/shared/widgets/button.dart';
-import 'package:sound_center/shared/widgets/text_field_box.dart';
+import 'package:sound_center/features/stream/presentation/widgets/radio/stream_action_menu.dart';
+import 'package:sound_center/features/stream/presentation/widgets/stream_template.dart';
+import 'package:sound_center/features/stream/presentation/widgets/stream_tool_bar.dart';
+import 'package:sound_center/generated/l10n.dart';
+
+class StreamSearchController {
+  static final ValueNotifier<bool> showSearchField = ValueNotifier(true);
+}
 
 class StreamPage extends StatefulWidget {
   const StreamPage({super.key});
 
   @override
   State<StreamPage> createState() => _StreamPageState();
+
+  bool resetStreamPage(BuildContext context) {
+    // final bloc = BlocProvider.of<StreamBloc>(context);
+    // final status = bloc.state.status;
+    StreamSearchController.showSearchField.value = false;
+    // if (status is! SubscribedPodcasts) {
+    //   bloc.add(GetSubscribedPodcasts());
+    //   return false;
+    // }
+    return true;
+  }
 }
 
 class _StreamPageState extends State<StreamPage> {
-  final TextEditingController _controller = TextEditingController();
+  Completer<void>? refreshCompleter;
 
   @override
   void initState() {
-    _controller.text = "http://192.168.1.2:8000/live";
     super.initState();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
-  }
-
-  StreamType detectStreamType(String url) {
-    final lower = url.toLowerCase();
-    if (lower.contains('icecast') ||
-        lower.contains('shoutcast') ||
-        lower.endsWith('/stream') ||
-        lower.endsWith('/;') ||
-        lower.contains('/live') ||
-        lower.contains('/radio')) {
-      return StreamType.iceCast;
-    } else {
-      return StreamType.staticFile;
-    }
-  }
-
-  void onSubmit(String url) {
-    debugPrint("my log");
-    log('ICY metadata received: $url', name: 'ICY_STREAM', level: 1000);
-    url = url.trim();
-    switch (detectStreamType(url)) {
-      case StreamType.staticFile:
-        BlocProvider.of<StreamBloc>(context).add(LoadStream(url));
-        break;
-      case StreamType.iceCast:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => StreamDetail(streamUrl: url)),
-        );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: TextFieldBox(
-            controller: _controller,
-            labelText: "URL",
-            textDirection: TextDirection.ltr,
-            textInputAction: TextInputAction.go,
-            autofocus: false,
-            hintText: "https://your-stream-url.com/live",
-            onSubmitted: onSubmit,
-          ),
-        ),
-        Row(
-          mainAxisAlignment: .spaceEvenly,
-          children: [
-            Button(buttonText: "Download", onPressed: () {}),
-            Button(
-              buttonText: "Play",
-              onPressed: () {
-                onSubmit(_controller.text);
-              },
-            ),
-          ],
-        ),
+        StreamToolBar(),
         Expanded(
           child: BlocBuilder<StreamBloc, StreamState>(
+            buildWhen: (previous, current) {
+              bool notStream = current.status is SubscribedStreams;
+              return notStream;
+            },
             builder: (BuildContext context, StreamState state) {
-              return Center(child: Text("No Stream"));
+              if (state.status is SubscribedStreams) {
+                SubscribedStreams status = state.status as SubscribedStreams;
+                return RefreshIndicator(
+                  onRefresh: () {
+                    refreshCompleter = Completer<void>();
+                    BlocProvider.of<StreamBloc>(
+                      context,
+                    ).add(CheckStreamsStatus(refreshCompleter));
+                    return refreshCompleter!.future;
+                  },
+                  child: ListView.builder(
+                    itemCount: status.streams.length,
+                    itemBuilder: (context, index) {
+                      final stream = status.streams[index];
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  StreamDetail(streamUrl: stream.url),
+                            ),
+                          );
+                        },
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => StreamActionMenu(stream: stream),
+                          );
+                        },
+                        child: StreamTemplate(stats: stream),
+                      );
+                    },
+                  ),
+                );
+              }
+              return Center(child: Text(S.of(context).noStream));
             },
           ),
         ),

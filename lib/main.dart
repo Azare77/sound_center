@@ -14,6 +14,7 @@ import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/download_manager.dart';
 import 'package:sound_center/core_view/home.dart';
+import 'package:sound_center/database/shared_preferences/app_setting_storage.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
@@ -38,6 +39,7 @@ void main() async {
 Future<void> _init() async {
   try {
     if (!(kIsWeb || Platform.isWindows)) {
+      bool isNotificationPersist = AppSettingStorage.getNotificationState();
       audioHandler = await AudioService.init(
         builder: () => JustAudioNotificationHandler(),
         config: AudioServiceConfig(
@@ -45,8 +47,8 @@ Future<void> _init() async {
           androidNotificationChannelId: 'app.soundcenter.player.channel.audio',
           androidNotificationChannelName: 'Playback',
           androidNotificationChannelDescription: "Show Current player status",
-          androidNotificationOngoing: false,
-          androidStopForegroundOnPause: false,
+          androidNotificationOngoing: !isNotificationPersist,
+          androidStopForegroundOnPause: !isNotificationPersist,
           fastForwardInterval: Duration(seconds: 30),
           rewindInterval: Duration(seconds: 10),
         ),

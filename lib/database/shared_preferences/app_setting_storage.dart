@@ -67,4 +67,15 @@ class AppSettingStorage {
     String jsonString = jsonEncode(podcastIndexInfo);
     await Storage.instance.prefs.setString('podcastIndexInfo', jsonString);
   }
+
+  static bool getNotificationState() {
+    final bool? persist = Storage.instance.prefs.getBool(
+      'notification_persist',
+    );
+    return persist ?? false;
+  }
+
+  static Future<void> setNotificationState(bool persist) async {
+    await Storage.instance.prefs.setBool('notification_persist', persist);
+  }
 }

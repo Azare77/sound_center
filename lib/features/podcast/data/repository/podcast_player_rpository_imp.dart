@@ -104,7 +104,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   bool isPlaying() {
-    return _playerService.getPlayer().playing;
+    return _playerService.isPlaying();
   }
 
   bool hasSource() {

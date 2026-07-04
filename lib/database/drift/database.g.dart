@@ -1651,6 +1651,405 @@ class DownloadTableCompanion extends UpdateCompanion<DownloadTableData> {
   }
 }
 
+class $StreamSubscriptionTableTable extends StreamSubscriptionTable
+    with TableInfo<$StreamSubscriptionTableTable, StreamSubscriptionTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $StreamSubscriptionTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+    'url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startAtMeta = const VerificationMeta(
+    'startAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startAt = GeneratedColumn<DateTime>(
+    'start_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _isOnlineMeta = const VerificationMeta(
+    'isOnline',
+  );
+  @override
+  late final GeneratedColumn<bool> isOnline = GeneratedColumn<bool>(
+    'is_online',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_online" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    title,
+    url,
+    startAt,
+    isOnline,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'stream_subscription_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<StreamSubscriptionTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+        _urlMeta,
+        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_urlMeta);
+    }
+    if (data.containsKey('start_at')) {
+      context.handle(
+        _startAtMeta,
+        startAt.isAcceptableOrUnknown(data['start_at']!, _startAtMeta),
+      );
+    }
+    if (data.containsKey('is_online')) {
+      context.handle(
+        _isOnlineMeta,
+        isOnline.isAcceptableOrUnknown(data['is_online']!, _isOnlineMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  StreamSubscriptionTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return StreamSubscriptionTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      url: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}url'],
+      )!,
+      startAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}start_at'],
+      )!,
+      isOnline: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_online'],
+      )!,
+    );
+  }
+
+  @override
+  $StreamSubscriptionTableTable createAlias(String alias) {
+    return $StreamSubscriptionTableTable(attachedDatabase, alias);
+  }
+}
+
+class StreamSubscriptionTableData extends DataClass
+    implements Insertable<StreamSubscriptionTableData> {
+  final int id;
+  final DateTime createdAt;
+  final String title;
+  final String url;
+  final DateTime startAt;
+  final bool isOnline;
+  const StreamSubscriptionTableData({
+    required this.id,
+    required this.createdAt,
+    required this.title,
+    required this.url,
+    required this.startAt,
+    required this.isOnline,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['title'] = Variable<String>(title);
+    map['url'] = Variable<String>(url);
+    map['start_at'] = Variable<DateTime>(startAt);
+    map['is_online'] = Variable<bool>(isOnline);
+    return map;
+  }
+
+  StreamSubscriptionTableCompanion toCompanion(bool nullToAbsent) {
+    return StreamSubscriptionTableCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      title: Value(title),
+      url: Value(url),
+      startAt: Value(startAt),
+      isOnline: Value(isOnline),
+    );
+  }
+
+  factory StreamSubscriptionTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return StreamSubscriptionTableData(
+      id: serializer.fromJson<int>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      title: serializer.fromJson<String>(json['title']),
+      url: serializer.fromJson<String>(json['url']),
+      startAt: serializer.fromJson<DateTime>(json['startAt']),
+      isOnline: serializer.fromJson<bool>(json['isOnline']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'title': serializer.toJson<String>(title),
+      'url': serializer.toJson<String>(url),
+      'startAt': serializer.toJson<DateTime>(startAt),
+      'isOnline': serializer.toJson<bool>(isOnline),
+    };
+  }
+
+  StreamSubscriptionTableData copyWith({
+    int? id,
+    DateTime? createdAt,
+    String? title,
+    String? url,
+    DateTime? startAt,
+    bool? isOnline,
+  }) => StreamSubscriptionTableData(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    title: title ?? this.title,
+    url: url ?? this.url,
+    startAt: startAt ?? this.startAt,
+    isOnline: isOnline ?? this.isOnline,
+  );
+  StreamSubscriptionTableData copyWithCompanion(
+    StreamSubscriptionTableCompanion data,
+  ) {
+    return StreamSubscriptionTableData(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      title: data.title.present ? data.title.value : this.title,
+      url: data.url.present ? data.url.value : this.url,
+      startAt: data.startAt.present ? data.startAt.value : this.startAt,
+      isOnline: data.isOnline.present ? data.isOnline.value : this.isOnline,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StreamSubscriptionTableData(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('title: $title, ')
+          ..write('url: $url, ')
+          ..write('startAt: $startAt, ')
+          ..write('isOnline: $isOnline')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, createdAt, title, url, startAt, isOnline);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StreamSubscriptionTableData &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.title == this.title &&
+          other.url == this.url &&
+          other.startAt == this.startAt &&
+          other.isOnline == this.isOnline);
+}
+
+class StreamSubscriptionTableCompanion
+    extends UpdateCompanion<StreamSubscriptionTableData> {
+  final Value<int> id;
+  final Value<DateTime> createdAt;
+  final Value<String> title;
+  final Value<String> url;
+  final Value<DateTime> startAt;
+  final Value<bool> isOnline;
+  const StreamSubscriptionTableCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.title = const Value.absent(),
+    this.url = const Value.absent(),
+    this.startAt = const Value.absent(),
+    this.isOnline = const Value.absent(),
+  });
+  StreamSubscriptionTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    required String title,
+    required String url,
+    this.startAt = const Value.absent(),
+    this.isOnline = const Value.absent(),
+  }) : title = Value(title),
+       url = Value(url);
+  static Insertable<StreamSubscriptionTableData> custom({
+    Expression<int>? id,
+    Expression<DateTime>? createdAt,
+    Expression<String>? title,
+    Expression<String>? url,
+    Expression<DateTime>? startAt,
+    Expression<bool>? isOnline,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (title != null) 'title': title,
+      if (url != null) 'url': url,
+      if (startAt != null) 'start_at': startAt,
+      if (isOnline != null) 'is_online': isOnline,
+    });
+  }
+
+  StreamSubscriptionTableCompanion copyWith({
+    Value<int>? id,
+    Value<DateTime>? createdAt,
+    Value<String>? title,
+    Value<String>? url,
+    Value<DateTime>? startAt,
+    Value<bool>? isOnline,
+  }) {
+    return StreamSubscriptionTableCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      title: title ?? this.title,
+      url: url ?? this.url,
+      startAt: startAt ?? this.startAt,
+      isOnline: isOnline ?? this.isOnline,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (startAt.present) {
+      map['start_at'] = Variable<DateTime>(startAt.value);
+    }
+    if (isOnline.present) {
+      map['is_online'] = Variable<bool>(isOnline.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StreamSubscriptionTableCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('title: $title, ')
+          ..write('url: $url, ')
+          ..write('startAt: $startAt, ')
+          ..write('isOnline: $isOnline')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1658,6 +2057,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SubscriptionTableTable subscriptionTable =
       $SubscriptionTableTable(this);
   late final $DownloadTableTable downloadTable = $DownloadTableTable(this);
+  late final $StreamSubscriptionTableTable streamSubscriptionTable =
+      $StreamSubscriptionTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1666,6 +2067,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     playlistTable,
     subscriptionTable,
     downloadTable,
+    streamSubscriptionTable,
   ];
 }
 
@@ -2516,6 +2918,238 @@ typedef $$DownloadTableTableProcessedTableManager =
       DownloadTableData,
       PrefetchHooks Function()
     >;
+typedef $$StreamSubscriptionTableTableCreateCompanionBuilder =
+    StreamSubscriptionTableCompanion Function({
+      Value<int> id,
+      Value<DateTime> createdAt,
+      required String title,
+      required String url,
+      Value<DateTime> startAt,
+      Value<bool> isOnline,
+    });
+typedef $$StreamSubscriptionTableTableUpdateCompanionBuilder =
+    StreamSubscriptionTableCompanion Function({
+      Value<int> id,
+      Value<DateTime> createdAt,
+      Value<String> title,
+      Value<String> url,
+      Value<DateTime> startAt,
+      Value<bool> isOnline,
+    });
+
+class $$StreamSubscriptionTableTableFilterComposer
+    extends Composer<_$AppDatabase, $StreamSubscriptionTableTable> {
+  $$StreamSubscriptionTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startAt => $composableBuilder(
+    column: $table.startAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isOnline => $composableBuilder(
+    column: $table.isOnline,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$StreamSubscriptionTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $StreamSubscriptionTableTable> {
+  $$StreamSubscriptionTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startAt => $composableBuilder(
+    column: $table.startAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isOnline => $composableBuilder(
+    column: $table.isOnline,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$StreamSubscriptionTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $StreamSubscriptionTableTable> {
+  $$StreamSubscriptionTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startAt =>
+      $composableBuilder(column: $table.startAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isOnline =>
+      $composableBuilder(column: $table.isOnline, builder: (column) => column);
+}
+
+class $$StreamSubscriptionTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $StreamSubscriptionTableTable,
+          StreamSubscriptionTableData,
+          $$StreamSubscriptionTableTableFilterComposer,
+          $$StreamSubscriptionTableTableOrderingComposer,
+          $$StreamSubscriptionTableTableAnnotationComposer,
+          $$StreamSubscriptionTableTableCreateCompanionBuilder,
+          $$StreamSubscriptionTableTableUpdateCompanionBuilder,
+          (
+            StreamSubscriptionTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $StreamSubscriptionTableTable,
+              StreamSubscriptionTableData
+            >,
+          ),
+          StreamSubscriptionTableData,
+          PrefetchHooks Function()
+        > {
+  $$StreamSubscriptionTableTableTableManager(
+    _$AppDatabase db,
+    $StreamSubscriptionTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$StreamSubscriptionTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$StreamSubscriptionTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$StreamSubscriptionTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> url = const Value.absent(),
+                Value<DateTime> startAt = const Value.absent(),
+                Value<bool> isOnline = const Value.absent(),
+              }) => StreamSubscriptionTableCompanion(
+                id: id,
+                createdAt: createdAt,
+                title: title,
+                url: url,
+                startAt: startAt,
+                isOnline: isOnline,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                required String title,
+                required String url,
+                Value<DateTime> startAt = const Value.absent(),
+                Value<bool> isOnline = const Value.absent(),
+              }) => StreamSubscriptionTableCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                title: title,
+                url: url,
+                startAt: startAt,
+                isOnline: isOnline,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$StreamSubscriptionTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $StreamSubscriptionTableTable,
+      StreamSubscriptionTableData,
+      $$StreamSubscriptionTableTableFilterComposer,
+      $$StreamSubscriptionTableTableOrderingComposer,
+      $$StreamSubscriptionTableTableAnnotationComposer,
+      $$StreamSubscriptionTableTableCreateCompanionBuilder,
+      $$StreamSubscriptionTableTableUpdateCompanionBuilder,
+      (
+        StreamSubscriptionTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $StreamSubscriptionTableTable,
+          StreamSubscriptionTableData
+        >,
+      ),
+      StreamSubscriptionTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2526,4 +3160,9 @@ class $AppDatabaseManager {
       $$SubscriptionTableTableTableManager(_db, _db.subscriptionTable);
   $$DownloadTableTableTableManager get downloadTable =>
       $$DownloadTableTableTableManager(_db, _db.downloadTable);
+  $$StreamSubscriptionTableTableTableManager get streamSubscriptionTable =>
+      $$StreamSubscriptionTableTableTableManager(
+        _db,
+        _db.streamSubscriptionTable,
+      );
 }

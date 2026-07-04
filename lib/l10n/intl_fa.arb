@@ -60,5 +60,16 @@
   "downloadCompleted": "دانلود کامل شد",
   "downloadStopped": "دانلود متوقف شد",
   "errorInDownload": "خطا در دانلود",
-  "stream": "استریم"
+  "stream": "استریم",
+  "urlLink": "لینک استریم",
+  "loadStream": "بارگذاری استریم",
+  "linkIsWrongOrServerIsStopped": "لینک اشتباه است یا پخش متوقف شده است",
+  "play": "پخش",
+  "noStream": "استریمی وجود ندارد",
+  "host": "هاست",
+  "serverId": "اطلاعات سرور",
+  "location": "مکان",
+  "adminInfo": "اطلاعات ادمین",
+  "startedAt": "شروع شده در",
+  "notification": "اعلان ها"
 }

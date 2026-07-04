@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String toJalali(DateTime date) {
   int gy = date.year;
   int gm = date.month;
@@ -38,4 +40,10 @@ String toJalali(DateTime date) {
   }
 
   return '$jy/${jm.toString().padLeft(2, '0')}/${jd.toString().padLeft(2, '0')}';
+}
+
+String toJalaliDateTime(DateTime date) {
+  final day = toJalali(date);
+  final time = DateFormat('HH:mm').format(date);
+  return "$day  $time";
 }

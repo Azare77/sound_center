@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
-import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
 class StreamNavigation extends StatefulWidget {
@@ -17,7 +15,7 @@ class StreamNavigation extends StatefulWidget {
 class _StreamNavigationState extends State<StreamNavigation> {
   final StreamPlayerRepositoryImp imp = StreamPlayerRepositoryImp();
 
-  late final StreamBloc _streamBloc;
+  // late final StreamBloc _streamBloc;
 
   int total = 1;
   int pass = 0;
@@ -29,7 +27,7 @@ class _StreamNavigationState extends State<StreamNavigation> {
   @override
   void initState() {
     super.initState();
-    _streamBloc = BlocProvider.of<StreamBloc>(context);
+    // _streamBloc = BlocProvider.of<StreamBloc>(context);
     _setupStreams();
   }
 
@@ -110,12 +108,6 @@ class _StreamNavigationState extends State<StreamNavigation> {
         ),
       ],
     );
-  }
-
-  Future<void> _refreshAfterTrackChange() async {
-    pass = 0;
-    total = await imp.getDuration();
-    _updateUi();
   }
 
   Widget convertTime(int input) {

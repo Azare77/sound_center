@@ -46,8 +46,9 @@ dependencies:
   just_audio: ^0.10.5
   media_kit_libs_linux: ^1.2.1
   just_audio_media_kit: ^2.1.0
-  audio_service: ^0.18.18
-  audio_service_mpris: ^0.2.0
+  audio_service: ^0.18.19
+  audio_service_mpris: ^0.2.1
+  #  mpv_audio_kit: ^0.0.9
   #DATABASE
   drift: ^2.29.0
   drift_flutter: ^0.2.7
@@ -61,7 +62,7 @@ dependencies:
   toastification: ^3.0.3
   flutter_colorpicker: ^1.1.0
   #PODCAST
-  podcast_search: ^0.7.13
+  podcast_search: ^0.7.15
   cached_network_image: ^3.4.1
   background_downloader: ^9.5.0
   app_links: ^7.0.0
@@ -76,6 +77,8 @@ dev_dependencies:
   mocktail: ^1.0.4
   flutter_launcher_icons: "^0.14.4"
 
+dependency_overrides:
+  dio: 5.9.2
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

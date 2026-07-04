@@ -19,22 +19,26 @@ jobs:
       - name: Flutter Doctor Licences
         run: yes | flutter doctor --android-licenses
 
-      - name: Flutter Doctor
-        run: flutter doctor -v
-
-      - name: Accept Android SDK licenses
-        run: yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-
       - name: Flutter Pub Get
         run: flutter pub get
 
       - name: Flutter Analyze
-        run: flutter analyze
+        run: flutter pub get
 
-      - name: Flutter Clean
-        run: flutter clean
+      - name: Patch pdfrx
+        run: |
+          PDFRX_PATH=$(find $HOME/.pub-cache -type d -name "pdfium_flutter-*" | head -n 1)
+          CMAKE_FILE="$PDFRX_PATH/android/CMakeLists.txt"
 
-      - name: Build APK (split-per-abi)
+          if [ -f "$CMAKE_FILE" ]; then
+            sed -i '2i add_link_options("LINKER:--build-id=none")' "$CMAKE_FILE"
+            echo "Patched CMakeLists.txt in $CMAKE_FILE"
+          else
+            echo "CMakeLists.txt not found in expected location"
+            exit 1
+          fi
+
+      - name: Build APK
         run: flutter build apk --release --split-per-abi
 
       - name: Remove build folder

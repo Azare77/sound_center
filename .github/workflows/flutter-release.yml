@@ -35,6 +35,9 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=$(pwd)/android/app/release.jks" >> android/key.properties
 
+      - name: Set PUB_CACHE inside workspace
+        run: echo "PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache" >> $GITHUB_ENV
+
       - name: Flutter Pub Get
         run: flutter pub get
 

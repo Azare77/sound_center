@@ -49,3 +49,21 @@ Please open an [Issue](https://github.com/azare77/sound_center/issues) or join t
   playback orchestration.
 - Permissions: the app requests storage/media permissions on first run to allow local scanning (
   `permission_handler`).
+
+## License
+
+Sound Center - A music and podcast player bringing multiple playback modes into one app.
+Copyright (C) 2026 Ali Zare
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.

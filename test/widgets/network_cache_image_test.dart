@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 
 void main() {
   testWidgets('NetworkCacheImage shows fallback when url is null', (

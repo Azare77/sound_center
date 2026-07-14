@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 
 class PodcastTemplate extends StatelessWidget {
   const PodcastTemplate({super.key, required this.podcast});

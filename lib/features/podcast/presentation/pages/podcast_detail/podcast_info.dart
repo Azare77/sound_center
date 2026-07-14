@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/constants.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/description.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PodcastInfo extends StatelessWidget {

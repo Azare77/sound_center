@@ -13,7 +13,8 @@ class TextFieldBox extends StatefulWidget {
     this.autofocus = false,
     this.onSubmitted,
     this.inputFormatters,
-    this.suffix,
+    this.isDense,
+    this.suffixIcon,
     this.prefixIcon,
     this.validator,
     this.onChanged,
@@ -41,8 +42,9 @@ class TextFieldBox extends StatefulWidget {
   final bool useBorder;
   final int? maxLength;
   final int? maxLines;
+  final bool? isDense;
   final bool canRequestFocus;
-  final Widget? suffix;
+  final Widget? suffixIcon;
   final Widget? prefixIcon;
   final List<TextInputFormatter>? inputFormatters;
   final Function(String text)? onSubmitted;
@@ -129,6 +131,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
         },
         focusNode: focusNode,
         canRequestFocus: widget.canRequestFocus,
+        textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
           labelText: widget.labelText,
           contentPadding: const EdgeInsets.all(10.0),
@@ -136,7 +139,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
           hintStyle: const TextStyle(color: Colors.grey),
           helperStyle: const TextStyle(color: Colors.grey),
           counterText: '',
-          isDense: false,
+          isDense: widget.isDense,
           error: widget.validator != null
               ? widget.validator!(widget.controller?.text)
                     ? null
@@ -144,7 +147,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                     ? Text(widget.errorText!)
                     : const SizedBox.shrink()
               : null,
-          suffix: widget.suffix,
+          suffixIcon: widget.suffixIcon,
           prefixIcon: widget.prefixIcon,
           border: widget.useBorder
               ? const OutlineInputBorder(

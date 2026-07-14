@@ -8,9 +8,9 @@ import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
 import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 
 class PodcastPlayerRepositoryImp implements PlayerRepository {
   static final PodcastPlayerRepositoryImp _instance =

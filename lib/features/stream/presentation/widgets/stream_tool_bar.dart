@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/pages/stream.dart';
 import 'package:sound_center/features/stream/presentation/widgets/direct_link_dialog.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -15,10 +17,12 @@ class _StreamToolBarState extends State<StreamToolBar> {
   bool _showSearch = false;
   final _controller = TextEditingController();
   late ValueNotifier searchNotifier;
+  late final StreamBloc bloc;
 
   @override
   void initState() {
     super.initState();
+    bloc = BlocProvider.of<StreamBloc>(context);
     searchNotifier = StreamSearchController.showSearchField;
     searchNotifier.addListener(() {
       if (_showSearch) {
@@ -57,10 +61,31 @@ class _StreamToolBarState extends State<StreamToolBar> {
                 maxLines: 1,
                 hintText: S.of(context).searchHint,
                 autofocus: true,
+                suffixIcon: Row(
+                  mainAxisSize: .min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.language_rounded),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.translate_rounded),
+                    ),
+                  ],
+                ),
+
                 onChanged: (text) {
-                  if (text.trim().isEmpty) {}
+                  if (text.trim().isEmpty) {
+                    bloc.add(GetSubscribedStreams());
+                  }
                 },
-                onSubmitted: (text) {},
+                onSubmitted: (text) {
+                  bloc.add(
+                    SearchStream(offset: 1, language: "persian", name: text),
+                  );
+                },
               ),
             ),
           if (!_showSearch) const Spacer(),
@@ -80,6 +105,7 @@ class _StreamToolBarState extends State<StreamToolBar> {
     StreamSearchController.showSearchField.value = _showSearch;
     if (!_showSearch) {
       _controller.clear();
+      bloc.add(GetSubscribedStreams());
     }
   }
 }

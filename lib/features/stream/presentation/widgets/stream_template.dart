@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/util/date_util.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 
 class StreamTemplate extends StatelessWidget {
   const StreamTemplate({super.key, required this.stats});
@@ -23,6 +24,14 @@ class StreamTemplate extends StatelessWidget {
       child: Row(
         spacing: 10,
         children: [
+          SizedBox(
+            width: size,
+            height: size,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: NetworkCacheImage(url: stats.logo),
+            ),
+          ),
           // --- متن‌ها ---
           Expanded(
             child: Column(

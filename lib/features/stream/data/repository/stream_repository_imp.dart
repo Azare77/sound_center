@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/foundation.dart';
+import 'package:radio_browser_api/src/models/list_response.dart';
+import 'package:radio_browser_api/src/models/station.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/stream/data/source/radio_browser.dart';
 import 'package:sound_center/features/stream/data/source/stream_source.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
@@ -218,6 +221,22 @@ class StreamRepositoryImp implements StreamRepository {
       port: address.hasPort ? address.port : null,
     );
     return dbUrl;
+  }
+
+  @override
+  Future<RadioBrowserListResponse<Station>> searchStations({
+    String? country,
+    String? name,
+    String? language,
+    required int offset,
+  }) async {
+    final response = await RadioBrowser.search(
+      offset: offset,
+      language: language,
+      country: country,
+      name: name,
+    );
+    return response;
   }
 }
 

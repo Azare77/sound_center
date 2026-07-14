@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 
 class PodcastHeaderImage extends StatelessWidget {
   const PodcastHeaderImage({super.key, this.url});

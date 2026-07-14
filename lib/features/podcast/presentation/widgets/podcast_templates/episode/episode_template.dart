@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/core/util/date_util.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/network_image.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/download_button.dart';
 
 class EpisodeTemplate extends StatelessWidget {

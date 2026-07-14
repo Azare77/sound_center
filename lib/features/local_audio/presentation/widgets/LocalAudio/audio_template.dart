@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
@@ -42,7 +43,7 @@ class _AudioTemplateState extends State<AudioTemplate> {
       fontSize: 13,
     );
     return Container(
-      height: 70,
+      height: LIST_ITEM_HEIGHT,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         spacing: 10,

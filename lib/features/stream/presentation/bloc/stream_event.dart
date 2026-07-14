@@ -4,6 +4,15 @@ sealed class StreamEvent {}
 
 class GetSubscribedStreams extends StreamEvent {}
 
+class SearchStream extends StreamEvent {
+  final int offset;
+  final String? name;
+  final String? language;
+  final String? country;
+
+  SearchStream({required this.offset, this.name, this.language, this.country});
+}
+
 class CheckStreamsStatus extends StreamEvent {
   final Completer<void>? refreshCompleter;
 

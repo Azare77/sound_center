@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
+import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
@@ -37,6 +38,26 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       emit(state.copyWith(SubscribedStreams(subs)));
     });
     add(CheckStreamsStatus(null));
+    on<SearchStream>((event, emit) async {
+      if (event.name == null) {
+        add(GetSubscribedStreams());
+      } else {
+        emit(state.copyWith(LoadingStream()));
+        final RadioBrowserListResponse<Station> streams = await getStreamUseCase
+            .searchStations(
+              name: event.name!.isEmpty ? null : event.name,
+              offset: event.offset,
+              country: event.country,
+              language: event.language,
+            );
+        List<StreamSubEntity> stream = [];
+        for (Station s in streams.items) {
+          stream.add(StreamSubEntity.fromStation(s));
+        }
+        SubscribedStreams status = SubscribedStreams(stream);
+        emit(state.copyWith(status));
+      }
+    });
     on<SubscribeToStream>((event, emit) async {
       bool success = await getStreamUseCase.subscribe(event.stream);
       if (success) {

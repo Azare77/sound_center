@@ -1,3 +1,4 @@
+import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/core/usecase/usecase.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
@@ -12,6 +13,20 @@ class GetStreamsUseCase implements UseCase {
   @override
   Future<List<StreamSubEntity>> call({params}) async {
     return await _streamRepository.getSubscribedStreams();
+  }
+
+  Future<RadioBrowserListResponse<Station>> searchStations({
+    String? country,
+    String? name,
+    String? language,
+    required int offset,
+  }) async {
+    return await _streamRepository.searchStations(
+      offset: offset,
+      language: language,
+      country: country,
+      name: name,
+    );
   }
 
   Future<List<StreamSubEntity>> checkStreamsStatus() async {

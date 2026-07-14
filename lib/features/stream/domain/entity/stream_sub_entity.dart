@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 
@@ -7,12 +8,14 @@ class StreamSubEntity {
   final String url;
   final DateTime startAt;
   final bool isOnline;
+  final String? logo;
 
   StreamSubEntity({
     required this.title,
     required this.url,
     required this.startAt,
     required this.isOnline,
+    this.logo,
   });
 
   factory StreamSubEntity.fromDrift(StreamSubscriptionTableData subscription) {
@@ -30,6 +33,16 @@ class StreamSubEntity {
       url: server.url!,
       startAt: server.serverStartIso8601 ?? DateTime(1970),
       isOnline: server.source.isNotEmpty,
+    );
+  }
+
+  factory StreamSubEntity.fromStation(Station server) {
+    return StreamSubEntity(
+      title: "${server.name}-${server.state}",
+      url: server.url,
+      startAt: server.lastCheckOkTime ?? DateTime(1970),
+      isOnline: false,
+      logo: server.favicon,
     );
   }
 

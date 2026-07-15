@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
 import 'package:sound_center/features/stream/domain/repository/stream_repository.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
-import 'package:sound_center/features/stream/presentation/pages/stream_detail.dart';
+import 'package:sound_center/features/stream/presentation/pages/stream_detail/stream_detail.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
@@ -51,7 +52,18 @@ class _DirectLinkDialogState extends State<DirectLinkDialog> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => StreamDetail(streamUrl: url)),
+        MaterialPageRoute(
+          builder: (_) => StreamDetail(
+            stream: StreamSubEntity(
+              title: '',
+              url: url,
+              startAt: DateTime(1970),
+              audioUrl: url,
+              isOnline: false,
+              fullData: null,
+            ),
+          ),
+        ),
       );
     }
   }

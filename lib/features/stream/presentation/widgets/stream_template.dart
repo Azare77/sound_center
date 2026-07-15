@@ -27,9 +27,12 @@ class StreamTemplate extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: NetworkCacheImage(url: stats.logo),
+            child: Hero(
+              tag: stats.fullData?.stationUUID ?? stats.url,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: NetworkCacheImage(url: stats.cover),
+              ),
             ),
           ),
           // --- متن‌ها ---

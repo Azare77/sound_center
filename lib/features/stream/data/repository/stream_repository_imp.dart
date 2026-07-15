@@ -1,3 +1,5 @@
+// ignore_for_file: implementation_imports
+
 import 'dart:async';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';

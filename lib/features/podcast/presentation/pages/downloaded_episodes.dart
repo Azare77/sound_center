@@ -49,7 +49,6 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
                       state.status as DownloadedEpisodesStatus;
                   return ListView.builder(
                     itemExtent: LIST_ITEM_HEIGHT,
-                    cacheExtent: 700,
                     itemCount: status.episodes.length,
                     itemBuilder: (context, index) {
                       Episode episode = status.episodes[index];

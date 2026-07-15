@@ -15,16 +15,18 @@ class GetStreamsUseCase implements UseCase {
     return await _streamRepository.getSubscribedStreams();
   }
 
-  Future<RadioBrowserListResponse<Station>> searchStations({
-    String? country,
+  Future<RadioBrowserListResponse<Station>?> searchStations({
+    String? countryCode,
     String? name,
     String? language,
+    String? tag,
     required int offset,
   }) async {
     return await _streamRepository.searchStations(
       offset: offset,
       language: language,
-      country: country,
+      countryCode: countryCode,
+      tag: tag,
       name: name,
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 // ignore: depend_on_referenced_packages
@@ -43,15 +44,26 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
         add(GetSubscribedStreams());
       } else {
         emit(state.copyWith(LoadingStream()));
-        final RadioBrowserListResponse<Station> streams = await getStreamUseCase
-            .searchStations(
+        final RadioBrowserListResponse<Station>? streams =
+            await getStreamUseCase.searchStations(
               name: event.name!.isEmpty ? null : event.name,
               offset: event.offset,
-              country: event.country,
+              countryCode: event.countryCode,
               language: event.language,
+              tag: event.tag,
             );
-        List<StreamSubEntity> stream = [];
-        for (Station s in streams.items) {
+        if (streams == null) {
+          emit(state.copyWith(SearchStreams([])));
+          return;
+        }
+        final stream = <StreamSubEntity>[];
+        final uuids = <String>{};
+        final urls = <String>{};
+
+        for (final s in streams.items) {
+          if (s.urlResolved == null) continue;
+          if (!uuids.add(s.stationUUID)) continue;
+          if (!urls.add(s.url)) continue;
           stream.add(StreamSubEntity.fromStation(s));
         }
         SearchStreams status = SearchStreams(stream);
@@ -77,7 +89,6 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
           (stream is AudioModel && stream.path == event.url)) {
         return;
       }
-      // icyListener.stop();
       player.setPlayList(event.toAudio());
       await player.play(0, direct: true);
       emit(state.copyWith(state.status));
@@ -102,7 +113,6 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       }
     });
     on<PlayStream>((event, emit) async {
-      // icyListener.stop();
       final stream = player.getCurrentStream;
       if (player.hasSource() &&
           stream is Source &&
@@ -111,21 +121,31 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       }
       player.setPlayList(event.stream);
       player.play(0, direct: true);
-      player.addMetadataListener(() async {
-        IcecastStream? icecast = await getStreamUseCase.getIcecastStream(
-          event.stream.listenUrl,
-        );
-        if (icecast == null) return;
-        Source? s = icecast.icestats.source.firstWhereOrNull(
-          (s) => s.listenUrl == event.stream.listenUrl,
-        );
-        if (s != null) add(UpdateStreamInfo(icecast, s));
-      });
-      player.addIcyMetadataListener((title) async {
-        Source? s = Source(listenUrl: event.stream.listenUrl, title: title);
-        IcecastStream? icecast = IcecastStream(icestats: IceStats(source: [s]));
-        add(UpdateStreamInfo(icecast, s));
-      });
+      if (!Platform.isLinux) {
+        player.addIcyMetadataListener((title) async {
+          if (title == null || title.isEmpty) return;
+          Source? s = Source(
+            listenUrl: event.stream.listenUrl,
+            title: title,
+            cover: event.stream.cover,
+          );
+          IcecastStream? icecast = IcecastStream(
+            icestats: IceStats(source: [s]),
+          );
+          add(UpdateStreamInfo(icecast, s));
+        });
+      } else {
+        player.addMetadataListener(() async {
+          IcecastStream? icecast = await getStreamUseCase.getIcecastStream(
+            event.stream.listenUrl,
+          );
+          if (icecast == null) return;
+          Source? s = icecast.icestats.source.firstWhereOrNull(
+            (s) => s.listenUrl == event.stream.listenUrl,
+          );
+          if (s != null) add(UpdateStreamInfo(icecast, s));
+        });
+      }
       emit(state.copyWith(state.status));
     });
 

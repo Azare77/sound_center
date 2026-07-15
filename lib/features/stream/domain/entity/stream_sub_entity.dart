@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/database/drift/database.dart';
@@ -27,10 +29,12 @@ class StreamSubEntity {
       title: subscription.title,
       url: subscription.url,
       audioUrl: subscription.url,
-      cover: subscription.title,
+      cover: subscription.cover,
       startAt: subscription.startAt,
       isOnline: subscription.isOnline,
-      fullData: null,
+      fullData: subscription.fullData != null
+          ? Station.fromJson(jsonDecode(subscription.fullData!))
+          : null,
     );
   }
 
@@ -63,6 +67,8 @@ class StreamSubEntity {
       url: Value(url),
       startAt: Value(startAt),
       isOnline: Value(isOnline),
+      cover: Value(cover),
+      fullData: Value(fullData != null ? jsonEncode(fullData!.toJson()) : null),
     );
   }
 }

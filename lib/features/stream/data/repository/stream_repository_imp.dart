@@ -183,11 +183,9 @@ class StreamRepositoryImp implements StreamRepository {
   }
 
   Future<bool> isSubscribed(String url) async {
-    Uri address = _parseAddress(url);
-
     final existing = await (database.select(
       database.streamSubscriptionTable,
-    )..where((tbl) => tbl.url.equals(address.toString()))).getSingleOrNull();
+    )..where((tbl) => tbl.url.equals(url))).getSingleOrNull();
     if (existing != null) {
       return true;
     }
@@ -226,16 +224,18 @@ class StreamRepositoryImp implements StreamRepository {
   }
 
   @override
-  Future<RadioBrowserListResponse<Station>> searchStations({
-    String? country,
+  Future<RadioBrowserListResponse<Station>?> searchStations({
+    String? countryCode,
     String? name,
     String? language,
+    String? tag,
     required int offset,
   }) async {
     final response = await RadioBrowser.search(
       offset: offset,
       language: language,
-      country: country,
+      countryCode: countryCode,
+      tag: tag,
       name: name,
     );
     return response;

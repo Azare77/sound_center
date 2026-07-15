@@ -8,9 +8,16 @@ class SearchStream extends StreamEvent {
   final int offset;
   final String? name;
   final String? language;
-  final String? country;
+  final String? countryCode;
+  final String? tag;
 
-  SearchStream({required this.offset, this.name, this.language, this.country});
+  SearchStream({
+    required this.offset,
+    this.name,
+    this.language,
+    this.countryCode,
+    this.tag,
+  });
 }
 
 class CheckStreamsStatus extends StreamEvent {

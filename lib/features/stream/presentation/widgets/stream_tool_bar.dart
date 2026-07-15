@@ -21,6 +21,9 @@ class _StreamToolBarState extends State<StreamToolBar> {
   final _controller = TextEditingController();
   late ValueNotifier searchNotifier;
   late final StreamBloc bloc;
+  String? language;
+  String? country;
+  String? tags;
 
   @override
   void initState() {
@@ -73,27 +76,45 @@ class _StreamToolBarState extends State<StreamToolBar> {
                         showDialog(
                           context: context,
                           builder: (context) => CountryListDialog(),
-                        );
+                        ).then((res) {
+                          country = res;
+                          setState(() {});
+                        });
                       },
-                      icon: Icon(Icons.language_rounded),
+                      icon: Icon(
+                        Icons.language_rounded,
+                        color: country != null ? Colors.blue : null,
+                      ),
                     ),
                     IconButton(
                       onPressed: () async {
                         showDialog(
                           context: context,
                           builder: (context) => LanguageListDialog(),
-                        );
+                        ).then((res) {
+                          language = res;
+                          setState(() {});
+                        });
                       },
-                      icon: Icon(Icons.translate_rounded),
+                      icon: Icon(
+                        Icons.translate_rounded,
+                        color: language != null ? Colors.blue : null,
+                      ),
                     ),
                     IconButton(
                       onPressed: () async {
                         showDialog(
                           context: context,
                           builder: (context) => TagListDialog(),
-                        );
+                        ).then((res) {
+                          tags = res;
+                          setState(() {});
+                        });
                       },
-                      icon: Icon(Icons.sell_rounded),
+                      icon: Icon(
+                        Icons.sell_rounded,
+                        color: tags != null ? Colors.blue : null,
+                      ),
                     ),
                   ],
                 ),
@@ -103,7 +124,15 @@ class _StreamToolBarState extends State<StreamToolBar> {
                   }
                 },
                 onSubmitted: (text) {
-                  bloc.add(SearchStream(offset: 1, name: text));
+                  bloc.add(
+                    SearchStream(
+                      offset: 1,
+                      name: text.trim(),
+                      language: language,
+                      countryCode: country,
+                      tag: tags,
+                    ),
+                  );
                 },
               ),
             ),

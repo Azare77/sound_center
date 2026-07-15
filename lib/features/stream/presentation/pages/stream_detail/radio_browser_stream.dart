@@ -27,6 +27,7 @@ class _RadioStreamViewState extends State<RadioStreamView> {
   final ScrollController _sliverScrollController = ScrollController();
   bool toolbarCollapsed = false;
   bool subscribed = false;
+  final titleStyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
 
   @override
   void initState() {
@@ -101,22 +102,52 @@ class _RadioStreamViewState extends State<RadioStreamView> {
                 }
               },
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 child: Directionality(
                   textDirection: TextDirection.ltr,
-                  child: Column(
-                    crossAxisAlignment: .start,
-                    spacing: 5,
-                    children: [
-                      TextView(widget.station.name),
-                      TextView(widget.station.countryCode),
-                      TextView(widget.station.clickCount.toString()),
-                      TextView(widget.station.votes.toString()),
-                      TextView(widget.station.tags.toString()),
-                      TextView(widget.station.language.toString()),
-                      TextView(widget.station.lastCheckOk.toString()),
-                      TextView(widget.station.lastCheckOkTime.toString()),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5,
+                      children: [
+                        TextView("Station Info", style: titleStyle),
+                        TextView(widget.station.name),
+                        TextView(widget.station.countryCode),
+
+                        if (widget.station.language != null)
+                          TextView(widget.station.language!),
+
+                        if (widget.station.tags != null)
+                          TextView(widget.station.tags!),
+
+                        if (widget.station.codec != null ||
+                            widget.station.bitrate > 0) ...[
+                          TextView("Format", style: titleStyle),
+                          Row(
+                            children: [
+                              if (widget.station.codec != null)
+                                TextView(
+                                  "${widget.station.codec!} - ",
+                                  style: const TextStyle(fontFamily: 'VazirEn'),
+                                ),
+                              if (widget.station.bitrate > 0)
+                                TextView(
+                                  "${widget.station.bitrate} kbps",
+                                  style: const TextStyle(fontFamily: 'VazirEn'),
+                                ),
+                            ],
+                          ),
+                        ],
+
+                        TextView("Website", style: titleStyle),
+                        TextView(widget.station.url),
+
+                        if (widget.station.favicon != null) ...[
+                          TextView("Cover", style: titleStyle),
+                          TextView(widget.station.favicon!),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
               ),

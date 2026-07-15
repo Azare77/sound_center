@@ -10,10 +10,11 @@ enum StreamType { staticFile, iceCast }
 abstract class StreamRepository {
   StreamType detectStreamType(String url);
 
-  Future<RadioBrowserListResponse<Station>> searchStations({
-    String? country,
+  Future<RadioBrowserListResponse<Station>?> searchStations({
+    String? countryCode,
     String? name,
     String? language,
+    String? tag,
     required int offset,
   });
 

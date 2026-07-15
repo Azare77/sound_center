@@ -9,7 +9,7 @@ import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
-class StreamInfo extends StatelessWidget {
+class StreamInfo extends StatefulWidget {
   const StreamInfo({
     super.key,
     required this.subscribed,
@@ -22,6 +22,22 @@ class StreamInfo extends StatelessWidget {
   final Function(StreamSubEntity sub) subscribe;
   final String? url;
   final radio.Station station;
+
+  @override
+  State<StreamInfo> createState() => _StreamInfoState();
+}
+
+class _StreamInfoState extends State<StreamInfo> {
+  bool subscribed = false;
+
+  @override
+  void didUpdateWidget(covariant StreamInfo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.subscribed != widget.subscribed) {
+      subscribed = widget.subscribed;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +64,7 @@ class StreamInfo extends StatelessWidget {
                 spacing: 5,
                 children: [
                   ScrollingText(
-                    station.name,
+                    widget.station.name,
                     style: TextStyle(color: Colors.white),
                   ),
                   if (t == 1)
@@ -56,9 +72,15 @@ class StreamInfo extends StatelessWidget {
                       spacing: 5,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            final sub = StreamSubEntity.fromStation(station);
-                            subscribe.call(sub);
+                          onPressed: () async {
+                            final sub = StreamSubEntity.fromStation(
+                              widget.station,
+                            );
+                            final res = await widget.subscribe.call(sub);
+                            if (!res) return;
+                            setState(() {
+                              subscribed = !subscribed;
+                            });
                           },
                           child: Text(
                             subscribed
@@ -70,7 +92,11 @@ class StreamInfo extends StatelessWidget {
                           onPressed: () {
                             BlocProvider.of<StreamBloc>(context).add(
                               PlayStream(
-                                Source(listenUrl: station.urlResolved!),
+                                Source(
+                                  listenUrl: widget.station.urlResolved!,
+                                  title: widget.station.name,
+                                  cover: widget.station.favicon,
+                                ),
                               ),
                             );
                           },
@@ -85,9 +111,9 @@ class StreamInfo extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Hero(
-                  tag: station.stationUUID,
+                  tag: widget.station.stationUUID,
                   child: NetworkCacheImage(
-                    url: url,
+                    url: widget.url,
                     size: visibleHeight,
                     fit: BoxFit.cover,
                   ),

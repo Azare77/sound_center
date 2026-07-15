@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sound_center/core/constants/constants.dart';
-import 'package:sound_center/core/util/date_util.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 
@@ -57,8 +56,6 @@ class StreamTemplate extends StatelessWidget {
               ],
             ),
           ),
-          if (!stats.startAt.isAtSameMomentAs(DateTime(1970)))
-            Text(toJalaliDateTime(stats.startAt), style: infoTextStyle),
         ],
       ),
     );

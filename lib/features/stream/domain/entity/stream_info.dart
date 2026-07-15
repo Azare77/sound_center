@@ -95,6 +95,7 @@ class Source {
   final String? streamStart;
   final DateTime? streamStartIso8601;
   final String? title;
+  final String? cover;
 
   Source({
     required this.listenUrl,
@@ -110,6 +111,7 @@ class Source {
     this.streamStart,
     this.streamStartIso8601,
     this.title,
+    this.cover,
   });
 
   factory Source.fromJson(Map<String, dynamic> json) {

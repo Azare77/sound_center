@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_status.dart';
-import 'package:sound_center/features/stream/presentation/pages/stream_detail.dart';
+import 'package:sound_center/features/stream/presentation/pages/stream_detail/stream_detail.dart';
 import 'package:sound_center/features/stream/presentation/widgets/radio/stream_action_menu.dart';
 import 'package:sound_center/features/stream/presentation/widgets/stream_template.dart';
 import 'package:sound_center/features/stream/presentation/widgets/stream_tool_bar.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/widgets/loading.dart';
 
 class StreamSearchController {
   static final ValueNotifier<bool> showSearchField = ValueNotifier(true);
@@ -47,14 +48,17 @@ class _StreamPageState extends State<StreamPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = BlocProvider.of<StreamBloc>(context);
     return Column(
       children: [
         StreamToolBar(),
         Expanded(
           child: BlocBuilder<StreamBloc, StreamState>(
             buildWhen: (previous, current) {
-              bool notStream = current.status is SubscribedStreams;
-              return notStream;
+              bool notDownload =
+                  current.status is! ErrorLoadStream &&
+                  current.status is! StreamServer;
+              return notDownload;
             },
             builder: (BuildContext context, StreamState state) {
               if (state.status is SubscribedStreams) {
@@ -72,12 +76,47 @@ class _StreamPageState extends State<StreamPage> {
                     itemBuilder: (context, index) {
                       final stream = status.streams[index];
                       return InkWell(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  StreamDetail(streamUrl: stream.url),
+                              builder: (_) => StreamDetail(stream: stream),
+                            ),
+                          );
+                          bloc.add(GetSubscribedStreams());
+                        },
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => StreamActionMenu(stream: stream),
+                          );
+                        },
+                        child: StreamTemplate(stats: stream),
+                      );
+                    },
+                  ),
+                );
+              }
+              if (state.status is SearchStreams) {
+                SearchStreams status = state.status as SearchStreams;
+                return RefreshIndicator(
+                  onRefresh: () {
+                    refreshCompleter = Completer<void>();
+                    BlocProvider.of<StreamBloc>(
+                      context,
+                    ).add(CheckStreamsStatus(refreshCompleter));
+                    return refreshCompleter!.future;
+                  },
+                  child: ListView.builder(
+                    itemCount: status.streams.length,
+                    itemBuilder: (context, index) {
+                      final stream = status.streams[index];
+                      return InkWell(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => StreamDetail(stream: stream),
                             ),
                           );
                         },
@@ -92,6 +131,9 @@ class _StreamPageState extends State<StreamPage> {
                     },
                   ),
                 );
+              }
+              if (state.status is LoadingStream) {
+                return Loading();
               }
               return Center(child: Text(S.of(context).noStream));
             },

@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/pages/stream.dart';
 import 'package:sound_center/features/stream/presentation/widgets/direct_link_dialog.dart';
+import 'package:sound_center/features/stream/presentation/widgets/tool_bar/country_list_dialog.dart';
+import 'package:sound_center/features/stream/presentation/widgets/tool_bar/language_list_dialog.dart';
+import 'package:sound_center/features/stream/presentation/widgets/tool_bar/tag_list_dialog.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
@@ -66,25 +69,41 @@ class _StreamToolBarState extends State<StreamToolBar> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) => CountryListDialog(),
+                        );
+                      },
                       icon: Icon(Icons.language_rounded),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) => LanguageListDialog(),
+                        );
+                      },
                       icon: Icon(Icons.translate_rounded),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) => TagListDialog(),
+                        );
+                      },
+                      icon: Icon(Icons.sell_rounded),
                     ),
                   ],
                 ),
-
                 onChanged: (text) {
                   if (text.trim().isEmpty) {
                     bloc.add(GetSubscribedStreams());
                   }
                 },
                 onSubmitted: (text) {
-                  bloc.add(
-                    SearchStream(offset: 1, language: "persian", name: text),
-                  );
+                  bloc.add(SearchStream(offset: 1, name: text));
                 },
               ),
             ),

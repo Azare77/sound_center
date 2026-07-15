@@ -9,4 +9,8 @@ class StreamSubscriptionTable extends Table with TableMixin {
   DateTimeColumn get startAt => dateTime().withDefault(currentDateAndTime)();
 
   BoolColumn get isOnline => boolean().withDefault(const Constant(true))();
+
+  TextColumn get cover => text().nullable()();
+
+  TextColumn get fullData => text().nullable()();
 }

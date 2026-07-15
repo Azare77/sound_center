@@ -54,7 +54,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
         for (Station s in streams.items) {
           stream.add(StreamSubEntity.fromStation(s));
         }
-        SubscribedStreams status = SubscribedStreams(stream);
+        SearchStreams status = SearchStreams(stream);
         emit(state.copyWith(status));
       }
     });
@@ -93,7 +93,6 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     });
 
     on<LoadStream>((event, emit) async {
-      emit(state.copyWith(LoadingStream()));
       final url = event.streamUrl;
       IcecastStream? icecast = await getStreamUseCase.getIcecastStream(url);
       if (icecast != null) {
@@ -121,6 +120,11 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
           (s) => s.listenUrl == event.stream.listenUrl,
         );
         if (s != null) add(UpdateStreamInfo(icecast, s));
+      });
+      player.addIcyMetadataListener((title) async {
+        Source? s = Source(listenUrl: event.stream.listenUrl, title: title);
+        IcecastStream? icecast = IcecastStream(icestats: IceStats(source: [s]));
+        add(UpdateStreamInfo(icecast, s));
       });
       emit(state.copyWith(state.status));
     });

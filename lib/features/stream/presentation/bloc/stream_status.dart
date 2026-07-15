@@ -12,6 +12,12 @@ class SubscribedStreams extends StreamStatus {
   SubscribedStreams(this.streams);
 }
 
+class SearchStreams extends StreamStatus {
+  List<StreamSubEntity> streams;
+
+  SearchStreams(this.streams);
+}
+
 class StreamServer extends StreamStatus {
   final IcecastStream stream;
 

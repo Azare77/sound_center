@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:just_audio/just_audio.dart' show IcyMetadata;
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
@@ -44,6 +45,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   Stream<bool> get loadingStream => _loadingController.stream;
 
   Timer? _updateTimer;
+  StreamSubscription<IcyMetadata?>? _icySubscription;
   late final StreamBloc bloc;
 
   void _initialPlayerState() {
@@ -192,9 +194,24 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> stop() async {
+    _cancelIcyListener();
+    _updateTimer?.cancel();
+    _updateTimer = null;
     await _playerService.release();
     await Future.delayed(Duration(milliseconds: 100));
     bloc.add(TogglePlay());
+  }
+
+  void addIcyMetadataListener(void Function(String? title) onTitle) {
+    _icySubscription?.cancel();
+    _icySubscription = _playerService.icyMetadataStream.listen((metadata) {
+      onTitle(metadata?.info?.title ?? metadata?.headers?.name);
+    });
+  }
+
+  void _cancelIcyListener() {
+    _icySubscription?.cancel();
+    _icySubscription = null;
   }
 
   Future<void> addMetadataListener(Function onMetadata) async {
@@ -205,7 +222,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     if (hasSource() && (_currentStream is Source)) onMetadata.call();
     _updateTimer = Timer.periodic(Duration(seconds: 10), (_) {
       if (hasSource() && (_currentStream is Source)) {
-        onMetadata.call();
+        // onMetadata.call();
       } else {
         _updateTimer?.cancel();
         _updateTimer = null;

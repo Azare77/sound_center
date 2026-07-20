@@ -22,7 +22,7 @@ class StreamDetail extends StatefulWidget {
 
 class _StreamDetailState extends State<StreamDetail> {
   final StreamRepositoryImp repository = StreamRepositoryImp(AppDatabase());
-  bool subscribed = false;
+
   late String streamUrl;
   late StreamBloc bloc;
 
@@ -34,6 +34,7 @@ class _StreamDetailState extends State<StreamDetail> {
   }
 
   Future<bool> _subscribe(StreamSubEntity sub) async {
+    bool subscribed = await repository.isSubscribed(sub.url);
     StreamEvent? event;
     if (subscribed) {
       final confirmed =

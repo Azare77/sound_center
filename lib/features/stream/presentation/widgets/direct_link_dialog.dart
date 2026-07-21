@@ -60,7 +60,7 @@ class _DirectLinkDialogState extends State<DirectLinkDialog> {
               startAt: DateTime(1970),
               audioUrl: url,
               isOnline: false,
-              fullData: null,
+              uuid: null,
             ),
           ),
         ),

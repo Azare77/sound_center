@@ -1,135 +1,341 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:sound_center/features/stream/data/source/radio_browser.dart';
+import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
 class CountryListDialog extends StatefulWidget {
-  const CountryListDialog({super.key});
+  const CountryListDialog({super.key, this.currentCode});
+
+  final String? currentCode;
 
   @override
   State<CountryListDialog> createState() => _CountryListDialogState();
 }
 
 class _CountryListDialogState extends State<CountryListDialog> {
-  List<Map<String, dynamic>> raw = [
-    {"name": "US", "stationcount": 7476},
-    {"name": "DE", "stationcount": 6013},
-    {"name": "RU", "stationcount": 3147},
-    {"name": "FR", "stationcount": 2683},
-    {"name": "MX", "stationcount": 2669},
-    {"name": "GB", "stationcount": 2290},
-    {"name": "GR", "stationcount": 2163},
-    {"name": "CN", "stationcount": 2156},
-    {"name": "AU", "stationcount": 2049},
-    {"name": "IT", "stationcount": 1716},
-    {"name": "BR", "stationcount": 1544},
-    {"name": "CA", "stationcount": 1526},
-    {"name": "NL", "stationcount": 1376},
-    {"name": "ES", "stationcount": 1337},
-    {"name": "IN", "stationcount": 1143},
-    {"name": "PL", "stationcount": 1139},
-    {"name": "RO", "stationcount": 1064},
-    {"name": "PH", "stationcount": 999},
-    {"name": "AR", "stationcount": 801},
-    {"name": "TR", "stationcount": 793},
-    {"name": "AE", "stationcount": 774},
-    {"name": "ID", "stationcount": 657},
-    {"name": "CH", "stationcount": 630},
-    {"name": "CO", "stationcount": 614},
-    {"name": "CL", "stationcount": 605},
-    {"name": "BE", "stationcount": 505},
-    {"name": "RS", "stationcount": 404},
-    {"name": "HU", "stationcount": 379},
-    {"name": "UG", "stationcount": 368},
-    {"name": "AT", "stationcount": 347},
-    {"name": "PT", "stationcount": 344},
-    {"name": "UA", "stationcount": 341},
-    {"name": "BG", "stationcount": 332},
-    {"name": "HR", "stationcount": 313},
-    {"name": "CZ", "stationcount": 302},
-    {"name": "SE", "stationcount": 288},
-    {"name": "IE", "stationcount": 277},
-    {"name": "PE", "stationcount": 250},
-    {"name": "DK", "stationcount": 246},
-    {"name": "NZ", "stationcount": 237},
-    {"name": "ZA", "stationcount": 217},
-    {"name": "TW", "stationcount": 213},
-    {"name": "JP", "stationcount": 203},
-    {"name": "SK", "stationcount": 177},
-    {"name": "FI", "stationcount": 175},
-    {"name": "VE", "stationcount": 171},
-    {"name": "IL", "stationcount": 171},
-    {"name": "UY", "stationcount": 170},
-    {"name": "EC", "stationcount": 167},
-    {"name": "BA", "stationcount": 157},
-    {"name": "SI", "stationcount": 139},
-    {"name": "SA", "stationcount": 133},
-    {"name": "LV", "stationcount": 128},
-    {"name": "AF", "stationcount": 124},
-    {"name": "NO", "stationcount": 118},
-    {"name": "EE", "stationcount": 118},
-    {"name": "KR", "stationcount": 110},
-    {"name": "DO", "stationcount": 109},
-    {"name": "LT", "stationcount": 107},
-    {"name": "GH", "stationcount": 106},
-    {"name": "BY", "stationcount": 106},
-    {"name": "HK", "stationcount": 91},
-    {"name": "TH", "stationcount": 90},
-    {"name": "MY", "stationcount": 87},
-    {"name": "LK", "stationcount": 86},
-    {"name": "MD", "stationcount": 81},
-    {"name": "NG", "stationcount": 79},
-    {"name": "KE", "stationcount": 79},
-    {"name": "TN", "stationcount": 77},
-    {"name": "BO", "stationcount": 76},
-    {"name": "GT", "stationcount": 75},
-    {"name": "LB", "stationcount": 73},
-    {"name": "PK", "stationcount": 72},
-    {"name": "DZ", "stationcount": 72},
-    {"name": "PY", "stationcount": 69},
-    {"name": "MA", "stationcount": 67},
-    {"name": "SG", "stationcount": 65},
-    {"name": "SV", "stationcount": 64},
-    {"name": "MK", "stationcount": 64},
-    {"name": "CR", "stationcount": 59},
-    {"name": "HN", "stationcount": 56},
-    {"name": "CY", "stationcount": 52},
-    {"name": "ME", "stationcount": 52},
-    {"name": "EG", "stationcount": 51},
-    {"name": "JM", "stationcount": 51},
-    {"name": "PR", "stationcount": 50},
-    {"name": "RE", "stationcount": 47},
-    {"name": "VN", "stationcount": 47},
-    {"name": "AL", "stationcount": 44},
-    {"name": "KZ", "stationcount": 44},
-    {"name": "AZ", "stationcount": 41},
-    {"name": "ET", "stationcount": 36},
-    {"name": "HT", "stationcount": 36},
-    {"name": "SN", "stationcount": 35},
-    {"name": "LU", "stationcount": 35},
-    {"name": "SY", "stationcount": 33},
-    {"name": "IR", "stationcount": 33},
-    {"name": "MO", "stationcount": 32},
-    {"name": "GE", "stationcount": 32},
-    {"name": "NP", "stationcount": 30},
-  ];
-  List<String> countries = [];
-  late List<String> searchCountries;
+  List<Map<String, dynamic>> raw = [];
+  late List<Map> searchCountries;
+  Map? current;
 
   @override
   void initState() {
-    for (Map s in raw) {
-      countries.add(s['name']);
-    }
-    searchCountries = countries;
+    _inti();
     super.initState();
+  }
+
+  Future<void> _inti() async {
+    final countries = await RadioBrowser().getCountries();
+
+    if (countries != null) {
+      raw =
+          countries
+              .where((c) => c.name.trim().isNotEmpty)
+              .map(
+                (c) => {
+                  'name': c.iso31661 == 'IR' ? 'Iran' : c.name,
+                  'countryCode': c.iso31661,
+                  'stationCount': c.stationCount,
+                },
+              )
+              .toList()
+            ..sort(
+              (a, b) => (a['name'] as String).compareTo(b['name'] as String),
+            );
+    } else {
+      raw = [
+        {"countryCode": "AF", "name": "Afghanistan"},
+        {"countryCode": "AX", "name": "Åland Islands"},
+        {"countryCode": "AL", "name": "Albania"},
+        {"countryCode": "DZ", "name": "Algeria"},
+        {"countryCode": "AS", "name": "American Samoa"},
+        {"countryCode": "AD", "name": "Andorra"},
+        {"countryCode": "AO", "name": "Angola"},
+        {"countryCode": "AI", "name": "Anguilla"},
+        {"countryCode": "AQ", "name": "Antarctica"},
+        {"countryCode": "AG", "name": "Antigua and Barbuda"},
+        {"countryCode": "AR", "name": "Argentina"},
+        {"countryCode": "AM", "name": "Armenia"},
+        {"countryCode": "AW", "name": "Aruba"},
+        {"countryCode": "AU", "name": "Australia"},
+        {"countryCode": "AT", "name": "Austria"},
+        {"countryCode": "AZ", "name": "Azerbaijan"},
+
+        {"countryCode": "BS", "name": "Bahamas"},
+        {"countryCode": "BH", "name": "Bahrain"},
+        {"countryCode": "BD", "name": "Bangladesh"},
+        {"countryCode": "BB", "name": "Barbados"},
+        {"countryCode": "BY", "name": "Belarus"},
+        {"countryCode": "BE", "name": "Belgium"},
+        {"countryCode": "BZ", "name": "Belize"},
+        {"countryCode": "BJ", "name": "Benin"},
+        {"countryCode": "BM", "name": "Bermuda"},
+        {"countryCode": "BT", "name": "Bhutan"},
+        {"countryCode": "BO", "name": "Bolivia"},
+        {"countryCode": "BQ", "name": "Bonaire, Sint Eustatius and Saba"},
+        {"countryCode": "BA", "name": "Bosnia and Herzegovina"},
+        {"countryCode": "BW", "name": "Botswana"},
+        {"countryCode": "BV", "name": "Bouvet Island"},
+        {"countryCode": "BR", "name": "Brazil"},
+        {"countryCode": "IO", "name": "British Indian Ocean Territory"},
+        {"countryCode": "BN", "name": "Brunei"},
+        {"countryCode": "BG", "name": "Bulgaria"},
+        {"countryCode": "BF", "name": "Burkina Faso"},
+        {"countryCode": "BI", "name": "Burundi"},
+
+        {"countryCode": "CV", "name": "Cabo Verde"},
+        {"countryCode": "KH", "name": "Cambodia"},
+        {"countryCode": "CM", "name": "Cameroon"},
+        {"countryCode": "CA", "name": "Canada"},
+        {"countryCode": "KY", "name": "Cayman Islands"},
+        {"countryCode": "CF", "name": "Central African Republic"},
+        {"countryCode": "TD", "name": "Chad"},
+        {"countryCode": "CL", "name": "Chile"},
+        {"countryCode": "CN", "name": "China"},
+        {"countryCode": "CX", "name": "Christmas Island"},
+        {"countryCode": "CC", "name": "Cocos Islands"},
+        {"countryCode": "CO", "name": "Colombia"},
+        {"countryCode": "KM", "name": "Comoros"},
+        {"countryCode": "CG", "name": "Congo"},
+        {"countryCode": "CD", "name": "Congo, Democratic Republic"},
+        {"countryCode": "CK", "name": "Cook Islands"},
+        {"countryCode": "CR", "name": "Costa Rica"},
+        {"countryCode": "CI", "name": "Ivory Coast"},
+        {"countryCode": "HR", "name": "Croatia"},
+        {"countryCode": "CU", "name": "Cuba"},
+        {"countryCode": "CW", "name": "Curaçao"},
+        {"countryCode": "CY", "name": "Cyprus"},
+        {"countryCode": "CZ", "name": "Czech Republic"},
+
+        {"countryCode": "DK", "name": "Denmark"},
+        {"countryCode": "DJ", "name": "Djibouti"},
+        {"countryCode": "DM", "name": "Dominica"},
+        {"countryCode": "DO", "name": "Dominican Republic"},
+
+        {"countryCode": "EC", "name": "Ecuador"},
+        {"countryCode": "EG", "name": "Egypt"},
+        {"countryCode": "SV", "name": "El Salvador"},
+        {"countryCode": "GQ", "name": "Equatorial Guinea"},
+        {"countryCode": "ER", "name": "Eritrea"},
+        {"countryCode": "EE", "name": "Estonia"},
+        {"countryCode": "SZ", "name": "Eswatini"},
+        {"countryCode": "ET", "name": "Ethiopia"},
+
+        {"countryCode": "FK", "name": "Falkland Islands"},
+        {"countryCode": "FO", "name": "Faroe Islands"},
+        {"countryCode": "FJ", "name": "Fiji"},
+        {"countryCode": "FI", "name": "Finland"},
+        {"countryCode": "FR", "name": "France"},
+        {"countryCode": "GF", "name": "French Guiana"},
+        {"countryCode": "PF", "name": "French Polynesia"},
+        {"countryCode": "TF", "name": "French Southern Territories"},
+
+        {"countryCode": "GA", "name": "Gabon"},
+        {"countryCode": "GM", "name": "Gambia"},
+        {"countryCode": "GE", "name": "Georgia"},
+        {"countryCode": "DE", "name": "Germany"},
+        {"countryCode": "GH", "name": "Ghana"},
+        {"countryCode": "GI", "name": "Gibraltar"},
+        {"countryCode": "GR", "name": "Greece"},
+        {"countryCode": "GL", "name": "Greenland"},
+        {"countryCode": "GD", "name": "Grenada"},
+        {"countryCode": "GP", "name": "Guadeloupe"},
+        {"countryCode": "GU", "name": "Guam"},
+        {"countryCode": "GT", "name": "Guatemala"},
+        {"countryCode": "GG", "name": "Guernsey"},
+        {"countryCode": "GN", "name": "Guinea"},
+        {"countryCode": "GW", "name": "Guinea-Bissau"},
+        {"countryCode": "GY", "name": "Guyana"},
+
+        {"countryCode": "HT", "name": "Haiti"},
+        {"countryCode": "HM", "name": "Heard Island and McDonald Islands"},
+        {"countryCode": "VA", "name": "Holy See"},
+        {"countryCode": "HN", "name": "Honduras"},
+        {"countryCode": "HK", "name": "Hong Kong"},
+        {"countryCode": "HU", "name": "Hungary"},
+
+        {"countryCode": "IS", "name": "Iceland"},
+        {"countryCode": "IN", "name": "India"},
+        {"countryCode": "ID", "name": "Indonesia"},
+        {"countryCode": "IR", "name": "Iran"},
+        {"countryCode": "IQ", "name": "Iraq"},
+        {"countryCode": "IE", "name": "Ireland"},
+        {"countryCode": "IM", "name": "Isle of Man"},
+        {"countryCode": "IL", "name": "Israel"},
+        {"countryCode": "IT", "name": "Italy"},
+
+        {"countryCode": "JM", "name": "Jamaica"},
+        {"countryCode": "JP", "name": "Japan"},
+        {"countryCode": "JE", "name": "Jersey"},
+        {"countryCode": "JO", "name": "Jordan"},
+
+        {"countryCode": "KZ", "name": "Kazakhstan"},
+        {"countryCode": "KE", "name": "Kenya"},
+        {"countryCode": "KI", "name": "Kiribati"},
+        {"countryCode": "KP", "name": "North Korea"},
+        {"countryCode": "KR", "name": "South Korea"},
+        {"countryCode": "KW", "name": "Kuwait"},
+        {"countryCode": "KG", "name": "Kyrgyzstan"},
+
+        {"countryCode": "LA", "name": "Laos"},
+        {"countryCode": "LV", "name": "Latvia"},
+        {"countryCode": "LB", "name": "Lebanon"},
+        {"countryCode": "LS", "name": "Lesotho"},
+        {"countryCode": "LR", "name": "Liberia"},
+        {"countryCode": "LY", "name": "Libya"},
+        {"countryCode": "LI", "name": "Liechtenstein"},
+        {"countryCode": "LT", "name": "Lithuania"},
+        {"countryCode": "LU", "name": "Luxembourg"},
+        {"countryCode": "MO", "name": "Macao"},
+        {"countryCode": "MG", "name": "Madagascar"},
+        {"countryCode": "MW", "name": "Malawi"},
+        {"countryCode": "MY", "name": "Malaysia"},
+        {"countryCode": "MV", "name": "Maldives"},
+        {"countryCode": "ML", "name": "Mali"},
+        {"countryCode": "MT", "name": "Malta"},
+        {"countryCode": "MH", "name": "Marshall Islands"},
+        {"countryCode": "MQ", "name": "Martinique"},
+        {"countryCode": "MR", "name": "Mauritania"},
+        {"countryCode": "MU", "name": "Mauritius"},
+        {"countryCode": "YT", "name": "Mayotte"},
+        {"countryCode": "MX", "name": "Mexico"},
+        {"countryCode": "FM", "name": "Micronesia"},
+        {"countryCode": "MD", "name": "Moldova"},
+        {"countryCode": "MC", "name": "Monaco"},
+        {"countryCode": "MN", "name": "Mongolia"},
+        {"countryCode": "ME", "name": "Montenegro"},
+        {"countryCode": "MS", "name": "Montserrat"},
+        {"countryCode": "MA", "name": "Morocco"},
+        {"countryCode": "MZ", "name": "Mozambique"},
+        {"countryCode": "MM", "name": "Myanmar"},
+
+        {"countryCode": "NA", "name": "Namibia"},
+        {"countryCode": "NR", "name": "Nauru"},
+        {"countryCode": "NP", "name": "Nepal"},
+        {"countryCode": "NL", "name": "Netherlands"},
+        {"countryCode": "NC", "name": "New Caledonia"},
+        {"countryCode": "NZ", "name": "New Zealand"},
+        {"countryCode": "NI", "name": "Nicaragua"},
+        {"countryCode": "NE", "name": "Niger"},
+        {"countryCode": "NG", "name": "Nigeria"},
+        {"countryCode": "NU", "name": "Niue"},
+        {"countryCode": "NF", "name": "Norfolk Island"},
+        {"countryCode": "MK", "name": "North Macedonia"},
+        {"countryCode": "MP", "name": "Northern Mariana Islands"},
+        {"countryCode": "NO", "name": "Norway"},
+
+        {"countryCode": "OM", "name": "Oman"},
+
+        {"countryCode": "PK", "name": "Pakistan"},
+        {"countryCode": "PW", "name": "Palau"},
+        {"countryCode": "PS", "name": "Palestine"},
+        {"countryCode": "PA", "name": "Panama"},
+        {"countryCode": "PG", "name": "Papua New Guinea"},
+        {"countryCode": "PY", "name": "Paraguay"},
+        {"countryCode": "PE", "name": "Peru"},
+        {"countryCode": "PH", "name": "Philippines"},
+        {"countryCode": "PN", "name": "Pitcairn"},
+        {"countryCode": "PL", "name": "Poland"},
+        {"countryCode": "PT", "name": "Portugal"},
+        {"countryCode": "PR", "name": "Puerto Rico"},
+
+        {"countryCode": "QA", "name": "Qatar"},
+
+        {"countryCode": "RE", "name": "Réunion"},
+        {"countryCode": "RO", "name": "Romania"},
+        {"countryCode": "RU", "name": "Russia"},
+        {"countryCode": "RW", "name": "Rwanda"},
+
+        {"countryCode": "BL", "name": "Saint Barthélemy"},
+        {"countryCode": "SH", "name": "Saint Helena"},
+        {"countryCode": "KN", "name": "Saint Kitts and Nevis"},
+        {"countryCode": "LC", "name": "Saint Lucia"},
+        {"countryCode": "MF", "name": "Saint Martin"},
+        {"countryCode": "PM", "name": "Saint Pierre and Miquelon"},
+        {"countryCode": "VC", "name": "Saint Vincent and the Grenadines"},
+        {"countryCode": "WS", "name": "Samoa"},
+        {"countryCode": "SM", "name": "San Marino"},
+        {"countryCode": "ST", "name": "Sao Tome and Principe"},
+        {"countryCode": "SA", "name": "Saudi Arabia"},
+        {"countryCode": "SN", "name": "Senegal"},
+        {"countryCode": "RS", "name": "Serbia"},
+        {"countryCode": "SC", "name": "Seychelles"},
+        {"countryCode": "SL", "name": "Sierra Leone"},
+        {"countryCode": "SG", "name": "Singapore"},
+        {"countryCode": "SX", "name": "Sint Maarten"},
+        {"countryCode": "SK", "name": "Slovakia"},
+        {"countryCode": "SI", "name": "Slovenia"},
+        {"countryCode": "SB", "name": "Solomon Islands"},
+        {"countryCode": "SO", "name": "Somalia"},
+        {"countryCode": "ZA", "name": "South Africa"},
+        {
+          "countryCode": "GS",
+          "name": "South Georgia and South Sandwich Islands",
+        },
+        {"countryCode": "SS", "name": "South Sudan"},
+        {"countryCode": "ES", "name": "Spain"},
+        {"countryCode": "LK", "name": "Sri Lanka"},
+        {"countryCode": "SD", "name": "Sudan"},
+        {"countryCode": "SR", "name": "Suriname"},
+        {"countryCode": "SJ", "name": "Svalbard and Jan Mayen"},
+        {"countryCode": "SE", "name": "Sweden"},
+        {"countryCode": "CH", "name": "Switzerland"},
+        {"countryCode": "SY", "name": "Syria"},
+
+        {"countryCode": "TW", "name": "Taiwan"},
+        {"countryCode": "TJ", "name": "Tajikistan"},
+        {"countryCode": "TZ", "name": "Tanzania"},
+        {"countryCode": "TH", "name": "Thailand"},
+        {"countryCode": "TL", "name": "Timor-Leste"},
+        {"countryCode": "TG", "name": "Togo"},
+        {"countryCode": "TK", "name": "Tokelau"},
+        {"countryCode": "TO", "name": "Tonga"},
+        {"countryCode": "TT", "name": "Trinidad and Tobago"},
+        {"countryCode": "TN", "name": "Tunisia"},
+        {"countryCode": "TR", "name": "Turkey"},
+        {"countryCode": "TM", "name": "Turkmenistan"},
+        {"countryCode": "TC", "name": "Turks and Caicos Islands"},
+        {"countryCode": "TV", "name": "Tuvalu"},
+
+        {"countryCode": "UG", "name": "Uganda"},
+        {"countryCode": "UA", "name": "Ukraine"},
+        {"countryCode": "AE", "name": "United Arab Emirates"},
+        {"countryCode": "GB", "name": "United Kingdom"},
+        {"countryCode": "US", "name": "United States"},
+        {"countryCode": "UM", "name": "United States Minor Outlying Islands"},
+        {"countryCode": "UY", "name": "Uruguay"},
+        {"countryCode": "UZ", "name": "Uzbekistan"},
+
+        {"countryCode": "VU", "name": "Vanuatu"},
+        {"countryCode": "VE", "name": "Venezuela"},
+        {"countryCode": "VN", "name": "Vietnam"},
+        {"countryCode": "VG", "name": "Virgin Islands, British"},
+        {"countryCode": "VI", "name": "Virgin Islands, U.S."},
+
+        {"countryCode": "WF", "name": "Wallis and Futuna"},
+        {"countryCode": "EH", "name": "Western Sahara"},
+        {"countryCode": "YE", "name": "Yemen"},
+        {"countryCode": "ZM", "name": "Zambia"},
+        {"countryCode": "ZW", "name": "Zimbabwe"},
+      ];
+    }
+    searchCountries = List.from(raw);
+    current = raw.firstWhereOrNull(
+      (item) => item['countryCode'] == widget.currentCode,
+    );
+    setState(() {});
   }
 
   void search(String query) {
     if (query.isEmpty) {
-      searchCountries = countries;
+      searchCountries = raw;
     } else {
-      searchCountries = countries
-          .where((item) => item.toLowerCase().startsWith(query.toLowerCase()))
+      searchCountries = raw
+          .where(
+            (item) =>
+                item['name'].toLowerCase().startsWith(query.toLowerCase()),
+          )
           .toList();
     }
     setState(() {});
@@ -144,22 +350,49 @@ class _CountryListDialogState extends State<CountryListDialog> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextFieldBox(onChanged: search),
+              TextFieldBox(onChanged: search, autofocus: true),
+              if (current != null) ...[
+                TextView("${current!['name']}"),
+                Divider(),
+              ],
               Flexible(
-                child: ListView.builder(
-                  itemCount: searchCountries.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return InkWell(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextView(searchCountries[index]),
+                child: raw.isEmpty
+                    ? Loading()
+                    : ListView.builder(
+                        itemCount: searchCountries.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final country = searchCountries[index];
+                          return InkWell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: .start,
+                                spacing: 2,
+                                children: [
+                                  Text(country['name']),
+                                  if (country['stationCount'] != null)
+                                    Text(
+                                      "Station Count : ${country['stationCount'].toString()}",
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant
+                                            .withValues(alpha: 0.7),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.pop(
+                                context,
+                                searchCountries[index]['countryCode'],
+                              );
+                            },
+                          );
+                        },
                       ),
-                      onTap: () {
-                        Navigator.pop(context, searchCountries[index]);
-                      },
-                    );
-                  },
-                ),
               ),
             ],
           ),

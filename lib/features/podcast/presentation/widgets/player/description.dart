@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sound_center/core/util/text_util.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/html_parser.dart';
 
@@ -10,7 +11,7 @@ class Description extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: TextUtil.getTextDirection(description),
       child: Dialog(
         insetPadding: EdgeInsets.all(10),
         child: Padding(

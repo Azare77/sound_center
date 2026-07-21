@@ -9,7 +9,7 @@ class Button extends StatefulWidget {
     required this.buttonText,
     required this.onPressed,
     this.backgroundColor,
-    this.textColor = Colors.white,
+    this.textColor,
     this.showLoading = true,
     this.width,
     this.style,

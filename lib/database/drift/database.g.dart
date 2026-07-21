@@ -1736,16 +1736,15 @@ class $StreamSubscriptionTableTable extends StreamSubscriptionTable
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _fullDataMeta = const VerificationMeta(
-    'fullData',
-  );
+  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
   @override
-  late final GeneratedColumn<String> fullData = GeneratedColumn<String>(
-    'full_data',
+  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
+    'uuid',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -1756,7 +1755,7 @@ class $StreamSubscriptionTableTable extends StreamSubscriptionTable
     startAt,
     isOnline,
     cover,
-    fullData,
+    uuid,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1813,10 +1812,10 @@ class $StreamSubscriptionTableTable extends StreamSubscriptionTable
         cover.isAcceptableOrUnknown(data['cover']!, _coverMeta),
       );
     }
-    if (data.containsKey('full_data')) {
+    if (data.containsKey('uuid')) {
       context.handle(
-        _fullDataMeta,
-        fullData.isAcceptableOrUnknown(data['full_data']!, _fullDataMeta),
+        _uuidMeta,
+        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
       );
     }
     return context;
@@ -1859,9 +1858,9 @@ class $StreamSubscriptionTableTable extends StreamSubscriptionTable
         DriftSqlType.string,
         data['${effectivePrefix}cover'],
       ),
-      fullData: attachedDatabase.typeMapping.read(
+      uuid: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}full_data'],
+        data['${effectivePrefix}uuid'],
       ),
     );
   }
@@ -1881,7 +1880,7 @@ class StreamSubscriptionTableData extends DataClass
   final DateTime startAt;
   final bool isOnline;
   final String? cover;
-  final String? fullData;
+  final String? uuid;
   const StreamSubscriptionTableData({
     required this.id,
     required this.createdAt,
@@ -1890,7 +1889,7 @@ class StreamSubscriptionTableData extends DataClass
     required this.startAt,
     required this.isOnline,
     this.cover,
-    this.fullData,
+    this.uuid,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1904,8 +1903,8 @@ class StreamSubscriptionTableData extends DataClass
     if (!nullToAbsent || cover != null) {
       map['cover'] = Variable<String>(cover);
     }
-    if (!nullToAbsent || fullData != null) {
-      map['full_data'] = Variable<String>(fullData);
+    if (!nullToAbsent || uuid != null) {
+      map['uuid'] = Variable<String>(uuid);
     }
     return map;
   }
@@ -1921,9 +1920,7 @@ class StreamSubscriptionTableData extends DataClass
       cover: cover == null && nullToAbsent
           ? const Value.absent()
           : Value(cover),
-      fullData: fullData == null && nullToAbsent
-          ? const Value.absent()
-          : Value(fullData),
+      uuid: uuid == null && nullToAbsent ? const Value.absent() : Value(uuid),
     );
   }
 
@@ -1940,7 +1937,7 @@ class StreamSubscriptionTableData extends DataClass
       startAt: serializer.fromJson<DateTime>(json['startAt']),
       isOnline: serializer.fromJson<bool>(json['isOnline']),
       cover: serializer.fromJson<String?>(json['cover']),
-      fullData: serializer.fromJson<String?>(json['fullData']),
+      uuid: serializer.fromJson<String?>(json['uuid']),
     );
   }
   @override
@@ -1954,7 +1951,7 @@ class StreamSubscriptionTableData extends DataClass
       'startAt': serializer.toJson<DateTime>(startAt),
       'isOnline': serializer.toJson<bool>(isOnline),
       'cover': serializer.toJson<String?>(cover),
-      'fullData': serializer.toJson<String?>(fullData),
+      'uuid': serializer.toJson<String?>(uuid),
     };
   }
 
@@ -1966,7 +1963,7 @@ class StreamSubscriptionTableData extends DataClass
     DateTime? startAt,
     bool? isOnline,
     Value<String?> cover = const Value.absent(),
-    Value<String?> fullData = const Value.absent(),
+    Value<String?> uuid = const Value.absent(),
   }) => StreamSubscriptionTableData(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -1975,7 +1972,7 @@ class StreamSubscriptionTableData extends DataClass
     startAt: startAt ?? this.startAt,
     isOnline: isOnline ?? this.isOnline,
     cover: cover.present ? cover.value : this.cover,
-    fullData: fullData.present ? fullData.value : this.fullData,
+    uuid: uuid.present ? uuid.value : this.uuid,
   );
   StreamSubscriptionTableData copyWithCompanion(
     StreamSubscriptionTableCompanion data,
@@ -1988,7 +1985,7 @@ class StreamSubscriptionTableData extends DataClass
       startAt: data.startAt.present ? data.startAt.value : this.startAt,
       isOnline: data.isOnline.present ? data.isOnline.value : this.isOnline,
       cover: data.cover.present ? data.cover.value : this.cover,
-      fullData: data.fullData.present ? data.fullData.value : this.fullData,
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
     );
   }
 
@@ -2002,22 +1999,14 @@ class StreamSubscriptionTableData extends DataClass
           ..write('startAt: $startAt, ')
           ..write('isOnline: $isOnline, ')
           ..write('cover: $cover, ')
-          ..write('fullData: $fullData')
+          ..write('uuid: $uuid')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    createdAt,
-    title,
-    url,
-    startAt,
-    isOnline,
-    cover,
-    fullData,
-  );
+  int get hashCode =>
+      Object.hash(id, createdAt, title, url, startAt, isOnline, cover, uuid);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2029,7 +2018,7 @@ class StreamSubscriptionTableData extends DataClass
           other.startAt == this.startAt &&
           other.isOnline == this.isOnline &&
           other.cover == this.cover &&
-          other.fullData == this.fullData);
+          other.uuid == this.uuid);
 }
 
 class StreamSubscriptionTableCompanion
@@ -2041,7 +2030,7 @@ class StreamSubscriptionTableCompanion
   final Value<DateTime> startAt;
   final Value<bool> isOnline;
   final Value<String?> cover;
-  final Value<String?> fullData;
+  final Value<String?> uuid;
   const StreamSubscriptionTableCompanion({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2050,7 +2039,7 @@ class StreamSubscriptionTableCompanion
     this.startAt = const Value.absent(),
     this.isOnline = const Value.absent(),
     this.cover = const Value.absent(),
-    this.fullData = const Value.absent(),
+    this.uuid = const Value.absent(),
   });
   StreamSubscriptionTableCompanion.insert({
     this.id = const Value.absent(),
@@ -2060,7 +2049,7 @@ class StreamSubscriptionTableCompanion
     this.startAt = const Value.absent(),
     this.isOnline = const Value.absent(),
     this.cover = const Value.absent(),
-    this.fullData = const Value.absent(),
+    this.uuid = const Value.absent(),
   }) : title = Value(title),
        url = Value(url);
   static Insertable<StreamSubscriptionTableData> custom({
@@ -2071,7 +2060,7 @@ class StreamSubscriptionTableCompanion
     Expression<DateTime>? startAt,
     Expression<bool>? isOnline,
     Expression<String>? cover,
-    Expression<String>? fullData,
+    Expression<String>? uuid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2081,7 +2070,7 @@ class StreamSubscriptionTableCompanion
       if (startAt != null) 'start_at': startAt,
       if (isOnline != null) 'is_online': isOnline,
       if (cover != null) 'cover': cover,
-      if (fullData != null) 'full_data': fullData,
+      if (uuid != null) 'uuid': uuid,
     });
   }
 
@@ -2093,7 +2082,7 @@ class StreamSubscriptionTableCompanion
     Value<DateTime>? startAt,
     Value<bool>? isOnline,
     Value<String?>? cover,
-    Value<String?>? fullData,
+    Value<String?>? uuid,
   }) {
     return StreamSubscriptionTableCompanion(
       id: id ?? this.id,
@@ -2103,7 +2092,7 @@ class StreamSubscriptionTableCompanion
       startAt: startAt ?? this.startAt,
       isOnline: isOnline ?? this.isOnline,
       cover: cover ?? this.cover,
-      fullData: fullData ?? this.fullData,
+      uuid: uuid ?? this.uuid,
     );
   }
 
@@ -2131,8 +2120,8 @@ class StreamSubscriptionTableCompanion
     if (cover.present) {
       map['cover'] = Variable<String>(cover.value);
     }
-    if (fullData.present) {
-      map['full_data'] = Variable<String>(fullData.value);
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
     }
     return map;
   }
@@ -2147,7 +2136,7 @@ class StreamSubscriptionTableCompanion
           ..write('startAt: $startAt, ')
           ..write('isOnline: $isOnline, ')
           ..write('cover: $cover, ')
-          ..write('fullData: $fullData')
+          ..write('uuid: $uuid')
           ..write(')'))
         .toString();
   }
@@ -3030,7 +3019,7 @@ typedef $$StreamSubscriptionTableTableCreateCompanionBuilder =
       Value<DateTime> startAt,
       Value<bool> isOnline,
       Value<String?> cover,
-      Value<String?> fullData,
+      Value<String?> uuid,
     });
 typedef $$StreamSubscriptionTableTableUpdateCompanionBuilder =
     StreamSubscriptionTableCompanion Function({
@@ -3041,7 +3030,7 @@ typedef $$StreamSubscriptionTableTableUpdateCompanionBuilder =
       Value<DateTime> startAt,
       Value<bool> isOnline,
       Value<String?> cover,
-      Value<String?> fullData,
+      Value<String?> uuid,
     });
 
 class $$StreamSubscriptionTableTableFilterComposer
@@ -3088,8 +3077,8 @@ class $$StreamSubscriptionTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get fullData => $composableBuilder(
-    column: $table.fullData,
+  ColumnFilters<String> get uuid => $composableBuilder(
+    column: $table.uuid,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -3138,8 +3127,8 @@ class $$StreamSubscriptionTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get fullData => $composableBuilder(
-    column: $table.fullData,
+  ColumnOrderings<String> get uuid => $composableBuilder(
+    column: $table.uuid,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -3174,8 +3163,8 @@ class $$StreamSubscriptionTableTableAnnotationComposer
   GeneratedColumn<String> get cover =>
       $composableBuilder(column: $table.cover, builder: (column) => column);
 
-  GeneratedColumn<String> get fullData =>
-      $composableBuilder(column: $table.fullData, builder: (column) => column);
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
 }
 
 class $$StreamSubscriptionTableTableTableManager
@@ -3231,7 +3220,7 @@ class $$StreamSubscriptionTableTableTableManager
                 Value<DateTime> startAt = const Value.absent(),
                 Value<bool> isOnline = const Value.absent(),
                 Value<String?> cover = const Value.absent(),
-                Value<String?> fullData = const Value.absent(),
+                Value<String?> uuid = const Value.absent(),
               }) => StreamSubscriptionTableCompanion(
                 id: id,
                 createdAt: createdAt,
@@ -3240,7 +3229,7 @@ class $$StreamSubscriptionTableTableTableManager
                 startAt: startAt,
                 isOnline: isOnline,
                 cover: cover,
-                fullData: fullData,
+                uuid: uuid,
               ),
           createCompanionCallback:
               ({
@@ -3251,7 +3240,7 @@ class $$StreamSubscriptionTableTableTableManager
                 Value<DateTime> startAt = const Value.absent(),
                 Value<bool> isOnline = const Value.absent(),
                 Value<String?> cover = const Value.absent(),
-                Value<String?> fullData = const Value.absent(),
+                Value<String?> uuid = const Value.absent(),
               }) => StreamSubscriptionTableCompanion.insert(
                 id: id,
                 createdAt: createdAt,
@@ -3260,7 +3249,7 @@ class $$StreamSubscriptionTableTableTableManager
                 startAt: startAt,
                 isOnline: isOnline,
                 cover: cover,
-                fullData: fullData,
+                uuid: uuid,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
         );
         await m.addColumn(
           streamSubscriptionTable,
-          streamSubscriptionTable.fullData,
+          streamSubscriptionTable.uuid,
         );
       }
     },

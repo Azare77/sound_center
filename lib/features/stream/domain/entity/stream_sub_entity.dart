@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:drift/drift.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/database/drift/database.dart';
@@ -12,7 +10,7 @@ class StreamSubEntity {
   final DateTime startAt;
   final bool isOnline;
   final String? cover;
-  final Station? fullData;
+  final String? uuid;
 
   StreamSubEntity({
     required this.title,
@@ -20,7 +18,7 @@ class StreamSubEntity {
     required this.startAt,
     required this.audioUrl,
     required this.isOnline,
-    required this.fullData,
+    required this.uuid,
     this.cover,
   });
 
@@ -32,9 +30,7 @@ class StreamSubEntity {
       cover: subscription.cover,
       startAt: subscription.startAt,
       isOnline: subscription.isOnline,
-      fullData: subscription.fullData != null
-          ? Station.fromJson(jsonDecode(subscription.fullData!))
-          : null,
+      uuid: subscription.uuid,
     );
   }
 
@@ -45,7 +41,7 @@ class StreamSubEntity {
       audioUrl: server.title!,
       startAt: server.serverStartIso8601 ?? DateTime(1970),
       isOnline: server.source.isNotEmpty,
-      fullData: null,
+      uuid: null,
     );
   }
 
@@ -57,7 +53,7 @@ class StreamSubEntity {
       isOnline: false,
       cover: server.favicon,
       audioUrl: server.urlResolved!,
-      fullData: server,
+      uuid: server.stationUUID,
     );
   }
 
@@ -68,7 +64,7 @@ class StreamSubEntity {
       startAt: Value(startAt),
       isOnline: Value(isOnline),
       cover: Value(cover),
-      fullData: Value(fullData != null ? jsonEncode(fullData!.toJson()) : null),
+      uuid: Value(uuid),
     );
   }
 }

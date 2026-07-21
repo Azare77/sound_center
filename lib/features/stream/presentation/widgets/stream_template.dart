@@ -27,7 +27,7 @@ class StreamTemplate extends StatelessWidget {
             width: size,
             height: size,
             child: Hero(
-              tag: stats.fullData?.stationUUID ?? stats.url,
+              tag: stats.uuid ?? stats.url,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: NetworkCacheImage(url: stats.cover),

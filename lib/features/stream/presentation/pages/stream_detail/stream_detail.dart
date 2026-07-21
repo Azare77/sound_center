@@ -55,9 +55,9 @@ class _StreamDetailState extends State<StreamDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget content = widget.stream.fullData != null
+    final Widget content = widget.stream.uuid != null
         ? RadioStreamView(
-            station: widget.stream.fullData!,
+            stream: widget.stream,
             subscribe: _subscribe,
             repository: repository,
           )
@@ -67,7 +67,7 @@ class _StreamDetailState extends State<StreamDetail> {
             repository: repository,
           );
     return Scaffold(
-      appBar: widget.stream.fullData != null ? null : AppBar(),
+      appBar: widget.stream.uuid != null ? null : AppBar(),
       body: Column(
         children: [
           Expanded(child: content),

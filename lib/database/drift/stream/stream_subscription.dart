@@ -12,5 +12,5 @@ class StreamSubscriptionTable extends Table with TableMixin {
 
   TextColumn get cover => text().nullable()();
 
-  TextColumn get fullData => text().nullable()();
+  TextColumn get uuid => text().unique().nullable()();
 }

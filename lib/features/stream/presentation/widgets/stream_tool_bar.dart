@@ -73,9 +73,10 @@ class _StreamToolBarState extends State<StreamToolBar> {
                   children: [
                     IconButton(
                       onPressed: () async {
+                        final dialog = CountryListDialog(currentCode: country);
                         showDialog(
                           context: context,
-                          builder: (context) => CountryListDialog(),
+                          builder: (context) => dialog,
                         ).then((res) {
                           country = res;
                           setState(() {});
@@ -88,9 +89,12 @@ class _StreamToolBarState extends State<StreamToolBar> {
                     ),
                     IconButton(
                       onPressed: () async {
+                        final dialog = LanguageListDialog(
+                          currentLanguage: language,
+                        );
                         showDialog(
                           context: context,
-                          builder: (context) => LanguageListDialog(),
+                          builder: (context) => dialog,
                         ).then((res) {
                           language = res;
                           setState(() {});
@@ -103,9 +107,10 @@ class _StreamToolBarState extends State<StreamToolBar> {
                     ),
                     IconButton(
                       onPressed: () async {
+                        final dialog = TagListDialog(currentTag: tags);
                         showDialog(
                           context: context,
-                          builder: (context) => TagListDialog(),
+                          builder: (context) => dialog,
                         ).then((res) {
                           tags = res;
                           setState(() {});

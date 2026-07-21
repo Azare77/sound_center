@@ -21,6 +21,7 @@ class StreamRepositoryImp implements StreamRepository {
   StreamRepositoryImp(this.database);
 
   final StreamSource _source = StreamSource();
+  final RadioBrowser _browser = RadioBrowser.initialize(null);
 
   @override
   StreamType detectStreamType(String url) {
@@ -231,7 +232,7 @@ class StreamRepositoryImp implements StreamRepository {
     String? tag,
     required int offset,
   }) async {
-    final response = await RadioBrowser.search(
+    final response = await _browser.search(
       offset: offset,
       language: language,
       countryCode: countryCode,
@@ -239,6 +240,11 @@ class StreamRepositoryImp implements StreamRepository {
       name: name,
     );
     return response;
+  }
+
+  Future<Station?> loadStationInfo(String uuid) async {
+    var station = await _browser.loadStationInfo(uuid);
+    return station;
   }
 }
 

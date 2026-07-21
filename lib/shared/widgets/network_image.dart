@@ -97,7 +97,7 @@ class NetworkCacheImage extends StatelessWidget {
       height: size,
       child: Image.asset(
         'assets/default-cover.png',
-        fit: BoxFit.scaleDown,
+        fit: BoxFit.cover,
         filterQuality: FilterQuality.high,
       ),
     );

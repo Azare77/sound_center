@@ -63,6 +63,9 @@ class _StreamPageState extends State<StreamPage> {
             builder: (BuildContext context, StreamState state) {
               if (state.status is SubscribedStreams) {
                 SubscribedStreams status = state.status as SubscribedStreams;
+                if (status.streams.isEmpty) {
+                  return Center(child: Text(S.of(context).noStream));
+                }
                 return RefreshIndicator(
                   onRefresh: () {
                     refreshCompleter = Completer<void>();
@@ -99,37 +102,31 @@ class _StreamPageState extends State<StreamPage> {
               }
               if (state.status is SearchStreams) {
                 SearchStreams status = state.status as SearchStreams;
-                return RefreshIndicator(
-                  onRefresh: () {
-                    refreshCompleter = Completer<void>();
-                    BlocProvider.of<StreamBloc>(
-                      context,
-                    ).add(CheckStreamsStatus(refreshCompleter));
-                    return refreshCompleter!.future;
+                if (status.streams.isEmpty) {
+                  return Center(child: Text(S.of(context).noStream));
+                }
+                return ListView.builder(
+                  itemCount: status.streams.length,
+                  itemBuilder: (context, index) {
+                    final stream = status.streams[index];
+                    return InkWell(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => StreamDetail(stream: stream),
+                          ),
+                        );
+                      },
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => StreamActionMenu(stream: stream),
+                        );
+                      },
+                      child: StreamTemplate(stats: stream),
+                    );
                   },
-                  child: ListView.builder(
-                    itemCount: status.streams.length,
-                    itemBuilder: (context, index) {
-                      final stream = status.streams[index];
-                      return InkWell(
-                        onTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => StreamDetail(stream: stream),
-                            ),
-                          );
-                        },
-                        onLongPress: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => StreamActionMenu(stream: stream),
-                          );
-                        },
-                        child: StreamTemplate(stats: stream),
-                      );
-                    },
-                  ),
                 );
               }
               if (state.status is LoadingStream) {

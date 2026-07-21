@@ -71,5 +71,11 @@
   "location": "مکان",
   "adminInfo": "اطلاعات ادمین",
   "startedAt": "شروع شده در",
-  "notification": "اعلان ها"
+  "notification": "اعلان ها",
+  "country": "کشور",
+  "tags": "تگ ها",
+  "format": "فرمت",
+  "website": "وب سایت",
+  "votes": "حمایت ها",
+  "clicks": "کلیک ها"
 }

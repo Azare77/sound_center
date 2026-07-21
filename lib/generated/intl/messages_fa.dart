@@ -33,7 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("هنرمند"),
     "az": MessageLookupByLibrary.simpleMessage("الف-ی"),
+    "clicks": MessageLookupByLibrary.simpleMessage("کلیک ها"),
     "copy": MessageLookupByLibrary.simpleMessage("کپی تم"),
+    "country": MessageLookupByLibrary.simpleMessage("کشور"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("ساخت تم جدید"),
     "createTime": MessageLookupByLibrary.simpleMessage("تاریخ ایجاد"),
     "currentMediaColor": MessageLookupByLibrary.simpleMessage(
@@ -51,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloading": MessageLookupByLibrary.simpleMessage("در حال دانلود"),
     "duration": MessageLookupByLibrary.simpleMessage("مدت"),
     "errorInDownload": MessageLookupByLibrary.simpleMessage("خطا در دانلود"),
+    "format": MessageLookupByLibrary.simpleMessage("فرمت"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("دریافت کلید API"),
     "green": MessageLookupByLibrary.simpleMessage("سبز"),
     "host": MessageLookupByLibrary.simpleMessage("هاست"),
@@ -99,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "stream": MessageLookupByLibrary.simpleMessage("استریم"),
     "submit": MessageLookupByLibrary.simpleMessage("تایید"),
     "subscribe": MessageLookupByLibrary.simpleMessage("مشترک شدن"),
+    "tags": MessageLookupByLibrary.simpleMessage("تگ ها"),
     "theme": MessageLookupByLibrary.simpleMessage("تم"),
     "themeName": MessageLookupByLibrary.simpleMessage("نام تم"),
     "thereIsANewUpdate": MessageLookupByLibrary.simpleMessage(
@@ -109,6 +113,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "unsubscribe": MessageLookupByLibrary.simpleMessage("لغو اشتراک"),
     "updateNow": MessageLookupByLibrary.simpleMessage("به روزرسانی"),
     "urlLink": MessageLookupByLibrary.simpleMessage("لینک استریم"),
+    "votes": MessageLookupByLibrary.simpleMessage("حمایت ها"),
+    "website": MessageLookupByLibrary.simpleMessage("وب سایت"),
     "yes": MessageLookupByLibrary.simpleMessage("بله"),
     "za": MessageLookupByLibrary.simpleMessage("ی-الف"),
   };

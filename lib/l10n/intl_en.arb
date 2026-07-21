@@ -71,5 +71,11 @@
   "location": "Location",
   "adminInfo": "Admin Info",
   "startedAt": "Started At",
-  "notification": "Notification"
+  "notification": "Notification",
+  "country": "Country",
+  "tags": "Tags",
+  "format": "Format",
+  "website": "Website",
+  "votes": "Votes",
+  "clicks": "Clicks"
 }

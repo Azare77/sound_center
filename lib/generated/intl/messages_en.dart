@@ -35,7 +35,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("Artist"),
     "az": MessageLookupByLibrary.simpleMessage("A-Z"),
+    "clicks": MessageLookupByLibrary.simpleMessage("Clicks"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),
+    "country": MessageLookupByLibrary.simpleMessage("Country"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("Create New Theme"),
     "createTime": MessageLookupByLibrary.simpleMessage("Create time"),
     "currentMediaColor": MessageLookupByLibrary.simpleMessage(
@@ -57,6 +59,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorInDownload": MessageLookupByLibrary.simpleMessage(
       "Error In Download",
     ),
+    "format": MessageLookupByLibrary.simpleMessage("Format"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
     "host": MessageLookupByLibrary.simpleMessage("Host"),
@@ -107,6 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "stream": MessageLookupByLibrary.simpleMessage("Stream"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "subscribe": MessageLookupByLibrary.simpleMessage("Subscribe"),
+    "tags": MessageLookupByLibrary.simpleMessage("Tags"),
     "theme": MessageLookupByLibrary.simpleMessage("Theme"),
     "themeName": MessageLookupByLibrary.simpleMessage("Theme Name"),
     "thereIsANewUpdate": MessageLookupByLibrary.simpleMessage(
@@ -117,6 +121,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "unsubscribe": MessageLookupByLibrary.simpleMessage("Unsubscribe"),
     "updateNow": MessageLookupByLibrary.simpleMessage("Update Now"),
     "urlLink": MessageLookupByLibrary.simpleMessage("Url Link"),
+    "votes": MessageLookupByLibrary.simpleMessage("Votes"),
+    "website": MessageLookupByLibrary.simpleMessage("Website"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "za": MessageLookupByLibrary.simpleMessage("Z-A"),
   };

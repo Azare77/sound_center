@@ -14,14 +14,16 @@ class StreamInfo extends StatefulWidget {
     super.key,
     required this.subscribed,
     required this.subscribe,
+    required this.heroTag,
     this.url,
-    required this.station,
+    this.station,
   });
 
   final bool subscribed;
   final Function(StreamSubEntity sub) subscribe;
   final String? url;
-  final radio.Station station;
+  final String heroTag;
+  final radio.Station? station;
 
   @override
   State<StreamInfo> createState() => _StreamInfoState();
@@ -58,60 +60,62 @@ class _StreamInfoState extends State<StreamInfo> {
           child: FlexibleSpaceBar(
             title: Padding(
               padding: EdgeInsets.only(top: toolbar),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 5,
-                children: [
-                  ScrollingText(
-                    widget.station.name,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  if (t == 1)
-                    Row(
+              child: widget.station == null
+                  ? SizedBox()
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 5,
                       children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            final sub = StreamSubEntity.fromStation(
-                              widget.station,
-                            );
-                            final res = await widget.subscribe.call(sub);
-                            if (!res) return;
-                            setState(() {
-                              subscribed = !subscribed;
-                            });
-                          },
-                          child: Text(
-                            subscribed
-                                ? S.of(context).unsubscribe
-                                : S.of(context).subscribe,
-                          ),
+                        ScrollingText(
+                          widget.station!.name,
+                          style: TextStyle(color: Colors.white),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            BlocProvider.of<StreamBloc>(context).add(
-                              PlayStream(
-                                Source(
-                                  listenUrl: widget.station.urlResolved!,
-                                  title: widget.station.name,
-                                  cover: widget.station.favicon,
+                        if (t == 1)
+                          Row(
+                            spacing: 5,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  final sub = StreamSubEntity.fromStation(
+                                    widget.station!,
+                                  );
+                                  final res = await widget.subscribe.call(sub);
+                                  if (!res) return;
+                                  setState(() {
+                                    subscribed = !subscribed;
+                                  });
+                                },
+                                child: Text(
+                                  subscribed
+                                      ? S.of(context).unsubscribe
+                                      : S.of(context).subscribe,
                                 ),
                               ),
-                            );
-                          },
-                          child: Text(S.of(context).play),
-                        ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  BlocProvider.of<StreamBloc>(context).add(
+                                    PlayStream(
+                                      Source(
+                                        listenUrl: widget.station!.urlResolved!,
+                                        title: widget.station!.name,
+                                        cover: widget.station!.favicon,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(S.of(context).play),
+                              ),
+                            ],
+                          ),
                       ],
                     ),
-                ],
-              ),
             ),
             background: Stack(
               fit: StackFit.expand,
               children: [
                 Hero(
-                  tag: widget.station.stationUUID,
+                  tag: widget.heroTag,
                   child: NetworkCacheImage(
                     url: widget.url,
                     size: visibleHeight,

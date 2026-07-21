@@ -1744,7 +1744,6 @@ class $StreamSubscriptionTableTable extends StreamSubscriptionTable
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   @override
   List<GeneratedColumn> get $columns => [

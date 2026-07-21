@@ -51,6 +51,11 @@ class AppDatabase extends _$AppDatabase {
           streamSubscriptionTable,
           streamSubscriptionTable.uuid,
         );
+        await customStatement('''
+        CREATE UNIQUE INDEX stream_subscription_uuid_unique
+        ON stream_subscription_table(uuid)
+        WHERE uuid IS NOT NULL;
+      ''');
       }
     },
   );

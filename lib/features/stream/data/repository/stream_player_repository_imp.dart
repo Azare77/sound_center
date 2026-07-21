@@ -19,7 +19,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   }
 
   StreamPlayerRepositoryImp._internal() {
-    _playerService.setOnStreamComplete(() => stop());
+    _playerService.setOnStreamComplete(() => restart());
     _initialPlayerState();
   }
 
@@ -200,6 +200,12 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     await _playerService.release();
     await Future.delayed(Duration(milliseconds: 100));
     bloc.add(TogglePlay());
+  }
+
+  Future<void> restart() async {
+    await _playerService.release();
+    await Future.delayed(Duration(seconds: 2));
+    await play(0);
   }
 
   void addIcyMetadataListener(void Function(String? title) onTitle) {

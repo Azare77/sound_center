@@ -229,7 +229,7 @@ class JustAudioService {
     } else if (_source == AudioSource.online) {
       _onPodcastComplete?.call();
     } else if (_source == AudioSource.stream) {
-      play().onError((e, s) => _onStreamComplete?.call());
+      _onStreamComplete?.call();
     }
     await Future.delayed(const Duration(milliseconds: 200));
     _handlingError = false;

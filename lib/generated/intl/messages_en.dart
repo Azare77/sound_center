@@ -35,6 +35,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("Artist"),
     "az": MessageLookupByLibrary.simpleMessage("A-Z"),
+    "checkForUpdates": MessageLookupByLibrary.simpleMessage(
+      "Check for updates",
+    ),
     "clicks": MessageLookupByLibrary.simpleMessage("Clicks"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),
     "country": MessageLookupByLibrary.simpleMessage("Country"),
@@ -124,6 +127,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "votes": MessageLookupByLibrary.simpleMessage("Votes"),
     "website": MessageLookupByLibrary.simpleMessage("Website"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "youAreUsingLatestVersion": MessageLookupByLibrary.simpleMessage(
+      "You\'re using the latest version.",
+    ),
     "za": MessageLookupByLibrary.simpleMessage("Z-A"),
   };
 }

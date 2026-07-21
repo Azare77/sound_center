@@ -414,6 +414,16 @@ class S {
     );
   }
 
+  /// `You're using the latest version.`
+  String get youAreUsingLatestVersion {
+    return Intl.message(
+      'You\'re using the latest version.',
+      name: 'youAreUsingLatestVersion',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Update Now`
   String get updateNow {
     return Intl.message('Update Now', name: 'updateNow', desc: '', args: []);
@@ -552,6 +562,16 @@ class S {
   /// `Clicks`
   String get clicks {
     return Intl.message('Clicks', name: 'clicks', desc: '', args: []);
+  }
+
+  /// `Check for updates`
+  String get checkForUpdates {
+    return Intl.message(
+      'Check for updates',
+      name: 'checkForUpdates',
+      desc: '',
+      args: [],
+    );
   }
 }
 

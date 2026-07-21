@@ -55,6 +55,7 @@
   "copy": "Copy",
   "sourceCode": "Source Code",
   "thereIsANewUpdate": "There is a new update",
+  "youAreUsingLatestVersion": "You're using the latest version.",
   "updateNow": "Update Now",
   "downloading": "Downloading",
   "downloadCompleted": "Download Completed",
@@ -77,5 +78,6 @@
   "format": "Format",
   "website": "Website",
   "votes": "Votes",
-  "clicks": "Clicks"
+  "clicks": "Clicks",
+  "checkForUpdates": "Check for updates"
 }

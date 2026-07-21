@@ -55,6 +55,7 @@
   "copy": "کپی تم",
   "sourceCode": "کد منبع",
   "thereIsANewUpdate": "به روزسانی جدیدی در دسترس است",
+  "youAreUsingLatestVersion": "برنامه شما به‌روز است.",
   "updateNow": "به روزرسانی",
   "downloading": "در حال دانلود",
   "downloadCompleted": "دانلود کامل شد",
@@ -77,5 +78,6 @@
   "format": "فرمت",
   "website": "وب سایت",
   "votes": "حمایت ها",
-  "clicks": "کلیک ها"
+  "clicks": "کلیک ها",
+  "checkForUpdates": "بررسی بروزرسانی"
 }

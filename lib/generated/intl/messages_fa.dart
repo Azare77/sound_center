@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("هنرمند"),
     "az": MessageLookupByLibrary.simpleMessage("الف-ی"),
+    "checkForUpdates": MessageLookupByLibrary.simpleMessage("بررسی بروزرسانی"),
     "clicks": MessageLookupByLibrary.simpleMessage("کلیک ها"),
     "copy": MessageLookupByLibrary.simpleMessage("کپی تم"),
     "country": MessageLookupByLibrary.simpleMessage("کشور"),
@@ -116,6 +117,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "votes": MessageLookupByLibrary.simpleMessage("حمایت ها"),
     "website": MessageLookupByLibrary.simpleMessage("وب سایت"),
     "yes": MessageLookupByLibrary.simpleMessage("بله"),
+    "youAreUsingLatestVersion": MessageLookupByLibrary.simpleMessage(
+      "برنامه شما به‌روز است.",
+    ),
     "za": MessageLookupByLibrary.simpleMessage("ی-الف"),
   };
 }

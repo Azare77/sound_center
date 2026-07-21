@@ -131,7 +131,7 @@ class _StreamToolBarState extends State<StreamToolBar> {
                 onSubmitted: (text) {
                   bloc.add(
                     SearchStream(
-                      offset: 1,
+                      offset: 0,
                       name: text.trim(),
                       language: language,
                       countryCode: country,

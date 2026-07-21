@@ -67,8 +67,7 @@ dependencies:
   cached_network_image: ^3.4.1
   background_downloader: ^9.5.6
   #STREAM
-  radio_browser_api:
-    path: "../radio-browser-api"
+  radio_browser_api: ^2.0.0+1
   #SHARE
   app_links: ^7.2.1
   share_plus: ^13.2.0

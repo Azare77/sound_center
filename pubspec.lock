@@ -274,7 +274,7 @@ packages:
     source: hosted
     version: "1.2.1"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       sha256: "2f5709ae4d3d59dd8f7cd309b4e023046b57d8a6c82130785d2b0e5868084e76"
@@ -1048,11 +1048,10 @@ packages:
   radio_browser_api:
     dependency: "direct main"
     description:
-      name: radio_browser_api
-      sha256: "73da0aa774ebfb28315d7c4590f4b231105772860fe1a4ba5c20ee05cf0e8d63"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0+1"
+      path: "../radio-browser-api"
+      relative: true
+    source: path
+    version: "2.0.0"
   recase:
     dependency: transitive
     description:

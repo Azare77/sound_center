@@ -34,6 +34,7 @@ dependencies:
     sdk: flutter
 
   intl: ^0.20.2
+  collection: ^1.19.1
   #GET AUDIO DATA FROM DISK
   permission_handler: ^12.0.3
   on_audio_query_forked: ^2.9.1
@@ -66,7 +67,8 @@ dependencies:
   cached_network_image: ^3.4.1
   background_downloader: ^9.5.6
   #STREAM
-  radio_browser_api: ^2.0.0+1
+  radio_browser_api:
+    path: "../radio-browser-api"
   #SHARE
   app_links: ^7.2.1
   share_plus: ^13.2.0

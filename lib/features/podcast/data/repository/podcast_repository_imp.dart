@@ -36,13 +36,14 @@ class PodcastRepositoryImp implements PodcastRepository {
 
   @override
   Future<List<SubscriptionEntity>> haveUpdate() async {
-    final subs = await getSubs();
+    List<SubscriptionTableData> subs = await getSubs();
     final podcasts = await compute(_checkSubscriptionsForUpdates, subs);
 
     PodcastSource.setCache(podcasts);
 
     final updates = <Map<String, dynamic>>[];
-
+    // fetch again subs because user may update the table while compute operation
+    subs = await getSubs();
     for (final sub in subs) {
       final entity = SubscriptionEntity.fromDrift(sub);
       final podcast = podcasts[sub.feedUrl];

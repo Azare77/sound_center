@@ -71,16 +71,10 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       }
     });
     on<SubscribeToStream>((event, emit) async {
-      bool success = await getStreamUseCase.subscribe(event.stream);
-      if (success) {
-        add(GetSubscribedStreams());
-      }
+      await getStreamUseCase.subscribe(event.stream);
     });
     on<UnSubscribeFromStream>((event, emit) async {
-      bool success = await getStreamUseCase.unsubscribe(event.stream);
-      if (success) {
-        add(GetSubscribedStreams());
-      }
+      await getStreamUseCase.unsubscribe(event.stream);
     });
 
     on<StreamStaticFile>((event, emit) async {

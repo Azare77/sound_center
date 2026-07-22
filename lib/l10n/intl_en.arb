@@ -79,5 +79,7 @@
   "website": "Website",
   "votes": "Votes",
   "clicks": "Clicks",
-  "checkForUpdates": "Check for updates"
+  "checkForUpdates": "Check for updates",
+  "loading": "Loading",
+  "errorInLoading": "Error in loading"
 }

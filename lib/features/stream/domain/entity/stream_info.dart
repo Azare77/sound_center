@@ -1,3 +1,5 @@
+import 'package:radio_browser_api/radio_browser_api.dart';
+
 class IcecastStream {
   final IceStats icestats;
 
@@ -96,6 +98,7 @@ class Source {
   final DateTime? streamStartIso8601;
   final String? title;
   final String? cover;
+  final String? uuid;
 
   Source({
     required this.listenUrl,
@@ -112,6 +115,7 @@ class Source {
     this.streamStartIso8601,
     this.title,
     this.cover,
+    this.uuid,
   });
 
   factory Source.fromJson(Map<String, dynamic> json) {
@@ -135,6 +139,16 @@ class Source {
       streamStart: json['stream_start'],
       streamStartIso8601: streamStartIso8601,
       title: json['title'],
+      uuid: json['uuid'],
+    );
+  }
+
+  factory Source.fromStation(Station station) {
+    return Source(
+      listenUrl: station.urlResolved!,
+      title: station.name,
+      cover: station.favicon,
+      uuid: station.stationUUID,
     );
   }
 
@@ -153,6 +167,7 @@ class Source {
       'stream_start': streamStart,
       'stream_start_iso8601': streamStartIso8601,
       'title': title,
+      'uuid': uuid,
     };
   }
 }

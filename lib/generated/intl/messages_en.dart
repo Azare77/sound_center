@@ -62,6 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorInDownload": MessageLookupByLibrary.simpleMessage(
       "Error In Download",
     ),
+    "errorInLoading": MessageLookupByLibrary.simpleMessage("Error in loading"),
     "format": MessageLookupByLibrary.simpleMessage("Format"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
@@ -76,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadFail": MessageLookupByLibrary.simpleMessage("Failed To Load Podcast"),
     "loadPodcast": MessageLookupByLibrary.simpleMessage("Load Podcast"),
     "loadStream": MessageLookupByLibrary.simpleMessage("Load Stream"),
+    "loading": MessageLookupByLibrary.simpleMessage("Loading"),
     "local": MessageLookupByLibrary.simpleMessage("Local"),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
     "moreInfo": MessageLookupByLibrary.simpleMessage("More Info"),

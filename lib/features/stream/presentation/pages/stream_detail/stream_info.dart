@@ -96,11 +96,7 @@ class _StreamInfoState extends State<StreamInfo> {
                                 onPressed: () {
                                   BlocProvider.of<StreamBloc>(context).add(
                                     PlayStream(
-                                      Source(
-                                        listenUrl: widget.station!.urlResolved!,
-                                        title: widget.station!.name,
-                                        cover: widget.station!.favicon,
-                                      ),
+                                      Source.fromStation(widget.station!),
                                     ),
                                   );
                                 },

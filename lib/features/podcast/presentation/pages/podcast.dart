@@ -11,6 +11,7 @@ import 'package:sound_center/features/podcast/presentation/widgets/podcast_templ
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/subscribed/subscribed_podcast_list.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/shared/widgets/toast_message.dart';
 
 class PodcastSearchController {
   static final ValueNotifier<bool> showSearchField = ValueNotifier(true);
@@ -29,6 +30,10 @@ class Podcast extends StatelessWidget {
 
   void handleDeepLink(BuildContext context, Map<String, String> params) async {
     try {
+      ToastMessage.showInfoMessage(
+        title: Text(S.of(context).loading),
+        autoCloseIn: 10,
+      );
       PodcastBloc bloc = BlocProvider.of<PodcastBloc>(context);
       search.Podcast podcast = await search.Feed.loadFeed(
         url: params['podcast'] ?? "",
@@ -44,7 +49,9 @@ class Podcast extends StatelessWidget {
         ),
       );
       bloc.add(GetSubscribedPodcasts());
-    } catch (_) {}
+    } catch (_) {
+      ToastMessage.showErrorMessage(title: S.of(context).errorInLoading);
+    }
   }
 
   bool resetPodcastPage(BuildContext context) {

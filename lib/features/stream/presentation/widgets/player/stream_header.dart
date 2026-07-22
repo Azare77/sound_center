@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -55,7 +54,6 @@ class _StreamHeaderState extends State<StreamHeader> {
   Widget build(BuildContext context) {
     return BlocBuilder<StreamBloc, StreamState>(
       builder: (BuildContext context, StreamState state) {
-        final song = imp.getCurrentStream!;
         late final String title;
         late final String? artist;
         final currentStream = imp.getCurrentStream;
@@ -97,9 +95,24 @@ class _StreamHeaderState extends State<StreamHeader> {
                   width: 50,
                   height: 50,
                   onPressed: () async {
-                    if (!Platform.isLinux) {
-                      SharePlus.instance.share(
-                        ShareParams(files: [XFile(song.path)]),
+                    if (currentStream is Source) {
+                      if (currentStream.uuid != null) {
+                        final params = {'station': currentStream.uuid};
+                        final uri = Uri(
+                          scheme: 'https',
+                          host: 'azare77.github.io',
+                          path: '/stream',
+                          queryParameters: params,
+                        );
+                        await SharePlus.instance.share(ShareParams(uri: uri));
+                      } else {
+                        await SharePlus.instance.share(
+                          ShareParams(text: currentStream.listenUrl),
+                        );
+                      }
+                    } else if (currentStream is AudioModel) {
+                      await SharePlus.instance.share(
+                        ShareParams(text: currentStream.uri),
                       );
                     }
                   },

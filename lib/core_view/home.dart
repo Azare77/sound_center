@@ -57,7 +57,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // Handle links
     _linkSubscription = AppLinks().uriLinkStream.listen((uri) async {
       Map<String, String> params = uri.queryParameters;
-      _podcast.handleDeepLink(context, params);
+      if (uri.path == '/podcast') {
+        _podcast.handleDeepLink(context, params);
+      } else if (uri.path == '/stream') {
+        _stream.handleDeepLink(context, params);
+      }
     });
   }
 

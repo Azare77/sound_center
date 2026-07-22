@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:radio_browser_api/radio_browser_api.dart' as radio;
+import 'package:sound_center/database/drift/database.dart';
+import 'package:sound_center/features/stream/data/repository/stream_repository_imp.dart';
+import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_status.dart';
 import 'package:sound_center/features/stream/presentation/pages/stream_detail/stream_detail.dart';
@@ -10,6 +14,7 @@ import 'package:sound_center/features/stream/presentation/widgets/stream_templat
 import 'package:sound_center/features/stream/presentation/widgets/stream_tool_bar.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/shared/widgets/toast_message.dart';
 
 class StreamSearchController {
   static final ValueNotifier<bool> showSearchField = ValueNotifier(true);
@@ -22,14 +27,39 @@ class StreamPage extends StatefulWidget {
   State<StreamPage> createState() => _StreamPageState();
 
   bool resetStreamPage(BuildContext context) {
-    // final bloc = BlocProvider.of<StreamBloc>(context);
-    // final status = bloc.state.status;
+    final bloc = BlocProvider.of<StreamBloc>(context);
+    final status = bloc.state.status;
     StreamSearchController.showSearchField.value = false;
-    // if (status is! SubscribedPodcasts) {
-    //   bloc.add(GetSubscribedPodcasts());
-    //   return false;
-    // }
+    if (status is! SubscribedStreams) {
+      bloc.add(GetSubscribedStreams());
+      return false;
+    }
     return true;
+  }
+
+  void handleDeepLink(BuildContext context, Map<String, String> params) async {
+    try {
+      ToastMessage.showInfoMessage(
+        title: Text(S.of(context).loading),
+        autoCloseIn: 10,
+      );
+      radio.Station? station = await StreamRepositoryImp(
+        AppDatabase(),
+      ).loadStationInfo(params['station']!);
+      if (station == null) return;
+      // bloc.add(PlayStream(Source.fromStation(station)));
+      await Navigator.push(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              StreamDetail(stream: StreamSubEntity.fromStation(station)),
+        ),
+      );
+    } catch (_) {
+      // ignore: use_build_context_synchronously
+      ToastMessage.showErrorMessage(title: S.of(context).errorInLoading);
+    }
   }
 }
 

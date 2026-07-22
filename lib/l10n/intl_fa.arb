@@ -79,5 +79,7 @@
   "website": "وب سایت",
   "votes": "حمایت ها",
   "clicks": "کلیک ها",
-  "checkForUpdates": "بررسی بروزرسانی"
+  "checkForUpdates": "بررسی بروزرسانی",
+  "loading": "در حال بارگذاری",
+  "errorInLoading": "خطا در بارگذاری"
 }

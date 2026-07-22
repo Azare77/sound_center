@@ -573,6 +573,21 @@ class S {
       args: [],
     );
   }
+
+  /// `Loading`
+  String get loading {
+    return Intl.message('Loading', name: 'loading', desc: '', args: []);
+  }
+
+  /// `Error in loading`
+  String get errorInLoading {
+    return Intl.message(
+      'Error in loading',
+      name: 'errorInLoading',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

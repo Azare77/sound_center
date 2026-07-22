@@ -81,5 +81,6 @@
   "clicks": "Clicks",
   "checkForUpdates": "Check for updates",
   "loading": "Loading",
-  "errorInLoading": "Error in loading"
+  "errorInLoading": "Error in loading",
+  "stationCount": "Station Count"
 }

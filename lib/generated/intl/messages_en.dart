@@ -112,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "soundCenter": MessageLookupByLibrary.simpleMessage("Sound Center"),
     "sourceCode": MessageLookupByLibrary.simpleMessage("Source Code"),
     "startedAt": MessageLookupByLibrary.simpleMessage("Started At"),
+    "stationCount": MessageLookupByLibrary.simpleMessage("Station Count"),
     "stream": MessageLookupByLibrary.simpleMessage("Stream"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "subscribe": MessageLookupByLibrary.simpleMessage("Subscribe"),

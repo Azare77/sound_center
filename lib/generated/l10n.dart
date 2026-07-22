@@ -588,6 +588,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Station Count`
+  String get stationCount {
+    return Intl.message(
+      'Station Count',
+      name: 'stationCount',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

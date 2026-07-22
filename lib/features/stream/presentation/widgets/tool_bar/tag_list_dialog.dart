@@ -1068,59 +1068,56 @@ class _TagListDialogState extends State<TagListDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              TextFieldBox(
-                onChanged: search,
-                autofocus: true,
-                controller: query,
-                labelText: S.of(context).tags,
-                maxLines: 1,
-              ),
-              if (current != null) ...[Text(current!['name']), Divider()],
-              Flexible(
-                child: raw.isEmpty
-                    ? Loading()
-                    : ListView.builder(
-                        itemCount: searchTags.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final tag = searchTags[index];
-                          return InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                spacing: 2,
-                                children: [
-                                  Text(tag['name']),
-                                  if (tag['stationCount'] != null)
-                                    Text(
-                                      "Station Count : ${tag['stationCount'].toString()}",
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant
-                                            .withValues(alpha: 0.7),
-                                        fontSize: 13,
-                                      ),
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            TextFieldBox(
+              onChanged: search,
+              autofocus: true,
+              controller: query,
+              labelText: S.of(context).tags,
+              maxLines: 1,
+            ),
+            if (current != null) ...[Text(current!['name']), Divider()],
+            Flexible(
+              child: raw.isEmpty
+                  ? Loading()
+                  : ListView.builder(
+                      itemCount: searchTags.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final tag = searchTags[index];
+                        return InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: .start,
+                              spacing: 2,
+                              children: [
+                                Text(tag['name']),
+                                if (tag['stationCount'] != null)
+                                  Text(
+                                    "${S.of(context).stationCount} : ${tag['stationCount'].toString()}",
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                          .withValues(alpha: 0.7),
+                                      fontSize: 13,
                                     ),
-                                ],
-                              ),
+                                  ),
+                              ],
                             ),
-                            onTap: () {
-                              Navigator.pop(context, searchTags[index]['name']);
-                            },
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context, searchTags[index]['name']);
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
     );

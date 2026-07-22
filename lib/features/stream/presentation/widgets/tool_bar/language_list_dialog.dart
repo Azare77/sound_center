@@ -154,63 +154,60 @@ class _LanguageListDialogState extends State<LanguageListDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              TextFieldBox(
-                onChanged: search,
-                autofocus: true,
-                controller: query,
-                labelText: S.of(context).language,
-                maxLines: 1,
-              ),
-              if (current != null) ...[TextView(current!['name']), Divider()],
-              Flexible(
-                child: raw.isEmpty
-                    ? Loading()
-                    : ListView.builder(
-                        itemCount: searchLanguage.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final language = searchLanguage[index];
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            TextFieldBox(
+              onChanged: search,
+              autofocus: true,
+              controller: query,
+              labelText: S.of(context).language,
+              maxLines: 1,
+            ),
+            if (current != null) ...[TextView(current!['name']), Divider()],
+            Flexible(
+              child: raw.isEmpty
+                  ? Loading()
+                  : ListView.builder(
+                      itemCount: searchLanguage.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final language = searchLanguage[index];
 
-                          return InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                spacing: 2,
-                                children: [
-                                  Text(language['name']),
-                                  if (language['stationCount'] != null)
-                                    Text(
-                                      "Station Count : ${language['stationCount'].toString()}",
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant
-                                            .withValues(alpha: 0.7),
-                                        fontSize: 13,
-                                      ),
+                        return InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: .start,
+                              spacing: 2,
+                              children: [
+                                Text(language['name']),
+                                if (language['stationCount'] != null)
+                                  Text(
+                                    "${S.of(context).stationCount} : ${language['stationCount'].toString()}",
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                          .withValues(alpha: 0.7),
+                                      fontSize: 13,
                                     ),
-                                ],
-                              ),
+                                  ),
+                              ],
                             ),
-                            onTap: () {
-                              Navigator.pop(
-                                context,
-                                language['name'].toString().toLowerCase(),
-                              );
-                            },
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(
+                              context,
+                              language['name'].toString().toLowerCase(),
+                            );
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
     );

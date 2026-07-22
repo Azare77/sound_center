@@ -351,65 +351,62 @@ class _CountryListDialogState extends State<CountryListDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              TextFieldBox(
-                onChanged: search,
-                autofocus: true,
-                controller: query,
-                labelText: S.of(context).country,
-                maxLines: 1,
-              ),
-              if (current != null) ...[
-                TextView("${current!['name']}"),
-                Divider(),
-              ],
-              Flexible(
-                child: raw.isEmpty
-                    ? Loading()
-                    : ListView.builder(
-                        itemCount: searchCountries.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final country = searchCountries[index];
-                          return InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                spacing: 2,
-                                children: [
-                                  Text(country['name']),
-                                  if (country['stationCount'] != null)
-                                    Text(
-                                      "Station Count : ${country['stationCount'].toString()}",
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant
-                                            .withValues(alpha: 0.7),
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.pop(
-                                context,
-                                searchCountries[index]['countryCode'],
-                              );
-                            },
-                          );
-                        },
-                      ),
-              ),
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            TextFieldBox(
+              onChanged: search,
+              autofocus: true,
+              controller: query,
+              labelText: S.of(context).country,
+              maxLines: 1,
+            ),
+            if (current != null) ...[
+              TextView("${current!['name']}"),
+              Divider(),
             ],
-          ),
+            Flexible(
+              child: raw.isEmpty
+                  ? Loading()
+                  : ListView.builder(
+                      itemCount: searchCountries.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final country = searchCountries[index];
+                        return InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: .start,
+                              spacing: 2,
+                              children: [
+                                Text(country['name']),
+                                if (country['stationCount'] != null)
+                                  Text(
+                                    "${S.of(context).stationCount} : ${country['stationCount'].toString()}",
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                          .withValues(alpha: 0.7),
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(
+                              context,
+                              searchCountries[index]['countryCode'],
+                            );
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
     );

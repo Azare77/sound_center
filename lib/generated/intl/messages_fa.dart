@@ -102,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "soundCenter": MessageLookupByLibrary.simpleMessage("مرکز صدا"),
     "sourceCode": MessageLookupByLibrary.simpleMessage("کد منبع"),
     "startedAt": MessageLookupByLibrary.simpleMessage("شروع شده در"),
+    "stationCount": MessageLookupByLibrary.simpleMessage("تعداد ایستگاه"),
     "stream": MessageLookupByLibrary.simpleMessage("استریم"),
     "submit": MessageLookupByLibrary.simpleMessage("تایید"),
     "subscribe": MessageLookupByLibrary.simpleMessage("مشترک شدن"),

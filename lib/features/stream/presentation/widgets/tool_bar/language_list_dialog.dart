@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/stream/data/source/radio_browser.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
@@ -17,13 +18,20 @@ class LanguageListDialog extends StatefulWidget {
 class _LanguageListDialogState extends State<LanguageListDialog> {
   List<Map<String, dynamic>> raw = [];
   late List<Map<String, dynamic>> searchLanguage;
+  late final TextEditingController query;
   Map? current;
 
   @override
-  @override
   void initState() {
+    query = TextEditingController();
     _init();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    query.dispose();
+    super.dispose();
   }
 
   String capitalize(String value) {
@@ -124,11 +132,10 @@ class _LanguageListDialogState extends State<LanguageListDialog> {
         {"name": "Urdu", "languageCode": "ur"},
       ];
     }
-    searchLanguage = raw;
     current = raw.firstWhereOrNull(
       (item) => item['name'] == widget.currentLanguage,
     );
-    setState(() {});
+    search(query.text.trim());
   }
 
   void search(String query) {
@@ -154,7 +161,13 @@ class _LanguageListDialogState extends State<LanguageListDialog> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextFieldBox(onChanged: search),
+              TextFieldBox(
+                onChanged: search,
+                autofocus: true,
+                controller: query,
+                labelText: S.of(context).language,
+                maxLines: 1,
+              ),
               if (current != null) ...[TextView(current!['name']), Divider()],
               Flexible(
                 child: raw.isEmpty

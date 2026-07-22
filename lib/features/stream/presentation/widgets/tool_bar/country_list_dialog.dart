@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/stream/data/source/radio_browser.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
@@ -17,15 +18,23 @@ class CountryListDialog extends StatefulWidget {
 class _CountryListDialogState extends State<CountryListDialog> {
   List<Map<String, dynamic>> raw = [];
   late List<Map> searchCountries;
+  late final TextEditingController query;
   Map? current;
 
   @override
   void initState() {
-    _inti();
+    query = TextEditingController();
+    _init();
     super.initState();
   }
 
-  Future<void> _inti() async {
+  @override
+  void dispose() {
+    query.dispose();
+    super.dispose();
+  }
+
+  Future<void> _init() async {
     final countries = await RadioBrowser().getCountries();
 
     if (countries != null) {
@@ -320,11 +329,10 @@ class _CountryListDialogState extends State<CountryListDialog> {
         {"countryCode": "ZW", "name": "Zimbabwe"},
       ];
     }
-    searchCountries = List.from(raw);
     current = raw.firstWhereOrNull(
       (item) => item['countryCode'] == widget.currentCode,
     );
-    setState(() {});
+    search(query.text.trim());
   }
 
   void search(String query) {
@@ -350,7 +358,13 @@ class _CountryListDialogState extends State<CountryListDialog> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextFieldBox(onChanged: search, autofocus: true),
+              TextFieldBox(
+                onChanged: search,
+                autofocus: true,
+                controller: query,
+                labelText: S.of(context).country,
+                maxLines: 1,
+              ),
               if (current != null) ...[
                 TextView("${current!['name']}"),
                 Divider(),

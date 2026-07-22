@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sound_center/features/stream/data/source/radio_browser.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
@@ -16,12 +17,20 @@ class TagListDialog extends StatefulWidget {
 class _TagListDialogState extends State<TagListDialog> {
   List<Map<String, dynamic>> raw = [];
   late List<Map<String, dynamic>> searchTags;
+  late final TextEditingController query;
   Map? current;
 
   @override
   void initState() {
+    query = TextEditingController();
     _init();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    query.dispose();
+    super.dispose();
   }
 
   Future<void> _init() async {
@@ -1040,9 +1049,8 @@ class _TagListDialogState extends State<TagListDialog> {
         {"name": "электронная"},
       ];
     }
-    searchTags = raw;
     current = raw.firstWhereOrNull((item) => item['name'] == widget.currentTag);
-    setState(() {});
+    search(query.text.trim());
   }
 
   void search(String query) {
@@ -1067,7 +1075,13 @@ class _TagListDialogState extends State<TagListDialog> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextFieldBox(onChanged: search),
+              TextFieldBox(
+                onChanged: search,
+                autofocus: true,
+                controller: query,
+                labelText: S.of(context).tags,
+                maxLines: 1,
+              ),
               if (current != null) ...[Text(current!['name']), Divider()],
               Flexible(
                 child: raw.isEmpty

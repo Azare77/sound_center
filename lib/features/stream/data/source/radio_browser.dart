@@ -32,11 +32,12 @@ class RadioBrowser {
 
     if (_initializing != null) {
       await _initializing;
-      return;
+      return await ensureInitialized();
     }
 
     _initializing = _init();
     await _initializing;
+    return await ensureInitialized();
   }
 
   Future<RadioBrowserApi> _init() async {

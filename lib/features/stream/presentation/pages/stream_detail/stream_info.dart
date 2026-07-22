@@ -15,13 +15,13 @@ class StreamInfo extends StatefulWidget {
     required this.subscribed,
     required this.subscribe,
     required this.heroTag,
-    this.url,
+    this.cover,
     this.station,
   });
 
   final bool subscribed;
   final Function(StreamSubEntity sub) subscribe;
-  final String? url;
+  final String? cover;
   final String heroTag;
   final radio.Station? station;
 
@@ -31,13 +31,25 @@ class StreamInfo extends StatefulWidget {
 
 class _StreamInfoState extends State<StreamInfo> {
   bool subscribed = false;
+  radio.Station? station;
+  String? cover;
+  String? title;
+
+  @override
+  void initState() {
+    cover = widget.cover;
+    title = widget.station?.name;
+    super.initState();
+  }
 
   @override
   void didUpdateWidget(covariant StreamInfo oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (oldWidget.subscribed != widget.subscribed) {
       subscribed = widget.subscribed;
+      station = widget.station;
+      cover = station?.favicon;
+      title = station?.name;
     }
   }
 
@@ -60,7 +72,7 @@ class _StreamInfoState extends State<StreamInfo> {
           child: FlexibleSpaceBar(
             title: Padding(
               padding: EdgeInsets.only(top: toolbar),
-              child: widget.station == null
+              child: station == null
                   ? SizedBox()
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,7 +80,7 @@ class _StreamInfoState extends State<StreamInfo> {
                       spacing: 5,
                       children: [
                         ScrollingText(
-                          widget.station!.name,
+                          station!.name,
                           style: TextStyle(color: Colors.white),
                         ),
                         if (t == 1)
@@ -78,7 +90,7 @@ class _StreamInfoState extends State<StreamInfo> {
                               ElevatedButton(
                                 onPressed: () async {
                                   final sub = StreamSubEntity.fromStation(
-                                    widget.station!,
+                                    station!,
                                   );
                                   final res = await widget.subscribe.call(sub);
                                   if (!res) return;
@@ -95,9 +107,7 @@ class _StreamInfoState extends State<StreamInfo> {
                               ElevatedButton(
                                 onPressed: () {
                                   BlocProvider.of<StreamBloc>(context).add(
-                                    PlayStream(
-                                      Source.fromStation(widget.station!),
-                                    ),
+                                    PlayStream(Source.fromStation(station!)),
                                   );
                                 },
                                 child: Text(S.of(context).play),
@@ -113,7 +123,7 @@ class _StreamInfoState extends State<StreamInfo> {
                 Hero(
                   tag: widget.heroTag,
                   child: NetworkCacheImage(
-                    url: widget.url,
+                    url: cover,
                     size: visibleHeight,
                     fit: BoxFit.cover,
                   ),

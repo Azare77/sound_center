@@ -30,25 +30,20 @@ class Podcast extends StatelessWidget {
 
   void handleDeepLink(BuildContext context, Map<String, String> params) async {
     try {
-      ToastMessage.showInfoMessage(
-        title: Text(S.of(context).loading),
-        autoCloseIn: 10,
-      );
       PodcastBloc bloc = BlocProvider.of<PodcastBloc>(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PodcastDetail(feedUrl: params['podcast']!),
+        ),
+      ).then((_) => bloc.add(GetSubscribedPodcasts()));
       search.Podcast podcast = await search.Feed.loadFeed(
-        url: params['podcast'] ?? "",
+        url: params['podcast']!,
       );
       final episode = podcast.episodes.firstWhere(
         (item) => item.guid == params['guid'],
       );
       bloc.add(PlayPodcast(episodes: [episode], index: 0));
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PodcastDetail(feedUrl: params['podcast']!),
-        ),
-      );
-      bloc.add(GetSubscribedPodcasts());
     } catch (_) {
       ToastMessage.showErrorMessage(title: S.of(context).errorInLoading);
     }

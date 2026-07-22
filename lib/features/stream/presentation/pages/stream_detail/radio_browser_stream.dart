@@ -49,7 +49,6 @@ class _RadioStreamViewState extends State<RadioStreamView> {
       });
     });
     _init();
-    _checkSubscription();
   }
 
   Future<void> _init() async {
@@ -59,13 +58,12 @@ class _RadioStreamViewState extends State<RadioStreamView> {
       Navigator.pop(context);
       return;
     }
-    setState(() {
-      station = res;
-    });
+    station = res;
+    _checkSubscription();
   }
 
   void _checkSubscription() async {
-    final result = await widget.repository.isSubscribed(widget.stream.url);
+    final result = await widget.repository.isSubscribed(station!.url);
     if (!mounted) return;
     setState(() => subscribed = result);
   }
@@ -92,7 +90,7 @@ class _RadioStreamViewState extends State<RadioStreamView> {
           title: AnimatedOpacity(
             opacity: toolbarCollapsed ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 500),
-            child: Text(widget.stream.title),
+            child: Text(station?.name ?? widget.stream.title),
           ),
           expandedHeight: EXPANDED_HEIGHT,
           flexibleSpace: StreamInfo(
@@ -100,7 +98,7 @@ class _RadioStreamViewState extends State<RadioStreamView> {
             subscribed: subscribed,
             station: station,
             heroTag: widget.stream.uuid!,
-            url: widget.stream.cover,
+            cover: widget.stream.cover,
           ),
         ),
         SliverToBoxAdapter(

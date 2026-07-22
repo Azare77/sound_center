@@ -31,7 +31,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late final Podcast _podcast;
   late final StreamPage _stream;
   late final AppLinks appLinks;
-  StreamSubscription<Uri>? _linkSubscription;
+  late final StreamSubscription<Uri> _linkSubscription;
 
   @override
   void initState() {
@@ -49,19 +49,37 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _linkSubscription?.cancel();
+    _linkSubscription.cancel();
     super.dispose();
   }
 
+  String? _lastHandledLink;
+
   Future<void> initDeepLinks() async {
-    // Handle links
     _linkSubscription = AppLinks().uriLinkStream.listen((uri) async {
-      Map<String, String> params = uri.queryParameters;
-      if (uri.path == '/podcast') {
-        _podcast.handleDeepLink(context, params);
-      } else if (uri.path == '/stream') {
-        _stream.handleDeepLink(context, params);
+      final normalized = Uri(
+        scheme: uri.scheme,
+        host: uri.host,
+        path: uri.path,
+        queryParameters: uri.queryParameters,
+      ).toString();
+
+      if (_lastHandledLink == normalized) return;
+      _lastHandledLink = normalized;
+
+      final params = uri.queryParameters;
+
+      switch (uri.path) {
+        case '/podcast':
+          _podcast.handleDeepLink(context, params);
+          break;
+
+        case '/stream':
+          _stream.handleDeepLink(context, params);
+          break;
       }
+      await Future.delayed(Duration(seconds: 1));
+      _lastHandledLink = null;
     });
   }
 

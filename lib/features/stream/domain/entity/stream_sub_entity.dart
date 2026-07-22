@@ -6,7 +6,6 @@ import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 class StreamSubEntity {
   final String title;
   final String url;
-  final String audioUrl;
   final DateTime startAt;
   final bool isOnline;
   final String? cover;
@@ -16,7 +15,6 @@ class StreamSubEntity {
     required this.title,
     required this.url,
     required this.startAt,
-    required this.audioUrl,
     required this.isOnline,
     required this.uuid,
     this.cover,
@@ -26,7 +24,6 @@ class StreamSubEntity {
     return StreamSubEntity(
       title: subscription.title,
       url: subscription.url,
-      audioUrl: subscription.url,
       cover: subscription.cover,
       startAt: subscription.startAt,
       isOnline: subscription.isOnline,
@@ -38,7 +35,6 @@ class StreamSubEntity {
     return StreamSubEntity(
       title: server.title!,
       url: server.url!,
-      audioUrl: server.title!,
       startAt: server.serverStartIso8601 ?? DateTime(1970),
       isOnline: server.source.isNotEmpty,
       uuid: null,
@@ -52,7 +48,6 @@ class StreamSubEntity {
       startAt: server.lastCheckOkTime ?? DateTime(1970),
       isOnline: false,
       cover: server.favicon,
-      audioUrl: server.urlResolved!,
       uuid: server.stationUUID,
     );
   }

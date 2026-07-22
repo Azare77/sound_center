@@ -18,21 +18,24 @@ class RadioBrowser {
     if (host != null) {
       _api = RadioBrowserApi.fromHost(host);
     } else {
-      _initializing = ensureInitialized();
+      _initializing = _init();
     }
   }
 
   Future<void> ensureInitialized() async {
     if (_api != null) return;
 
-    if (_initializing != null) {
-      await _initializing;
-      return await ensureInitialized();
-    }
+    _initializing ??= _init();
 
-    _initializing = RadioBrowserApi.discoverHost(userAgent: 'SoundCenter/1.0');
     await _initializing;
-    return await ensureInitialized();
+  }
+
+  Future<void> _init() async {
+    try {
+      _api = await RadioBrowserApi.discoverHost(userAgent: 'SoundCenter/1.0.0');
+    } finally {
+      _initializing = null;
+    }
   }
 
   Future<RadioBrowserListResponse<Station>?> search({

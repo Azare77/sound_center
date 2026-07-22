@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
-
-// ignore: depend_on_referenced_packages
-import 'package:http/http.dart' as http;
 import 'package:radio_browser_api/radio_browser_api.dart';
 
 class RadioBrowser {
@@ -23,7 +18,7 @@ class RadioBrowser {
     if (host != null) {
       _api = RadioBrowserApi.fromHost(host);
     } else {
-      _initializing = _init();
+      _initializing = ensureInitialized();
     }
   }
 
@@ -35,55 +30,9 @@ class RadioBrowser {
       return await ensureInitialized();
     }
 
-    _initializing = _init();
+    _initializing = RadioBrowserApi.discoverHost(userAgent: 'SoundCenter/1.0');
     await _initializing;
     return await ensureInitialized();
-  }
-
-  Future<RadioBrowserApi> _init() async {
-    final servers = await _getServers();
-
-    if (servers.isEmpty) {
-      throw Exception('No RadioBrowser servers available');
-    }
-
-    servers.shuffle(Random());
-
-    for (final host in servers) {
-      try {
-        final api = RadioBrowserApi.fromHost(host);
-
-        await api.getStationsByName(name: 'test');
-
-        _api = api;
-        return api;
-      } catch (_) {
-        continue;
-      }
-    }
-
-    throw Exception('Could not connect to RadioBrowser');
-  }
-
-  Future<List<String>> _getServers() async {
-    final response = await http.get(
-      Uri.parse('https://all.api.radio-browser.info/json/servers'),
-      headers: {'User-Agent': 'SoundCenter/1.0'},
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to get servers');
-    }
-
-    final List data = jsonDecode(response.body);
-
-    return data
-        .map((e) => e['name'] as String)
-        .map(
-          (host) =>
-              host.replaceFirst('https://', '').replaceFirst('http://', ''),
-        )
-        .toList();
   }
 
   Future<RadioBrowserListResponse<Station>?> search({

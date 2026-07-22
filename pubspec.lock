@@ -1049,10 +1049,10 @@ packages:
     dependency: "direct main"
     description:
       name: radio_browser_api
-      sha256: "73da0aa774ebfb28315d7c4590f4b231105772860fe1a4ba5c20ee05cf0e8d63"
+      sha256: "55fabf1b51bbfad639f9b0551d821ac0ab571a9b75e43038959cbcca82c8588a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0+1"
+    version: "2.1.0"
   recase:
     dependency: transitive
     description:

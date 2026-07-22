@@ -188,8 +188,17 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> togglePlayState() async {
-    bloc.add(TogglePlay());
-    await _playerService.togglePlaying();
+    if (_currentStream is AudioModel) {
+      await _playerService.togglePlaying();
+      bloc.add(TogglePlay());
+      return;
+    }
+    if (isPlaying()) {
+      await stop();
+      bloc.add(TogglePlay());
+    } else {
+      bloc.add(PlayStream(_currentStream));
+    }
   }
 
   @override

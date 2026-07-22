@@ -110,6 +110,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       final stream = player.getCurrentStream;
       if (player.hasSource() &&
           stream is Source &&
+          player.isPlaying() &&
           stream.listenUrl == event.stream.listenUrl) {
         return;
       }

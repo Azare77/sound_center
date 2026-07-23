@@ -45,12 +45,10 @@ class _StreamInfoState extends State<StreamInfo> {
   @override
   void didUpdateWidget(covariant StreamInfo oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.subscribed != widget.subscribed) {
-      subscribed = widget.subscribed;
-      station = widget.station;
-      cover = station?.favicon;
-      title = station?.name;
-    }
+    subscribed = widget.subscribed;
+    station = widget.station;
+    cover = station?.favicon;
+    title = station?.name;
   }
 
   @override

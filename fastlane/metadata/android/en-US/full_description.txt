@@ -1,19 +1,35 @@
-<p>Sound Center is your ultimate open-source audio companion, designed to merge local playback with modern streaming features. Whether you are managing your personal offline library or tuning into your favorite shows, Sound Center handles it all simultaneously with a seamless, intuitive interface.</p>
-
+<p>
+Sound Center is a modern open-source audio player that combines local music playback with advanced streaming capabilities in a single application.
+</p>
+<p>
+Whether you want to manage your offline audio library or listen to your favorite podcasts and streams, Sound Center provides all the features you need through a simple, smooth, and user-friendly experience.
+</p>
 <p><b>Current Features:</b></p>
 <ul>
-  <li><b>Local Music Player:</b> High-quality playback for all your offline audio tracks.</li>
-  <li><b>Podcast Player:</b> Seamlessly stream and manage your favorite podcasts alongside your local music.</li>
-  <li><b>100% FOSS:</b> Completely free and open-source with absolute privacy—no proprietary trackers or analytics.</li>
+<li>
+<b>Local Music Player:</b>
+High-quality playback of audio files stored on your device.
+</li>
+<li>
+<b>Podcast Player:</b>
+Easily play and manage your favorite podcasts alongside your personal music collection.
+</li>
+<li>
+<b>Stream Player:</b>
+Search, play, and manage online audio streams.
+</li>
 </ul>
-
-<p><b>Roadmap &amp; Upcoming Features:</b></p>
-
-<p>We are actively developing Sound Center to become an all-in-one audio hub. Future releases will include:</p>
-
+<p><b>Planned Features for Future Versions:</b></p>
 <ul>
-  <li><b>Direct Live Streaming:</b> Tune into live audio streams and internet radio stations directly.</li>
-  <li><b>Online Music Integration:</b> Stream your favorite playlists straight from popular online platforms like YouTube Music and SoundCloud.</li>
+<li>
+<b>Online Music Service Integration:</b>
+Support for services such as YouTube Music and SoundCloud in future releases.
+</li>
+<li>
+<b>Additional Tools:</b>
+Features such as lyrics search, tag editing, downloading, and more useful utilities.
+</li>
 </ul>
-
-<p>Join us on GitHub to contribute, report issues, or follow our development journey!</p>
+<p>
+Join us on GitHub, contribute to the development, report issues, and follow the progress of Sound Center.
+</p>

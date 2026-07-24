@@ -1,1 +1,1 @@
-Local music and podcast player, built to enhance your quality of life.
+Local music and podcast and stream player, built to enhance your quality of life.

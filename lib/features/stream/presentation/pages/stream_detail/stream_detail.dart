@@ -49,7 +49,6 @@ class _StreamDetailState extends State<StreamDetail> {
       event = SubscribeToStream(sub);
     }
     bloc.add(event);
-    setState(() => subscribed = !subscribed);
     return true;
   }
 

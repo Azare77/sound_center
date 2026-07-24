@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
@@ -67,32 +68,35 @@ class _StreamNavigationState extends State<StreamNavigation> {
 
     return Column(
       children: [
-        Row(
-          children: [
-            convertTime(pass),
-            Expanded(
-              child: Slider(
-                value: pass.toDouble(),
-                max: total.toDouble(),
-                inactiveColor: Colors.grey,
+        if (Platform.isLinux)
+          Row(
+            children: [
+              convertTime(pass),
+              Expanded(
+                child: Slider(
+                  value: pass.toDouble(),
+                  max: total.toDouble(),
+                  inactiveColor: Colors.grey,
 
-                onChanged: (val) {
-                  seeking = true;
-                  pass = val.toInt();
-                  _updateUi();
-                },
+                  onChanged: (val) {
+                    seeking = true;
+                    pass = val.toInt();
+                    _updateUi();
+                  },
 
-                onChangeStart: (_) => seeking = true,
+                  onChangeStart: (_) => seeking = true,
 
-                onChangeEnd: (val) {
-                  seeking = false;
-                  imp.seek(Duration(milliseconds: val.floor()));
-                },
+                  onChangeEnd: Platform.isLinux
+                      ? (val) {
+                          seeking = false;
+                          imp.seek(Duration(milliseconds: val.floor()));
+                        }
+                      : null,
+                ),
               ),
-            ),
-            convertTime(total),
-          ],
-        ),
+              convertTime(total),
+            ],
+          ),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

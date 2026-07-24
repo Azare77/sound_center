@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/player/speed_dialog.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/widgets/player/stream_image.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StreamHeader extends StatefulWidget {
   const StreamHeader({super.key});
@@ -56,13 +56,16 @@ class _StreamHeaderState extends State<StreamHeader> {
       builder: (BuildContext context, StreamState state) {
         late final String title;
         late final String? artist;
+        late final String? url;
         final currentStream = imp.getCurrentStream;
         if (currentStream is AudioModel) {
           title = currentStream.title;
           artist = currentStream.artist;
+          url = currentStream.uri;
         } else if (currentStream is Source) {
           title = currentStream.title ?? '';
           artist = null;
+          url = currentStream.listenUrl;
         }
         currentPlayList = imp.getPlayList();
         _currentIndex = 0;
@@ -76,10 +79,18 @@ class _StreamHeaderState extends State<StreamHeader> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: () {
-                    showDialog(context: context, builder: (_) => SpeedDialog());
+                  onPressed: () async {
+                    if (url != null) {
+                      Uri uri = Uri.parse(url);
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    }
                   },
-                  icon: Icon(Icons.speed_rounded),
+                  icon: Icon(Icons.language_rounded),
                 ),
                 SizedBox(
                   width: 40,

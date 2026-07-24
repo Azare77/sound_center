@@ -1,0 +1,10 @@
+What's New:
+- Added Radio Browser API integration for discovering radio streams.
+- Introduced a dedicated user interface for Icecast streams.
+
+Improvements:
+- Replaced automatic update checks with a manual option in Settings.
+
+Fixed:
+- Fixed an issue with sharing radio streams.
+- Fixed text direction (RTL/LTR) issues in podcast descriptions.

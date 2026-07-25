@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:just_audio/just_audio.dart' show IcyMetadata;
@@ -9,6 +10,7 @@ import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:sound_center/shared/widgets/network_image.dart';
 
 class StreamPlayerRepositoryImp implements PlayerRepository {
   static final StreamPlayerRepositoryImp _instance =
@@ -132,18 +134,33 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> play(int _, {bool direct = false}) async {
     _currentStream = _playList[0];
-    late String url;
-    late String title;
+    late final String url;
+    late final String title;
+    Duration? duration;
+    dynamic cover;
     if (_currentStream is AudioModel) {
-      url = (_currentStream as AudioModel).path;
-      title = (_currentStream as AudioModel).title;
+      final audio = (_currentStream as AudioModel);
+      url = audio.path;
+      title = audio.title;
+      cover = audio.cover;
+      duration = Duration(milliseconds: audio.duration);
+      (_currentStream as AudioModel).duration;
     } else if (_currentStream is Source) {
-      url = (_currentStream as Source).listenUrl;
-      title = (_currentStream as Source).title ?? '';
+      final stream = (_currentStream as Source);
+      url = stream.listenUrl;
+      title = stream.title ?? '';
+      cover = stream.cover ?? '';
     }
+    File? file;
+    try {
+      file = await NetworkCacheImage.customCacheManager.getSingleFile(cover);
+    } catch (_) {}
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromStream(
       url: url,
       title: title,
+      cover: cover,
+      duration: duration,
+      cached: file?.uri,
     );
     await _playerService.setSource(
       url,
@@ -213,7 +230,8 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   Future<void> restart() async {
     await _playerService.release();
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
+    bloc.add(AutoPlayStream());
     await play(0);
   }
 

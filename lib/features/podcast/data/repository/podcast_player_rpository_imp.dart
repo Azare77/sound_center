@@ -145,7 +145,9 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     final String? cacheFile = await _chach(key);
     File? file;
     try {
-      file = await NetworkCacheImage.customCacheManager.getSingleFile("");
+      file = await NetworkCacheImage.customCacheManager.getSingleFile(
+        _currentEpisode!.imageUrl ?? '',
+      );
     } catch (_) {}
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
       _episodes[index],

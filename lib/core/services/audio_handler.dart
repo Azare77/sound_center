@@ -203,10 +203,18 @@ class JustAudioNotificationHandler extends BaseAudioHandler
     required String title,
     String? artist,
     Duration? duration,
-    Uint8List? cover,
+    dynamic cover,
     Uri? cached,
   }) async {
-    final Uri? artUri = await saveCoverToFile(cover, "cover_$title");
+    Uri? artUri;
+    if (cover is String && cover.isNotEmpty) {
+      artUri = cached ?? Uri.tryParse(cover);
+    } else {
+      artUri = await saveCoverToFile(
+        cover.isEmpty ? null : cover,
+        "cover_$title",
+      );
+    }
     MediaItem item = MediaItem(
       id: url,
       title: title,

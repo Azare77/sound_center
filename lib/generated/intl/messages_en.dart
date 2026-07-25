@@ -96,6 +96,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "podcast": MessageLookupByLibrary.simpleMessage("Podcast"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("Podcast Api"),
     "purple": MessageLookupByLibrary.simpleMessage("Purple"),
+    "recommendUpdateViaStore": MessageLookupByLibrary.simpleMessage(
+      "If you installed this app from an app store, we recommend updating it through the same store.",
+    ),
     "rssFeed": MessageLookupByLibrary.simpleMessage("Rss Feed"),
     "scaffoldBackground": MessageLookupByLibrary.simpleMessage(
       "scaffold Background",

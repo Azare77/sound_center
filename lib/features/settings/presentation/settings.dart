@@ -9,6 +9,7 @@ import 'package:sound_center/features/settings/presentation/pages/language_setti
 import 'package:sound_center/features/settings/presentation/pages/notification_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/theme_settings.dart';
+import 'package:sound_center/features/settings/presentation/pages/update_dialog.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/toast_message.dart';
@@ -86,7 +87,7 @@ class Settings extends StatelessWidget {
                         child: Text(S.of(context).sourceCode),
                       ),
                       TextButton(
-                        onPressed: _checkForUpdate,
+                        onPressed: () => _checkForUpdate(context),
                         child: Text(S.of(context).checkForUpdates),
                       ),
                     ],
@@ -101,7 +102,7 @@ class Settings extends StatelessWidget {
     );
   }
 
-  Future<void> _checkForUpdate() async {
+  Future<void> _checkForUpdate(BuildContext context) async {
     try {
       final res = await http.get(
         Uri.parse('https://api.github.com/repos/azare77/sound_center/releases'),
@@ -126,31 +127,8 @@ class Settings extends StatelessWidget {
       if (VERSION_NAME != latestStable['tag_name'] &&
           !isPrerelease &&
           !isDraft) {
-        ToastMessage.showInfoMessage(
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                Intl.message(
-                  "There is a new update",
-                  name: "thereIsANewUpdate",
-                ),
-                style: textStyle,
-              ),
-              TextButton(
-                onPressed: () async {
-                  final Uri url = Uri.parse(
-                    "https://github.com/Azare77/sound_center/releases",
-                  );
-                  launchUrl(url, mode: LaunchMode.externalApplication);
-                },
-                child: Text(Intl.message("Update Now", name: "updateNow")),
-              ),
-            ],
-          ),
-          autoCloseIn: 10,
-        );
+        // ignore: use_build_context_synchronously
+        showDialog(context: context, builder: (_) => UpdateDialog());
       } else {
         ToastMessage.showInfoMessage(
           title: Text(

@@ -598,6 +598,16 @@ class S {
       args: [],
     );
   }
+
+  /// `If you installed this app from an app store, we recommend updating it through the same store.`
+  String get recommendUpdateViaStore {
+    return Intl.message(
+      'If you installed this app from an app store, we recommend updating it through the same store.',
+      name: 'recommendUpdateViaStore',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

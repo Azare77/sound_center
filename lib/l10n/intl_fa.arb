@@ -54,9 +54,9 @@
   "themeName": "نام تم",
   "copy": "کپی تم",
   "sourceCode": "کد منبع",
-  "thereIsANewUpdate": "به روزسانی جدیدی در دسترس است",
+  "thereIsANewUpdate": "به‌روزسانی جدیدی در دسترس است",
   "youAreUsingLatestVersion": "برنامه شما به‌روز است.",
-  "updateNow": "به روزرسانی",
+  "updateNow": "به‌روزرسانی",
   "downloading": "در حال دانلود",
   "downloadCompleted": "دانلود کامل شد",
   "downloadStopped": "دانلود متوقف شد",
@@ -79,8 +79,9 @@
   "website": "وب سایت",
   "votes": "حمایت ها",
   "clicks": "کلیک ها",
-  "checkForUpdates": "بررسی بروزرسانی",
+  "checkForUpdates": "بررسی به‌روزرسانی",
   "loading": "در حال بارگذاری",
   "errorInLoading": "خطا در بارگذاری",
-  "stationCount": "تعداد ایستگاه"
+  "stationCount": "تعداد ایستگاه",
+  "recommendUpdateViaStore": "اگر این اپ را از فروشگاه اپلیکیشن نصب کرده‌اید، پیشنهاد می‌کنیم از طریق همان فروشگاه به‌روزرسانی کنید."
 }

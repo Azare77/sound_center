@@ -82,5 +82,6 @@
   "checkForUpdates": "Check for updates",
   "loading": "Loading",
   "errorInLoading": "Error in loading",
-  "stationCount": "Station Count"
+  "stationCount": "Station Count",
+  "recommendUpdateViaStore": "If you installed this app from an app store, we recommend updating it through the same store."
 }

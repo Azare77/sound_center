@@ -176,12 +176,10 @@ class _RadioStreamViewState extends State<RadioStreamView> {
                               onTap: () async {
                                 final uri = Uri.parse(station!.url);
 
-                                if (await canLaunchUrl(uri)) {
-                                  await launchUrl(
-                                    uri,
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                }
+                                await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                );
                               },
                               child: Text(
                                 station!.url,

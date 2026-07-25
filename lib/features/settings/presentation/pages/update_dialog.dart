@@ -47,10 +47,7 @@ class UpdateDialog extends StatelessWidget {
               child: TextButton(
                 onPressed: () async {
                   final uri = Uri.parse(_releaseUrl);
-
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
                 },
                 child: Text(S.of(context).updateNow),
               ),

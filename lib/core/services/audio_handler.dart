@@ -211,7 +211,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       artUri = cached ?? Uri.tryParse(cover);
     } else {
       artUri = await saveCoverToFile(
-        cover.isEmpty ? null : cover,
+        (cover == null || cover.isEmpty) ? null : cover,
         "cover_$title",
       );
     }

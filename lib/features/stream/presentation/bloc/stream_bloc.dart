@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-// ignore: depend_on_referenced_packages
-import 'package:collection/collection.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
@@ -114,33 +111,19 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
           stream.listenUrl == event.stream.listenUrl) {
         return;
       }
+      await player.stop();
       player.setPlayList(event.stream);
       player.play(0, direct: true);
-      if (!Platform.isLinux) {
-        player.addIcyMetadataListener((title) async {
-          if (title == null || title.isEmpty) return;
-          Source? s = Source(
-            listenUrl: event.stream.listenUrl,
-            title: title,
-            cover: event.stream.cover,
-          );
-          IcecastStream? icecast = IcecastStream(
-            icestats: IceStats(source: [s]),
-          );
-          add(UpdateStreamInfo(icecast, s));
-        });
-      } else {
-        player.addMetadataListener(() async {
-          IcecastStream? icecast = await getStreamUseCase.getIcecastStream(
-            event.stream.listenUrl,
-          );
-          if (icecast == null) return;
-          Source? s = icecast.icestats.source.firstWhereOrNull(
-            (s) => s.listenUrl == event.stream.listenUrl,
-          );
-          if (s != null) add(UpdateStreamInfo(icecast, s));
-        });
-      }
+      player.addIcyMetadataListener((title) async {
+        if (title == null || title.isEmpty) return;
+        Source? s = Source(
+          listenUrl: event.stream.listenUrl,
+          title: title,
+          cover: event.stream.cover,
+        );
+        IcecastStream? icecast = IcecastStream(icestats: IceStats(source: [s]));
+        add(UpdateStreamInfo(icecast, s));
+      });
       emit(state.copyWith(state.status));
     });
 

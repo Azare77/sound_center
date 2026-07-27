@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -24,7 +25,10 @@ class JustAudioService {
   void Function()? _onLoading;
   void Function()? _onReady;
 
+  final LocalAudioProxy _audioProxy = LocalAudioProxy();
+
   final AudioPlayer _player = AudioPlayer(
+    useLazyPreparation: true,
     audioLoadConfiguration: AudioLoadConfiguration(
       androidLoadControl: AndroidLoadControl(
         minBufferDuration: const Duration(seconds: 30),
@@ -46,7 +50,7 @@ class JustAudioService {
 
   Stream<Duration?> get duration => _player.durationStream;
 
-  Stream<IcyMetadata?> get icyMetadataStream => _player.icyMetadataStream;
+  Stream<IcyMetadata?> get icyMetadataStream => _audioProxy.metadataStream;
 
   final _loadingController = StreamController<bool>.broadcast();
 
@@ -100,8 +104,10 @@ class JustAudioService {
         _loadingSource = false;
         _source = source;
         await release();
+        await Future.delayed(const Duration(milliseconds: 100));
       }
       if (_loadingSource) return false;
+      await _audioProxy.stopProxy();
       _loadingSource = true;
       onSourceSet?.call();
       switch (source) {
@@ -112,13 +118,16 @@ class JustAudioService {
           if (cachedFilePath != null) {
             await _player.setFilePath(cachedFilePath);
           } else {
-            await _player.setUrl(path).timeout(const Duration(seconds: 30));
+            await _player
+                .setUrl(path, headers: {'Connection': 'close'})
+                .timeout(const Duration(seconds: 30));
           }
           break;
         case AudioSource.stream:
+          final proxyUrl = await _audioProxy.startProxy(path);
           final address = ProgressiveAudioSource(
-            Uri.parse(path),
-            headers: {'Icy-MetaData': '1'},
+            Uri.parse(proxyUrl),
+            headers: {'Icy-MetaData': '1', 'Connection': 'close'},
           );
           await _player
               .setAudioSource(address)
@@ -157,6 +166,7 @@ class JustAudioService {
   Future<void> release() async {
     try {
       await _player.stop();
+      await _player.clearAudioSources();
     } catch (e) {
       return;
     }
@@ -233,5 +243,197 @@ class JustAudioService {
     }
     await Future.delayed(const Duration(milliseconds: 200));
     _handlingError = false;
+  }
+}
+
+class LocalAudioProxy {
+  HttpServer? _server;
+  HttpClient? _client;
+  HttpClientRequest? _activeRequest;
+
+  // تغییر نوع استریم به مدل دقیق IcyMetadata?
+  final StreamController<IcyMetadata?> _metadataController =
+      StreamController<IcyMetadata?>.broadcast();
+
+  Stream<IcyMetadata?> get metadataStream => _metadataController.stream;
+
+  Future<String> startProxy(String targetUrl) async {
+    // ۱. ابتدا سرور و پروکسی‌های در حال اجرای قبلی را ریست و متوقف کنید
+    await stopProxy();
+
+    // ۲. ایجاد سرور محلی روی یک پورت آزاد و تصادفی در محیط لوکال گوشی
+    _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    _client = HttpClient();
+
+    // ۳. گوش دادن به درخواست‌های دریافتی از سمت پکیج just_audio
+    _server!.listen((HttpRequest request) async {
+      try {
+        final uri = Uri.parse(targetUrl);
+        _activeRequest = await _client!.getUrl(uri);
+
+        // ارسال هدرهای درخواستی آی‌سی به سرور رادیو آنلاین جهت گرفتن متادیتا
+        _activeRequest!.headers.set('Icy-MetaData', '1');
+        _activeRequest!.headers.set('Connection', 'close');
+
+        // باز کردن کانکشن شبکه با سرور رادیو
+        final response = await _activeRequest!.close();
+
+        // ۴. استخراج و پارس کردن کاملاً ایمن هدرها برای جلوگیری از خطای More than one value
+        int metaInt = 0;
+        int? bitrate;
+        String? genre;
+        String? name;
+        String? url;
+        bool? isPublic;
+
+        try {
+          // استفاده از [key]?.first به جای value() تداخل هدرهای چندتایی را ۱۰۰٪ حل می‌کند
+          final String? icyMetaIntStr = response.headers['icy-metaint']?.first;
+          metaInt = icyMetaIntStr != null
+              ? int.tryParse(icyMetaIntStr) ?? 0
+              : 0;
+
+          final String? icyBrStr = response.headers['icy-metaint']?.first;
+          bitrate = icyBrStr != null ? int.tryParse(icyBrStr) : null;
+
+          genre = response.headers['icy-genre']?.first;
+          name = response.headers['icy-name']?.first;
+          url = response.headers['icy-url']?.first;
+
+          final String? icyPubStr = response.headers['icy-pub']?.first;
+          isPublic = icyPubStr != null
+              ? (icyPubStr == '1' || icyPubStr.toLowerCase() == 'true')
+              : null;
+        } catch (e) {
+          debugPrint("خطای غیرمترقبه در پارس هدرهای رادیو (بلعیده شد): $e");
+        }
+
+        // تنظیم هدرهای پاسخ برای لوکال هاست جهت تحویل دیتای تمیز به پلیر
+        request.response.headers.contentType = response.headers.contentType;
+        request.response.statusCode = response.statusCode;
+        request.response.headers.set('Cache-Control', 'no-cache');
+
+        int bytesUntilMeta = metaInt;
+        List<int> metaBuffer = [];
+        int metaLength = 0;
+        bool readingMetaLength = false;
+        bool readingMetaText = false;
+
+        // ۵. شروع لوپ خواندن بایت‌ها به صورت تکه تکه (Chunked)
+        await for (var chunk in response) {
+          if (_server == null) {
+            break; // اگر پروکسی بسته شد، فوراً از حلقه خارج شو
+          }
+
+          if (metaInt == 0) {
+            // اگر رادیو ساختار متادیتا درون‌خطی نداشت، دیتا مستقیماً فرستاده می‌شود
+            request.response.add(chunk);
+            await request.response.flush();
+            continue;
+          }
+
+          int chunkOffset = 0;
+          while (chunkOffset < chunk.length) {
+            if (!readingMetaLength && !readingMetaText) {
+              // الف) تفکیک بایت‌های موزیک معمولی: فرستادن بایت‌های خالص صوتی به پلیر بدون نویز
+              int bytesToRead = chunk.length - chunkOffset;
+              if (bytesToRead > bytesUntilMeta) bytesToRead = bytesUntilMeta;
+
+              final audioBytes = chunk.sublist(
+                chunkOffset,
+                chunkOffset + bytesToRead,
+              );
+              request.response.add(audioBytes);
+
+              chunkOffset += bytesToRead;
+              bytesUntilMeta -= bytesToRead;
+
+              if (bytesUntilMeta == 0) {
+                readingMetaLength =
+                    true; // رسیدن به فاز بایت تعیین‌کننده طول متادیتا
+              }
+            } else if (readingMetaLength) {
+              // ب) محاسبه اندازه طول متادیتا (بایت دریافتی ضربدر ۱۶ مساوی بایت‌های متن)
+              int lengthByte = chunk[chunkOffset];
+              chunkOffset++;
+              metaLength = lengthByte * 16;
+              readingMetaLength = false;
+
+              if (metaLength > 0) {
+                readingMetaText = true;
+                metaBuffer.clear();
+              } else {
+                bytesUntilMeta =
+                    metaInt; // متادیتا در این بخش خالی بود، بازگشت به فاز صدا
+              }
+            } else if (readingMetaText) {
+              // ج) جمع‌آوری بایت‌های متنی شامل اطلاعات خواننده و آهنگ
+              int bytesToRead = chunk.length - chunkOffset;
+              if (bytesToRead > metaLength) bytesToRead = metaLength;
+
+              metaBuffer.addAll(
+                chunk.sublist(chunkOffset, chunkOffset + bytesToRead),
+              );
+              chunkOffset += bytesToRead;
+              metaLength -= bytesToRead;
+
+              if (metaLength == 0) {
+                readingMetaText = false;
+                bytesUntilMeta = metaInt;
+
+                // تبدیل بایت‌ها به رشته متنی و استخراج فیلد StreamTitle
+                final metaText = String.fromCharCodes(metaBuffer);
+                if (metaText.contains("StreamTitle='")) {
+                  final rawTitle = metaText
+                      .split("StreamTitle='")[1]
+                      .split("';")[0];
+
+                  // ساخت شیء هدر رسمی پکیج just_audio با اطلاعات پارس شده
+                  IcyHeaders headers = IcyHeaders(
+                    bitrate: bitrate,
+                    genre: genre,
+                    name: name,
+                    metadataInterval: metaInt,
+                    url: url,
+                    isPublic: isPublic,
+                  );
+
+                  // شبیه‌سازی و ساخت شیء رسمی نهایی IcyMetadata
+                  final simulatedMetadata = IcyMetadata(
+                    headers: headers,
+                    info: IcyInfo(title: rawTitle, url: targetUrl),
+                  );
+
+                  _metadataController.add(simulatedMetadata);
+                }
+              }
+            }
+          }
+          await request.response.flush();
+        }
+      } catch (e) {
+        debugPrint("Proxy implementation error: $e");
+      } finally {
+        try {
+          await request.response.close();
+        } catch (_) {}
+      }
+    });
+
+    return 'http://localhost:${_server!.port}/stream.mp3';
+  }
+
+  Future<void> stopProxy() async {
+    try {
+      _metadataController.add(null); // ارسال وضعیت تهی به شنونده‌ها هنگام توقف
+      _activeRequest?.abort();
+      _activeRequest = null;
+      _client?.close(force: true);
+      _client = null;
+      await _server?.close(force: true);
+      _server = null;
+    } catch (e) {
+      debugPrint("Error stopping proxy: $e");
+    }
   }
 }

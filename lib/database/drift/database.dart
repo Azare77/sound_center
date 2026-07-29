@@ -74,9 +74,7 @@ class AppDatabase extends _$AppDatabase {
       // Get the home directory for Linux
       final homeDir = Directory(Platform.environment['HOME']!);
       // Create the .config/app_name directory
-      final configDir = Directory(
-        p.join(homeDir.path, '.config', APP_CONFIG_FOLDER_LINUX),
-      );
+      final configDir = Directory(p.join(homeDir.path, APP_DB_FOLDER_LINUX));
       if (!await configDir.exists()) {
         await configDir.create(recursive: true);
       }

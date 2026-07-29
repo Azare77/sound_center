@@ -62,4 +62,26 @@ class StreamSubEntity {
       uuid: Value(uuid),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'url': url,
+      'startAt': startAt.toIso8601String(),
+      'isOnline': isOnline,
+      'cover': cover,
+      'uuid': uuid,
+    };
+  }
+
+  factory StreamSubEntity.fromJson(Map<String, dynamic> json) {
+    return StreamSubEntity(
+      title: json['title'] as String,
+      url: json['url'] as String,
+      startAt: DateTime.parse(json['startAt'] as String),
+      isOnline: json['isOnline'] as bool,
+      uuid: json['uuid'] as String?,
+      cover: json['cover'] as String?,
+    );
+  }
 }

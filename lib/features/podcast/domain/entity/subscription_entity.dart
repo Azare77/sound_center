@@ -82,4 +82,34 @@ class SubscriptionEntity {
       haveNewEpisode: Value(false),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'podcastId': podcastId,
+      'title': title,
+      'author': author,
+      'artworkUrl': artworkUrl,
+      'feedUrl': feedUrl,
+      'totalEpisodes': totalEpisodes,
+      'subscribedAt': subscribedAt.toIso8601String(),
+      'lastListenAt': lastListenAt.toIso8601String(),
+      'updateTime': updateTime.toIso8601String(),
+      'haveNewEpisode': haveNewEpisode,
+    };
+  }
+
+  factory SubscriptionEntity.fromJson(Map<String, dynamic> json) {
+    return SubscriptionEntity(
+      podcastId: json['podcastId'] as String?,
+      title: json['title'] as String,
+      author: json['author'] as String?,
+      artworkUrl: json['artworkUrl'] as String?,
+      feedUrl: json['feedUrl'] as String,
+      totalEpisodes: json['totalEpisodes'] as int,
+      subscribedAt: DateTime.parse(json['subscribedAt'] as String),
+      lastListenAt: DateTime.parse(json['lastListenAt'] as String),
+      updateTime: DateTime.parse(json['updateTime'] as String),
+      haveNewEpisode: json['haveNewEpisode'] as bool,
+    );
+  }
 }

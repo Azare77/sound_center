@@ -51,6 +51,40 @@ class AppThemeData {
       iconColor: Color(json['iconColor']),
     );
   }
+
+  AppThemeData copyWith({
+    String? id,
+    Brightness? brightness,
+    Color? scaffoldBackground,
+    Color? thumbColor,
+    Color? appBarBackground,
+    Color? appBarShadowColor,
+    Color? iconColor,
+    Color? mediaColor,
+  }) {
+    return AppThemeData(
+      id: id ?? this.id,
+      brightness: brightness ?? this.brightness,
+      scaffoldBackground: scaffoldBackground ?? this.scaffoldBackground,
+      thumbColor: thumbColor ?? this.thumbColor,
+      appBarBackground: appBarBackground ?? this.appBarBackground,
+      appBarShadowColor: appBarShadowColor ?? this.appBarShadowColor,
+      iconColor: iconColor ?? this.iconColor,
+      mediaColor: mediaColor ?? this.mediaColor,
+    );
+  }
+}
+
+extension AppThemeDataCompare on AppThemeData {
+  bool isEquivalent(AppThemeData other) {
+    return brightness == other.brightness &&
+        scaffoldBackground == other.scaffoldBackground &&
+        thumbColor == other.thumbColor &&
+        appBarBackground == other.appBarBackground &&
+        appBarShadowColor == other.appBarShadowColor &&
+        iconColor == other.iconColor &&
+        mediaColor == other.mediaColor;
+  }
 }
 
 class ThemeManager {
@@ -148,6 +182,19 @@ class ThemeManager {
     green,
     ..._customThemes.values,
   ];
+
+  static bool isEquivalent(AppThemeData other) {
+    return allThemes.any(
+      (theme) =>
+          theme.brightness == other.brightness &&
+          theme.scaffoldBackground == other.scaffoldBackground &&
+          theme.thumbColor == other.thumbColor &&
+          theme.appBarBackground == other.appBarBackground &&
+          theme.appBarShadowColor == other.appBarShadowColor &&
+          theme.iconColor == other.iconColor &&
+          theme.mediaColor == other.mediaColor,
+    );
+  }
 }
 
 AppThemeData _buildDarkTheme() {

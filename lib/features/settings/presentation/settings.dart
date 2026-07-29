@@ -1,19 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:sound_center/core/constants/constants.dart';
+import 'package:sound_center/features/settings/presentation/pages/about_dialog.dart';
+import 'package:sound_center/features/settings/presentation/pages/backup_dialog.dart';
 import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/notification_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/theme_settings.dart';
-import 'package:sound_center/features/settings/presentation/pages/update_dialog.dart';
 import 'package:sound_center/generated/l10n.dart';
-import 'package:sound_center/shared/theme/themes.dart';
-import 'package:sound_center/shared/widgets/toast_message.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -65,6 +58,12 @@ class Settings extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
+                  showDialog(context: context, builder: (_) => BackupDialog());
+                },
+                child: Text(S.of(context).backupRestore),
+              ),
+              TextButton(
+                onPressed: () {
                   showAboutDialog(
                     context: context,
                     applicationVersion: VERSION_NAME,
@@ -76,21 +75,7 @@ class Settings extends StatelessWidget {
                       width: 30,
                       height: 30,
                     ),
-                    children: [
-                      TextButton(
-                        onPressed: () async {
-                          final Uri url = Uri.parse(
-                            "https://github.com/Azare77/sound_center",
-                          );
-                          launchUrl(url, mode: LaunchMode.externalApplication);
-                        },
-                        child: Text(S.of(context).sourceCode),
-                      ),
-                      TextButton(
-                        onPressed: () => _checkForUpdate(context),
-                        child: Text(S.of(context).checkForUpdates),
-                      ),
-                    ],
+                    children: [AboutDialogBody()],
                   );
                 },
                 child: Text(S.of(context).moreInfo),
@@ -100,47 +85,5 @@ class Settings extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _checkForUpdate(BuildContext context) async {
-    try {
-      final res = await http.get(
-        Uri.parse('https://api.github.com/repos/azare77/sound_center/releases'),
-      );
-
-      if (res.statusCode != 200) return;
-
-      final List releases = jsonDecode(res.body);
-
-      final stableReleases = releases.where(
-        (r) => r['prerelease'] == false && r['draft'] == false,
-      );
-
-      if (stableReleases.isEmpty) return;
-      final latestStable = stableReleases.first;
-
-      final isPrerelease = latestStable['prerelease'] ?? false;
-      final isDraft = latestStable['draft'] ?? false;
-      final textStyle = ThemeManager.getThemeData(
-        ThemeManager.current,
-      ).textTheme.bodyMedium;
-      if (VERSION_NAME != latestStable['tag_name'] &&
-          !isPrerelease &&
-          !isDraft) {
-        // ignore: use_build_context_synchronously
-        showDialog(context: context, builder: (_) => UpdateDialog());
-      } else {
-        ToastMessage.showInfoMessage(
-          title: Text(
-            Intl.message(
-              "youAreUsingLatestVersion",
-              name: "youAreUsingLatestVersion",
-            ),
-            style: textStyle,
-          ),
-          autoCloseIn: 2,
-        );
-      }
-    } catch (_) {}
   }
 }

@@ -170,4 +170,40 @@ class Source {
       'uuid': uuid,
     };
   }
+
+  Source copyWith({
+    String? audioInfo,
+    int? bitrate,
+    String? genre,
+    int? listenerPeak,
+    int? listeners,
+    String? listenUrl,
+    String? serverDescription,
+    String? serverName,
+    String? serverType,
+    String? serverUrl,
+    String? streamStart,
+    DateTime? streamStartIso8601,
+    String? title,
+    String? cover,
+    String? uuid,
+  }) {
+    return Source(
+      audioInfo: audioInfo ?? this.audioInfo,
+      bitrate: bitrate ?? this.bitrate,
+      genre: genre ?? this.genre,
+      listenerPeak: listenerPeak ?? this.listenerPeak,
+      listeners: listeners ?? this.listeners,
+      listenUrl: listenUrl ?? this.listenUrl,
+      serverDescription: serverDescription ?? this.serverDescription,
+      serverName: serverName ?? this.serverName,
+      serverType: serverType ?? this.serverType,
+      serverUrl: serverUrl ?? this.serverUrl,
+      streamStart: streamStart ?? this.streamStart,
+      streamStartIso8601: streamStartIso8601 ?? this.streamStartIso8601,
+      title: title ?? this.title,
+      cover: cover ?? this.cover,
+      uuid: uuid ?? this.uuid,
+    );
+  }
 }

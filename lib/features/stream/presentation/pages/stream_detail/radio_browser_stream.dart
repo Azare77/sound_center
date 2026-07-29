@@ -54,8 +54,10 @@ class _RadioStreamViewState extends State<RadioStreamView> {
   Future<void> _init() async {
     final res = await widget.repository.loadStationInfo(widget.stream.uuid!);
     if (res == null) {
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+      if (mounted) {
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+      }
       return;
     }
     station = res;

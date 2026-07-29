@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:just_audio/just_audio.dart' show IcyMetadata;
 import 'package:sound_center/core/services/audio_handler.dart';
@@ -104,18 +103,19 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     late String url;
     late String title;
     String? artist;
-    Uint8List? cover;
+    dynamic cover;
     int? duration;
     if (item is AudioModel) {
       url = item.path;
       title = item.title;
       artist = item.artist;
-      cover = item.cover;
       duration = await getDuration();
     } else if (item is Source) {
       url = item.listenUrl;
       title = item.title ?? "";
+      cover = item.cover;
     }
+    cover = item.cover;
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromStream(
       url: url,
       title: title,

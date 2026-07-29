@@ -116,11 +116,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       player.play(0, direct: true);
       player.addIcyMetadataListener((title) async {
         if (title == null || title.isEmpty) return;
-        Source? s = Source(
-          listenUrl: event.stream.listenUrl,
-          title: title,
-          cover: event.stream.cover,
-        );
+        Source? s = event.stream.copyWith(title: title);
         IcecastStream? icecast = IcecastStream(icestats: IceStats(source: [s]));
         add(UpdateStreamInfo(icecast, s));
       });

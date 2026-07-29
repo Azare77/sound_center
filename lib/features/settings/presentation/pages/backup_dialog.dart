@@ -62,6 +62,7 @@ class BackupDialog extends StatelessWidget {
           ),
         );
       }
+      Navigator.pop(context);
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -164,6 +165,8 @@ class BackupDialog extends StatelessWidget {
       ToastMessage.showInfoMessage(
         title: Text(S.of(context).failedToRestoreBackup, style: textStyle),
       );
+    } finally {
+      Navigator.pop(context);
     }
   }
 

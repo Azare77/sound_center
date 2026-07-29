@@ -83,5 +83,11 @@
   "loading": "در حال بارگذاری",
   "errorInLoading": "خطا در بارگذاری",
   "stationCount": "تعداد ایستگاه",
-  "recommendUpdateViaStore": "اگر این اپ را از فروشگاه اپلیکیشن نصب کرده‌اید، پیشنهاد می‌کنیم از طریق همان فروشگاه به‌روزرسانی کنید."
+  "recommendUpdateViaStore": "اگر این اپ را از فروشگاه اپلیکیشن نصب کرده‌اید، پیشنهاد می‌کنیم از طریق همان فروشگاه به‌روزرسانی کنید.",
+  "backupRestore": "پشتیبان‌گیری و بازیابی",
+  "exportData": "خروجی گرفتن از داده‌ها",
+  "importData": "وارد کردن داده‌ها",
+  "backupRestoredSuccessfully": "داده‌ها با موفقیت بازیابی شدند.",
+  "backupPartiallyRestoredSomeDataCouldNotBeImported": "بازیابی داده‌ها به طور کامل انجام نشد.",
+  "failedToRestoreBackup": "بازیابی داده‌ها ناموفق بود."
 }

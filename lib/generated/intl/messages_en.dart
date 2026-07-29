@@ -35,6 +35,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("Artist"),
     "az": MessageLookupByLibrary.simpleMessage("A-Z"),
+    "backupPartiallyRestoredSomeDataCouldNotBeImported":
+        MessageLookupByLibrary.simpleMessage(
+          "Backup partially restored. Some data could not be imported.",
+        ),
+    "backupRestore": MessageLookupByLibrary.simpleMessage("Backup & Restore"),
+    "backupRestoredSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Backup restored successfully.",
+    ),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "Check for updates",
     ),
@@ -63,11 +71,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Error In Download",
     ),
     "errorInLoading": MessageLookupByLibrary.simpleMessage("Error in loading"),
+    "exportData": MessageLookupByLibrary.simpleMessage("Export Data"),
+    "failedToRestoreBackup": MessageLookupByLibrary.simpleMessage(
+      "Failed to restore backup.",
+    ),
     "format": MessageLookupByLibrary.simpleMessage("Format"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
     "host": MessageLookupByLibrary.simpleMessage("Host"),
     "iconColor": MessageLookupByLibrary.simpleMessage("Icon"),
+    "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("Latest First"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),

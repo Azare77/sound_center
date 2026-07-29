@@ -83,5 +83,11 @@
   "loading": "Loading",
   "errorInLoading": "Error in loading",
   "stationCount": "Station Count",
-  "recommendUpdateViaStore": "If you installed this app from an app store, we recommend updating it through the same store."
+  "recommendUpdateViaStore": "If you installed this app from an app store, we recommend updating it through the same store.",
+  "backupRestore": "Backup & Restore",
+  "exportData": "Export Data",
+  "importData": "Import Data",
+  "backupRestoredSuccessfully": "Backup restored successfully.",
+  "backupPartiallyRestoredSomeDataCouldNotBeImported": "Backup partially restored. Some data could not be imported.",
+  "failedToRestoreBackup": "Failed to restore backup."
 }

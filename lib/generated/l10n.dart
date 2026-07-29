@@ -608,6 +608,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Backup & Restore`
+  String get backupRestore {
+    return Intl.message(
+      'Backup & Restore',
+      name: 'backupRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export Data`
+  String get exportData {
+    return Intl.message('Export Data', name: 'exportData', desc: '', args: []);
+  }
+
+  /// `Import Data`
+  String get importData {
+    return Intl.message('Import Data', name: 'importData', desc: '', args: []);
+  }
+
+  /// `Backup restored successfully.`
+  String get backupRestoredSuccessfully {
+    return Intl.message(
+      'Backup restored successfully.',
+      name: 'backupRestoredSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Backup partially restored. Some data could not be imported.`
+  String get backupPartiallyRestoredSomeDataCouldNotBeImported {
+    return Intl.message(
+      'Backup partially restored. Some data could not be imported.',
+      name: 'backupPartiallyRestoredSomeDataCouldNotBeImported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to restore backup.`
+  String get failedToRestoreBackup {
+    return Intl.message(
+      'Failed to restore backup.',
+      name: 'failedToRestoreBackup',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

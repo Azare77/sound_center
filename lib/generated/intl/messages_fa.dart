@@ -33,6 +33,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "artist": MessageLookupByLibrary.simpleMessage("هنرمند"),
     "az": MessageLookupByLibrary.simpleMessage("الف-ی"),
+    "backupPartiallyRestoredSomeDataCouldNotBeImported":
+        MessageLookupByLibrary.simpleMessage(
+          "بازیابی داده‌ها به طور کامل انجام نشد.",
+        ),
+    "backupRestore": MessageLookupByLibrary.simpleMessage(
+      "پشتیبان‌گیری و بازیابی",
+    ),
+    "backupRestoredSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "داده‌ها با موفقیت بازیابی شدند.",
+    ),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "بررسی به‌روزرسانی",
     ),
@@ -57,11 +67,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "duration": MessageLookupByLibrary.simpleMessage("مدت"),
     "errorInDownload": MessageLookupByLibrary.simpleMessage("خطا در دانلود"),
     "errorInLoading": MessageLookupByLibrary.simpleMessage("خطا در بارگذاری"),
+    "exportData": MessageLookupByLibrary.simpleMessage(
+      "خروجی گرفتن از داده‌ها",
+    ),
+    "failedToRestoreBackup": MessageLookupByLibrary.simpleMessage(
+      "بازیابی داده‌ها ناموفق بود.",
+    ),
     "format": MessageLookupByLibrary.simpleMessage("فرمت"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("دریافت کلید API"),
     "green": MessageLookupByLibrary.simpleMessage("سبز"),
     "host": MessageLookupByLibrary.simpleMessage("هاست"),
     "iconColor": MessageLookupByLibrary.simpleMessage("آیکون"),
+    "importData": MessageLookupByLibrary.simpleMessage("وارد کردن داده‌ها"),
     "language": MessageLookupByLibrary.simpleMessage("زبان"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("جدید ترین"),
     "light": MessageLookupByLibrary.simpleMessage("روشن"),

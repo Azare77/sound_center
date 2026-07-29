@@ -167,11 +167,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
     }
   }
 
-  void setMediaItemFrom(AudioEntity audio) async {
-    Uint8List? cover = await AudioUtil.getCover(
-      audio.id,
-      coverSize: CoverSize.banner,
-    );
+  void setMediaItemFrom(AudioEntity audio, {Uint8List? cover}) async {
+    cover ??= await AudioUtil.getCover(audio.id, coverSize: CoverSize.banner);
     final Uri? artUri = await saveCoverToFile(cover, "cover_${audio.id}");
     _source = service.AudioSource.local;
     MediaItem item = MediaItem(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
@@ -39,15 +40,21 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       if (!res) return;
       int position = PlayerStateStorage.getLastPosition();
       await _playerService.seek(Duration(milliseconds: position));
-      _currentAudio!.cover = await AudioUtil.getCover(
-        _currentAudio!.id,
-        coverSize: CoverSize.banner,
-      );
+      if (Platform.isLinux) {
+        final file = File(_currentAudio!.path);
+        _currentAudio!.cover = AudioUtil.getLinuxCover(file);
+      } else {
+        _currentAudio!.cover = await AudioUtil.getCover(
+          _currentAudio!.id,
+          coverSize: CoverSize.banner,
+        );
+      }
       index = audios.indexWhere((a) => a.id == _currentAudio!.id);
       shuffleIndex = shuffleList.indexWhere((a) => a == index);
       audios[index] = _currentAudio!;
       (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
         _currentAudio!,
+        cover: Platform.isLinux ? _currentAudio!.cover : null,
       );
       bloc.add(AutoPlayNext());
     } catch (e, st) {
@@ -177,6 +184,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     bloc.add(AutoPlayNext());
     (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
       audios[index],
+      cover: Platform.isLinux ? audios[index].cover : null,
     );
     _loadChunk(index);
     await PlayerStateStorage.saveLastAudio(_currentAudio!);
@@ -312,6 +320,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   Future<void> _loadBanner() async {
+    if (Platform.isLinux) return;
     for (int i = 0; i < audios.length; i++) {
       final audio = audios[i];
       audio.cover ??= await AudioUtil.getCover(

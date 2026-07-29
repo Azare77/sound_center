@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -31,7 +32,13 @@ class _CurrentAudioState extends State<CurrentAudio> {
 
   void getCover() async {
     audioId = widget.audioEntity.id;
-    cover = await AudioUtil.getCover(audioId, coverSize: CoverSize.thumbnail);
+    final audioPath = widget.audioEntity.path;
+    if (Platform.isLinux) {
+      cover = AudioUtil.getLinuxCover(File(audioPath));
+    } else {
+      cover = await AudioUtil.getCover(audioId, coverSize: CoverSize.thumbnail);
+    }
+
     if (mounted) setState(() {});
   }
 

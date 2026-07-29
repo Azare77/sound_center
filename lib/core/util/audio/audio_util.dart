@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:flutter/services.dart';
 import 'package:on_audio_query_forked/on_audio_query.dart';
 
@@ -26,6 +27,11 @@ class AudioUtil {
 
     _coverCache[key] = cover;
     return cover;
+  }
+
+  static Uint8List? getLinuxCover(File file) {
+    final metadata = readMetadata(file, getImage: true);
+    return metadata.pictures.firstOrNull?.bytes;
   }
 
   static String convertSeekBarTime(int input) {

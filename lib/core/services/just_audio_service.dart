@@ -25,7 +25,8 @@ class JustAudioService {
   void Function()? _onLoading;
   void Function()? _onReady;
 
-  final LocalAudioProxy _audioProxy = LocalAudioProxy();
+  final StreamProxy _streamProxy = StreamProxy();
+  final PodcastProxy _podcastProxy = PodcastProxy();
 
   final AudioPlayer _player = AudioPlayer(
     useLazyPreparation: true,
@@ -50,7 +51,7 @@ class JustAudioService {
 
   Stream<Duration?> get duration => _player.durationStream;
 
-  Stream<IcyMetadata?> get icyMetadataStream => _audioProxy.metadataStream;
+  Stream<IcyMetadata?> get icyMetadataStream => _streamProxy.metadataStream;
 
   final _loadingController = StreamController<bool>.broadcast();
 
@@ -107,7 +108,8 @@ class JustAudioService {
         await Future.delayed(const Duration(milliseconds: 100));
       }
       if (_loadingSource) return false;
-      await _audioProxy.stopProxy();
+      await _streamProxy.stopProxy();
+      await _podcastProxy.stopProxy();
       _loadingSource = true;
       onSourceSet?.call();
       switch (source) {
@@ -118,13 +120,12 @@ class JustAudioService {
           if (cachedFilePath != null) {
             await _player.setFilePath(cachedFilePath);
           } else {
-            await _player
-                .setUrl(path, headers: {'Connection': 'close'})
-                .timeout(const Duration(seconds: 30));
+            final proxyUrl = await _podcastProxy.startProxy(path);
+            await _player.setUrl(proxyUrl).timeout(const Duration(seconds: 30));
           }
           break;
         case AudioSource.stream:
-          final proxyUrl = await _audioProxy.startProxy(path);
+          final proxyUrl = await _streamProxy.startProxy(path);
           final address = ProgressiveAudioSource(
             Uri.parse(proxyUrl),
             headers: {'Icy-MetaData': '1', 'Connection': 'close'},
@@ -246,7 +247,116 @@ class JustAudioService {
   }
 }
 
-class LocalAudioProxy {
+class PodcastProxy {
+  HttpServer? _server;
+  HttpClient? _client;
+
+  // نگهداری آخرین درخواست فعال برای مدیریت لغو در صورت سیک (Seek) ناگهانی
+  HttpClientRequest? _activeRequest;
+  bool _isStopping = false;
+
+  Future<String> startProxy(String targetUrl) async {
+    await stopProxy();
+
+    _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    _client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 25)
+      ..idleTimeout =
+          const Duration(
+            minutes: 10,
+          ) // افزایش تایم‌آوت برای باز ماندن کانکشن‌ها
+      ..maxConnectionsPerHost = 5;
+
+    _server!.listen((HttpRequest request) async {
+      if (_isStopping) {
+        _respondWithError(request, HttpStatus.serviceUnavailable);
+        return;
+      }
+
+      // لغو کانکشن قبلی *فقط* در صورتی که پلیر یک درخواست کاملاً جدید (سیک به جای دیگر) بدهد
+      _cancelActiveRequest();
+
+      try {
+        final uri = Uri.parse(targetUrl);
+        _activeRequest = await _client!.getUrl(uri);
+
+        // انتقال دقیق هدر Range پلیر به سرور اصلی برای پشتیبانی از Seek
+        final rangeHeader = request.headers.value('range');
+        if (rangeHeader != null) {
+          _activeRequest!.headers.set('Range', rangeHeader);
+        }
+
+        // تنظیم هدرهای استاندارد استریم زنده (اصلاح به keep-alive)
+        _activeRequest!.headers
+          ..set('Connection', 'keep-alive')
+          ..set('User-Agent', 'SoundCenter/2.0')
+          ..set('Accept', '*/*');
+
+        final response = await _activeRequest!.close().timeout(
+          const Duration(seconds: 25),
+          onTimeout: () => throw TimeoutException('Remote server timeout'),
+        );
+
+        // انتقال وضعیت (Status Code) و هدرهای پاسخ سرور به پلیر
+        request.response.statusCode = response.statusCode;
+        response.headers.forEach((name, values) {
+          if (name != 'connection') {
+            for (var value in values) {
+              request.response.headers.add(name, value);
+            }
+          }
+        });
+        request.response.headers.set('Connection', 'keep-alive');
+
+        // 🌟 کلید حل مشکل: استفاده از pipe هوشمند دارت
+        // این متد مدیریت Backpressure را به طور خودکار به سیستم‌عامل می‌سپارد.
+        // وقتی پلیر دانلود را متوقف کند، دارت به صورت خودکار خواندن از سرور اصلی را متوقف می‌کند؛
+        // بدون اینکه کانکشن را ببندد یا نیاز به مدیریت دستی بایت‌ها باشد.
+        await request.response.addStream(response);
+        await request.response.close();
+      } catch (e) {
+        debugPrint('⚠️ PodcastProxy Error: $e');
+        _respondWithError(request, HttpStatus.badGateway);
+      }
+    });
+
+    final port = _server!.port;
+    debugPrint(
+      '🚀 PodcastProxy Running on: http://127.0.0.1:$port/podcast.mp3',
+    );
+    return 'http://127.0.0.1:$port/podcast.mp3';
+  }
+
+  void _respondWithError(HttpRequest request, int statusCode) {
+    try {
+      request.response.statusCode = statusCode;
+      request.response.close();
+    } catch (_) {}
+  }
+
+  void _cancelActiveRequest() {
+    try {
+      _activeRequest?.abort();
+    } catch (_) {}
+    _activeRequest = null;
+  }
+
+  Future<void> stopProxy() async {
+    _isStopping = true;
+    _cancelActiveRequest();
+    try {
+      _client?.close(force: true);
+    } catch (_) {}
+    _client = null;
+    try {
+      await _server?.close(force: true);
+    } catch (_) {}
+    _server = null;
+    _isStopping = false;
+  }
+}
+
+class StreamProxy {
   HttpServer? _server;
   HttpClient? _client;
   HttpClientRequest? _activeRequest;

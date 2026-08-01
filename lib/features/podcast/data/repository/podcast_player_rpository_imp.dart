@@ -22,6 +22,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   PodcastPlayerRepositoryImp._internal() {
     _playerService.setOnPodcastComplete(() => next());
+    _playerService.setOnPodcastError(() => restart());
     _initialPlayerState();
   }
 
@@ -94,7 +95,9 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       _positionController.add(pos.inMilliseconds);
     });
     _playerService.processState.listen((state) {
-      _loadingController.add(isLoading());
+      bool loading = isLoading();
+      _loadingController.add(loading);
+      if (!loading && isPlaying()) _retryCount = 0;
     });
     _playerService.duration.listen((dur) {
       if (dur != null) {
@@ -136,6 +139,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> play(int index, {bool direct = false}) async {
+    _retryCount = 0;
     this.index = index;
     _currentEpisode = _episodes[index];
     String key = _currentEpisode!.title.trim();
@@ -222,9 +226,32 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> stop() async {
+    _retryCount = 0;
     _currentEpisode = null;
     await _playerService.release();
     bloc.add(TogglePlay());
+  }
+
+  int _retryCount = 0;
+
+  Future<void> restart() async {
+    _retryCount++;
+    if (_retryCount > 3) {
+      _retryCount = 0;
+      await stop();
+      return;
+    }
+    bool wasPlaying = _playerService.isPlaying();
+    int position = _playerService.getCurrentPosition();
+    await _playerService.release();
+    await Future.delayed(Duration(milliseconds: 500));
+    int currentRetry = _retryCount;
+    await play(index);
+    _retryCount = currentRetry;
+    await seek(Duration(milliseconds: position));
+    if (!wasPlaying) {
+      await _playerService.togglePlaying();
+    }
   }
 
   int getIndex(bool forward) {

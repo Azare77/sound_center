@@ -19,11 +19,12 @@ class JustAudioService {
   }
 
   // Callbacks
-  void Function()? _onComplete;
-  void Function()? _onPodcastComplete;
-  void Function()? _onStreamComplete;
-  void Function()? _onLoading;
-  void Function()? _onReady;
+  Future<void> Function()? _onComplete;
+  Future<void> Function()? _onPodcastComplete;
+  Future<void> Function()? _onPodcastError;
+  Future<void> Function()? _onStreamComplete;
+  Future<void> Function()? _onLoading;
+  Future<void> Function()? _onReady;
 
   final StreamProxy _streamProxy = StreamProxy();
   final PodcastProxy _podcastProxy = PodcastProxy();
@@ -77,19 +78,19 @@ class JustAudioService {
     });
 
     // forward processing state callbacks
-    _player.processingStateStream.listen((state) {
+    _player.processingStateStream.listen((state) async {
       if (state == ProcessingState.completed) {
         if (_source == AudioSource.local) {
-          _onComplete?.call();
+          await _onComplete?.call();
         } else if (_source == AudioSource.online) {
-          _onPodcastComplete?.call();
+          await _onPodcastComplete?.call();
         } else {
-          _onStreamComplete?.call();
+          await _onStreamComplete?.call();
         }
       } else if (state == ProcessingState.loading) {
-        _onLoading?.call();
+        await _onLoading?.call();
       } else if (state == ProcessingState.ready) {
-        _onReady?.call();
+        await _onReady?.call();
       }
     });
   }
@@ -116,6 +117,7 @@ class JustAudioService {
         case AudioSource.local:
           await _player.setFilePath(path);
           break;
+
         case AudioSource.online:
           if (cachedFilePath != null) {
             await _player.setFilePath(cachedFilePath);
@@ -124,6 +126,7 @@ class JustAudioService {
             await _player.setUrl(proxyUrl).timeout(const Duration(seconds: 30));
           }
           break;
+
         case AudioSource.stream:
           final proxyUrl = await _streamProxy.startProxy(path);
           final address = ProgressiveAudioSource(
@@ -135,6 +138,7 @@ class JustAudioService {
               .timeout(const Duration(seconds: 30));
           break;
       }
+
       await _player.setSpeed(1.0);
       _loadingSource = false;
       _loadingController.add(isLoading());
@@ -179,23 +183,27 @@ class JustAudioService {
 
   double getSpeed() => _player.speed;
 
-  void setOnComplete(void Function()? onComplete) {
+  void setOnComplete(Future<void> Function()? onComplete) {
     _onComplete = onComplete;
   }
 
-  void setOnPodcastComplete(void Function()? onPodcastComplete) {
+  void setOnPodcastComplete(Future<void> Function()? onPodcastComplete) {
     _onPodcastComplete = onPodcastComplete;
   }
 
-  void setOnStreamComplete(void Function()? onStreamComplete) {
+  void setOnPodcastError(Future<void> Function()? onPodcastError) {
+    _onPodcastError = onPodcastError;
+  }
+
+  void setOnStreamComplete(Future<void> Function()? onStreamComplete) {
     _onStreamComplete = onStreamComplete;
   }
 
-  void setOnLoading(void Function()? onLoading) {
+  void setOnLoading(Future<void> Function()? onLoading) {
     _onLoading = onLoading;
   }
 
-  void setOnReady(void Function()? onReady) {
+  void setOnReady(Future<void> Function()? onReady) {
     _onReady = onReady;
   }
 
@@ -234,13 +242,14 @@ class JustAudioService {
       debugPrint('Already handling an error, skipping re-entry');
       return;
     }
+    debugPrint('🪲Just Audio Error : $error');
     _handlingError = true;
     if (_source == AudioSource.local) {
-      _onComplete?.call();
+      await _onComplete?.call();
     } else if (_source == AudioSource.online) {
-      _onPodcastComplete?.call();
+      await _onPodcastError?.call();
     } else if (_source == AudioSource.stream) {
-      _onStreamComplete?.call();
+      await _onStreamComplete?.call();
     }
     await Future.delayed(const Duration(milliseconds: 200));
     _handlingError = false;

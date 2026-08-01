@@ -54,7 +54,9 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       _positionController.add(pos.inMilliseconds);
     });
     _playerService.processState.listen((state) {
-      _loadingController.add(isLoading());
+      bool loading = isLoading();
+      _loadingController.add(loading);
+      if (!loading && isPlaying()) _retryCount = 0;
     });
     _playerService.duration.listen((dur) {
       if (dur != null) {
@@ -133,6 +135,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> play(int _, {bool direct = false}) async {
+    _retryCount = 0;
     _currentStream = _playList[0];
     late final String url;
     late final String title;
@@ -220,6 +223,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> stop() async {
+    _retryCount = 0;
     _cancelIcyListener();
     _updateTimer?.cancel();
     _updateTimer = null;
@@ -228,11 +232,21 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     bloc.add(TogglePlay());
   }
 
+  int _retryCount = 0;
+
   Future<void> restart() async {
+    _retryCount++;
+    if (_retryCount > 3) {
+      _retryCount = 0;
+      await stop();
+      return;
+    }
     await _playerService.release();
     await Future.delayed(Duration(seconds: 1));
     bloc.add(AutoPlayStream());
+    int currentRetry = _retryCount;
     await play(0);
+    _retryCount = currentRetry;
   }
 
   void addIcyMetadataListener(void Function(String? title) onTitle) {

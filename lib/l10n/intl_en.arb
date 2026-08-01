@@ -79,7 +79,7 @@
   "website": "Website",
   "votes": "Votes",
   "clicks": "Clicks",
-  "checkForUpdates": "Check for updates",
+  "checkForUpdates": "Check for Updates via GitHub",
   "loading": "Loading",
   "errorInLoading": "Error in loading",
   "stationCount": "Station Count",

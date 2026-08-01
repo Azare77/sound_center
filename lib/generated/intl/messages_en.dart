@@ -44,7 +44,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Backup restored successfully.",
     ),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
-      "Check for updates",
+      "Check for Updates via GitHub",
     ),
     "clicks": MessageLookupByLibrary.simpleMessage("Clicks"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),

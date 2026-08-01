@@ -564,10 +564,10 @@ class S {
     return Intl.message('Clicks', name: 'clicks', desc: '', args: []);
   }
 
-  /// `Check for updates`
+  /// `Check for Updates via GitHub`
   String get checkForUpdates {
     return Intl.message(
-      'Check for updates',
+      'Check for Updates via GitHub',
       name: 'checkForUpdates',
       desc: '',
       args: [],

@@ -44,7 +44,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "داده‌ها با موفقیت بازیابی شدند.",
     ),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
-      "بررسی به‌روزرسانی",
+      "بررسی به‌روزرسانی از طریق GitHub",
     ),
     "clicks": MessageLookupByLibrary.simpleMessage("کلیک ها"),
     "copy": MessageLookupByLibrary.simpleMessage("کپی تم"),

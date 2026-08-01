@@ -1,3 +1,11 @@
+# 1.0.0-beta.6
+
+* Fixed notification cover image issues in Streams
+* Fixed network connection leaks by adding an internal proxy
+* Added ICY metadata fetching support for Linux
+* Added Backup and Restore functionality
+* Added Auto Restart podcast & stream when an error occurred
+
 ## 1.0.0-beta.5
 
 * Added Radio Browser API for searching streams

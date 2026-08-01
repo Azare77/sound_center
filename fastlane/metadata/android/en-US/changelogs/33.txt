@@ -1,0 +1,10 @@
+What's New:
+- Added Backup and Restore functionality.
+- Added Auto Restart podcast & stream when an error occurred.
+
+Improvements:
+- Added ICY metadata fetching support for Linux.
+
+Fixed:
+- Fixed notification cover image issues in Streams.
+- Fixed network connection leaks by adding an internal proxy.

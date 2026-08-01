@@ -27,8 +27,8 @@ Currently available on Android and Linux desktop, with support for English and F
 | **Downloads manager**                      | ✔ Background using `background_downloader` |
 | **Localization**                           | ✔ English & Farsi (`intl`)                 |
 | **Custom Themes**                          | ✔ Create Custom Themes and share them      |
+| **Live audio streams (internet radio)**    | ✔ Search and play radio stations           |
 | **Third-party sources (SoundCloud, etc.)** | 🔧 Planned — adapter-based architecture    |
-| **Live audio streams (internet radio)**    | 🔧 Supported at player level, UI pending   |
 
 </div>
 
@@ -45,10 +45,11 @@ Please open an [Issue](https://github.com/azare77/sound_center/issues) or join t
 
 ### Short notes
 
-- Architecture: modular features with BLoC for state management and a central `audio_handler` for
+- Architecture: modular features with BoC for state management and a central `audio_handler` for
   playback orchestration.
 - Permissions: the app requests storage/media permissions on first run to allow local scanning (
   `permission_handler`).
+- Services: app uses iTunes/podcast index for Podcasts and Radio browser for streams
 
 ## License
 

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:flutter/services.dart';
-import 'package:on_audio_query_forked/on_audio_query.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 enum CoverSize { thumbnail, banner }
 

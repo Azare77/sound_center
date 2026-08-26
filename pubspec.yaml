@@ -40,6 +40,11 @@ dependencies:
   on_audio_query_forked: ^2.9.1
   audio_metadata_reader: ^1.6.0
   media_store_plus: ^0.1.3
+  on_audio_query:
+    git:
+      url: https://github.com/Azare77/on_audio_query
+      path: packages/on_audio_query
+      ref: main
   #STATE MANAGEMENT
   bloc: ^9.2.1
   flutter_bloc: ^9.1.1

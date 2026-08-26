@@ -1,4 +1,4 @@
-import 'package:on_audio_query_forked/on_audio_query.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:sound_center/core/util/permission/permission_handler.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/data/sources/storage.dart';

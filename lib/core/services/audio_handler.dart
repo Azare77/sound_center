@@ -28,12 +28,28 @@ class JustAudioNotificationHandler extends BaseAudioHandler
 
       if (_source == service.AudioSource.local) {
         controls = [
-          MediaControl.skipToPrevious,
-          _player.playing ? MediaControl.pause : MediaControl.play,
-          MediaControl.skipToNext,
+          MediaControl(
+            androidIcon: 'drawable/audio_service_skip_previous',
+            label: 'Previous',
+            action: MediaAction.skipToPrevious,
+          ),
+          MediaControl(
+            androidIcon: _player.playing
+                ? 'drawable/audio_service_pause'
+                : 'drawable/audio_service_play_arrow',
+            label: _player.playing ? 'Pause' : 'Play',
+            action: _player.playing ? MediaAction.pause : MediaAction.play,
+          ),
+          MediaControl(
+            androidIcon: 'drawable/audio_service_skip_next',
+            label: 'Next',
+            action: MediaAction.skipToNext,
+          ),
         ];
+
         compactIndices = const [0, 1, 2];
       }
+
       if (_source == service.AudioSource.online) {
         controls = [
           MediaControl(
@@ -41,19 +57,44 @@ class JustAudioNotificationHandler extends BaseAudioHandler
             label: 'Fast Backward',
             action: MediaAction.rewind,
           ),
-          MediaControl.skipToPrevious,
-          _player.playing ? MediaControl.pause : MediaControl.play,
-          MediaControl.skipToNext,
+          MediaControl(
+            androidIcon: 'drawable/audio_service_skip_previous',
+            label: 'Previous',
+            action: MediaAction.skipToPrevious,
+          ),
+          MediaControl(
+            androidIcon: _player.playing
+                ? 'drawable/audio_service_pause'
+                : 'drawable/audio_service_play_arrow',
+            label: _player.playing ? 'Pause' : 'Play',
+            action: _player.playing ? MediaAction.pause : MediaAction.play,
+          ),
+          MediaControl(
+            androidIcon: 'drawable/audio_service_skip_next',
+            label: 'Next',
+            action: MediaAction.skipToNext,
+          ),
           MediaControl(
             androidIcon: 'drawable/ic_jump_forward',
             label: 'Fast Forward',
             action: MediaAction.fastForward,
           ),
         ];
+
         compactIndices = const [0, 2, 4];
       }
+
       if (_source == service.AudioSource.stream) {
-        controls = [_player.playing ? MediaControl.pause : MediaControl.play];
+        controls = [
+          MediaControl(
+            androidIcon: _player.playing
+                ? 'drawable/audio_service_pause'
+                : 'drawable/audio_service_play_arrow',
+            label: _player.playing ? 'Pause' : 'Play',
+            action: _player.playing ? MediaAction.pause : MediaAction.play,
+          ),
+        ];
+
         compactIndices = const [0];
       }
 

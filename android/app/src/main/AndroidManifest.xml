@@ -9,7 +9,9 @@
         android:maxSdkVersion="29" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ForegroundServicesPolicy" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -53,6 +55,33 @@
                 android:name="jump_backward_icon"
                 android:resource="@drawable/ic_jump_backward" />
 
+            <meta-data
+                android:name="audio_service_play_icon"
+                android:resource="@drawable/audio_service_play_arrow" />
+
+            <meta-data
+                android:name="audio_service_pause_icon"
+                android:resource="@drawable/audio_service_pause" />
+
+            <meta-data
+                android:name="audio_service_skip_next_icon"
+                android:resource="@drawable/audio_service_skip_next" />
+
+            <meta-data
+                android:name="audio_service_skip_previous_icon"
+                android:resource="@drawable/audio_service_skip_previous" />
+
+            <meta-data
+                android:name="audio_service_stop_icon"
+                android:resource="@drawable/audio_service_stop" />
+
+            <meta-data
+                android:name="audio_service_fast_forward_icon"
+                android:resource="@drawable/audio_service_fast_forward" />
+
+            <meta-data
+                android:name="audio_service_fast_rewind_icon"
+                android:resource="@drawable/audio_service_fast_rewind" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

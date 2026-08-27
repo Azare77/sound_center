@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
@@ -75,6 +75,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
             requestFocus: true,
             constraints: BoxConstraints(
               minWidth: MediaQuery.of(context).size.width,
+              minHeight: MediaQuery.of(context).size.height,
             ),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
             builder: (_) => Padding(

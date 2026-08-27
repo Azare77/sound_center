@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
@@ -70,6 +70,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
     pass = pass.clamp(0, total);
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           children: [
@@ -79,15 +80,12 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
                 value: pass.toDouble(),
                 max: total.toDouble(),
                 inactiveColor: Colors.grey,
-
                 onChanged: (val) {
                   seeking = true;
                   pass = val.toInt();
                   _updateUi();
                 },
-
                 onChangeStart: (_) => seeking = true,
-
                 onChangeEnd: (val) {
                   seeking = false;
                   imp.seek(Duration(milliseconds: val.floor()));

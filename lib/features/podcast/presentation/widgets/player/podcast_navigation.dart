@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
@@ -84,6 +84,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
     pass = pass.clamp(0, total);
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           children: [

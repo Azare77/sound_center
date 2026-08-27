@@ -67,6 +67,7 @@ class _StreamNavigationState extends State<StreamNavigation> {
     pass = pass.clamp(0, total);
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (Platform.isLinux)
           Row(

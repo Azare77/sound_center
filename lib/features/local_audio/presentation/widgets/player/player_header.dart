@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/player/header_image.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/player/speed_dialog.dart';
-import 'package:sound_center/shared/widgets/confirm_dialog.dart';
-import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class PlayerHeader extends StatefulWidget {
@@ -22,7 +17,6 @@ class PlayerHeader extends StatefulWidget {
 
 class _PlayerHeaderState extends State<PlayerHeader> {
   late final PageController controller;
-
   int _currentIndex = 0;
   bool _isScrolling = false;
   List<AudioEntity> currentPlayList = [];
@@ -65,78 +59,46 @@ class _PlayerHeaderState extends State<PlayerHeader> {
         currentPlayList = imp.getPlayList();
         _currentIndex = imp.isShuffle() ? imp.shuffleIndex : imp.index;
         _jumpToCorrectPage();
+        final slider = NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification notification) {
+            if (notification is ScrollStartNotification) {
+              _isScrolling = true;
+            }
+            if (notification is ScrollEndNotification) {
+              onScrollEnd();
+            }
+            return false;
+          },
+          child: PageView.builder(
+            controller: controller,
+            restorationId: song.title,
+            itemCount: currentPlayList.length,
+            itemBuilder: (BuildContext context, int index) {
+              AudioEntity audio = currentPlayList[index];
+              return HeaderImage(
+                key: ValueKey(audio.id),
+                id: audio.id,
+                cover: audio.cover,
+              );
+            },
+          ),
+        );
+        final orientation = MediaQuery.orientationOf(context);
         return Column(
           spacing: 20,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                //TODO remove GestureDetector
-                GestureDetector(
-                  onDoubleTap: () {
-                    showDialog(context: context, builder: (_) => SpeedDialog());
-                  },
-                  child: MediaControllerButton(
-                    width: 50,
-                    height: 50,
-                    onPressed: () => _delete(),
-                    svg: "assets/icons/trash-can.svg",
-                  ),
-                ),
-                SizedBox(
-                  width: 40,
-                  height: 5,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+            orientation == Orientation.landscape
+                ? Expanded(
+                    child: Center(
+                      child: AspectRatio(aspectRatio: 1, child: slider),
                     ),
+                  )
+                : SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.width * 0.8 - 30,
+                    child: slider,
                   ),
-                ),
-                MediaControllerButton(
-                  width: 50,
-                  height: 50,
-                  onPressed: () async {
-                    if (!Platform.isLinux) {
-                      SharePlus.instance.share(
-                        ShareParams(files: [XFile(song.path)]),
-                      );
-                    }
-                  },
-                  svg: "assets/icons/share.svg",
-                ),
-              ],
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.width * 0.8 - 30,
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification notification) {
-                  if (notification is ScrollStartNotification) {
-                    _isScrolling = true;
-                  }
-                  if (notification is ScrollEndNotification) {
-                    onScrollEnd();
-                  }
-                  return false;
-                },
-                child: PageView.builder(
-                  controller: controller,
-                  restorationId: song.title,
-                  itemCount: currentPlayList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    AudioEntity audio = currentPlayList[index];
-                    return HeaderImage(
-                      key: ValueKey(audio.id),
-                      id: audio.id,
-                      cover: audio.cover,
-                    );
-                  },
-                ),
-              ),
-            ),
             ScrollingText(
               song.title,
               textAlign: TextAlign.center,
@@ -167,17 +129,5 @@ class _PlayerHeaderState extends State<PlayerHeader> {
         _isScrolling = false;
       }
     });
-  }
-
-  void _delete() async {
-    bool res =
-        await showDialog(context: context, builder: (_) => ConfirmDialog()) ??
-        false;
-    if (res) {
-      BlocProvider.of<LocalBloc>(
-        // ignore: use_build_context_synchronously
-        context,
-      ).add(DeleteAudio(imp.getCurrentAudio!));
-    }
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 class ScrollingText extends StatelessWidget {

@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
-import 'package:flutter/cupertino.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:material_ui/material_ui.dart';
 
 class MetadataExtractor {
   Future<AudioMetadata?> readAudioMetadataFromUrl(String url) async {

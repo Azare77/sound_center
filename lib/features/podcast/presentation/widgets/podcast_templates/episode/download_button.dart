@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:background_downloader/background_downloader.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';

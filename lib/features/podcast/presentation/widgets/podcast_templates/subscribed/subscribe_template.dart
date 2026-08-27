@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 

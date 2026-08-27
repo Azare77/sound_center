@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:android_media_store/android_media_store.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/download_manager.dart';
@@ -50,6 +50,7 @@ Future<void> _init() async {
     if (Platform.isLinux) {
       JustAudioMediaKit.ensureInitialized();
     }
+    await AndroidMediaStore.ensureInitialized();
     await PodcastDownloader.init();
     debugPrint('✅ _init() completed successfully');
   } catch (e, st) {
@@ -84,9 +85,7 @@ class MyApp extends StatelessWidget {
               supportedLocales: S.delegate.supportedLocales,
               localizationsDelegates: const [
                 S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
+                ...GlobalMaterialLocalizations.delegates,
               ],
               title: "Sound Center",
               theme: ThemeManager.getThemeData(currentTheme),

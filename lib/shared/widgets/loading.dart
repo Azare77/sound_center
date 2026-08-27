@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
 class Loading extends StatelessWidget {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:radio_browser_api/radio_browser_api.dart' as radio;
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/util/text_util.dart';

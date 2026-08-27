@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/core/constants/constants.dart';
@@ -46,9 +46,12 @@ class BackupDialog extends StatelessWidget {
       final file = await createBackupFile(backup);
 
       if (Platform.isLinux) {
-        final path = await FilePicker.saveFile(fileName: file.path);
+        final path = await FilePicker.saveFile(
+          fileName: file.path,
+          bytes: file.readAsBytesSync(),
+        );
         if (path != null) {
-          await File(file.path).copy(path);
+          await File(file.path).copy(path.path);
         }
       } else {
         await SharePlus.instance.share(
@@ -91,9 +94,9 @@ class BackupDialog extends StatelessWidget {
         allowedExtensions: ['scbak'],
       );
 
-      if (result == null) return;
+      if (result.isEmpty) return;
 
-      final content = await File(result.files.single.path!).readAsString();
+      final content = await File(result.single.path!).readAsString();
       final backup = AppBackup.fromJson(jsonDecode(content));
 
       final db = AppDatabase();

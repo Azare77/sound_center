@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/stream/data/repository/stream_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';

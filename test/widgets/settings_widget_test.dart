@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/settings/presentation/settings.dart';
 import 'package:sound_center/generated/l10n.dart';
 
@@ -13,7 +12,6 @@ void main() {
         localizationsDelegates: const [
           S.delegate,
           GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: S.delegate.supportedLocales,
         home: Scaffold(body: Settings()),

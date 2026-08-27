@@ -3,7 +3,7 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';

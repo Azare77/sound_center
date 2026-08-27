@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sound_center/features/podcast/domain/entity/subscription_entity.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';

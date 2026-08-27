@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/podcast/presentation/pages/podcast_detail/podcast_detail.dart';

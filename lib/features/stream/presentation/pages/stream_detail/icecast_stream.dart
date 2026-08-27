@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/stream/data/repository/stream_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
@@ -83,61 +83,70 @@ class _IcecastStreamViewState extends State<IcecastStreamView> {
         } else {
           time = stream!.serverStart;
         }
-        return Column(
-          crossAxisAlignment: .stretch,
-          children: [
-            Card(
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  spacing: 2,
-                  crossAxisAlignment: .start,
-                  children: [
-                    if (stream!.title != null)
-                      Text("${S.of(context).title} : ${stream!.title}"),
-                    if (stream!.host != null)
-                      Text("${S.of(context).host} : ${stream!.host}"),
-                    if (stream!.serverId != null)
-                      Text("${S.of(context).serverId} : ${stream!.serverId}"),
-                    if (stream!.location != null)
-                      Text("${S.of(context).location} : ${stream!.location}"),
-                    if (stream!.admin != null)
-                      Text("${S.of(context).adminInfo} : ${stream!.admin}"),
-                    if (time != null)
-                      Text("${S.of(context).startedAt} : $time"),
-                    Divider(),
-                    Button(
-                      buttonText: subscribed
-                          ? S.of(context).unsubscribe
-                          : S.of(context).subscribe,
-                      showLoading: false,
-                      onPressed: () async {
-                        if (!subscribed) {
-                          String? name = await showDialog(
-                            context: context,
-                            builder: (_) => StreamNameDialog(),
-                          );
-                          if (name == null) return;
-                          stream!.title = name;
-                        }
-                        final sub = StreamSubEntity.fromIcecast(stream!);
-                        final res = await widget.subscribe.call(sub);
-                        if (!res) return;
-                        setState(() {
-                          subscribed = !subscribed;
-                        });
-                      },
-                    ),
-                  ],
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Card(
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    spacing: 2,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (stream!.title != null)
+                        Text("${S.of(context).title} : ${stream!.title}"),
+                      if (stream!.host != null)
+                        Text("${S.of(context).host} : ${stream!.host}"),
+                      if (stream!.serverId != null)
+                        Text("${S.of(context).serverId} : ${stream!.serverId}"),
+                      if (stream!.location != null)
+                        Text("${S.of(context).location} : ${stream!.location}"),
+                      if (stream!.admin != null)
+                        Text("${S.of(context).adminInfo} : ${stream!.admin}"),
+                      if (time != null)
+                        Text("${S.of(context).startedAt} : $time"),
+
+                      const Divider(),
+
+                      Button(
+                        buttonText: subscribed
+                            ? S.of(context).unsubscribe
+                            : S.of(context).subscribe,
+                        showLoading: false,
+                        onPressed: () async {
+                          if (!subscribed) {
+                            String? name = await showDialog(
+                              context: context,
+                              builder: (_) => StreamNameDialog(),
+                            );
+
+                            if (name == null) return;
+
+                            stream!.title = name;
+                          }
+
+                          final sub = StreamSubEntity.fromIcecast(stream!);
+                          final res = await widget.subscribe.call(sub);
+
+                          if (!res) return;
+
+                          setState(() {
+                            subscribed = !subscribed;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: ListView.builder(
+              ListView.builder(
+                shrinkWrap: true,
                 itemCount: stream!.source.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Source source = stream!.source[index];
+                itemBuilder: (context, index) {
+                  final source = stream!.source[index];
+
                   return InkWell(
                     onTap: () {
                       BlocProvider.of<StreamBloc>(
@@ -148,8 +157,8 @@ class _IcecastStreamViewState extends State<IcecastStreamView> {
                   );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

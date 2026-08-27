@@ -882,7 +882,7 @@ packages:
     description:
       path: "packages/on_audio_query"
       ref: main
-      resolved-ref: f42b06d2e10af480b2e3309bbc57f3bbd463d2db
+      resolved-ref: "518c46be0fd8bcd2ab845879a6f9960bf6a59843"
       url: "https://github.com/Azare77/on_audio_query"
     source: git
     version: "2.9.0"
@@ -890,8 +890,8 @@ packages:
     dependency: transitive
     description:
       path: "packages/on_audio_query_android"
-      ref: f42b06d2e10af480b2e3309bbc57f3bbd463d2db
-      resolved-ref: f42b06d2e10af480b2e3309bbc57f3bbd463d2db
+      ref: "518c46be0fd8bcd2ab845879a6f9960bf6a59843"
+      resolved-ref: "518c46be0fd8bcd2ab845879a6f9960bf6a59843"
       url: "https://github.com/Azare77/on_audio_query"
     source: git
     version: "1.1.0"

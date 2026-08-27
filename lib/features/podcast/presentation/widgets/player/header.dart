@@ -19,6 +19,7 @@ class PodcastHeader extends StatefulWidget {
 
 class _PodcastHeaderState extends State<PodcastHeader> {
   late final PageController controller;
+  final GlobalKey _sliderKey = GlobalKey();
   int currentIndex = 0;
   List<Episode> currentPlayList = [];
   bool _isScrolling = false;
@@ -40,8 +41,8 @@ class _PodcastHeaderState extends State<PodcastHeader> {
   void onScrollEnd() async {
     _isScrolling = false;
     await Future.delayed(Duration(milliseconds: 250));
-    if (_isScrolling) return;
-    int page = controller.page?.round() ?? 0;
+    if (!mounted || _isScrolling) return;
+    int page = controller.page?.round() ?? currentIndex;
     int change = page - currentIndex;
     if (change == 0) return;
     playerRepository.index += change;
@@ -58,6 +59,7 @@ class _PodcastHeaderState extends State<PodcastHeader> {
           currentIndex = playerRepository.index;
           _jumpToCorrectPage();
           final slider = NotificationListener<ScrollNotification>(
+            key: _sliderKey,
             onNotification: (ScrollNotification notification) {
               if (notification is ScrollStartNotification) {
                 _isScrolling = true;

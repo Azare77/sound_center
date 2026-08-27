@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum AudioSource { local, online, stream }
 
@@ -148,7 +148,7 @@ class JustAudioService {
       debugPrint('خطا در setSource: $e');
       _loadingSource = false;
       if (source != _source) return false;
-      _source = null;
+      // _source = null;
       await release();
       return false;
     }

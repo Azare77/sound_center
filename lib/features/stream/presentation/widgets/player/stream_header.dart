@@ -22,6 +22,7 @@ class _StreamHeaderState extends State<StreamHeader> {
 
   int _currentIndex = 0;
   bool _isScrolling = false;
+  final GlobalKey _sliderKey = GlobalKey();
   List<dynamic> currentPlayList = [];
   late final StreamPlayerRepositoryImp imp;
 
@@ -65,6 +66,7 @@ class _StreamHeaderState extends State<StreamHeader> {
         _currentIndex = 0;
         _jumpToCorrectPage();
         final slider = NotificationListener<ScrollNotification>(
+          key: _sliderKey,
           onNotification: (ScrollNotification notification) {
             if (notification is ScrollStartNotification) {
               _isScrolling = true;

@@ -17,6 +17,7 @@ class PlayerHeader extends StatefulWidget {
 
 class _PlayerHeaderState extends State<PlayerHeader> {
   late final PageController controller;
+  final GlobalKey _sliderKey = GlobalKey();
   int _currentIndex = 0;
   bool _isScrolling = false;
   List<AudioEntity> currentPlayList = [];
@@ -38,8 +39,8 @@ class _PlayerHeaderState extends State<PlayerHeader> {
   void onScrollEnd() async {
     _isScrolling = false;
     await Future.delayed(Duration(milliseconds: 250));
-    if (_isScrolling) return;
-    int page = controller.page?.round() ?? 0;
+    if (!mounted || _isScrolling) return;
+    int page = controller.page?.round() ?? _currentIndex;
     int change = page - _currentIndex;
     if (change == 0) return;
     if (imp.isShuffle()) {
@@ -60,6 +61,7 @@ class _PlayerHeaderState extends State<PlayerHeader> {
         _currentIndex = imp.isShuffle() ? imp.shuffleIndex : imp.index;
         _jumpToCorrectPage();
         final slider = NotificationListener<ScrollNotification>(
+          key: _sliderKey,
           onNotification: (ScrollNotification notification) {
             if (notification is ScrollStartNotification) {
               _isScrolling = true;

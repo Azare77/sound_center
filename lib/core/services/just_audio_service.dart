@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:just_audio/just_audio.dart';
@@ -501,7 +502,9 @@ class StreamProxy {
                 bytesUntilMeta = metaInt;
 
                 // تبدیل بایت‌ها به رشته متنی و استخراج فیلد StreamTitle
-                final metaText = String.fromCharCodes(metaBuffer);
+                final metaText = utf8
+                    .decode(metaBuffer, allowMalformed: true)
+                    .replaceAll('\x00', '');
                 if (metaText.contains("StreamTitle='")) {
                   final rawTitle = metaText
                       .split("StreamTitle='")[1]

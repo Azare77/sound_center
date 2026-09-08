@@ -15,6 +15,10 @@ This app provides playback of local music, podcast search and streaming, offline
 background playback, along with customization features.  
 Currently available on Android and Linux desktop, with support for English and Farsi languages.
 
+### Installation
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/app.soundcenter.player/)
+
 ## Features
 
 <div align="center">
@@ -45,7 +49,7 @@ Please open an [Issue](https://github.com/azare77/sound_center/issues) or join t
 
 ### Short notes
 
-- Architecture: modular features with BoC for state management and a central `audio_handler` for
+- Architecture: modular features with Bloc for state management and a central `audio_handler` for
   playback orchestration.
 - Permissions: the app requests storage/media permissions on first run to allow local scanning (
   `permission_handler`).

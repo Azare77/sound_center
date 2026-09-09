@@ -3,10 +3,11 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
+import 'package:sound_center/features/cloud/presentation/pages/cloud.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/local_audios.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
@@ -30,6 +31,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late final LocalAudios _localAudios;
   late final Podcast _podcast;
   late final StreamPage _stream;
+  late final CloudPage _cloud;
   late final AppLinks appLinks;
   late final StreamSubscription<Uri> _linkSubscription;
 
@@ -39,6 +41,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _localAudios = LocalAudios();
     _podcast = Podcast();
     _stream = StreamPage();
+    _cloud = CloudPage();
     appLinks = AppLinks();
     initDeepLinks();
     _localPlayer = LocalPlayerRepositoryImp();
@@ -93,8 +96,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         // swipe به راست → قبلی
         index--;
       }
-      if (index == 3) index = 0;
-      if (index < 0) index = 2;
+      if (index == 4) index = 0;
+      if (index < 0) index = 3;
     });
   }
 
@@ -137,7 +140,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     onPressed: () {
                       setState(() {
                         index++;
-                        if (index == 3) index = 0;
+                        if (index == 4) index = 0;
                       });
                     },
                     icon: BlocBuilder<PodcastBloc, PodcastState>(
@@ -152,6 +155,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                 ? Icons.podcasts_rounded
                                 : index == 1
                                 ? Icons.radio_rounded
+                                : index == 2
+                                ? Icons.cloud_rounded
                                 : Icons.music_note_rounded,
                           ),
                         );
@@ -168,7 +173,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             Expanded(
               child: IndexedStack(
                 index: index,
-                children: [_localAudios, _podcast, _stream],
+                children: [_localAudios, _podcast, _stream, _cloud],
               ),
             ),
             const CurrentMedia(),

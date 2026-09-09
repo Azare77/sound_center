@@ -74,6 +74,8 @@ dependencies:
   background_downloader: ^9.5.8
   #STREAM
   radio_browser_api: ^2.1.0
+  #Cloud
+  soundcloud_explode_dart: ^1.1.0
   #SHARE
   app_links: ^7.2.1
   share_plus: ^13.3.0
@@ -89,6 +91,7 @@ dev_dependencies:
 
 dependency_overrides:
   dio: 5.9.2
+  html: 0.15.6
   #  win32: 5.9.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

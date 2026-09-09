@@ -12,6 +12,7 @@ import 'package:sound_center/core/services/download_manager.dart';
 import 'package:sound_center/core_view/home.dart';
 import 'package:sound_center/database/shared_preferences/app_setting_storage.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
+import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => PodcastBloc()),
         BlocProvider(create: (_) => SettingBloc()),
         BlocProvider(create: (_) => StreamBloc()),
+        BlocProvider(create: (_) => CloudBloc()),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (BuildContext context, state) {

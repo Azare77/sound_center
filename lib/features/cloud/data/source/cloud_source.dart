@@ -14,8 +14,8 @@ class CloudSource {
       limit: 50,
     );
     final streamIterator = StreamIterator(stream);
-    final tracks = [];
-    final playlists = [];
+    final List<TrackSearchResult> tracks = [];
+    final List<PlaylistSearchResult> playlists = [];
     while (await streamIterator.moveNext()) {
       try {
         for (final result in streamIterator.current) {

@@ -11,6 +11,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
+import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class JustAudioNotificationHandler extends BaseAudioHandler
     with QueueHandler, SeekHandler {
@@ -50,7 +51,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
         compactIndices = const [0, 1, 2];
       }
 
-      if (_source == service.AudioSource.online) {
+      if (_source == service.AudioSource.podcast) {
         controls = [
           MediaControl(
             androidIcon: 'drawable/ic_jump_backward',
@@ -138,7 +139,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   Future<void> play() async {
     if (_source == service.AudioSource.local) {
       _localPlayer.togglePlayState();
-    } else if (_source == service.AudioSource.online) {
+    } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.togglePlayState();
     } else if (_source == service.AudioSource.stream) {
       _streamPlayer.togglePlayState();
@@ -149,7 +150,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   Future<void> pause() async {
     if (_source == service.AudioSource.local) {
       _localPlayer.togglePlayState();
-    } else if (_source == service.AudioSource.online) {
+    } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.togglePlayState();
     } else if (_source == service.AudioSource.stream) {
       _streamPlayer.togglePlayState();
@@ -160,7 +161,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   Future<void> stop() async {
     if (_source == service.AudioSource.local) {
       _localPlayer.stop();
-    } else if (_source == service.AudioSource.online) {
+    } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.stop();
     }
     await super.stop();
@@ -170,7 +171,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   Future<void> seek(Duration position) async {
     if (_source == service.AudioSource.local) {
       _localPlayer.seek(position);
-    } else if (_source == service.AudioSource.online) {
+    } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.seek(position);
     } else if (_source == service.AudioSource.stream) {
       _streamPlayer.seek(position);
@@ -181,7 +182,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   Future<void> skipToNext() async {
     if (_source == service.AudioSource.local) {
       _localPlayer.next(force: true);
-    } else if (_source == service.AudioSource.online) {
+    } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.next();
     }
   }
@@ -190,14 +191,14 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   Future<void> skipToPrevious() async {
     if (_source == service.AudioSource.local) {
       _localPlayer.previous();
-    } else if (_source == service.AudioSource.online) {
+    } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.previous();
     }
   }
 
   @override
   Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
-    if (_source != service.AudioSource.online) return;
+    if (_source != service.AudioSource.podcast) return;
     if (name == 'forward30') {
       final dest = _player.position.inMilliseconds + 30000;
       _podcastPlayer.seek(Duration(milliseconds: dest.floor()));
@@ -232,7 +233,21 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       artUri: artUri,
       duration: Duration(milliseconds: episode.duration?.inMilliseconds ?? 0),
     );
-    _source = service.AudioSource.online;
+    _source = service.AudioSource.podcast;
+    mediaItem.add(item);
+  }
+
+  void setMediaItemFromCloud(TrackSearchResult track, Uri? cached) async {
+    final Uri? artUri =
+        cached ?? Uri.tryParse(track.artworkUrl?.toString() ?? '');
+    MediaItem item = MediaItem(
+      id: track.id.toString(),
+      title: track.title,
+      artist: track.user.fullName,
+      artUri: artUri,
+      duration: Duration(milliseconds: track.duration.truncate()),
+    );
+    _source = service.AudioSource.podcast;
     mediaItem.add(item);
   }
 

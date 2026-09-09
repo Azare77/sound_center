@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/features/cloud/presentation/Widgets/filter_dialog.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/track_template/filter_dialog.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/pages/cloud.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -43,7 +43,10 @@ class _CloudToolBarState extends State<CloudToolBar> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height / 100;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height / 100;
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
       height: _showSearch ? height * 9 : height * 7,
@@ -59,7 +62,9 @@ class _CloudToolBarState extends State<CloudToolBar> {
                 controller: _controller,
                 textInputAction: TextInputAction.search,
                 maxLines: 1,
-                hintText: S.of(context).searchHint,
+                hintText: S
+                    .of(context)
+                    .searchHint,
                 autofocus: true,
                 onSubmitted: (text) {
                   BlocProvider.of<CloudBloc>(

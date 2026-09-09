@@ -2,27 +2,25 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
-import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
+import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
+import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
-class PodcastPlayerRepositoryImp implements PlayerRepository {
-  static final PodcastPlayerRepositoryImp _instance =
-      PodcastPlayerRepositoryImp._internal();
+class CloudPlayerRepositoryImp implements PlayerRepository {
+  static final CloudPlayerRepositoryImp _instance =
+      CloudPlayerRepositoryImp._internal();
 
-  factory PodcastPlayerRepositoryImp() {
+  factory CloudPlayerRepositoryImp() {
     return _instance;
   }
 
-  PodcastPlayerRepositoryImp._internal() {
-    _playerService.setOnPodcastComplete(() => next());
-    _playerService.setOnPodcastError(() => restart());
+  CloudPlayerRepositoryImp._internal() {
+    _playerService.setOnCloudComplete(() => next());
     _initialPlayerState();
   }
 
@@ -31,19 +29,18 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   final JustAudioService _playerService = JustAudioService();
-  List<Episode> _episodes = [];
+  List<TrackSearchResult> _tracks = [];
 
-  Episode? _currentEpisode;
+  TrackSearchResult? _currentTrack;
 
-  Episode? get getCurrentEpisode => _currentEpisode;
+  TrackSearchResult? get getCurrentTrack => _currentTrack;
 
   int index = 0;
-
-  String feedUrl = "";
 
   final _positionController = StreamController<int>.broadcast();
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
+  final sc = SoundcloudClient();
 
   Stream<int> get positionStream => _positionController.stream;
 
@@ -51,40 +48,37 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   Stream<bool> get loadingStream => _loadingController.stream;
 
-  late final PodcastBloc bloc;
+  late final CloudBloc bloc;
 
   Future<void> init() async {
     try {
-      if (PlayerStateStorage.getSource() != AudioSource.podcast) return;
-      _currentEpisode = PlayerStateStorage.getLastEpisode();
-      if (_currentEpisode == null) return;
-      if (_episodes.isEmpty) _episodes = [_currentEpisode!];
-      String key = _currentEpisode!.title.trim();
-      if (_currentEpisode!.author != null) {
-        key += "-${_currentEpisode!.author?.trim()}";
-      }
-      final String? cacheFile = await _chach(key);
+      if (PlayerStateStorage.getSource() != AudioSource.cloud) return;
+      _currentTrack = PlayerStateStorage.getLastCloudTrack();
+      if (_currentTrack == null) return;
+      if (_tracks.isEmpty) _tracks = [_currentTrack!];
       File? file;
       try {
         file = await NetworkCacheImage.customCacheManager.getSingleFile("");
       } catch (_) {}
-      (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
-        _currentEpisode!,
+      (audioHandler as JustAudioNotificationHandler).setMediaItemFromCloud(
+        _currentTrack!,
         file?.uri,
       );
       index = 0;
-      _episodes[index] = _currentEpisode!;
+      _tracks[index] = _currentTrack!;
+
+      final String? streamUrl = await getTrackUrl(_currentTrack!);
+      if (streamUrl == null) return;
       bool res = await _playerService.setSource(
-        _currentEpisode!.contentUrl!,
-        AudioSource.podcast,
-        cachedFilePath: cacheFile,
-        onSourceSet: () => bloc.add(AutoPlayPodcast()),
+        streamUrl,
+        AudioSource.cloud,
+        onSourceSet: () => bloc.add(AutoPlay()),
       );
       if (res) {
         int position = PlayerStateStorage.getLastPosition();
         _playerService.seek(Duration(milliseconds: position));
       }
-      bloc.add(AutoPlayPodcast());
+      bloc.add(AutoPlay());
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
     }
@@ -111,24 +105,24 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   bool hasSource() {
-    return _playerService.hasSource(AudioSource.podcast);
+    return _playerService.hasSource(AudioSource.cloud);
   }
 
-  void setBloc(PodcastBloc bloc) {
+  void setBloc(CloudBloc bloc) {
     this.bloc = bloc;
   }
 
   @override
   void setPlayList(dynamic episodes) {
-    assert(episodes is List<Episode>);
-    _episodes.clear();
-    for (Episode episode in episodes) {
-      _episodes.add(episode);
+    assert(episodes is List);
+    _tracks.clear();
+    for (var track in episodes) {
+      _tracks.add(track);
     }
   }
 
-  List<Episode> getPlayList() {
-    return _episodes;
+  List<TrackSearchResult> getPlayList() {
+    return _tracks;
   }
 
   @override
@@ -141,56 +135,48 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   Future<void> play(int index, {bool direct = false}) async {
     _retryCount = 0;
     this.index = index;
-    _currentEpisode = _episodes[index];
-    String key = _currentEpisode!.title.trim();
-    if (_currentEpisode!.author != null) {
-      key += "-${_currentEpisode!.author?.trim()}";
-    }
-    final String? cacheFile = await _chach(key);
+    _currentTrack = _tracks[index];
+    _loadingController.add(true);
     File? file;
     try {
       file = await NetworkCacheImage.customCacheManager.getSingleFile(
-        _currentEpisode!.imageUrl ?? '',
+        _currentTrack!.artworkUrl?.toString() ?? '',
       );
     } catch (_) {}
-    (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
-      _episodes[index],
+    (audioHandler as JustAudioNotificationHandler).setMediaItemFromCloud(
+      _tracks[index],
       file?.uri,
     );
-    await _playerService.setSource(
-      _episodes[index].contentUrl!,
-      AudioSource.podcast,
-      cachedFilePath: cacheFile,
-      onSourceSet: () => bloc.add(AutoPlayPodcast()),
-    );
-    await PlayerStateStorage.saveLastEpisode(_currentEpisode!);
-    await PlayerStateStorage.saveSource(AudioSource.podcast);
-    await _playerService.play();
-    bloc.add(AutoPlayPodcast());
-  }
-
-  Future<String?> _chach(String filename) async {
-    final Directory baseDir = await getApplicationDocumentsDirectory();
-    final String fullPath = '${baseDir.path}/Podcasts/$filename.mp3';
-    final bool exists = await File(fullPath).exists();
-    if (exists) {
-      return fullPath;
+    bloc.add(AutoPlay());
+    await _playerService.pause();
+    final String? streamUrl = await getTrackUrl(_currentTrack!);
+    if (streamUrl == null) {
+      await next();
+      return;
     }
-    return null;
+    await _playerService.setSource(
+      streamUrl,
+      AudioSource.cloud,
+      onSourceSet: () => bloc.add(AutoPlay()),
+    );
+    await PlayerStateStorage.saveLastCloudTrack();
+    await PlayerStateStorage.saveSource(AudioSource.cloud);
+    await _playerService.play();
+    bloc.add(AutoPlay());
   }
 
   @override
-  Future<Episode> next() async {
+  Future next() async {
     index = getIndex(true);
     await play(index);
-    return _episodes[index];
+    return _tracks[index];
   }
 
   @override
-  Future<Episode> previous() async {
+  Future previous() async {
     index = getIndex(false);
     await play(index);
-    return _episodes[index];
+    return _tracks[index];
   }
 
   @override
@@ -227,7 +213,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> stop() async {
     _retryCount = 0;
-    _currentEpisode = null;
+    _currentTrack = null;
     await _playerService.release();
     bloc.add(TogglePlay());
   }
@@ -255,7 +241,20 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   }
 
   int getIndex(bool forward) {
-    index = (index + (forward ? 1 : -1) + _episodes.length) % _episodes.length;
+    index = (index + (forward ? 1 : -1) + _tracks.length) % _tracks.length;
     return index;
+  }
+
+  Future<String?> getTrackUrl(TrackSearchResult track) async {
+    try {
+      final streams = await sc.tracks.getStreams(track.id);
+      final streamInfo = streams.firstWhere(
+        (s) => s.container.toLowerCase() == 'mp3',
+        orElse: () => streams.first,
+      );
+      return streamInfo.url;
+    } catch (e) {
+      return null;
+    }
   }
 }

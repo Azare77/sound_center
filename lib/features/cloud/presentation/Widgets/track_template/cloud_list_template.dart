@@ -1,7 +1,9 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
-import 'package:sound_center/features/cloud/presentation/Widgets/cloud_item_template.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_item_template.dart';
+import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
@@ -72,7 +74,7 @@ class CloudListTemplate extends StatelessWidget {
                       child: _HorizontalPlaylistCard(
                         key: ValueKey(item.id),
                         title: item.title,
-                        artworkUrl: item.artworkUrl.toString(),
+                        artworkUrl: item.artworkUrl?.toString(),
                         heroTag: item.id,
                         onTap: () {},
                       ),
@@ -97,7 +99,11 @@ class CloudListTemplate extends StatelessWidget {
               if (!_isValidItem(item)) return const SizedBox.shrink();
               return InkWell(
                 key: ValueKey(item.id),
-                onTap: () {},
+                onTap: () {
+                  BlocProvider.of<CloudBloc>(
+                    context,
+                  ).add(PlayTrack(tracks: items.tracks, index: index));
+                },
                 child: CloudItemTemplate(item: item),
               );
             }, childCount: items.tracks.length),
@@ -130,11 +136,9 @@ class _HorizontalPlaylistCard extends StatelessWidget {
   });
 
   final String title;
-  final String artworkUrl;
+  final String? artworkUrl;
   final Object heroTag;
   final VoidCallback onTap;
-
-  static const double _titleAreaHeight = 18.0;
 
   @override
   Widget build(BuildContext context) {

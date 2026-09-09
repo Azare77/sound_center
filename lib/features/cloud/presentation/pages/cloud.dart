@@ -2,9 +2,9 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/features/cloud/presentation/Widgets/cloud_history_list.dart';
-import 'package:sound_center/features/cloud/presentation/Widgets/cloud_list_template.dart';
-import 'package:sound_center/features/cloud/presentation/Widgets/cloud_tool_bar.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_history_list.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_list_template.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_tool_bar.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_status.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
@@ -16,11 +16,11 @@ class CloudSearchController {
 class CloudPage extends StatelessWidget {
   const CloudPage({super.key});
 
-  bool resetPodcastPage(BuildContext context) {
+  bool resetCloudPage(BuildContext context) {
     final bloc = BlocProvider.of<CloudBloc>(context);
     final status = bloc.state.status;
     CloudSearchController.showSearchField.value = false;
-    if (status is! LoadingCloud) {
+    if (status is! CloudHistory) {
       bloc.add(LoadHistory());
       return false;
     }

@@ -1,6 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/track_template/current_track.dart';
+import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
+import 'package:sound_center/features/cloud/presentation/pages/play_track.dart'
+    as cloud_page;
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
@@ -21,6 +26,7 @@ import 'package:sound_center/features/stream/presentation/pages/play_stream.dart
     as stream_page;
 import 'package:sound_center/features/stream/presentation/widgets/current_stream.dart';
 import 'package:sound_center/shared/theme/themes.dart';
+import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class CurrentMedia extends StatefulWidget {
   const CurrentMedia({super.key, this.color});
@@ -36,6 +42,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
   final PodcastPlayerRepositoryImp _podcastPlayer =
       PodcastPlayerRepositoryImp();
   final StreamPlayerRepositoryImp _streamPlayer = StreamPlayerRepositoryImp();
+  final CloudPlayerRepositoryImp _cloudPlayer = CloudPlayerRepositoryImp();
 
   Widget? _currentPlayer;
   Widget? _playerPage;
@@ -95,6 +102,9 @@ class _CurrentMediaState extends State<CurrentMedia> {
             BlocListener<StreamBloc, StreamState>(
               listener: (_, _) => _updatePlayer(),
             ),
+            BlocListener<CloudBloc, CloudState>(
+              listener: (_, _) => _updatePlayer(),
+            ),
             BlocListener<SettingBloc, SettingState>(
               listener: (_, _) => _updatePlayer(),
             ),
@@ -109,11 +119,13 @@ class _CurrentMediaState extends State<CurrentMedia> {
     final AudioEntity? audioEntity = _localPlayer.getCurrentAudio;
     final Episode? episode = _podcastPlayer.getCurrentEpisode;
     final dynamic stream = _streamPlayer.getCurrentStream;
+    final TrackSearchResult? cloud = _cloudPlayer.getCurrentTrack;
 
     final Widget? playerContent = _selectPlayerContent(
       audioEntity,
       episode,
       stream,
+      cloud,
     );
     if (playerContent == null) return null;
 
@@ -124,6 +136,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
     AudioEntity? audio,
     Episode? episode,
     dynamic stream,
+    TrackSearchResult? cloud,
   ) {
     _playerPage = null;
     if (_localPlayer.hasSource() && audio != null) {
@@ -147,6 +160,10 @@ class _CurrentMediaState extends State<CurrentMedia> {
       }
       _playerPage = stream_page.PlayStream();
       return CurrentStream(key: Key("$url-$title"), streamEntity: stream);
+    }
+    if (_cloudPlayer.hasSource() && cloud != null) {
+      _playerPage = cloud_page.PlayTrack();
+      return CurrentTrack(key: ValueKey(cloud.id), track: cloud);
     }
     return null;
   }

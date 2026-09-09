@@ -60,6 +60,13 @@ class PlayerStateStorage {
     );
   }
 
+  static dynamic getLastCloudTrack() {
+    List<String>? trackInfo;
+    trackInfo = Storage.instance.prefs.getStringList("lastCloudTrack");
+    if (trackInfo == null) return null;
+    return null;
+  }
+
   static Future<void> saveShuffleMode(ShuffleMode mode) async {
     await Storage.instance.prefs.setString("shuffle", mode.name);
   }
@@ -89,6 +96,10 @@ class PlayerStateStorage {
       episode.contentUrl!,
     ];
     await Storage.instance.prefs.setStringList("lastPodcast", episodeInfo);
+  }
+
+  static Future<void> saveLastCloudTrack() async {
+    await Storage.instance.prefs.setStringList("lastCloudTrack", []);
   }
 
   static Future<void> saveSource(AudioSource source) async {

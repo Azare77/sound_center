@@ -4,6 +4,21 @@ sealed class CloudEvent {}
 
 class LoadHistory extends CloudEvent {}
 
+class PlayTrack extends CloudEvent {
+  final List tracks;
+  final int index;
+
+  PlayTrack({required this.tracks, required this.index});
+}
+
+class PlayNextTrack extends CloudEvent {}
+
+class PlayPreviousTrack extends CloudEvent {}
+
+class AutoPlay extends CloudEvent {}
+
+class TogglePlay extends CloudEvent {}
+
 class SearchCloud extends CloudEvent {
   final String queryText;
   final SearchFilter filter;

@@ -19,7 +19,7 @@ class CloudItemTemplate extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: NetworkCacheImage(
-                url: item.artworkUrl.toString(),
+                url: item.artworkUrl?.toString(),
                 fit: item.artworkUrl != null ? BoxFit.cover : BoxFit.scaleDown,
               ),
             ),

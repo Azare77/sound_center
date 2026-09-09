@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:sound_center/database/drift/database.dart';
+import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_repository_imp.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/domain/usecases/get_cloud_usecase.dart';
@@ -17,22 +18,39 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
       CloudRepositoryImp(),
     );
 
-    // final PodcastPlayerRepositoryImp player = PodcastPlayerRepositoryImp();
-    // player.setBloc(this);
-    // player.init().then((_) async {
-    //   add(CheckPodcastUpdates(null));
-    //   Timer.periodic(
-    //     Duration(minutes: 30),
-    //     (_) => add(CheckPodcastUpdates(null)),
-    //   );
-    // });
+    final CloudPlayerRepositoryImp player = CloudPlayerRepositoryImp();
+    player.setBloc(this);
+    player.init();
 
     on<LoadHistory>((event, emit) async {
       emit(
         state.copyWith(CloudHistory(CloudEntity(playlists: [], tracks: []))),
       );
     });
-
+    on<PlayTrack>((event, emit) async {
+      player.setPlayList(event.tracks);
+      if (player.getCurrentTrack?.id != event.tracks[event.index].id ||
+          !player.hasSource()) {
+        await player.play(event.index, direct: true);
+      } else if (!player.isPlaying()) {
+        player.togglePlayState();
+      }
+      emit(state.copyWith(state.status));
+    });
+    on<PlayNextTrack>((event, emit) async {
+      await player.next();
+      emit(state.copyWith(state.status));
+    });
+    on<PlayPreviousTrack>((event, emit) async {
+      await player.previous();
+      emit(state.copyWith(state.status));
+    });
+    on<AutoPlay>((event, emit) async {
+      emit(state.copyWith(state.status));
+    });
+    on<TogglePlay>((event, emit) async {
+      emit(state.copyWith(state.status));
+    });
     on<SearchCloud>((event, emit) async {
       if (event.queryText.isEmpty) {
         add(LoadHistory());

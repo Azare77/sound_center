@@ -109,8 +109,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (!res) {
           final canSwitchPage = _podcast.resetPodcastPage(context);
           final canSwitchStream = _stream.resetStreamPage(context);
+          final canSwitchCloud = _cloud.resetCloudPage(context);
           if (index == 1 && canSwitchPage) setState(() => index = 0);
           if (index == 2 && canSwitchStream) setState(() => index = 0);
+          if (index == 3 && canSwitchCloud) setState(() => index = 0);
         }
       },
       child: Scaffold(

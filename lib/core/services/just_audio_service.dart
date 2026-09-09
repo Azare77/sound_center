@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_ui/material_ui.dart';
 
-enum AudioSource { local, online, stream }
+enum AudioSource { local, podcast, stream, cloud }
 
 class JustAudioService {
   static JustAudioService? _instance;
@@ -24,6 +24,7 @@ class JustAudioService {
   Future<void> Function()? _onPodcastComplete;
   Future<void> Function()? _onPodcastError;
   Future<void> Function()? _onStreamComplete;
+  Future<void> Function()? _onCloudComplete;
   Future<void> Function()? _onLoading;
   Future<void> Function()? _onReady;
 
@@ -83,7 +84,7 @@ class JustAudioService {
       if (state == ProcessingState.completed) {
         if (_source == AudioSource.local) {
           await _onComplete?.call();
-        } else if (_source == AudioSource.online) {
+        } else if (_source == AudioSource.podcast) {
           await _onPodcastComplete?.call();
         } else {
           await _onStreamComplete?.call();
@@ -119,7 +120,7 @@ class JustAudioService {
           await _player.setFilePath(path);
           break;
 
-        case AudioSource.online:
+        case AudioSource.podcast:
           if (cachedFilePath != null) {
             await _player.setFilePath(cachedFilePath);
           } else {
@@ -137,6 +138,9 @@ class JustAudioService {
           await _player
               .setAudioSource(address)
               .timeout(const Duration(seconds: 30));
+          break;
+        case AudioSource.cloud:
+          await _player.setUrl(path).timeout(const Duration(seconds: 30));
           break;
       }
 
@@ -169,6 +173,10 @@ class JustAudioService {
     }
   }
 
+  Future<void> pause() async {
+    await _player.pause();
+  }
+
   Future<void> release() async {
     try {
       await _player.stop();
@@ -194,6 +202,10 @@ class JustAudioService {
 
   void setOnPodcastError(Future<void> Function()? onPodcastError) {
     _onPodcastError = onPodcastError;
+  }
+
+  void setOnCloudComplete(Future<void> Function()? onCloudComplete) {
+    _onCloudComplete = onCloudComplete;
   }
 
   void setOnStreamComplete(Future<void> Function()? onStreamComplete) {
@@ -247,10 +259,12 @@ class JustAudioService {
     _handlingError = true;
     if (_source == AudioSource.local) {
       await _onComplete?.call();
-    } else if (_source == AudioSource.online) {
+    } else if (_source == AudioSource.podcast) {
       await _onPodcastError?.call();
     } else if (_source == AudioSource.stream) {
       await _onStreamComplete?.call();
+    } else if (_source == AudioSource.cloud) {
+      await _onCloudComplete?.call();
     }
     await Future.delayed(const Duration(milliseconds: 200));
     _handlingError = false;

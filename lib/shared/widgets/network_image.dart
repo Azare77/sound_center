@@ -134,7 +134,7 @@ class NetworkCacheImage extends StatelessWidget {
       filterQuality: FilterQuality.high,
       // اگر فایل بین لحظهٔ چک‌کردن کش و لحظهٔ رندر واقعی حذف/خراب شده باشد
       // (race condition نادر)، برمی‌گردیم به مسیر عادی شبکه.
-      errorBuilder: (_, __, ___) => _buildRemote(forHighQuality: false),
+      errorBuilder: (_, _, _) => _buildRemote(forHighQuality: false),
     );
     if (blur > 0) {
       image = ImageFiltered(

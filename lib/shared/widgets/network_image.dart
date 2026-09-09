@@ -1,12 +1,13 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image/image.dart' as img;
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 /// ---------------------------------------------------------------
@@ -20,6 +21,7 @@ class NetworkCacheImage extends StatelessWidget {
     this.memCacheSize = 400,
     this.fit = BoxFit.cover,
     this.blur = 0,
+    this.highQuality = false,
   });
 
   final String? url;
@@ -27,18 +29,46 @@ class NetworkCacheImage extends StatelessWidget {
   final int memCacheSize;
   final BoxFit fit;
   final double blur;
+  final bool highQuality;
 
   // -----------------------------------------------------------------
-  // CDN‑proxy (weserv.nl) – اگر کار نکرد به URL اصلی برمی‌گردد
+  // اصلاح آدرس به کیفیت مشخص‌شده.
+  // به‌جای خواندن از فیلد highQuality، پارامتر می‌گیرد تا هم برای
+  // درخواست کیفیت پایین و هم برای چک‌کردن معادل HQ آن قابل استفاده مجدد باشد.
   // -----------------------------------------------------------------
-  static String _proxyUrl(String originalUrl) {
-    return 'https://images.weserv.nl/'
-        '?url=${Uri.encodeComponent(originalUrl)}'
-        '&w=400&h=400&fit=cover&q=75&output=jpg';
+  String _resolveUrl(String originalUrl, {required bool forHighQuality}) {
+    if (!forHighQuality) return originalUrl;
+
+    if (originalUrl.contains('-large.')) {
+      return originalUrl.replaceAll('-large.', '-original.');
+    } else if (originalUrl.contains('-t500x500.')) {
+      return originalUrl.replaceAll('-t500x500.', '-original.');
+    } else if (originalUrl.contains('-t300x300.')) {
+      return originalUrl.replaceAll('-t300x300.', '-original.');
+    }
+    return originalUrl;
   }
 
   // -----------------------------------------------------------------
-  // CacheManager با سرویس سفارشی (fallback + compress)
+  // CDN‑proxy (weserv.nl)
+  // -----------------------------------------------------------------
+  String _proxyUrl(String originalUrl, {required bool forHighQuality}) {
+    final resolved = _resolveUrl(originalUrl, forHighQuality: forHighQuality);
+    if (forHighQuality) {
+      return 'https://images.weserv.nl/'
+          '?url=${Uri.encodeComponent(resolved)}'
+          '&q=100&output=jpg';
+    }
+    return 'https://images.weserv.nl/'
+        '?url=${Uri.encodeComponent(resolved)}'
+        '&w=400&h=400&fit=cover&q=75&output=jpg';
+  }
+
+  static String _cacheKey(String resolvedUrl, {required bool isHighQuality}) =>
+      'hq_${isHighQuality}_$resolvedUrl';
+
+  // -----------------------------------------------------------------
+  // کش منیجر پیش‌فرض (برای تصاویر عادی همراه با فشرده‌سازی)
   // -----------------------------------------------------------------
   static final customCacheManager = CacheManager(
     Config(
@@ -50,39 +80,107 @@ class NetworkCacheImage extends StatelessWidget {
     ),
   );
 
+  // -----------------------------------------------------------------
+  // کش منیجر اختصاصی کیفیت بالا (بدون فشرده‌سازی و بدون تغییر ابعاد)
+  // -----------------------------------------------------------------
+  static final highQualityCacheManager = CacheManager(
+    Config(
+      'soundCenterHQImageCache',
+      stalePeriod: const Duration(days: 15),
+      maxNrOfCacheObjects: 50,
+      repo: JsonCacheInfoRepository(databaseName: 'hqImageCacheInfo'),
+      fileService: HttpFileService(),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     if (url == null || url!.isEmpty) return _fallback();
 
-    final proxy = _proxyUrl(url!);
+    if (highQuality) {
+      // خودمون صریحاً HQ خواستیم؛ نیازی به چک اضافه نیست.
+      return _buildRemote(forHighQuality: true);
+    }
+
+    // پیش از رفتن سراغ نسخهٔ فشرده، چک کن آیا نسخهٔ HQ همین تصویر
+    // قبلاً روی دیسک کش شده یا نه (فقط یک I/O محلی، بدون شبکه).
+    final hqResolvedUrl = _resolveUrl(url!, forHighQuality: true);
+    final hqCacheKey = _cacheKey(hqResolvedUrl, isHighQuality: true);
+
+    return FutureBuilder<FileInfo?>(
+      future: highQualityCacheManager.getFileFromCache(hqCacheKey),
+      builder: (context, snapshot) {
+        final hqFile = snapshot.data;
+        if (hqFile != null) {
+          return _buildFromLocalFile(hqFile.file);
+        }
+        // نسخهٔ HQ کش نشده -> مسیر عادی (فشرده) طی می‌شود.
+        // اگر بعداً کاربر highQuality=true رو جایی دیگه لود کنه و کش بشه،
+        // دفعهٔ بعد که این ویجت rebuild بشه از همون فایل استفاده می‌کنه.
+        return _buildRemote(forHighQuality: false);
+      },
+    );
+  }
+
+  // -----------------------------------------------------------------
+  // رندر مستقیم از فایل موجود روی دیسک (بدون هیچ درخواست شبکه)
+  // -----------------------------------------------------------------
+  Widget _buildFromLocalFile(File file) {
+    Widget image = Image.file(
+      file,
+      width: size,
+      height: size,
+      fit: fit,
+      filterQuality: FilterQuality.high,
+      // اگر فایل بین لحظهٔ چک‌کردن کش و لحظهٔ رندر واقعی حذف/خراب شده باشد
+      // (race condition نادر)، برمی‌گردیم به مسیر عادی شبکه.
+      errorBuilder: (_, __, ___) => _buildRemote(forHighQuality: false),
+    );
+    if (blur > 0) {
+      image = ImageFiltered(
+        imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+        child: image,
+      );
+    }
+    return image;
+  }
+
+  // -----------------------------------------------------------------
+  // رندر از شبکه (با CDN proxy + fallback به آدرس اصلی)
+  // -----------------------------------------------------------------
+  Widget _buildRemote({required bool forHighQuality}) {
+    final resolvedUrl = _resolveUrl(url!, forHighQuality: forHighQuality);
+    final proxy = _proxyUrl(url!, forHighQuality: forHighQuality);
+    final cacheManager = forHighQuality
+        ? highQualityCacheManager
+        : customCacheManager;
+    final cacheKey = _cacheKey(resolvedUrl, isHighQuality: forHighQuality);
 
     return ImageFiltered(
       imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
       child: CachedNetworkImage(
         imageUrl: proxy,
-        cacheManager: customCacheManager,
-        cacheKey: url!,
-        // کش بر اساس URL اصلی (جلوگیری از کش تکراری)
+        cacheManager: cacheManager,
+        cacheKey: cacheKey,
         width: size,
         height: size,
         fit: fit,
-        memCacheWidth: memCacheSize,
-        memCacheHeight: memCacheSize,
+        memCacheWidth: forHighQuality ? null : memCacheSize,
+        memCacheHeight: forHighQuality ? null : memCacheSize,
         filterQuality: FilterQuality.high,
         placeholder: (_, _) => const Loading(),
         fadeInDuration: const Duration(milliseconds: 300),
         errorWidget: (context, _, error) {
-          // CDN شکست → fallback به URL اصلی
           debugPrint('CDN failed → fallback to original: $error');
           return CachedNetworkImage(
-            imageUrl: url!,
-            cacheManager: customCacheManager,
-            cacheKey: url!,
+            imageUrl: resolvedUrl,
+            cacheManager: cacheManager,
+            cacheKey: cacheKey,
             width: size,
             height: size,
             fit: fit,
-            memCacheWidth: memCacheSize,
-            memCacheHeight: memCacheSize,
+            memCacheWidth: forHighQuality ? null : memCacheSize,
+            memCacheHeight: forHighQuality ? null : memCacheSize,
             placeholder: (_, _) => const Loading(),
             errorWidget: (_, _, _) => _fallback(),
           );
@@ -105,7 +203,7 @@ class NetworkCacheImage extends StatelessWidget {
 }
 
 /// ---------------------------------------------------------------
-/// 2. سرویس HTTP با fallback + compress
+/// 2. سرویس HTTP با fallback + compress (دست‌نخورده باقی می‌ماند)
 /// ---------------------------------------------------------------
 class FallbackHttpFileService extends HttpFileService {
   final int width;
@@ -127,19 +225,9 @@ class FallbackHttpFileService extends HttpFileService {
       final response = await super.get(url, headers: headers);
       final Uint8List bytes = await _readStream(response.content);
 
-      // حجم دانلود شده (قبل از فشرده‌سازی)
-      // debugPrint('Downloaded: ${_fmt(bytes.length)} ← $url');
-
       final img.Image? decoded = img.decodeImage(bytes);
       if (decoded != null) {
         final Uint8List compressed = isProxy ? bytes : _compress(decoded);
-
-        // حجم بعد از فشرده‌سازی + صرفه‌جویی
-        // debugPrint(
-        //   'Compressed: ${_fmt(compressed.length)} '
-        //   '(Saved: ${_fmt(bytes.length - compressed.length)})',
-        // );
-
         return _MemoryResponse(compressed, response.validTill, 'jpg');
       }
     } on Exception catch (e) {
@@ -169,13 +257,6 @@ class FallbackHttpFileService extends HttpFileService {
     final resized = img.copyResize(image, width: width);
     return img.encodeJpg(resized, quality: quality);
   }
-
-  // نمایش خوانا حجم (B, KB, MB)
-  // String _fmt(int bytes) {
-  //   if (bytes < 1024) return '$bytes B';
-  //   if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-  //   return '${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB';
-  // }
 }
 
 /// ---------------------------------------------------------------

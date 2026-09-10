@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
+import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 
@@ -60,11 +61,11 @@ class PlayerStateStorage {
     );
   }
 
-  static dynamic getLastCloudTrack() {
-    List<String>? trackInfo;
-    trackInfo = Storage.instance.prefs.getStringList("lastCloudTrack");
+  static CloudTrack? getLastCloudTrack() {
+    String? trackInfo;
+    trackInfo = Storage.instance.prefs.getString("lastCloudTrack");
     if (trackInfo == null) return null;
-    return null;
+    return CloudTrack.fromJson(jsonDecode(trackInfo));
   }
 
   static Future<void> saveShuffleMode(ShuffleMode mode) async {
@@ -98,8 +99,11 @@ class PlayerStateStorage {
     await Storage.instance.prefs.setStringList("lastPodcast", episodeInfo);
   }
 
-  static Future<void> saveLastCloudTrack() async {
-    await Storage.instance.prefs.setStringList("lastCloudTrack", []);
+  static Future<void> saveLastCloudTrack(CloudTrack track) async {
+    await Storage.instance.prefs.setString(
+      "lastCloudTrack",
+      jsonEncode(track.toJson()),
+    );
   }
 
   static Future<void> saveSource(AudioSource source) async {

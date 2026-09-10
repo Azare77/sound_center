@@ -37,6 +37,30 @@ class CloudTrack {
       playCount: track.playbackCount.truncate(),
     );
   }
+
+  factory CloudTrack.fromJson(Map<String, dynamic> json) {
+    return CloudTrack(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      author: json['author'] as String?,
+      artworkUrl: json['artworkUrl'] as String?,
+      duration: json['duration'] as int,
+      playCount: json['playCount'] as int,
+      createDate: DateTime.parse(json['createDate'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'author': author,
+      'artworkUrl': artworkUrl,
+      'duration': duration,
+      'playCount': playCount,
+      'createDate': createDate.toIso8601String(),
+    };
+  }
 }
 
 class CloudPlaylist {

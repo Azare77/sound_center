@@ -158,10 +158,11 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       onSourceSet: () => bloc.add(AutoPlay()),
     );
     if (!allowToPlay) return;
-    await PlayerStateStorage.saveLastCloudTrack();
+    await PlayerStateStorage.saveLastCloudTrack(_currentTrack!);
     await PlayerStateStorage.saveSource(AudioSource.cloud);
     await _playerService.play();
     bloc.add(AutoPlay());
+    unawaited(_precacheAdjacentTracks(index));
   }
 
   @override
@@ -221,20 +222,53 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     return index;
   }
 
+  Future<void> _precacheAdjacentTracks(int index) async {
+    final List<Future<void>> tasks = [];
+    // آهنگ قبلی
+    if (index > 0) {
+      tasks.add(getTrackUrl(_tracks[index - 1]).then((_) {}));
+    }
+    // آهنگ بعدی
+    if (index < _tracks.length - 1) {
+      tasks.add(getTrackUrl(_tracks[index + 1]).then((_) {}));
+    }
+
+    if (tasks.isNotEmpty) {
+      await Future.wait(tasks);
+    }
+  }
+
+  final Map<int, String> _urlCache = {};
+  final Map<int, DateTime> _cachedTime = {};
+
+  static const _kUrlTtl = Duration(minutes: 5);
+
   Future<String?> getTrackUrl(CloudTrack track) async {
     try {
+      final cached = _urlCache[track.id];
+      final cachedTime = _cachedTime[track.id];
+      if (cached != null &&
+          cachedTime != null &&
+          DateTime.now().difference(cachedTime) < _kUrlTtl) {
+        return cached;
+      }
+
       final streams = await sc.tracks.getStreams(track.id);
       if (streams.isEmpty) {
         debugPrint('No transcodings returned for track ${track.id}');
         return null;
       }
+
       final streamInfo = streams.firstWhere(
         (s) => s.container.toLowerCase() == 'mp3',
         orElse: () => streams.first,
       );
+
+      _urlCache[track.id] = streamInfo.url;
+      _cachedTime[track.id] = DateTime.now();
       return streamInfo.url;
     } catch (e, st) {
-      debugPrint('getTrackUrl failed: $e\n$st'); // دیگه silent نباشه
+      debugPrint('getTrackUrl failed: $e\n$st');
       return null;
     }
   }

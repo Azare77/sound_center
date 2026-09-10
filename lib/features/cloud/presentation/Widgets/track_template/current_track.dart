@@ -21,13 +21,23 @@ class _CurrentTrackState extends State<CurrentTrack> {
 
   StreamSubscription<bool>? _loadingSub;
 
+  void _updateStatus() async {
+    await Future.delayed(Duration(milliseconds: 50));
+    isLoading = imp.isLoading();
+    if (isLoading) {
+      _updateStatus();
+      return;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     _loadingSub = imp.loadingStream.listen((loading) {
       isLoading = loading;
-      if (mounted) {
-        setState(() {});
-      }
+      _updateStatus();
     });
     super.initState();
   }
@@ -40,9 +50,9 @@ class _CurrentTrackState extends State<CurrentTrack> {
 
   @override
   Widget build(BuildContext context) {
-    // if (isLoading) {
-    //   _updateStatus();
-    // }
+    if (isLoading) {
+      _updateStatus();
+    }
     return ListTile(
       leading: SizedBox(
         width: 50,

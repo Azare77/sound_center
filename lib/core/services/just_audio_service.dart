@@ -142,14 +142,7 @@ class JustAudioService {
               .timeout(const Duration(seconds: 30));
           break;
         case AudioSource.cloud:
-          final address = ProgressiveAudioSource(
-            Uri.parse(path),
-
-            headers: {'Icy-MetaData': '1', 'Connection': 'close'},
-          );
-          await _player
-              .setAudioSource(address)
-              .timeout(const Duration(seconds: 30));
+          await _player.setUrl(path).timeout(const Duration(seconds: 30));
           break;
       }
 

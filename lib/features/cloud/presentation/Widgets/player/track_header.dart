@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
+import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/player/header_image.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
-import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class TrackHeader extends StatefulWidget {
   const TrackHeader({super.key});
@@ -19,7 +19,7 @@ class _TrackHeaderState extends State<TrackHeader> {
   late final PageController controller;
   final GlobalKey _sliderKey = GlobalKey();
   int currentIndex = 0;
-  List<TrackSearchResult> currentPlayList = [];
+  List<CloudTrack> currentPlayList = [];
   bool _isScrolling = false;
   late final CloudPlayerRepositoryImp playerRepository;
 
@@ -52,7 +52,7 @@ class _TrackHeaderState extends State<TrackHeader> {
     return SizedBox(
       child: BlocBuilder<CloudBloc, CloudState>(
         builder: (BuildContext context, CloudState state) {
-          TrackSearchResult currentTrack = playerRepository.getCurrentTrack!;
+          CloudTrack currentTrack = playerRepository.getCurrentTrack!;
           currentPlayList = playerRepository.getPlayList();
           currentIndex = playerRepository.index;
           _jumpToCorrectPage();
@@ -71,8 +71,8 @@ class _TrackHeaderState extends State<TrackHeader> {
               controller: controller,
               itemCount: currentPlayList.length,
               itemBuilder: (BuildContext context, int index) {
-                TrackSearchResult track = currentPlayList[index];
-                return TrackHeaderImage(url: track.artworkUrl?.toString());
+                CloudTrack track = currentPlayList[index];
+                return TrackHeaderImage(url: track.artworkUrl);
               },
             ),
           );
@@ -98,12 +98,7 @@ class _TrackHeaderState extends State<TrackHeader> {
                 style: TextStyle(fontSize: 18),
               ),
               ScrollingText(
-                currentTrack.user.fullName ?? "",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18),
-              ),
-              ScrollingText(
-                currentTrack.caption ?? "",
+                currentTrack.author ?? "",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),

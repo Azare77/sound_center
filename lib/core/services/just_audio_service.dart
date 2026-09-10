@@ -86,6 +86,8 @@ class JustAudioService {
           await _onComplete?.call();
         } else if (_source == AudioSource.podcast) {
           await _onPodcastComplete?.call();
+        } else if (_source == AudioSource.cloud) {
+          await _onCloudComplete?.call();
         } else {
           await _onStreamComplete?.call();
         }
@@ -140,7 +142,14 @@ class JustAudioService {
               .timeout(const Duration(seconds: 30));
           break;
         case AudioSource.cloud:
-          await _player.setUrl(path).timeout(const Duration(seconds: 30));
+          final address = ProgressiveAudioSource(
+            Uri.parse(path),
+
+            headers: {'Icy-MetaData': '1', 'Connection': 'close'},
+          );
+          await _player
+              .setAudioSource(address)
+              .timeout(const Duration(seconds: 30));
           break;
       }
 

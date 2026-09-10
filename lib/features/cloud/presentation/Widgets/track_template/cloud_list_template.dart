@@ -4,9 +4,9 @@ import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_item_template.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
+import 'package:sound_center/features/cloud/presentation/pages/playlist_info/playlist_detail.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
-import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class CloudListTemplate extends StatelessWidget {
   const CloudListTemplate(this.items, {super.key});
@@ -21,7 +21,7 @@ class CloudListTemplate extends StatelessWidget {
   );
 
   bool _isValidItem(dynamic item) =>
-      item is TrackSearchResult || item is PlaylistSearchResult;
+      item is CloudTrack || item is CloudPlaylist;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class CloudListTemplate extends StatelessWidget {
             SliverFixedExtentList(
               itemExtent: LIST_ITEM_HEIGHT,
               delegate: SliverChildBuilderDelegate(
-                (context, index) => _buildVerticalPlaylistItem(index),
+                (context, index) => _buildVerticalPlaylistItem(context, index),
                 childCount: items.playlists.length,
               ),
             )
@@ -74,9 +74,16 @@ class CloudListTemplate extends StatelessWidget {
                       child: _HorizontalPlaylistCard(
                         key: ValueKey(item.id),
                         title: item.title,
-                        artworkUrl: item.artworkUrl?.toString(),
+                        artworkUrl: item.artworkUrl,
                         heroTag: item.id,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PlaylistDetail(playlist: item),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
@@ -113,12 +120,17 @@ class CloudListTemplate extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalPlaylistItem(int index) {
+  Widget _buildVerticalPlaylistItem(BuildContext context, int index) {
     final item = items.playlists[index];
     if (!_isValidItem(item)) return const SizedBox.shrink();
     return InkWell(
       key: ValueKey(item.id),
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => PlaylistDetail(playlist: item)),
+        );
+      },
       child: CloudItemTemplate(item: item),
     );
   }
@@ -163,7 +175,6 @@ class _HorizontalPlaylistCard extends StatelessWidget {
                     child: NetworkCacheImage(
                       url: artworkUrl,
                       size: null,
-                      highQuality: true,
                       fit: BoxFit.cover,
                     ),
                   ),

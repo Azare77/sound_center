@@ -1,6 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -21,7 +20,7 @@ class NetworkCacheImage extends StatelessWidget {
     this.memCacheSize = 400,
     this.fit = BoxFit.cover,
     this.blur = 0,
-    this.highQuality = false,
+    this.highQuality = true,
   });
 
   final String? url;
@@ -97,64 +96,12 @@ class NetworkCacheImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (url == null || url!.isEmpty) return _fallback();
 
-    if (highQuality) {
-      // خودمون صریحاً HQ خواستیم؛ نیازی به چک اضافه نیست.
-      return _buildRemote(forHighQuality: true);
-    }
-
-    // پیش از رفتن سراغ نسخهٔ فشرده، چک کن آیا نسخهٔ HQ همین تصویر
-    // قبلاً روی دیسک کش شده یا نه (فقط یک I/O محلی، بدون شبکه).
-    final hqResolvedUrl = _resolveUrl(url!, forHighQuality: true);
-    final hqCacheKey = _cacheKey(hqResolvedUrl, isHighQuality: true);
-
-    return FutureBuilder<FileInfo?>(
-      future: highQualityCacheManager.getFileFromCache(hqCacheKey),
-      builder: (context, snapshot) {
-        final hqFile = snapshot.data;
-        if (hqFile != null) {
-          return _buildFromLocalFile(hqFile.file);
-        }
-        // نسخهٔ HQ کش نشده -> مسیر عادی (فشرده) طی می‌شود.
-        // اگر بعداً کاربر highQuality=true رو جایی دیگه لود کنه و کش بشه،
-        // دفعهٔ بعد که این ویجت rebuild بشه از همون فایل استفاده می‌کنه.
-        return _buildRemote(forHighQuality: false);
-      },
-    );
-  }
-
-  // -----------------------------------------------------------------
-  // رندر مستقیم از فایل موجود روی دیسک (بدون هیچ درخواست شبکه)
-  // -----------------------------------------------------------------
-  Widget _buildFromLocalFile(File file) {
-    Widget image = Image.file(
-      file,
-      width: size,
-      height: size,
-      fit: fit,
-      filterQuality: FilterQuality.high,
-      // اگر فایل بین لحظهٔ چک‌کردن کش و لحظهٔ رندر واقعی حذف/خراب شده باشد
-      // (race condition نادر)، برمی‌گردیم به مسیر عادی شبکه.
-      errorBuilder: (_, _, _) => _buildRemote(forHighQuality: false),
-    );
-    if (blur > 0) {
-      image = ImageFiltered(
-        imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: image,
-      );
-    }
-    return image;
-  }
-
-  // -----------------------------------------------------------------
-  // رندر از شبکه (با CDN proxy + fallback به آدرس اصلی)
-  // -----------------------------------------------------------------
-  Widget _buildRemote({required bool forHighQuality}) {
-    final resolvedUrl = _resolveUrl(url!, forHighQuality: forHighQuality);
-    final proxy = _proxyUrl(url!, forHighQuality: forHighQuality);
-    final cacheManager = forHighQuality
+    final resolvedUrl = _resolveUrl(url!, forHighQuality: highQuality);
+    final proxy = _proxyUrl(url!, forHighQuality: highQuality);
+    final cacheManager = highQuality
         ? highQualityCacheManager
         : customCacheManager;
-    final cacheKey = _cacheKey(resolvedUrl, isHighQuality: forHighQuality);
+    final cacheKey = _cacheKey(resolvedUrl, isHighQuality: highQuality);
 
     return ImageFiltered(
       imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
@@ -165,8 +112,8 @@ class NetworkCacheImage extends StatelessWidget {
         width: size,
         height: size,
         fit: fit,
-        memCacheWidth: forHighQuality ? null : memCacheSize,
-        memCacheHeight: forHighQuality ? null : memCacheSize,
+        memCacheWidth: highQuality ? null : memCacheSize,
+        memCacheHeight: highQuality ? null : memCacheSize,
         filterQuality: FilterQuality.high,
         placeholder: (_, _) => const Loading(),
         fadeInDuration: const Duration(milliseconds: 300),
@@ -179,8 +126,8 @@ class NetworkCacheImage extends StatelessWidget {
             width: size,
             height: size,
             fit: fit,
-            memCacheWidth: forHighQuality ? null : memCacheSize,
-            memCacheHeight: forHighQuality ? null : memCacheSize,
+            memCacheWidth: highQuality ? null : memCacheSize,
+            memCacheHeight: highQuality ? null : memCacheSize,
             placeholder: (_, _) => const Loading(),
             errorWidget: (_, _, _) => _fallback(),
           );

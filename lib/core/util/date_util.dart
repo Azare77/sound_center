@@ -1,6 +1,13 @@
+import 'dart:ui';
+
 import 'package:intl/intl.dart';
+import 'package:sound_center/database/shared_preferences/app_setting_storage.dart';
 
 String toJalali(DateTime date) {
+  final local = AppSettingStorage.getLocale();
+  if (local == const Locale('en')) {
+    return DateFormat('yyyy/MM/dd', 'en').format(date);
+  }
   int gy = date.year;
   int gm = date.month;
   int gd = date.day;
@@ -42,7 +49,7 @@ String toJalali(DateTime date) {
   return '$jy/${jm.toString().padLeft(2, '0')}/${jd.toString().padLeft(2, '0')}';
 }
 
-String toJalaliDateTime(DateTime date) {
+String _toJalaliDateTime(DateTime date) {
   final day = toJalali(date);
   final time = DateFormat('HH:mm').format(date);
   return "$day  $time";

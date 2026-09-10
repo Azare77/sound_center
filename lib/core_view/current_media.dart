@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
+import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/current_track.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/pages/play_track.dart'
@@ -26,7 +27,6 @@ import 'package:sound_center/features/stream/presentation/pages/play_stream.dart
     as stream_page;
 import 'package:sound_center/features/stream/presentation/widgets/current_stream.dart';
 import 'package:sound_center/shared/theme/themes.dart';
-import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class CurrentMedia extends StatefulWidget {
   const CurrentMedia({super.key, this.color});
@@ -119,7 +119,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
     final AudioEntity? audioEntity = _localPlayer.getCurrentAudio;
     final Episode? episode = _podcastPlayer.getCurrentEpisode;
     final dynamic stream = _streamPlayer.getCurrentStream;
-    final TrackSearchResult? cloud = _cloudPlayer.getCurrentTrack;
+    final CloudTrack? cloud = _cloudPlayer.getCurrentTrack;
 
     final Widget? playerContent = _selectPlayerContent(
       audioEntity,
@@ -136,7 +136,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
     AudioEntity? audio,
     Episode? episode,
     dynamic stream,
-    TrackSearchResult? cloud,
+    CloudTrack? cloud,
   ) {
     _playerPage = null;
     if (_localPlayer.hasSource() && audio != null) {

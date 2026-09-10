@@ -5,7 +5,7 @@ sealed class CloudEvent {}
 class LoadHistory extends CloudEvent {}
 
 class PlayTrack extends CloudEvent {
-  final List tracks;
+  final List<CloudTrack> tracks;
   final int index;
 
   PlayTrack({required this.tracks, required this.index});

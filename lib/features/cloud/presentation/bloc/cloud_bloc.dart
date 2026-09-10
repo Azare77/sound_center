@@ -15,7 +15,7 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
 
   CloudBloc() : super(CloudState(LoadingCloud())) {
     final GetCloudUseCase getCloudUseCase = GetCloudUseCase(
-      CloudRepositoryImp(),
+      CloudRepositoryImp(_database),
     );
 
     final CloudPlayerRepositoryImp player = CloudPlayerRepositoryImp();

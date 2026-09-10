@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
+import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
-import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class CurrentTrack extends StatefulWidget {
   const CurrentTrack({super.key, required this.track});
 
-  final TrackSearchResult track;
+  final CloudTrack track;
 
   @override
   State<CurrentTrack> createState() => _CurrentTrackState();
@@ -62,7 +62,7 @@ class _CurrentTrackState extends State<CurrentTrack> {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        widget.track.user.fullName ?? "",
+        widget.track.author ?? "",
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(

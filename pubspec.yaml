@@ -75,7 +75,8 @@ dependencies:
   #STREAM
   radio_browser_api: ^2.1.0
   #Cloud
-  soundcloud_explode_dart: ^1.1.0
+  soundcloud_explode_dart:
+    path: ../flutter_packages/soundcloud_explode_dart
   #SHARE
   app_links: ^7.2.1
   share_plus: ^13.3.0

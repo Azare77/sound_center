@@ -7,11 +7,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/just_audio_service.dart' as service;
 import 'package:sound_center/core/util/audio/audio_util.dart';
+import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
-import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class JustAudioNotificationHandler extends BaseAudioHandler
     with QueueHandler, SeekHandler {
@@ -27,7 +27,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       List<MediaControl> controls = [];
       List<int> compactIndices = [];
 
-      if (_source == service.AudioSource.local) {
+      if (_source == service.AudioSource.local ||
+          _source == service.AudioSource.cloud) {
         controls = [
           MediaControl(
             androidIcon: 'drawable/audio_service_skip_previous',
@@ -237,17 +238,17 @@ class JustAudioNotificationHandler extends BaseAudioHandler
     mediaItem.add(item);
   }
 
-  void setMediaItemFromCloud(TrackSearchResult track, Uri? cached) async {
+  void setMediaItemFromCloud(CloudTrack track, Uri? cached) async {
     final Uri? artUri =
         cached ?? Uri.tryParse(track.artworkUrl?.toString() ?? '');
     MediaItem item = MediaItem(
       id: track.id.toString(),
       title: track.title,
-      artist: track.user.fullName,
+      artist: track.author,
       artUri: artUri,
       duration: Duration(milliseconds: track.duration.truncate()),
     );
-    _source = service.AudioSource.podcast;
+    _source = service.AudioSource.cloud;
     mediaItem.add(item);
   }
 

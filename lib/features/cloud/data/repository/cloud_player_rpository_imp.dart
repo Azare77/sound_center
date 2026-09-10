@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
+import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
@@ -29,11 +30,11 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   }
 
   final JustAudioService _playerService = JustAudioService();
-  List<TrackSearchResult> _tracks = [];
+  List<CloudTrack> _tracks = [];
 
-  TrackSearchResult? _currentTrack;
+  CloudTrack? _currentTrack;
 
-  TrackSearchResult? get getCurrentTrack => _currentTrack;
+  CloudTrack? get getCurrentTrack => _currentTrack;
 
   int index = 0;
 
@@ -91,7 +92,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     _playerService.processState.listen((state) {
       bool loading = isLoading();
       _loadingController.add(loading);
-      if (!loading && isPlaying()) _retryCount = 0;
     });
     _playerService.duration.listen((dur) {
       if (dur != null) {
@@ -121,7 +121,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     }
   }
 
-  List<TrackSearchResult> getPlayList() {
+  List<CloudTrack> getPlayList() {
     return _tracks;
   }
 
@@ -133,7 +133,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> play(int index, {bool direct = false}) async {
-    _retryCount = 0;
     this.index = index;
     _currentTrack = _tracks[index];
     _loadingController.add(true);
@@ -149,13 +148,12 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     );
     bloc.add(AutoPlay());
     await _playerService.pause();
-    final String? streamUrl = await getTrackUrl(_currentTrack!);
-    if (streamUrl == null) {
-      await next();
+    final String? trackUrl = await getTrackUrl(_currentTrack!);
+    if (trackUrl == null) {
       return;
     }
     await _playerService.setSource(
-      streamUrl,
+      trackUrl,
       AudioSource.cloud,
       onSourceSet: () => bloc.add(AutoPlay()),
     );
@@ -212,32 +210,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> stop() async {
-    _retryCount = 0;
     _currentTrack = null;
     await _playerService.release();
     bloc.add(TogglePlay());
-  }
-
-  int _retryCount = 0;
-
-  Future<void> restart() async {
-    _retryCount++;
-    if (_retryCount > 3) {
-      _retryCount = 0;
-      await stop();
-      return;
-    }
-    bool wasPlaying = _playerService.isPlaying();
-    int position = _playerService.getCurrentPosition();
-    await _playerService.release();
-    await Future.delayed(Duration(milliseconds: 500));
-    int currentRetry = _retryCount;
-    await play(index);
-    _retryCount = currentRetry;
-    await seek(Duration(milliseconds: position));
-    if (!wasPlaying) {
-      await _playerService.togglePlaying();
-    }
   }
 
   int getIndex(bool forward) {
@@ -245,15 +220,20 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     return index;
   }
 
-  Future<String?> getTrackUrl(TrackSearchResult track) async {
+  Future<String?> getTrackUrl(CloudTrack track) async {
     try {
       final streams = await sc.tracks.getStreams(track.id);
+      if (streams.isEmpty) {
+        debugPrint('No transcodings returned for track ${track.id}');
+        return null;
+      }
       final streamInfo = streams.firstWhere(
         (s) => s.container.toLowerCase() == 'mp3',
         orElse: () => streams.first,
       );
       return streamInfo.url;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('getTrackUrl failed: $e\n$st'); // دیگه silent نباشه
       return null;
     }
   }

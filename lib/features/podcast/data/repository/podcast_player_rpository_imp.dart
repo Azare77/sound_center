@@ -157,12 +157,13 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       _episodes[index],
       file?.uri,
     );
-    await _playerService.setSource(
+    bool allowToPlay = await _playerService.setSource(
       _episodes[index].contentUrl!,
       AudioSource.podcast,
       cachedFilePath: cacheFile,
       onSourceSet: () => bloc.add(AutoPlayPodcast()),
     );
+    if (!allowToPlay) return;
     await PlayerStateStorage.saveLastEpisode(_currentEpisode!);
     await PlayerStateStorage.saveSource(AudioSource.podcast);
     await _playerService.play();

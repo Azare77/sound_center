@@ -99,24 +99,41 @@ class JustAudioService {
     });
   }
 
+  int _requestId = 0;
+
   Future<bool> setSource(
     String path,
     AudioSource source, {
     String? cachedFilePath,
     void Function()? onSourceSet,
   }) async {
+    final int myId = ++_requestId;
+    bool isStale() => myId != _requestId;
+
+    if (_loadingSource) {
+      try {
+        await _player.stop();
+      } catch (_) {}
+    }
+    if (isStale()) return false;
+
     try {
       if (source != _source) {
-        _loadingSource = false;
         _source = source;
         await release();
         await Future.delayed(const Duration(milliseconds: 100));
       }
-      if (_loadingSource) return false;
+
+      if (isStale()) return false;
+
       await _streamProxy.stopProxy();
       await _podcastProxy.stopProxy();
+
+      if (isStale()) return false;
+
       _loadingSource = true;
       onSourceSet?.call();
+
       switch (source) {
         case AudioSource.local:
           await _player.setFilePath(path);
@@ -127,23 +144,34 @@ class JustAudioService {
             await _player.setFilePath(cachedFilePath);
           } else {
             final proxyUrl = await _podcastProxy.startProxy(path);
+            if (isStale()) return false;
             await _player.setUrl(proxyUrl).timeout(const Duration(seconds: 30));
           }
           break;
 
         case AudioSource.stream:
           final proxyUrl = await _streamProxy.startProxy(path);
-          final address = ProgressiveAudioSource(
+          if (isStale()) return false;
+          final audioSource = ProgressiveAudioSource(
             Uri.parse(proxyUrl),
             headers: {'Icy-MetaData': '1', 'Connection': 'close'},
           );
           await _player
-              .setAudioSource(address)
+              .setAudioSource(audioSource)
               .timeout(const Duration(seconds: 30));
           break;
+
         case AudioSource.cloud:
           await _player.setUrl(path).timeout(const Duration(seconds: 30));
           break;
+      }
+
+      // لایه‌ی دفاعی نهایی: اگه با وجود stop() اولیه، باز هم یک درخواست
+      // جدیدتر در حین این عملیات رسیده و ما نتونستیم جلوشو بگیریم،
+      // نباید بذاریم این نتیجه‌ی "قدیمی" روی player بمونه.
+      if (isStale()) {
+        await release();
+        return false;
       }
 
       await _player.setSpeed(1.0);
@@ -153,9 +181,9 @@ class JustAudioService {
       return true;
     } catch (e) {
       debugPrint('خطا در setSource: $e');
+      if (isStale()) return false;
       _loadingSource = false;
       if (source != _source) return false;
-      // _source = null;
       await release();
       return false;
     }

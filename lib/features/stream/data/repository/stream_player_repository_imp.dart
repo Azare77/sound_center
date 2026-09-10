@@ -165,12 +165,12 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       duration: duration,
       cached: file?.uri,
     );
-    await _playerService.setSource(
+    bool allowToPlay = await _playerService.setSource(
       url,
       AudioSource.stream,
       onSourceSet: () => bloc.add(AutoPlayStream()),
     );
-
+    if (!allowToPlay) return;
     await _playerService.play();
     bloc.add(AutoPlayStream());
   }

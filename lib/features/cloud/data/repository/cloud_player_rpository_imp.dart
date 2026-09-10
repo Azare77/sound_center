@@ -136,6 +136,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     this.index = index;
     _currentTrack = _tracks[index];
     _loadingController.add(true);
+    bloc.add(AutoPlay());
     File? file;
     try {
       file = await NetworkCacheImage.customCacheManager.getSingleFile(
@@ -146,17 +147,17 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _tracks[index],
       file?.uri,
     );
-    bloc.add(AutoPlay());
     await _playerService.pause();
     final String? trackUrl = await getTrackUrl(_currentTrack!);
     if (trackUrl == null) {
       return;
     }
-    await _playerService.setSource(
+    bool allowToPlay = await _playerService.setSource(
       trackUrl,
       AudioSource.cloud,
       onSourceSet: () => bloc.add(AutoPlay()),
     );
+    if (!allowToPlay) return;
     await PlayerStateStorage.saveLastCloudTrack();
     await PlayerStateStorage.saveSource(AudioSource.cloud);
     await _playerService.play();

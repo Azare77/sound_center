@@ -81,24 +81,24 @@ class CloudItemTemplate extends StatelessWidget {
                 ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: .end,
-              children: [
-                Text(
-                  AudioUtil.convertTime(item.duration),
-                  style: infoTextStyle,
-                ),
-                if (item.playCount > 0)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Text(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: .end,
+                children: [
+                  Text(
+                    AudioUtil.convertTime(item.duration),
+                    style: infoTextStyle,
+                  ),
+                  if (item.playCount > 0)
+                    Text(
                       "▶ ${formatNumber(item.playCount)}",
                       textDirection: TextDirection.ltr,
                       style: infoTextStyle,
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

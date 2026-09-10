@@ -57,6 +57,10 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _currentTrack = PlayerStateStorage.getLastCloudTrack();
       if (_currentTrack == null) return;
       if (_tracks.isEmpty) _tracks = [_currentTrack!];
+      index = 0;
+      _tracks[index] = _currentTrack!;
+      _restoredFromStorage = true;
+      bloc.add(AutoPlay());
       File? file;
       try {
         file = await NetworkCacheImage.customCacheManager.getSingleFile("");
@@ -65,8 +69,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
         _currentTrack!,
         file?.uri,
       );
-      index = 0;
-      _tracks[index] = _currentTrack!;
 
       final String? streamUrl = await getTrackUrl(_currentTrack!);
       if (streamUrl == null) return;
@@ -104,8 +106,10 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     return _playerService.isPlaying();
   }
 
+  bool _restoredFromStorage = false;
+
   bool hasSource() {
-    return _playerService.hasSource(AudioSource.cloud);
+    return _playerService.hasSource(AudioSource.cloud) || _restoredFromStorage;
   }
 
   void setBloc(CloudBloc bloc) {

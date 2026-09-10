@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
+import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_item_template.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
@@ -12,7 +13,6 @@ class CloudListTemplate extends StatelessWidget {
   const CloudListTemplate(this.items, {super.key});
 
   final CloudEntity items;
-
   static const double _minPlaylistRowHeight = 90.0;
   static const double _sectionSpacing = 12.0;
   static const _sectionTitleStyle = TextStyle(
@@ -25,10 +25,11 @@ class CloudListTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final playerRepo = CloudPlayerRepositoryImp();
     if (items.playlists.isEmpty && items.tracks.isEmpty) {
       return const Center(child: TextView("No History"));
     }
-
+    final currentAudio = playerRepo.getCurrentTrack;
     final bool hasTracks = items.tracks.isNotEmpty;
     final bool hasPlaylists = items.playlists.isNotEmpty;
 
@@ -103,15 +104,19 @@ class CloudListTemplate extends StatelessWidget {
             itemExtent: LIST_ITEM_HEIGHT,
             delegate: SliverChildBuilderDelegate((context, index) {
               final item = items.tracks[index];
+              final isCurrent = currentAudio?.id == item.id;
               if (!_isValidItem(item)) return const SizedBox.shrink();
-              return InkWell(
+              return Material(
                 key: ValueKey(item.id),
-                onTap: () {
-                  BlocProvider.of<CloudBloc>(
-                    context,
-                  ).add(PlayTrack(tracks: items.tracks, index: index));
-                },
-                child: CloudItemTemplate(item: item),
+                color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    BlocProvider.of<CloudBloc>(
+                      context,
+                    ).add(PlayTrack(tracks: items.tracks, index: index));
+                  },
+                  child: CloudItemTemplate(item: item),
+                ),
               );
             }, childCount: items.tracks.length),
           ),

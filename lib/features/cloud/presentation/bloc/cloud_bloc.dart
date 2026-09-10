@@ -17,7 +17,9 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
     final GetCloudUseCase getCloudUseCase = GetCloudUseCase(
       CloudRepositoryImp(_database),
     );
-
+    on<AutoPlay>((event, emit) async {
+      emit(state.copyWith(state.status));
+    });
     final CloudPlayerRepositoryImp player = CloudPlayerRepositoryImp();
     player.setBloc(this);
     player.init();
@@ -43,9 +45,6 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
     });
     on<PlayPreviousTrack>((event, emit) async {
       await player.previous();
-      emit(state.copyWith(state.status));
-    });
-    on<AutoPlay>((event, emit) async {
       emit(state.copyWith(state.status));
     });
     on<TogglePlay>((event, emit) async {

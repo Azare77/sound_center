@@ -62,11 +62,13 @@ class CloudItemTemplate extends StatelessWidget {
                     spacing: 15,
                     children: [
                       if (item.author != null && item.author.isNotEmpty)
-                        Text(
-                          item.author,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: infoTextStyle,
+                        Flexible(
+                          child: Text(
+                            item.author,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: infoTextStyle,
+                          ),
                         ),
                       Text(
                         toJalali(item.createDate),
@@ -79,11 +81,41 @@ class CloudItemTemplate extends StatelessWidget {
                 ],
               ),
             ),
-            Text(AudioUtil.convertTime(item.duration), style: infoTextStyle),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: .end,
+              children: [
+                Text(
+                  AudioUtil.convertTime(item.duration),
+                  style: infoTextStyle,
+                ),
+                if (item.playCount > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      "▶ ${formatNumber(item.playCount)}",
+                      textDirection: TextDirection.ltr,
+                      style: infoTextStyle,
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       );
     }
     return SizedBox();
+  }
+
+  String formatNumber(int number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(1)}M';
+    }
+
+    if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(1)}K';
+    }
+
+    return number.toString();
   }
 }

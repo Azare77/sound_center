@@ -70,7 +70,7 @@ class CloudSource {
         queryText,
         searchFilter: filter,
         offset: 0,
-        limit: 50,
+        limit: 100,
       );
       final streamIterator = StreamIterator(stream);
       final List<TrackSearchResult> tracks = [];

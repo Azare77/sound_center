@@ -13,6 +13,7 @@ class CloudTrack {
   final String? author;
   final String? artworkUrl;
   final int duration;
+  final int playCount;
   final DateTime createDate;
 
   CloudTrack({
@@ -22,6 +23,7 @@ class CloudTrack {
     this.author,
     this.artworkUrl,
     required this.createDate,
+    required this.playCount,
   });
 
   factory CloudTrack.fromTrackSearchResult(TrackSearchResult track) {
@@ -32,6 +34,7 @@ class CloudTrack {
       duration: track.duration.truncate(),
       artworkUrl: track.artworkUrl?.toString(),
       createDate: track.createdAt,
+      playCount: track.playbackCount.truncate(),
     );
   }
 }

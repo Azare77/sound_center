@@ -3,8 +3,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:background_downloader/background_downloader.dart';
-// ignore: depend_on_referenced_packages
-import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
@@ -31,12 +29,14 @@ class _DownloadTrackState extends State<DownloadTrack> {
   late final CloudBloc bloc;
   final CloudPlayerRepositoryImp imp = CloudPlayerRepositoryImp();
   late final String fullPath;
+  late final String _key;
 
   @override
   void initState() {
     super.initState();
     bloc = BlocProvider.of<CloudBloc>(context);
     downloader = FileDownloader();
+    _key = "${widget.track.title.trim()}-${widget.track.author.trim()}";
     _loadTask();
   }
 
@@ -47,33 +47,32 @@ class _DownloadTrackState extends State<DownloadTrack> {
     super.dispose();
   }
 
+  /// دانلودهای کلاود هیچ‌وقت با `_downloader.enqueue()` وارد موتور native
+  /// نمی‌شن (نگاه کنید به `PodcastDownloader.downloadCloudTrack`)، پس هیچ
+  /// رکوردی در `downloader.database` براشون وجود نداره. منبع صحت واقعی
+  /// همون رجیستری در-حافظه‌ای `PodcastDownloader.cloudStateForKey` هست که
+  /// در طول عمر اپ زنده می‌مونه و با باز/بسته شدن این ویجت پاک نمی‌شه.
   Future<void> _loadTask() async {
-    String key = widget.track.title.trim();
-    key += "-${widget.track.author.trim()}";
-    final records = await downloader.database.allRecords();
-    final url = await imp.getTrackUrl(imp.getCurrentTrack!);
     final Directory baseDir = await getTemporaryDirectory();
-    fullPath = '${baseDir.path}/Cloud/$key.mp3';
-    final record = records.firstWhereOrNull(
-      (r) => r.task is DownloadTask && (r.task as DownloadTask).url == url,
-    );
+    fullPath = '${baseDir.path}/Cloud/$_key.mp3';
 
-    if (record != null) {
-      final DownloadTask task = record.task as DownloadTask;
-      final bool exists = await File(fullPath).exists();
-      if (!exists && record.progress == 1) {
-        await downloader.database.deleteRecordWithId(task.taskId);
-        _task = null;
-        _progress = 0.0;
-        _isRunning = false;
-        if (mounted) setState(() {});
-        return;
-      }
-
-      _task = task;
-      _progress = record.progress;
-      _isRunning = record.status == TaskStatus.running;
+    final cloudState = PodcastDownloader.cloudStateForKey(_key);
+    if (cloudState != null) {
+      _task = cloudState.task;
+      _progress = cloudState.progress;
+      _isRunning = cloudState.status == TaskStatus.running;
       _listen();
+      if (mounted) setState(() {});
+      return;
+    }
+
+    // اگه دانلودی در حال اجرا در حافظه نیست، فقط بررسی کن که فایل نهایی
+    // قبلاً کامل دانلود شده یا نه (مثلاً بعد از kill کامل اپ).
+    final bool exists = await File(fullPath).exists();
+    if (exists) {
+      _task = null;
+      _progress = 1.0;
+      _isRunning = false;
       if (mounted) setState(() {});
     }
   }
@@ -111,7 +110,23 @@ class _DownloadTrackState extends State<DownloadTrack> {
 
   bool _retrying = false;
 
+  /// دانلود کلاود (گروه 'cloud') هیچ‌وقت enqueue نشده، پس pause/resume نیتیو
+  /// (`PodcastDownloader.pause`/`resume`) روش اثر نداره و همیشه resume را
+  /// fail می‌کنه و از صفر دوباره شروع می‌شه. برای این گروه باید از
+  /// `pauseCloudDownload`/`resumeCloudDownload` استفاده کرد که واقعاً روی
+  /// حلقه‌ی دانلود دستی HLS اثر می‌ذاره و segmentهای دانلودشده رو حفظ می‌کنه.
   void _toggle() async {
+    final isCloud = PodcastDownloader.isCloudTask(_task!);
+
+    if (isCloud) {
+      if (_isRunning) {
+        PodcastDownloader.pauseCloudDownload(_key);
+      } else {
+        PodcastDownloader.resumeCloudDownload(_key);
+      }
+      return;
+    }
+
     if (_isRunning) {
       PodcastDownloader.pause(_task!);
     } else {
@@ -149,7 +164,6 @@ class _DownloadTrackState extends State<DownloadTrack> {
         IconButton(
           iconSize: 20,
           onPressed: () {
-            print(_task);
             if (_task == null) {
               _start();
             } else if (_progress >= 1) {

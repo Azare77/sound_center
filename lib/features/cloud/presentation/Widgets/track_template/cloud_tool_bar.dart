@@ -4,6 +4,7 @@ import 'package:sound_center/features/cloud/presentation/Widgets/track_template/
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/pages/cloud.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
@@ -19,10 +20,12 @@ class _CloudToolBarState extends State<CloudToolBar> {
   final _controller = TextEditingController();
   late ValueNotifier searchNotifier;
   SearchFilter type = SearchFilter.none;
+  late CloudBloc bloc;
 
   @override
   void initState() {
     super.initState();
+    bloc = BlocProvider.of<CloudBloc>(context);
     searchNotifier = CloudSearchController.showSearchField;
     searchNotifier.addListener(() {
       if (_showSearch) {
@@ -90,6 +93,19 @@ class _CloudToolBarState extends State<CloudToolBar> {
                 ),
               ),
             ),
+          if (!_showSearch) const Spacer(),
+          IconButton(
+            onPressed: () async {
+              bool? confirm = await showDialog(
+                context: context,
+                builder: (_) => ConfirmDialog(),
+              );
+              if (confirm ?? false) {
+                bloc.add(ClearHistory());
+              }
+            },
+            icon: Icon(Icons.delete_rounded),
+          ),
         ],
       ),
     );

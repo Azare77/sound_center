@@ -98,7 +98,7 @@ class _TrackHeaderState extends State<TrackHeader> {
                 style: TextStyle(fontSize: 18),
               ),
               ScrollingText(
-                currentTrack.author ?? "",
+                currentTrack.author,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),

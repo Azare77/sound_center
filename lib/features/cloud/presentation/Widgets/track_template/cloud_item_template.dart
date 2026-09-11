@@ -81,25 +81,26 @@ class CloudItemTemplate extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: .end,
-                children: [
-                  Text(
-                    AudioUtil.convertTime(item.duration),
-                    style: infoTextStyle,
-                  ),
-                  if (item.playCount > 0)
+            if (item is CloudTrack)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: .end,
+                  children: [
                     Text(
-                      "▶ ${formatNumber(item.playCount)}",
-                      textDirection: TextDirection.ltr,
+                      AudioUtil.convertTime(item.duration),
                       style: infoTextStyle,
                     ),
-                ],
+                    if (item.playCount > 0)
+                      Text(
+                        "▶ ${formatNumber(item.playCount)}",
+                        textDirection: TextDirection.ltr,
+                        style: infoTextStyle,
+                      ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       );

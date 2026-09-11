@@ -2245,6 +2245,17 @@ class $CloudHistoryTableTable extends CloudHistoryTable
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _shareLinkMeta = const VerificationMeta(
+    'shareLink',
+  );
+  @override
+  late final GeneratedColumn<String> shareLink = GeneratedColumn<String>(
+    'share_link',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2256,6 +2267,7 @@ class $CloudHistoryTableTable extends CloudHistoryTable
     artworkUrl,
     playbackCount,
     duration,
+    shareLink,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2335,6 +2347,14 @@ class $CloudHistoryTableTable extends CloudHistoryTable
     } else if (isInserting) {
       context.missing(_durationMeta);
     }
+    if (data.containsKey('share_link')) {
+      context.handle(
+        _shareLinkMeta,
+        shareLink.isAcceptableOrUnknown(data['share_link']!, _shareLinkMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_shareLinkMeta);
+    }
     return context;
   }
 
@@ -2380,6 +2400,10 @@ class $CloudHistoryTableTable extends CloudHistoryTable
         DriftSqlType.int,
         data['${effectivePrefix}duration'],
       )!,
+      shareLink: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}share_link'],
+      )!,
     );
   }
 
@@ -2400,6 +2424,7 @@ class CloudHistoryTableData extends DataClass
   final String? artworkUrl;
   final int playbackCount;
   final int duration;
+  final String shareLink;
   const CloudHistoryTableData({
     required this.id,
     required this.createdAt,
@@ -2410,6 +2435,7 @@ class CloudHistoryTableData extends DataClass
     this.artworkUrl,
     required this.playbackCount,
     required this.duration,
+    required this.shareLink,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2425,6 +2451,7 @@ class CloudHistoryTableData extends DataClass
     }
     map['playback_count'] = Variable<int>(playbackCount);
     map['duration'] = Variable<int>(duration);
+    map['share_link'] = Variable<String>(shareLink);
     return map;
   }
 
@@ -2441,6 +2468,7 @@ class CloudHistoryTableData extends DataClass
           : Value(artworkUrl),
       playbackCount: Value(playbackCount),
       duration: Value(duration),
+      shareLink: Value(shareLink),
     );
   }
 
@@ -2459,6 +2487,7 @@ class CloudHistoryTableData extends DataClass
       artworkUrl: serializer.fromJson<String?>(json['artworkUrl']),
       playbackCount: serializer.fromJson<int>(json['playbackCount']),
       duration: serializer.fromJson<int>(json['duration']),
+      shareLink: serializer.fromJson<String>(json['shareLink']),
     );
   }
   @override
@@ -2474,6 +2503,7 @@ class CloudHistoryTableData extends DataClass
       'artworkUrl': serializer.toJson<String?>(artworkUrl),
       'playbackCount': serializer.toJson<int>(playbackCount),
       'duration': serializer.toJson<int>(duration),
+      'shareLink': serializer.toJson<String>(shareLink),
     };
   }
 
@@ -2487,6 +2517,7 @@ class CloudHistoryTableData extends DataClass
     Value<String?> artworkUrl = const Value.absent(),
     int? playbackCount,
     int? duration,
+    String? shareLink,
   }) => CloudHistoryTableData(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -2497,6 +2528,7 @@ class CloudHistoryTableData extends DataClass
     artworkUrl: artworkUrl.present ? artworkUrl.value : this.artworkUrl,
     playbackCount: playbackCount ?? this.playbackCount,
     duration: duration ?? this.duration,
+    shareLink: shareLink ?? this.shareLink,
   );
   CloudHistoryTableData copyWithCompanion(CloudHistoryTableCompanion data) {
     return CloudHistoryTableData(
@@ -2515,6 +2547,7 @@ class CloudHistoryTableData extends DataClass
           ? data.playbackCount.value
           : this.playbackCount,
       duration: data.duration.present ? data.duration.value : this.duration,
+      shareLink: data.shareLink.present ? data.shareLink.value : this.shareLink,
     );
   }
 
@@ -2529,7 +2562,8 @@ class CloudHistoryTableData extends DataClass
           ..write('uploadedAt: $uploadedAt, ')
           ..write('artworkUrl: $artworkUrl, ')
           ..write('playbackCount: $playbackCount, ')
-          ..write('duration: $duration')
+          ..write('duration: $duration, ')
+          ..write('shareLink: $shareLink')
           ..write(')'))
         .toString();
   }
@@ -2545,6 +2579,7 @@ class CloudHistoryTableData extends DataClass
     artworkUrl,
     playbackCount,
     duration,
+    shareLink,
   );
   @override
   bool operator ==(Object other) =>
@@ -2558,7 +2593,8 @@ class CloudHistoryTableData extends DataClass
           other.uploadedAt == this.uploadedAt &&
           other.artworkUrl == this.artworkUrl &&
           other.playbackCount == this.playbackCount &&
-          other.duration == this.duration);
+          other.duration == this.duration &&
+          other.shareLink == this.shareLink);
 }
 
 class CloudHistoryTableCompanion
@@ -2572,6 +2608,7 @@ class CloudHistoryTableCompanion
   final Value<String?> artworkUrl;
   final Value<int> playbackCount;
   final Value<int> duration;
+  final Value<String> shareLink;
   const CloudHistoryTableCompanion({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2582,6 +2619,7 @@ class CloudHistoryTableCompanion
     this.artworkUrl = const Value.absent(),
     this.playbackCount = const Value.absent(),
     this.duration = const Value.absent(),
+    this.shareLink = const Value.absent(),
   });
   CloudHistoryTableCompanion.insert({
     this.id = const Value.absent(),
@@ -2593,12 +2631,14 @@ class CloudHistoryTableCompanion
     this.artworkUrl = const Value.absent(),
     required int playbackCount,
     required int duration,
+    required String shareLink,
   }) : trackId = Value(trackId),
        title = Value(title),
        author = Value(author),
        uploadedAt = Value(uploadedAt),
        playbackCount = Value(playbackCount),
-       duration = Value(duration);
+       duration = Value(duration),
+       shareLink = Value(shareLink);
   static Insertable<CloudHistoryTableData> custom({
     Expression<int>? id,
     Expression<DateTime>? createdAt,
@@ -2609,6 +2649,7 @@ class CloudHistoryTableCompanion
     Expression<String>? artworkUrl,
     Expression<int>? playbackCount,
     Expression<int>? duration,
+    Expression<String>? shareLink,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2620,6 +2661,7 @@ class CloudHistoryTableCompanion
       if (artworkUrl != null) 'artwork_url': artworkUrl,
       if (playbackCount != null) 'playback_count': playbackCount,
       if (duration != null) 'duration': duration,
+      if (shareLink != null) 'share_link': shareLink,
     });
   }
 
@@ -2633,6 +2675,7 @@ class CloudHistoryTableCompanion
     Value<String?>? artworkUrl,
     Value<int>? playbackCount,
     Value<int>? duration,
+    Value<String>? shareLink,
   }) {
     return CloudHistoryTableCompanion(
       id: id ?? this.id,
@@ -2644,6 +2687,7 @@ class CloudHistoryTableCompanion
       artworkUrl: artworkUrl ?? this.artworkUrl,
       playbackCount: playbackCount ?? this.playbackCount,
       duration: duration ?? this.duration,
+      shareLink: shareLink ?? this.shareLink,
     );
   }
 
@@ -2677,6 +2721,9 @@ class CloudHistoryTableCompanion
     if (duration.present) {
       map['duration'] = Variable<int>(duration.value);
     }
+    if (shareLink.present) {
+      map['share_link'] = Variable<String>(shareLink.value);
+    }
     return map;
   }
 
@@ -2691,7 +2738,8 @@ class CloudHistoryTableCompanion
           ..write('uploadedAt: $uploadedAt, ')
           ..write('artworkUrl: $artworkUrl, ')
           ..write('playbackCount: $playbackCount, ')
-          ..write('duration: $duration')
+          ..write('duration: $duration, ')
+          ..write('shareLink: $shareLink')
           ..write(')'))
         .toString();
   }
@@ -3890,6 +3938,7 @@ typedef $$CloudHistoryTableTableCreateCompanionBuilder =
       Value<String?> artworkUrl,
       required int playbackCount,
       required int duration,
+      required String shareLink,
     });
 typedef $$CloudHistoryTableTableUpdateCompanionBuilder =
     CloudHistoryTableCompanion Function({
@@ -3902,6 +3951,7 @@ typedef $$CloudHistoryTableTableUpdateCompanionBuilder =
       Value<String?> artworkUrl,
       Value<int> playbackCount,
       Value<int> duration,
+      Value<String> shareLink,
     });
 
 class $$CloudHistoryTableTableFilterComposer
@@ -3955,6 +4005,11 @@ class $$CloudHistoryTableTableFilterComposer
 
   ColumnFilters<int> get duration => $composableBuilder(
     column: $table.duration,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get shareLink => $composableBuilder(
+    column: $table.shareLink,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4012,6 +4067,11 @@ class $$CloudHistoryTableTableOrderingComposer
     column: $table.duration,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get shareLink => $composableBuilder(
+    column: $table.shareLink,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CloudHistoryTableTableAnnotationComposer
@@ -4055,6 +4115,9 @@ class $$CloudHistoryTableTableAnnotationComposer
 
   GeneratedColumn<int> get duration =>
       $composableBuilder(column: $table.duration, builder: (column) => column);
+
+  GeneratedColumn<String> get shareLink =>
+      $composableBuilder(column: $table.shareLink, builder: (column) => column);
 }
 
 class $$CloudHistoryTableTableTableManager
@@ -4106,6 +4169,7 @@ class $$CloudHistoryTableTableTableManager
                 Value<String?> artworkUrl = const Value.absent(),
                 Value<int> playbackCount = const Value.absent(),
                 Value<int> duration = const Value.absent(),
+                Value<String> shareLink = const Value.absent(),
               }) => CloudHistoryTableCompanion(
                 id: id,
                 createdAt: createdAt,
@@ -4116,6 +4180,7 @@ class $$CloudHistoryTableTableTableManager
                 artworkUrl: artworkUrl,
                 playbackCount: playbackCount,
                 duration: duration,
+                shareLink: shareLink,
               ),
           createCompanionCallback:
               ({
@@ -4128,6 +4193,7 @@ class $$CloudHistoryTableTableTableManager
                 Value<String?> artworkUrl = const Value.absent(),
                 required int playbackCount,
                 required int duration,
+                required String shareLink,
               }) => CloudHistoryTableCompanion.insert(
                 id: id,
                 createdAt: createdAt,
@@ -4138,6 +4204,7 @@ class $$CloudHistoryTableTableTableManager
                 artworkUrl: artworkUrl,
                 playbackCount: playbackCount,
                 duration: duration,
+                shareLink: shareLink,
               ),
           withReferenceMapper: (p0) => p0
               .map(

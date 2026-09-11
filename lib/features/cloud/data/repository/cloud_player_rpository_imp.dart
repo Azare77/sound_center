@@ -71,7 +71,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       );
 
       final String? streamUrl = await getTrackUrl(_currentTrack!);
-      if (streamUrl == null) return;
+      if (streamUrl == null || !hasSource()) return;
       bool res = await _playerService.setSource(
         streamUrl,
         AudioSource.cloud,
@@ -81,6 +81,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
         int position = PlayerStateStorage.getLastPosition();
         _playerService.seek(Duration(milliseconds: position));
       }
+      _restoredFromStorage = false;
       bloc.add(AutoPlay());
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');

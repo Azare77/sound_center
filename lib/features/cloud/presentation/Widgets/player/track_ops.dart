@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/player/speed_dialog.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/player/download_track.dart';
 
 class TrackOps extends StatelessWidget {
   const TrackOps({super.key});
@@ -11,12 +12,7 @@ class TrackOps extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: () {
-            showDialog(context: context, builder: (_) => SpeedDialog());
-          },
-          icon: Icon(Icons.speed_rounded),
-        ),
+        DownloadTrack(track: playerRepository.getCurrentTrack!),
         SizedBox(
           width: 40,
           height: 5,
@@ -27,7 +23,13 @@ class TrackOps extends StatelessWidget {
             ),
           ),
         ),
-        IconButton(onPressed: () async {}, icon: Icon(Icons.share_rounded)),
+        IconButton(
+          onPressed: () async {
+            final track = playerRepository.getCurrentTrack!;
+            await SharePlus.instance.share(ShareParams(uri: track.shareLink));
+          },
+          icon: Icon(Icons.share_rounded),
+        ),
       ],
     );
   }

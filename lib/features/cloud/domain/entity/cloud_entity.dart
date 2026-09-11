@@ -17,6 +17,7 @@ class CloudTrack {
   final int duration;
   final int playCount;
   final DateTime createDate;
+  final Uri shareLink;
 
   CloudTrack({
     required this.id,
@@ -26,6 +27,7 @@ class CloudTrack {
     this.artworkUrl,
     required this.createDate,
     required this.playCount,
+    required this.shareLink,
   });
 
   factory CloudTrack.fromTrackSearchResult(TrackSearchResult track) {
@@ -37,6 +39,7 @@ class CloudTrack {
       artworkUrl: track.artworkUrl?.toString(),
       createDate: track.createdAt,
       playCount: track.playbackCount.truncate(),
+      shareLink: track.permalinkUrl,
     );
   }
 
@@ -49,6 +52,7 @@ class CloudTrack {
       createDate: record.uploadedAt,
       playCount: record.playbackCount,
       artworkUrl: record.artworkUrl,
+      shareLink: Uri.dataFromString(record.shareLink),
     );
   }
 
@@ -61,6 +65,7 @@ class CloudTrack {
       uploadedAt: Value(createDate),
       playbackCount: Value(playCount),
       artworkUrl: Value(artworkUrl),
+      shareLink: Value(shareLink.toString()),
     );
   }
 
@@ -73,6 +78,7 @@ class CloudTrack {
       duration: json['duration'] as int,
       playCount: json['playCount'] as int,
       createDate: DateTime.parse(json['createDate'] as String),
+      shareLink: Uri.dataFromString(json['shareLink'] as String),
     );
   }
 
@@ -85,6 +91,7 @@ class CloudTrack {
       'duration': duration,
       'playCount': playCount,
       'createDate': createDate.toIso8601String(),
+      'shareLink': shareLink.toString(),
     };
   }
 }

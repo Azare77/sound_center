@@ -15,4 +15,6 @@ class CloudHistoryTable extends Table with TableMixin {
   IntColumn get playbackCount => integer()();
 
   IntColumn get duration => integer()();
+
+  TextColumn get shareLink => text()();
 }

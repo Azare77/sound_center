@@ -7,9 +7,9 @@ import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 import '../../domain/repository/cloud_repository.dart';
 
 class CloudRepositoryImp implements CloudRepository {
-  final AppDatabase _appDatabase;
+  final AppDatabase _database;
 
-  CloudRepositoryImp(this._appDatabase);
+  CloudRepositoryImp(this._database);
 
   final CloudSource _source = CloudSource();
 
@@ -26,9 +26,9 @@ class CloudRepositoryImp implements CloudRepository {
 
   Future<List<CloudHistoryTableData>> _getSubs() async {
     final subs =
-        await (_appDatabase.select(_appDatabase.cloudHistoryTable)..orderBy([
+        await (_database.select(_database.cloudHistoryTable)..orderBy([
               (t) => drift.OrderingTerm(
-                expression: t.id,
+                expression: t.createdAt,
                 mode: drift.OrderingMode.desc,
               ),
             ]))
@@ -44,8 +44,8 @@ class CloudRepositoryImp implements CloudRepository {
   }
 
   Future<bool> isOnHistory(int trackId) async {
-    final existing = await (_appDatabase.select(
-      _appDatabase.cloudHistoryTable,
+    final existing = await (_database.select(
+      _database.cloudHistoryTable,
     )..where((tbl) => tbl.trackId.equals(trackId))).getSingleOrNull();
     if (existing != null) {
       return true;
@@ -56,24 +56,29 @@ class CloudRepositoryImp implements CloudRepository {
   @override
   Future<bool> addToHistory(CloudTrack track) async {
     bool existed = await isOnHistory(track.id);
-    if (existed) return true;
-    await _appDatabase
-        .into(_appDatabase.cloudHistoryTable)
-        .insert(track.toDrift());
+    if (existed) {
+      await (_database.update(
+        _database.cloudHistoryTable,
+      )..where((tbl) => tbl.trackId.equals(track.id))).write(
+        CloudHistoryTableCompanion(createdAt: drift.Value(DateTime.now())),
+      );
+    } else {
+      await _database.into(_database.cloudHistoryTable).insert(track.toDrift());
+    }
     return true;
   }
 
   @override
   Future<bool> removeFromHistory(CloudTrack track) async {
-    await (_appDatabase.delete(
-      _appDatabase.cloudHistoryTable,
+    await (_database.delete(
+      _database.cloudHistoryTable,
     )..where((r) => r.trackId.equals(track.id))).go();
     return true;
   }
 
   @override
   Future<bool> clearHistory() async {
-    await (_appDatabase.delete(_appDatabase.cloudHistoryTable)).go();
+    await (_database.delete(_database.cloudHistoryTable)).go();
     return true;
   }
 }

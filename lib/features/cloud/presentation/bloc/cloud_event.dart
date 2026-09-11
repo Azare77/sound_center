@@ -25,3 +25,17 @@ class SearchCloud extends CloudEvent {
 
   SearchCloud({required this.queryText, required this.filter});
 }
+
+class AddToHistory extends CloudEvent {
+  final CloudTrack track;
+
+  AddToHistory({required this.track});
+}
+
+class RemoveFromHistory extends CloudEvent {
+  final CloudTrack track;
+
+  RemoveFromHistory({required this.track});
+}
+
+class ClearHistory extends CloudEvent {}

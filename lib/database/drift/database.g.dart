@@ -2141,6 +2141,562 @@ class StreamSubscriptionTableCompanion
   }
 }
 
+class $CloudHistoryTableTable extends CloudHistoryTable
+    with TableInfo<$CloudHistoryTableTable, CloudHistoryTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CloudHistoryTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _trackIdMeta = const VerificationMeta(
+    'trackId',
+  );
+  @override
+  late final GeneratedColumn<int> trackId = GeneratedColumn<int>(
+    'track_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _authorMeta = const VerificationMeta('author');
+  @override
+  late final GeneratedColumn<String> author = GeneratedColumn<String>(
+    'author',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uploadedAtMeta = const VerificationMeta(
+    'uploadedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> uploadedAt = GeneratedColumn<DateTime>(
+    'uploaded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _artworkUrlMeta = const VerificationMeta(
+    'artworkUrl',
+  );
+  @override
+  late final GeneratedColumn<String> artworkUrl = GeneratedColumn<String>(
+    'artwork_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _playbackCountMeta = const VerificationMeta(
+    'playbackCount',
+  );
+  @override
+  late final GeneratedColumn<int> playbackCount = GeneratedColumn<int>(
+    'playback_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _durationMeta = const VerificationMeta(
+    'duration',
+  );
+  @override
+  late final GeneratedColumn<int> duration = GeneratedColumn<int>(
+    'duration',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    trackId,
+    title,
+    author,
+    uploadedAt,
+    artworkUrl,
+    playbackCount,
+    duration,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cloud_history_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CloudHistoryTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('track_id')) {
+      context.handle(
+        _trackIdMeta,
+        trackId.isAcceptableOrUnknown(data['track_id']!, _trackIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_trackIdMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('author')) {
+      context.handle(
+        _authorMeta,
+        author.isAcceptableOrUnknown(data['author']!, _authorMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_authorMeta);
+    }
+    if (data.containsKey('uploaded_at')) {
+      context.handle(
+        _uploadedAtMeta,
+        uploadedAt.isAcceptableOrUnknown(data['uploaded_at']!, _uploadedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_uploadedAtMeta);
+    }
+    if (data.containsKey('artwork_url')) {
+      context.handle(
+        _artworkUrlMeta,
+        artworkUrl.isAcceptableOrUnknown(data['artwork_url']!, _artworkUrlMeta),
+      );
+    }
+    if (data.containsKey('playback_count')) {
+      context.handle(
+        _playbackCountMeta,
+        playbackCount.isAcceptableOrUnknown(
+          data['playback_count']!,
+          _playbackCountMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_playbackCountMeta);
+    }
+    if (data.containsKey('duration')) {
+      context.handle(
+        _durationMeta,
+        duration.isAcceptableOrUnknown(data['duration']!, _durationMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_durationMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CloudHistoryTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CloudHistoryTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      trackId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}track_id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      author: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}author'],
+      )!,
+      uploadedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}uploaded_at'],
+      )!,
+      artworkUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artwork_url'],
+      ),
+      playbackCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}playback_count'],
+      )!,
+      duration: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration'],
+      )!,
+    );
+  }
+
+  @override
+  $CloudHistoryTableTable createAlias(String alias) {
+    return $CloudHistoryTableTable(attachedDatabase, alias);
+  }
+}
+
+class CloudHistoryTableData extends DataClass
+    implements Insertable<CloudHistoryTableData> {
+  final int id;
+  final DateTime createdAt;
+  final int trackId;
+  final String title;
+  final String author;
+  final DateTime uploadedAt;
+  final String? artworkUrl;
+  final int playbackCount;
+  final int duration;
+  const CloudHistoryTableData({
+    required this.id,
+    required this.createdAt,
+    required this.trackId,
+    required this.title,
+    required this.author,
+    required this.uploadedAt,
+    this.artworkUrl,
+    required this.playbackCount,
+    required this.duration,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['track_id'] = Variable<int>(trackId);
+    map['title'] = Variable<String>(title);
+    map['author'] = Variable<String>(author);
+    map['uploaded_at'] = Variable<DateTime>(uploadedAt);
+    if (!nullToAbsent || artworkUrl != null) {
+      map['artwork_url'] = Variable<String>(artworkUrl);
+    }
+    map['playback_count'] = Variable<int>(playbackCount);
+    map['duration'] = Variable<int>(duration);
+    return map;
+  }
+
+  CloudHistoryTableCompanion toCompanion(bool nullToAbsent) {
+    return CloudHistoryTableCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      trackId: Value(trackId),
+      title: Value(title),
+      author: Value(author),
+      uploadedAt: Value(uploadedAt),
+      artworkUrl: artworkUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(artworkUrl),
+      playbackCount: Value(playbackCount),
+      duration: Value(duration),
+    );
+  }
+
+  factory CloudHistoryTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CloudHistoryTableData(
+      id: serializer.fromJson<int>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      trackId: serializer.fromJson<int>(json['trackId']),
+      title: serializer.fromJson<String>(json['title']),
+      author: serializer.fromJson<String>(json['author']),
+      uploadedAt: serializer.fromJson<DateTime>(json['uploadedAt']),
+      artworkUrl: serializer.fromJson<String?>(json['artworkUrl']),
+      playbackCount: serializer.fromJson<int>(json['playbackCount']),
+      duration: serializer.fromJson<int>(json['duration']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'trackId': serializer.toJson<int>(trackId),
+      'title': serializer.toJson<String>(title),
+      'author': serializer.toJson<String>(author),
+      'uploadedAt': serializer.toJson<DateTime>(uploadedAt),
+      'artworkUrl': serializer.toJson<String?>(artworkUrl),
+      'playbackCount': serializer.toJson<int>(playbackCount),
+      'duration': serializer.toJson<int>(duration),
+    };
+  }
+
+  CloudHistoryTableData copyWith({
+    int? id,
+    DateTime? createdAt,
+    int? trackId,
+    String? title,
+    String? author,
+    DateTime? uploadedAt,
+    Value<String?> artworkUrl = const Value.absent(),
+    int? playbackCount,
+    int? duration,
+  }) => CloudHistoryTableData(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    trackId: trackId ?? this.trackId,
+    title: title ?? this.title,
+    author: author ?? this.author,
+    uploadedAt: uploadedAt ?? this.uploadedAt,
+    artworkUrl: artworkUrl.present ? artworkUrl.value : this.artworkUrl,
+    playbackCount: playbackCount ?? this.playbackCount,
+    duration: duration ?? this.duration,
+  );
+  CloudHistoryTableData copyWithCompanion(CloudHistoryTableCompanion data) {
+    return CloudHistoryTableData(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      trackId: data.trackId.present ? data.trackId.value : this.trackId,
+      title: data.title.present ? data.title.value : this.title,
+      author: data.author.present ? data.author.value : this.author,
+      uploadedAt: data.uploadedAt.present
+          ? data.uploadedAt.value
+          : this.uploadedAt,
+      artworkUrl: data.artworkUrl.present
+          ? data.artworkUrl.value
+          : this.artworkUrl,
+      playbackCount: data.playbackCount.present
+          ? data.playbackCount.value
+          : this.playbackCount,
+      duration: data.duration.present ? data.duration.value : this.duration,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CloudHistoryTableData(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('trackId: $trackId, ')
+          ..write('title: $title, ')
+          ..write('author: $author, ')
+          ..write('uploadedAt: $uploadedAt, ')
+          ..write('artworkUrl: $artworkUrl, ')
+          ..write('playbackCount: $playbackCount, ')
+          ..write('duration: $duration')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    trackId,
+    title,
+    author,
+    uploadedAt,
+    artworkUrl,
+    playbackCount,
+    duration,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CloudHistoryTableData &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.trackId == this.trackId &&
+          other.title == this.title &&
+          other.author == this.author &&
+          other.uploadedAt == this.uploadedAt &&
+          other.artworkUrl == this.artworkUrl &&
+          other.playbackCount == this.playbackCount &&
+          other.duration == this.duration);
+}
+
+class CloudHistoryTableCompanion
+    extends UpdateCompanion<CloudHistoryTableData> {
+  final Value<int> id;
+  final Value<DateTime> createdAt;
+  final Value<int> trackId;
+  final Value<String> title;
+  final Value<String> author;
+  final Value<DateTime> uploadedAt;
+  final Value<String?> artworkUrl;
+  final Value<int> playbackCount;
+  final Value<int> duration;
+  const CloudHistoryTableCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.trackId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.author = const Value.absent(),
+    this.uploadedAt = const Value.absent(),
+    this.artworkUrl = const Value.absent(),
+    this.playbackCount = const Value.absent(),
+    this.duration = const Value.absent(),
+  });
+  CloudHistoryTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    required int trackId,
+    required String title,
+    required String author,
+    required DateTime uploadedAt,
+    this.artworkUrl = const Value.absent(),
+    required int playbackCount,
+    required int duration,
+  }) : trackId = Value(trackId),
+       title = Value(title),
+       author = Value(author),
+       uploadedAt = Value(uploadedAt),
+       playbackCount = Value(playbackCount),
+       duration = Value(duration);
+  static Insertable<CloudHistoryTableData> custom({
+    Expression<int>? id,
+    Expression<DateTime>? createdAt,
+    Expression<int>? trackId,
+    Expression<String>? title,
+    Expression<String>? author,
+    Expression<DateTime>? uploadedAt,
+    Expression<String>? artworkUrl,
+    Expression<int>? playbackCount,
+    Expression<int>? duration,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (trackId != null) 'track_id': trackId,
+      if (title != null) 'title': title,
+      if (author != null) 'author': author,
+      if (uploadedAt != null) 'uploaded_at': uploadedAt,
+      if (artworkUrl != null) 'artwork_url': artworkUrl,
+      if (playbackCount != null) 'playback_count': playbackCount,
+      if (duration != null) 'duration': duration,
+    });
+  }
+
+  CloudHistoryTableCompanion copyWith({
+    Value<int>? id,
+    Value<DateTime>? createdAt,
+    Value<int>? trackId,
+    Value<String>? title,
+    Value<String>? author,
+    Value<DateTime>? uploadedAt,
+    Value<String?>? artworkUrl,
+    Value<int>? playbackCount,
+    Value<int>? duration,
+  }) {
+    return CloudHistoryTableCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      trackId: trackId ?? this.trackId,
+      title: title ?? this.title,
+      author: author ?? this.author,
+      uploadedAt: uploadedAt ?? this.uploadedAt,
+      artworkUrl: artworkUrl ?? this.artworkUrl,
+      playbackCount: playbackCount ?? this.playbackCount,
+      duration: duration ?? this.duration,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (trackId.present) {
+      map['track_id'] = Variable<int>(trackId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
+    }
+    if (uploadedAt.present) {
+      map['uploaded_at'] = Variable<DateTime>(uploadedAt.value);
+    }
+    if (artworkUrl.present) {
+      map['artwork_url'] = Variable<String>(artworkUrl.value);
+    }
+    if (playbackCount.present) {
+      map['playback_count'] = Variable<int>(playbackCount.value);
+    }
+    if (duration.present) {
+      map['duration'] = Variable<int>(duration.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CloudHistoryTableCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('trackId: $trackId, ')
+          ..write('title: $title, ')
+          ..write('author: $author, ')
+          ..write('uploadedAt: $uploadedAt, ')
+          ..write('artworkUrl: $artworkUrl, ')
+          ..write('playbackCount: $playbackCount, ')
+          ..write('duration: $duration')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2150,6 +2706,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DownloadTableTable downloadTable = $DownloadTableTable(this);
   late final $StreamSubscriptionTableTable streamSubscriptionTable =
       $StreamSubscriptionTableTable(this);
+  late final $CloudHistoryTableTable cloudHistoryTable =
+      $CloudHistoryTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2159,6 +2717,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     subscriptionTable,
     downloadTable,
     streamSubscriptionTable,
+    cloudHistoryTable,
   ];
 }
 
@@ -2336,7 +2895,16 @@ class $$PlaylistTableTableTableManager
                 audio: audio,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$PlaylistTableTable, PlaylistTableData>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PlaylistTableTable,
+                    PlaylistTableData
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -2684,7 +3252,18 @@ class $$SubscriptionTableTableTableManager
                 lastListenAt: lastListenAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$SubscriptionTableTable, SubscriptionTableData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SubscriptionTableTable,
+                    SubscriptionTableData
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -2985,7 +3564,16 @@ class $$DownloadTableTableTableManager
                 duration: duration,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$DownloadTableTable, DownloadTableData>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $DownloadTableTable,
+                    DownloadTableData
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -3251,7 +3839,19 @@ class $$StreamSubscriptionTableTableTableManager
                 uuid: uuid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<
+                    $StreamSubscriptionTableTable,
+                    StreamSubscriptionTableData
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $StreamSubscriptionTableTable,
+                    StreamSubscriptionTableData
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -3279,6 +3879,306 @@ typedef $$StreamSubscriptionTableTableProcessedTableManager =
       StreamSubscriptionTableData,
       PrefetchHooks Function()
     >;
+typedef $$CloudHistoryTableTableCreateCompanionBuilder =
+    CloudHistoryTableCompanion Function({
+      Value<int> id,
+      Value<DateTime> createdAt,
+      required int trackId,
+      required String title,
+      required String author,
+      required DateTime uploadedAt,
+      Value<String?> artworkUrl,
+      required int playbackCount,
+      required int duration,
+    });
+typedef $$CloudHistoryTableTableUpdateCompanionBuilder =
+    CloudHistoryTableCompanion Function({
+      Value<int> id,
+      Value<DateTime> createdAt,
+      Value<int> trackId,
+      Value<String> title,
+      Value<String> author,
+      Value<DateTime> uploadedAt,
+      Value<String?> artworkUrl,
+      Value<int> playbackCount,
+      Value<int> duration,
+    });
+
+class $$CloudHistoryTableTableFilterComposer
+    extends Composer<_$AppDatabase, $CloudHistoryTableTable> {
+  $$CloudHistoryTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get author => $composableBuilder(
+    column: $table.author,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get uploadedAt => $composableBuilder(
+    column: $table.uploadedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get artworkUrl => $composableBuilder(
+    column: $table.artworkUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get playbackCount => $composableBuilder(
+    column: $table.playbackCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get duration => $composableBuilder(
+    column: $table.duration,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CloudHistoryTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $CloudHistoryTableTable> {
+  $$CloudHistoryTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get author => $composableBuilder(
+    column: $table.author,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get uploadedAt => $composableBuilder(
+    column: $table.uploadedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get artworkUrl => $composableBuilder(
+    column: $table.artworkUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get playbackCount => $composableBuilder(
+    column: $table.playbackCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get duration => $composableBuilder(
+    column: $table.duration,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CloudHistoryTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CloudHistoryTableTable> {
+  $$CloudHistoryTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get trackId =>
+      $composableBuilder(column: $table.trackId, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get author =>
+      $composableBuilder(column: $table.author, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get uploadedAt => $composableBuilder(
+    column: $table.uploadedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get artworkUrl => $composableBuilder(
+    column: $table.artworkUrl,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get playbackCount => $composableBuilder(
+    column: $table.playbackCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get duration =>
+      $composableBuilder(column: $table.duration, builder: (column) => column);
+}
+
+class $$CloudHistoryTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CloudHistoryTableTable,
+          CloudHistoryTableData,
+          $$CloudHistoryTableTableFilterComposer,
+          $$CloudHistoryTableTableOrderingComposer,
+          $$CloudHistoryTableTableAnnotationComposer,
+          $$CloudHistoryTableTableCreateCompanionBuilder,
+          $$CloudHistoryTableTableUpdateCompanionBuilder,
+          (
+            CloudHistoryTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $CloudHistoryTableTable,
+              CloudHistoryTableData
+            >,
+          ),
+          CloudHistoryTableData,
+          PrefetchHooks Function()
+        > {
+  $$CloudHistoryTableTableTableManager(
+    _$AppDatabase db,
+    $CloudHistoryTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CloudHistoryTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CloudHistoryTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CloudHistoryTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> trackId = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> author = const Value.absent(),
+                Value<DateTime> uploadedAt = const Value.absent(),
+                Value<String?> artworkUrl = const Value.absent(),
+                Value<int> playbackCount = const Value.absent(),
+                Value<int> duration = const Value.absent(),
+              }) => CloudHistoryTableCompanion(
+                id: id,
+                createdAt: createdAt,
+                trackId: trackId,
+                title: title,
+                author: author,
+                uploadedAt: uploadedAt,
+                artworkUrl: artworkUrl,
+                playbackCount: playbackCount,
+                duration: duration,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                required int trackId,
+                required String title,
+                required String author,
+                required DateTime uploadedAt,
+                Value<String?> artworkUrl = const Value.absent(),
+                required int playbackCount,
+                required int duration,
+              }) => CloudHistoryTableCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                trackId: trackId,
+                title: title,
+                author: author,
+                uploadedAt: uploadedAt,
+                artworkUrl: artworkUrl,
+                playbackCount: playbackCount,
+                duration: duration,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CloudHistoryTableTable, CloudHistoryTableData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CloudHistoryTableTable,
+                    CloudHistoryTableData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CloudHistoryTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CloudHistoryTableTable,
+      CloudHistoryTableData,
+      $$CloudHistoryTableTableFilterComposer,
+      $$CloudHistoryTableTableOrderingComposer,
+      $$CloudHistoryTableTableAnnotationComposer,
+      $$CloudHistoryTableTableCreateCompanionBuilder,
+      $$CloudHistoryTableTableUpdateCompanionBuilder,
+      (
+        CloudHistoryTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $CloudHistoryTableTable,
+          CloudHistoryTableData
+        >,
+      ),
+      CloudHistoryTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3294,4 +4194,6 @@ class $AppDatabaseManager {
         _db,
         _db.streamSubscriptionTable,
       );
+  $$CloudHistoryTableTableTableManager get cloudHistoryTable =>
+      $$CloudHistoryTableTableTableManager(_db, _db.cloudHistoryTable);
 }

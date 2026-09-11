@@ -17,4 +17,20 @@ class GetCloudUseCase implements UseCase {
   }) async {
     return await _cloudRepository.search(queryText, filter);
   }
+
+  Future<List<CloudTrack>> getPlaybackHistory() async {
+    return await _cloudRepository.getPlaybackHistory();
+  }
+
+  Future<bool> addToHistory(CloudTrack track) async {
+    return await _cloudRepository.addToHistory(track);
+  }
+
+  Future<bool> removeFromHistory(CloudTrack track) async {
+    return await _cloudRepository.removeFromHistory(track);
+  }
+
+  Future<bool> clearHistory() async {
+    return await _cloudRepository.clearHistory();
+  }
 }

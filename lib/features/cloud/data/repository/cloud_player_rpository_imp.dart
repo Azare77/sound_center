@@ -165,7 +165,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     await PlayerStateStorage.saveLastCloudTrack(_currentTrack!);
     await PlayerStateStorage.saveSource(AudioSource.cloud);
     await _playerService.play();
-    bloc.add(AutoPlay());
+    bloc.add(AddToHistory(track: _currentTrack!));
     unawaited(_precacheAdjacentTracks(index));
   }
 

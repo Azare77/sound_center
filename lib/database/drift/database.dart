@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -11,6 +12,7 @@ import 'local/playlist.dart';
 import 'podcast/download.dart';
 import 'podcast/subscription.dart';
 import 'stream/stream_subscription.dart';
+import 'cloud/cloud_history.dart';
 
 part 'database.g.dart';
 
@@ -21,6 +23,7 @@ part 'database.g.dart';
     SubscriptionTable,
     DownloadTable,
     StreamSubscriptionTable,
+    CloudHistoryTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -31,7 +34,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnectionSync());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -56,6 +59,9 @@ class AppDatabase extends _$AppDatabase {
         ON stream_subscription_table(uuid)
         WHERE uuid IS NOT NULL;
       ''');
+      }
+      if (from < 4) {
+        await m.createTable(cloudHistoryTable);
       }
     },
   );

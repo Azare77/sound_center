@@ -25,9 +25,9 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
     player.init();
 
     on<LoadHistory>((event, emit) async {
-      emit(
-        state.copyWith(CloudHistory(CloudEntity(playlists: [], tracks: []))),
-      );
+      final res = await getCloudUseCase.getPlaybackHistory();
+      final status = CloudHistory(CloudEntity(playlists: [], tracks: res));
+      emit(state.copyWith(status));
     });
     on<PlayTrack>((event, emit) async {
       player.setPlayList(event.tracks);
@@ -62,6 +62,19 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
         emit(state.copyWith(SearchResultStatus(searchResult: result)));
       }
     });
+
+    on<AddToHistory>((event, emit) async {
+      await getCloudUseCase.addToHistory(event.track);
+    });
+    on<RemoveFromHistory>((event, emit) async {
+      final res = await getCloudUseCase.removeFromHistory(event.track);
+      if (res) add(LoadHistory());
+    });
+    on<ClearHistory>((event, emit) async {
+      final res = await getCloudUseCase.clearHistory();
+      if (res) add(LoadHistory());
+    });
+
     add(LoadHistory());
   }
 }

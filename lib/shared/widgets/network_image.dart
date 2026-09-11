@@ -20,7 +20,7 @@ class NetworkCacheImage extends StatelessWidget {
     this.memCacheSize = 400,
     this.fit = BoxFit.cover,
     this.blur = 0,
-    this.highQuality = true,
+    this.highQuality = false,
   });
 
   final String? url;
@@ -60,7 +60,7 @@ class NetworkCacheImage extends StatelessWidget {
     }
     return 'https://images.weserv.nl/'
         '?url=${Uri.encodeComponent(resolved)}'
-        '&w=400&h=400&fit=cover&q=75&output=jpg';
+        '&w=500&h=500&fit=cover&q=75&output=jpg';
   }
 
   static String _cacheKey(String resolvedUrl, {required bool isHighQuality}) =>

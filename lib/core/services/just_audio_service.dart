@@ -100,6 +100,7 @@ class JustAudioService {
   }
 
   int _requestId = 0;
+  Completer<void>? _cancelCompleter;
 
   Future<bool> setSource(
     String path,
@@ -109,6 +110,20 @@ class JustAudioService {
   }) async {
     final int myId = ++_requestId;
     bool isStale() => myId != _requestId;
+
+    // هر request قبلی رو همین الان کنسل کن — مهم نیست کجای اجراش باشه
+    _cancelCompleter?.complete();
+    final myCancelCompleter = Completer<void>();
+    _cancelCompleter = myCancelCompleter;
+
+    Future<T> cancellable<T>(Future<T> future) {
+      return Future.any<T>([
+        future,
+        myCancelCompleter.future.then(
+          (_) => throw const _StaleSourceException(),
+        ),
+      ]);
+    }
 
     if (_loadingSource) {
       try {
@@ -136,39 +151,40 @@ class JustAudioService {
 
       switch (source) {
         case AudioSource.local:
-          await _player.setFilePath(path);
+          await cancellable(_player.setFilePath(path));
           break;
 
         case AudioSource.podcast:
           if (cachedFilePath != null) {
-            await _player.setFilePath(cachedFilePath);
+            await cancellable(_player.setFilePath(cachedFilePath));
           } else {
-            final proxyUrl = await _podcastProxy.startProxy(path);
+            final proxyUrl = await cancellable(_podcastProxy.startProxy(path));
             if (isStale()) return false;
-            await _player.setUrl(proxyUrl).timeout(const Duration(seconds: 30));
+            await cancellable(
+              _player.setUrl(proxyUrl),
+            ).timeout(const Duration(seconds: 30));
           }
           break;
 
         case AudioSource.stream:
-          final proxyUrl = await _streamProxy.startProxy(path);
+          final proxyUrl = await cancellable(_streamProxy.startProxy(path));
           if (isStale()) return false;
           final audioSource = ProgressiveAudioSource(
             Uri.parse(proxyUrl),
             headers: {'Icy-MetaData': '1', 'Connection': 'close'},
           );
-          await _player
-              .setAudioSource(audioSource)
-              .timeout(const Duration(seconds: 30));
+          await cancellable(
+            _player.setAudioSource(audioSource),
+          ).timeout(const Duration(seconds: 30));
           break;
 
         case AudioSource.cloud:
-          await _player.setUrl(path).timeout(const Duration(seconds: 30));
+          await cancellable(
+            _player.setUrl(path),
+          ).timeout(const Duration(seconds: 30));
           break;
       }
 
-      // لایه‌ی دفاعی نهایی: اگه با وجود stop() اولیه، باز هم یک درخواست
-      // جدیدتر در حین این عملیات رسیده و ما نتونستیم جلوشو بگیریم،
-      // نباید بذاریم این نتیجه‌ی "قدیمی" روی player بمونه.
       if (isStale()) {
         await release();
         return false;
@@ -179,6 +195,8 @@ class JustAudioService {
       _loadingController.add(isLoading());
       onSourceSet?.call();
       return true;
+    } on _StaleSourceException {
+      return false;
     } catch (e) {
       debugPrint('خطا در setSource: $e');
       if (isStale()) return false;
@@ -186,6 +204,11 @@ class JustAudioService {
       if (source != _source) return false;
       await release();
       return false;
+    } finally {
+      // فقط اگه Completer خودمونه پاکش کن، نه Completer یه request جدیدتر
+      if (identical(_cancelCompleter, myCancelCompleter)) {
+        _cancelCompleter = null;
+      }
     }
   }
 
@@ -279,6 +302,10 @@ class JustAudioService {
     return true;
   }
 
+  void setSourceByForce(AudioSource source) {
+    _source = source;
+  }
+
   // ========= error handling & advancing logic =========
   Future<void> _handlePlaybackError(String error) async {
     if (_handlingError) {
@@ -299,6 +326,10 @@ class JustAudioService {
     await Future.delayed(const Duration(milliseconds: 200));
     _handlingError = false;
   }
+}
+
+class _StaleSourceException implements Exception {
+  const _StaleSourceException();
 }
 
 class PodcastProxy {

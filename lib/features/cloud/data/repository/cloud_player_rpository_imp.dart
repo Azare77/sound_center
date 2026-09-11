@@ -151,11 +151,11 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _tracks[index],
       file?.uri,
     );
+    _restoredFromStorage = false;
+    _playerService.setSourceByForce(AudioSource.cloud);
     await _playerService.pause();
     final String? trackUrl = await getTrackUrl(_currentTrack!);
-    if (trackUrl == null) {
-      return;
-    }
+    if (trackUrl == null || !hasSource()) return;
     bool allowToPlay = await _playerService.setSource(
       trackUrl,
       AudioSource.cloud,
@@ -165,7 +165,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     await PlayerStateStorage.saveLastCloudTrack(_currentTrack!);
     await PlayerStateStorage.saveSource(AudioSource.cloud);
     await _playerService.play();
-    bloc.add(AddToHistory(track: _currentTrack!));
+    bloc.add(AutoPlay());
     unawaited(_precacheAdjacentTracks(index));
   }
 

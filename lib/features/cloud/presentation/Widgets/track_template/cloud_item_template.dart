@@ -93,10 +93,24 @@ class CloudItemTemplate extends StatelessWidget {
                       style: infoTextStyle,
                     ),
                     if (item.playCount > 0)
-                      Text(
-                        "▶ ${formatNumber(item.playCount)}",
+                      Directionality(
                         textDirection: TextDirection.ltr,
-                        style: infoTextStyle,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.play_arrow,
+                              size: 16,
+                              color: infoTextStyle.color,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              formatNumber(item.playCount),
+                              textDirection: TextDirection.ltr,
+                              style: infoTextStyle,
+                            ),
+                          ],
+                        ),
                       ),
                   ],
                 ),

@@ -1,17 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:background_downloader/background_downloader.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/constants.dart';
+import 'package:sound_center/core/services/hls_downloader.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/podcast/domain/entity/downloaded_episode_entity.dart';
@@ -166,8 +165,6 @@ class PodcastDownloader {
     return success ? task : null;
   }
 
-  /// دانلود ترک ابری با فرمت m3u8 و انتقال آن به حافظه اشتراکی موسیقی.
-  ///
   /// این تسک هیچ‌وقت با `_downloader.enqueue()` وارد موتور native نمی‌شه؛
   /// دانلود واقعی به‌صورت دستی توسط [HlsDownloader] انجام می‌شه. برای
   /// pause/resume واقعی از `pauseCloudDownload`/`resumeCloudDownload`
@@ -182,18 +179,18 @@ class PodcastDownloader {
     print("🚀 [PodcastDownloader] شروع متد و بازگشت فوری تسک");
 
     final tempDir = await getTemporaryDirectory();
-    final tempPath = '${tempDir.path}/Cloud/$key.mp3';
+    final tempPath = '${tempDir.path}/Cloud/$key.m4a';
     await Directory('${tempDir.path}/Cloud').create(recursive: true);
 
-    _downloads['$key.mp3'] = track;
+    _downloads['$key.m4a'] = track;
 
     final task = DownloadTask(
       url: m3u8Url,
-      filename: '$key.mp3',
+      filename: '$key.m4a',
       directory: 'Cloud',
       baseDirectory: BaseDirectory.temporary,
       group: 'cloud',
-      metaData: '$key.mp3',
+      metaData: '$key.m4a',
     );
 
     _cloudStates[key] = CloudDownloadState(
@@ -245,9 +242,9 @@ class PodcastDownloader {
 
         // 🔄 Find a unique filename on Desktop by auto-incrementing
         int counter = 1;
-        String uniquePath = '${destDir.path}/$key.mp3';
+        String uniquePath = '${destDir.path}/$key.m4a';
         while (await File(uniquePath).exists()) {
-          uniquePath = '${destDir.path}/$key ($counter).mp3';
+          uniquePath = '${destDir.path}/$key ($counter).m4a';
           counter++;
         }
 
@@ -262,7 +259,7 @@ class PodcastDownloader {
 
         final fileDir = file.parent.path;
         while (await File(uniqueTempPath).exists() && counter > 1) {
-          uniqueTempPath = '$fileDir/$key ($counter).mp3';
+          uniqueTempPath = '$fileDir/$key ($counter).m4a';
           counter++;
         }
 
@@ -369,123 +366,5 @@ class PodcastDownloader {
       bloc.add(DownloadEpisode(downloadEntity));
       _downloads.remove(task.metaData);
     }
-  }
-}
-
-class HlsDownloader {
-  /// دانلود کامل یک استریم HLS با متد دانلود موازی برای افزایش سرعت چشمگیر.
-  ///
-  /// [waitIfPaused] در ابتدای هر iteration ورکر await می‌شه؛ اگه pause شده
-  /// باشه، ورکر همون‌جا معلق می‌مونه تا resume صدا زده بشه، بدون این‌که
-  /// segmentهایی که تا اون لحظه دانلود شدن از دست برن.
-  static Future<File> downloadAndMux({
-    required String m3u8Url,
-    required String outputPath,
-    required Function(double) onProgress,
-    Future<void> Function()? waitIfPaused,
-  }) async {
-    print('🌐 [HlsDownloader] دریافت مانیفست m3u8...');
-    final playlistResp = await http.get(Uri.parse(m3u8Url));
-    if (playlistResp.statusCode != 200) {
-      throw Exception('دریافت پلی‌لیست ناموفق بود: ${playlistResp.statusCode}');
-    }
-    final lines = const LineSplitter().convert(playlistResp.body);
-
-    String? initUrl;
-    final segmentUrls = <String>[];
-
-    for (final line in lines) {
-      if (line.startsWith('#EXT-X-MAP:URI=')) {
-        final match = RegExp(r'URI="([^"]+)"').firstMatch(line);
-        if (match != null) initUrl = match.group(1);
-      } else if (line.isNotEmpty && !line.startsWith('#')) {
-        segmentUrls.add(line);
-      }
-    }
-
-    if (initUrl == null || segmentUrls.isEmpty) {
-      throw Exception('پلی‌لیست معتبر نیست یا سگمنتی پیدا نشد');
-    }
-
-    print(
-      '📦 [HlsDownloader] تعداد کل سگمنت‌ها: ${segmentUrls.length}. شروع دانلود موازی...',
-    );
-
-    // ۱) دانلود فورا و مستقیم Init Segment
-    final initBytes = await _fetchBytes(initUrl);
-    onProgress(0.05);
-
-    // ۲) تعریف آرایه برای نگهداری سگمنت‌های دانلود شده با حفظ ترتیب دیسک
-    final downloadedSegments = List<List<int>?>.filled(
-      segmentUrls.length,
-      null,
-    );
-    int completedCount = 0;
-
-    // ۳) تنظیم میزان همزمانی (مثلا دانلود همزمان 8 سگمنت با هم)
-    const int maxConcurrentDownloads = 8;
-    int currentTaskIndex = 0;
-
-    // تابع کمکی برای مدیریت صف موازی
-    Future<void> worker() async {
-      while (currentTaskIndex < segmentUrls.length) {
-        // اگه pause شده، همین‌جا معلق می‌مونه تا resume بشه؛ segment بعدی
-        // رو شروع نمی‌کنه ولی segmentهای در حال دانلود فعلی رو کنسل نمی‌کنه.
-        await waitIfPaused?.call();
-
-        final index = currentTaskIndex++;
-        final url = segmentUrls[index];
-
-        try {
-          final bytes = await _fetchBytes(url);
-          downloadedSegments[index] = bytes;
-          completedCount++;
-
-          // آپدیت درصد پیشرفت به صورت زنده
-          double progressRatio =
-              0.05 + (completedCount / segmentUrls.length) * 0.95;
-          onProgress(progressRatio);
-        } catch (e) {
-          print('❌ خطا در دانلود سگمنت شماره $index: $e');
-          rethrow;
-        }
-      }
-    }
-
-    // شروع کار ورکرها به صورت همزمان
-    final workers = List.generate(maxConcurrentDownloads, (_) => worker());
-
-    // انتظار برای اتمام دانلود تمام سگمنت‌ها
-    await Future.wait(workers);
-
-    // ۴) نوشتن همگی در فایل خروجی به ترتیب کاملا درست مانیفست
-    print(
-      '💾 [HlsDownloader] تمام پارت‌ها دانلود شدند. در حال سرهم‌بندی (Mux) روی دیسک...',
-    );
-    final outFile = File(outputPath);
-    final sink = outFile.openWrite();
-
-    try {
-      sink.add(initBytes); // اول ftyp+moov
-      for (final segmentBytes in downloadedSegments) {
-        if (segmentBytes != null) {
-          sink.add(segmentBytes);
-        }
-      }
-    } finally {
-      await sink.flush();
-      await sink.close();
-      print('✨ [HlsDownloader] فایل نهایی با موفقیت ساخته شد.');
-    }
-
-    return outFile;
-  }
-
-  static Future<List<int>> _fetchBytes(String url) async {
-    final resp = await http.get(Uri.parse(url));
-    if (resp.statusCode != 200) {
-      throw Exception('دانلود سگمنت ناموفق: (${resp.statusCode})');
-    }
-    return resp.bodyBytes;
   }
 }

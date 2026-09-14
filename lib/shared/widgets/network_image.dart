@@ -20,7 +20,7 @@ class NetworkCacheImage extends StatelessWidget {
     this.memCacheSize = 400,
     this.fit = BoxFit.cover,
     this.blur = 0,
-    this.highQuality = false,
+    this.highQuality = true,
   });
 
   final String? url;

@@ -232,6 +232,7 @@ class _HomeState extends State<Home>
             label: const SizedBox.shrink(),
             backgroundColor: Colors.red,
             isLabelVisible: showBadge,
+            alignment: Alignment.topRight,
             child: AnimatedRotation(
               turns: _menuOpen ? 0.125 : 0,
               duration: _menuDuration,

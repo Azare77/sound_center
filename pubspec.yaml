@@ -33,17 +33,17 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  material_ui: ^1.0.1
+  material_ui: ^1.3.0
   intl: ^0.20.3
   collection: ^1.19.1
   #GET AUDIO DATA FROM DISK
-  permission_handler: ^13.0.1
+  permission_handler: ^13.0.2
   on_audio_query:
     git:
       url: https://github.com/Azare77/on_audio_query
       path: packages/on_audio_query
       ref: main
-  audio_metadata_reader: ^1.7.1
+  audio_metadata_reader: ^1.8.0
   #  media_store_plus: ^0.1.3
   android_media_store: ^0.0.4
   #STATE MANAGEMENT
@@ -57,7 +57,7 @@ dependencies:
   audio_service_mpris: ^0.2.1
   #  mpv_audio_kit: ^0.0.9
   #DATABASE
-  drift: ^2.34.3
+  drift: ^2.35.0
   drift_flutter: ^0.3.1
   path_provider: ^2.1.6
   shared_preferences: ^2.5.5
@@ -69,31 +69,31 @@ dependencies:
   toastification: ^3.2.0
   flutter_colorpicker: ^1.1.0
   #PODCAST
-  podcast_search: ^0.7.15
-  cached_network_image: ^3.4.1
-  background_downloader: ^9.5.8
+  podcast_search:
+    git:
+      url: https://github.com/BerkayOez/podcast_search
+      ref: fix/missing_dio_exception_type
+  cached_network_image: ^4.0.0
+  background_downloader: ^9.6.2
   #STREAM
   radio_browser_api: ^2.1.0
   #Cloud
   soundcloud_explode_dart:
-    path: ../flutter_packages/soundcloud_explode_dart
+    git:
+      url: https://github.com/Azare77/soundcloud_explode_dart
+      ref: main
   #SHARE
   app_links: ^7.2.1
   share_plus: ^13.3.0
-  file_picker: ^12.1.0
+  file_picker: ^13.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  drift_dev: ^2.34.5
-  build_runner: ^2.16.0
+  drift_dev: ^2.35.0
+  build_runner: ^2.16.1
   mocktail: ^1.0.5
   flutter_launcher_icons: "^0.14.4"
-
-dependency_overrides:
-  dio: 5.9.2
-  html: 0.15.6
-  #  win32: 5.9.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -101,6 +101,9 @@ dependency_overrides:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   intl_utils: ^2.8.12
+dependency_overrides:
+  html: 0.15.6
+  #  dio: 5.9.2
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: true

@@ -6,6 +6,7 @@ import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_item_template.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/pages/playlist_info/playlist_detail.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
@@ -27,7 +28,7 @@ class CloudListTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     final playerRepo = CloudPlayerRepositoryImp();
     if (items.playlists.isEmpty && items.tracks.isEmpty) {
-      return const Center(child: TextView("No History"));
+      return Center(child: TextView(S.of(context).noHistory));
     }
     final currentAudio = playerRepo.getCurrentTrack;
     final bool hasTracks = items.tracks.isNotEmpty;
@@ -39,14 +40,14 @@ class CloudListTemplate extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         if (hasPlaylists) ...[
-          const SliverPadding(
-            padding: EdgeInsetsDirectional.only(
+          SliverPadding(
+            padding: const EdgeInsetsDirectional.only(
               start: 8.0,
               top: 8.0,
               bottom: 6.0,
             ),
             sliver: SliverToBoxAdapter(
-              child: Text("Playlists", style: _sectionTitleStyle),
+              child: Text(S.of(context).playlists, style: _sectionTitleStyle),
             ),
           ),
           if (!hasTracks)
@@ -94,10 +95,10 @@ class CloudListTemplate extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: _sectionSpacing)),
         ],
         if (hasTracks) ...[
-          const SliverPadding(
-            padding: EdgeInsetsDirectional.only(start: 8.0, bottom: 6.0),
+          SliverPadding(
+            padding: const EdgeInsetsDirectional.only(start: 8.0, bottom: 6.0),
             sliver: SliverToBoxAdapter(
-              child: Text("Tracks", style: _sectionTitleStyle),
+              child: Text(S.of(context).tracks, style: _sectionTitleStyle),
             ),
           ),
           SliverFixedExtentList(

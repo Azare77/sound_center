@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "STREAM_NAMES": MessageLookupByLibrary.simpleMessage(
+      "----------------- STREAM NAMES ----------------",
+    ),
     "THEME_NAMES": MessageLookupByLibrary.simpleMessage(
       "----------------- THEM NAMES ----------------",
     ),
@@ -47,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "بررسی به‌روزرسانی از طریق GitHub",
     ),
     "clicks": MessageLookupByLibrary.simpleMessage("کلیک ها"),
+    "cloud": MessageLookupByLibrary.simpleMessage("SoundCloud"),
     "copy": MessageLookupByLibrary.simpleMessage("کپی تم"),
     "country": MessageLookupByLibrary.simpleMessage("کشور"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("ساخت تم جدید"),
@@ -97,6 +101,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no": MessageLookupByLibrary.simpleMessage("نه"),
     "noAudio": MessageLookupByLibrary.simpleMessage("بدون موسیقی!!"),
+    "noDrmFreeMusic": MessageLookupByLibrary.simpleMessage(
+      "موزیک آزاد و بدون قفل DRM وجود ندارد",
+    ),
+    "noHistory": MessageLookupByLibrary.simpleMessage("بدون تاریخچه"),
     "noPodcast": MessageLookupByLibrary.simpleMessage("بدون پادکست"),
     "noStream": MessageLookupByLibrary.simpleMessage("استریمی وجود ندارد"),
     "notification": MessageLookupByLibrary.simpleMessage("اعلان ها"),
@@ -104,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "oldestFirst": MessageLookupByLibrary.simpleMessage("قدیمی ترین"),
     "play": MessageLookupByLibrary.simpleMessage("پخش"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("سرعت پخش"),
+    "playlists": MessageLookupByLibrary.simpleMessage("فهرست‌های پخش"),
     "podcast": MessageLookupByLibrary.simpleMessage("پادکست"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("سرویس دهنده پادکست"),
     "purple": MessageLookupByLibrary.simpleMessage("بنفش"),
@@ -136,6 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "thumbColor": MessageLookupByLibrary.simpleMessage("اسلایدر"),
     "title": MessageLookupByLibrary.simpleMessage("عنوان"),
+    "tracks": MessageLookupByLibrary.simpleMessage("آهنگ‌ها"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("لغو اشتراک"),
     "updateNow": MessageLookupByLibrary.simpleMessage("به‌روزرسانی"),
     "urlLink": MessageLookupByLibrary.simpleMessage("لینک استریم"),

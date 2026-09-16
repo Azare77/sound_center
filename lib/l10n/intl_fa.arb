@@ -89,5 +89,11 @@
   "importData": "وارد کردن داده‌ها",
   "backupRestoredSuccessfully": "داده‌ها با موفقیت بازیابی شدند.",
   "backupPartiallyRestoredSomeDataCouldNotBeImported": "بازیابی داده‌ها به طور کامل انجام نشد.",
-  "failedToRestoreBackup": "بازیابی داده‌ها ناموفق بود."
+  "failedToRestoreBackup": "بازیابی داده‌ها ناموفق بود.",
+  "STREAM_NAMES": "----------------- STREAM NAMES ----------------",
+  "cloud": "SoundCloud",
+  "noDrmFreeMusic": "موزیک آزاد و بدون قفل DRM وجود ندارد",
+  "noHistory": "بدون تاریخچه",
+  "playlists": "فهرست‌های پخش",
+  "tracks": "آهنگ‌ها"
 }

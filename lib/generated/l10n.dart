@@ -658,6 +658,46 @@ class S {
       args: [],
     );
   }
+
+  /// `----------------- STREAM NAMES ----------------`
+  String get STREAM_NAMES {
+    return Intl.message(
+      '----------------- STREAM NAMES ----------------',
+      name: 'STREAM_NAMES',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SoundCloud`
+  String get cloud {
+    return Intl.message('SoundCloud', name: 'cloud', desc: '', args: []);
+  }
+
+  /// `NO DRM FREE MUSIC`
+  String get noDrmFreeMusic {
+    return Intl.message(
+      'NO DRM FREE MUSIC',
+      name: 'noDrmFreeMusic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No History`
+  String get noHistory {
+    return Intl.message('No History', name: 'noHistory', desc: '', args: []);
+  }
+
+  /// `Playlists`
+  String get playlists {
+    return Intl.message('Playlists', name: 'playlists', desc: '', args: []);
+  }
+
+  /// `Tracks`
+  String get tracks {
+    return Intl.message('Tracks', name: 'tracks', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

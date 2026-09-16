@@ -12,6 +12,7 @@ import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/pages/playlist_info/playlist_info.dart';
 import 'package:sound_center/features/cloud/presentation/pages/playlist_info/track_tool_bar.dart';
 import 'package:sound_center/features/cloud/presentation/pages/playlist_info/tracks.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class PlaylistDetail extends StatefulWidget {
@@ -137,7 +138,9 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                     : tracks.isNotEmpty && initialized
                     ? Tracks(tracks: tracks, bestImageUrl: image)
                     : SliverFillRemaining(
-                        child: Center(child: Text("NO DRF FREE MUSIC")),
+                        child: Center(
+                          child: Text(S.of(context).noDrmFreeMusic),
+                        ),
                       ),
               ],
             ),

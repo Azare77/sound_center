@@ -5,7 +5,6 @@ import 'package:sound_center/features/cloud/data/repository/cloud_player_rposito
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_item_template.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
-import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
 class Tracks extends StatefulWidget {
   const Tracks({super.key, required this.tracks, this.bestImageUrl});

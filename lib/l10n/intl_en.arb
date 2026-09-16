@@ -89,5 +89,11 @@
   "importData": "Import Data",
   "backupRestoredSuccessfully": "Backup restored successfully.",
   "backupPartiallyRestoredSomeDataCouldNotBeImported": "Backup partially restored. Some data could not be imported.",
-  "failedToRestoreBackup": "Failed to restore backup."
+  "failedToRestoreBackup": "Failed to restore backup.",
+  "STREAM_NAMES": "----------------- STREAM NAMES ----------------",
+  "cloud": "SoundCloud",
+  "noDrmFreeMusic": "NO DRM FREE MUSIC",
+  "noHistory": "No History",
+  "playlists": "Playlists",
+  "tracks": "Tracks"
 }

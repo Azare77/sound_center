@@ -114,8 +114,7 @@ class _HomeState extends State<Home>
         badge: hasNewEpisode,
       ),
       (icon: Icons.radio_rounded, title: S.of(context).stream, badge: false),
-      // TODO: کلید `cloud` را به l10n اضافه کن و این literal را با S.of(context).cloud عوض کن.
-      (icon: Icons.cloud_rounded, title: 'Cloud', badge: false),
+      (icon: Icons.cloud_rounded, title: S.of(context).cloud, badge: false),
     ];
   }
 

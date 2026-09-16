@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "STREAM_NAMES": MessageLookupByLibrary.simpleMessage(
+      "----------------- STREAM NAMES ----------------",
+    ),
     "THEME_NAMES": MessageLookupByLibrary.simpleMessage(
       "----------------- THEM NAMES ----------------",
     ),
@@ -47,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Check for Updates via GitHub",
     ),
     "clicks": MessageLookupByLibrary.simpleMessage("Clicks"),
+    "cloud": MessageLookupByLibrary.simpleMessage("SoundCloud"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),
     "country": MessageLookupByLibrary.simpleMessage("Country"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("Create New Theme"),
@@ -99,6 +103,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noAudio": MessageLookupByLibrary.simpleMessage("NO AUDIO!!"),
+    "noDrmFreeMusic": MessageLookupByLibrary.simpleMessage("NO DRM FREE MUSIC"),
+    "noHistory": MessageLookupByLibrary.simpleMessage("No History"),
     "noPodcast": MessageLookupByLibrary.simpleMessage("NO PODCAST"),
     "noStream": MessageLookupByLibrary.simpleMessage("No Stream"),
     "notification": MessageLookupByLibrary.simpleMessage("Notification"),
@@ -106,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "oldestFirst": MessageLookupByLibrary.simpleMessage("Oldest First"),
     "play": MessageLookupByLibrary.simpleMessage("Play"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("Play Speed"),
+    "playlists": MessageLookupByLibrary.simpleMessage("Playlists"),
     "podcast": MessageLookupByLibrary.simpleMessage("Podcast"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("Podcast Api"),
     "purple": MessageLookupByLibrary.simpleMessage("Purple"),
@@ -140,6 +147,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "thumbColor": MessageLookupByLibrary.simpleMessage("Slider"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
+    "tracks": MessageLookupByLibrary.simpleMessage("Tracks"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("Unsubscribe"),
     "updateNow": MessageLookupByLibrary.simpleMessage("Update Now"),
     "urlLink": MessageLookupByLibrary.simpleMessage("Url Link"),

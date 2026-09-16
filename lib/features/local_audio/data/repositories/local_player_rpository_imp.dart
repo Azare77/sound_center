@@ -24,6 +24,10 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     _initialPlayerState();
   }
 
+  final _audioChangedController = StreamController<AudioEntity?>.broadcast();
+
+  Stream<AudioEntity?> get audioChangedStream => _audioChangedController.stream;
+
   final JustAudioService _playerService = JustAudioService();
 
   void init() async {
@@ -37,6 +41,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
         _currentAudio!.path,
         AudioSource.local,
       );
+      _audioChangedController.add(_currentAudio);
       if (!res) return;
       int position = PlayerStateStorage.getLastPosition();
       await _playerService.seek(Duration(milliseconds: position));
@@ -171,6 +176,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
     if (!res) return;
     this.index = index;
     _currentAudio = audios[index];
+    _audioChangedController.add(_currentAudio);
     if (direct && shuffleMode == ShuffleMode.shuffle) {
       _shuffleAudios();
     }
@@ -229,12 +235,14 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> togglePlayState() async {
+    _audioChangedController.add(_currentAudio);
     bloc.add(TogglePlay());
     await _playerService.togglePlaying();
   }
 
   @override
   Future<void> stop() async {
+    _audioChangedController.add(null);
     await _playerService.release();
     bloc.add(TogglePlay());
   }

@@ -38,6 +38,9 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   final _positionController = StreamController<int>.broadcast();
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
+  final _streamChangedController = StreamController<dynamic>.broadcast();
+
+  Stream<dynamic> get streamChangedStream => _streamChangedController.stream;
 
   Stream<int> get positionStream => _positionController.stream;
 
@@ -137,6 +140,8 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   Future<void> play(int _, {bool direct = false}) async {
     _retryCount = 0;
     _currentStream = _playList[0];
+    _playerService.setSourceByForce(AudioSource.stream);
+    _streamChangedController.add(_currentStream);
     late final String url;
     late final String title;
     Duration? duration;
@@ -210,15 +215,15 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   Future<void> togglePlayState() async {
     if (_currentStream is AudioModel) {
       await _playerService.togglePlaying();
-      bloc.add(TogglePlay());
-      return;
-    }
-    if (isPlaying()) {
-      await stop();
-      bloc.add(TogglePlay());
     } else {
-      bloc.add(PlayStream(_currentStream));
+      if (isPlaying()) {
+        await stop();
+      } else {
+        bloc.add(PlayStream(_currentStream));
+      }
     }
+    _streamChangedController.add(_currentStream);
+    bloc.add(TogglePlay());
   }
 
   @override
@@ -227,6 +232,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     _cancelIcyListener();
     _updateTimer?.cancel();
     _updateTimer = null;
+    _streamChangedController.add(null);
     await _playerService.release();
     await Future.delayed(Duration(milliseconds: 100));
     bloc.add(TogglePlay());

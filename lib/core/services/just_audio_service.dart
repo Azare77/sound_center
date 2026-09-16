@@ -58,6 +58,11 @@ class JustAudioService {
 
   final _loadingController = StreamController<bool>.broadcast();
 
+  final _sourceChangedController = StreamController<AudioSource>.broadcast();
+
+  Stream<AudioSource> get sourceChangedStream =>
+      _sourceChangedController.stream;
+
   Stream<bool?> get processState => _loadingController.stream;
 
   AudioSource? get source => _source;
@@ -111,7 +116,6 @@ class JustAudioService {
     final int myId = ++_requestId;
     bool isStale() => myId != _requestId;
 
-    // هر request قبلی رو همین الان کنسل کن — مهم نیست کجای اجراش باشه
     _cancelCompleter?.complete();
     final myCancelCompleter = Completer<void>();
     _cancelCompleter = myCancelCompleter;
@@ -125,7 +129,15 @@ class JustAudioService {
       ]);
     }
 
-    if (_loadingSource) {
+    final bool wasLoading = _loadingSource;
+    final bool sourceChanged = source != _source;
+    _source = source;
+    _loadingSource = true;
+    _loadingController.add(true);
+    _sourceChangedController.add(source);
+    onSourceSet?.call();
+
+    if (wasLoading) {
       try {
         await _player.stop();
       } catch (_) {}
@@ -133,21 +145,17 @@ class JustAudioService {
     if (isStale()) return false;
 
     try {
-      if (source != _source) {
-        _source = source;
+      if (sourceChanged) {
         await release();
         await Future.delayed(const Duration(milliseconds: 100));
       }
 
       if (isStale()) return false;
-
-      await _streamProxy.stopProxy();
-      await _podcastProxy.stopProxy();
+      final timeout = const Duration(milliseconds: 800);
+      await _streamProxy.stopProxy().timeout(timeout);
+      await _podcastProxy.stopProxy().timeout(timeout);
 
       if (isStale()) return false;
-
-      _loadingSource = true;
-      onSourceSet?.call();
 
       switch (source) {
         case AudioSource.local:
@@ -201,11 +209,11 @@ class JustAudioService {
       debugPrint('خطا در setSource: $e');
       if (isStale()) return false;
       _loadingSource = false;
+      _loadingController.add(false);
       if (source != _source) return false;
       await release();
       return false;
     } finally {
-      // فقط اگه Completer خودمونه پاکش کن، نه Completer یه request جدیدتر
       if (identical(_cancelCompleter, myCancelCompleter)) {
         _cancelCompleter = null;
       }

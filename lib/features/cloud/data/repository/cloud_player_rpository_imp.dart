@@ -41,7 +41,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   final _positionController = StreamController<int>.broadcast();
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
-  final sc = SoundcloudClient();
+  final _trackChangedController = StreamController<CloudTrack?>.broadcast();
+
+  Stream<CloudTrack?> get trackChangedStream => _trackChangedController.stream;
 
   Stream<int> get positionStream => _positionController.stream;
 
@@ -51,6 +53,8 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
 
   late final CloudBloc bloc;
 
+  final sc = SoundcloudClient();
+
   Future<void> init() async {
     try {
       if (PlayerStateStorage.getSource() != AudioSource.cloud) return;
@@ -59,7 +63,8 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       if (_tracks.isEmpty) _tracks = [_currentTrack!];
       index = 0;
       _tracks[index] = _currentTrack!;
-      _restoredFromStorage = true;
+      _playerService.setSourceByForce(AudioSource.cloud);
+      _trackChangedController.add(_currentTrack);
       bloc.add(AutoPlay());
       File? file;
       try {
@@ -81,7 +86,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
         int position = PlayerStateStorage.getLastPosition();
         _playerService.seek(Duration(milliseconds: position));
       }
-      _restoredFromStorage = false;
       bloc.add(AutoPlay());
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
@@ -107,10 +111,8 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     return _playerService.isPlaying();
   }
 
-  bool _restoredFromStorage = false;
-
   bool hasSource() {
-    return _playerService.hasSource(AudioSource.cloud) || _restoredFromStorage;
+    return _playerService.hasSource(AudioSource.cloud);
   }
 
   void setBloc(CloudBloc bloc) {
@@ -140,7 +142,8 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
     _currentTrack = _tracks[index];
-    _loadingController.add(true);
+    _playerService.setSourceByForce(AudioSource.cloud);
+    _trackChangedController.add(_currentTrack);
     bloc.add(AutoPlay());
     File? file;
     try {
@@ -152,8 +155,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _tracks[index],
       file?.uri,
     );
-    _restoredFromStorage = false;
-    _playerService.setSourceByForce(AudioSource.cloud);
     await _playerService.pause();
     final String? trackUrl = await getTrackUrl(_currentTrack!);
     if (trackUrl == null || !hasSource()) return;
@@ -211,6 +212,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> togglePlayState() async {
+    _trackChangedController.add(_currentTrack);
     bloc.add(TogglePlay());
     await _playerService.togglePlaying();
   }
@@ -218,6 +220,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   @override
   Future<void> stop() async {
     _currentTrack = null;
+    _trackChangedController.add(null);
     await _playerService.release();
     bloc.add(TogglePlay());
   }

@@ -12,7 +12,9 @@ import 'package:sound_center/main.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 
-class PodcastPlayerRepositoryImp implements PlayerRepository {
+class PodcastPlayerRepositoryImp
+    with NowPlayingNotifier<Episode?>
+    implements PlayerRepository {
   static final PodcastPlayerRepositoryImp _instance =
       PodcastPlayerRepositoryImp._internal();
 
@@ -44,6 +46,9 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   final _positionController = StreamController<int>.broadcast();
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
+  final _episodeChangedController = StreamController<Episode?>.broadcast();
+
+  Stream<Episode?> get episodeChangedStream => _episodeChangedController.stream;
 
   Stream<int> get positionStream => _positionController.stream;
 
@@ -59,6 +64,9 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
       _currentEpisode = PlayerStateStorage.getLastEpisode();
       if (_currentEpisode == null) return;
       if (_episodes.isEmpty) _episodes = [_currentEpisode!];
+      _playerService.setSourceByForce(AudioSource.podcast);
+      _episodeChangedController.add(_currentEpisode);
+
       String key = _currentEpisode!.title.trim();
       if (_currentEpisode!.author != null) {
         key += "-${_currentEpisode!.author?.trim()}";
@@ -142,6 +150,9 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
     _retryCount = 0;
     this.index = index;
     _currentEpisode = _episodes[index];
+    _playerService.setSourceByForce(AudioSource.podcast);
+    _episodeChangedController.add(_currentEpisode);
+
     String key = _currentEpisode!.title.trim();
     if (_currentEpisode!.author != null) {
       key += "-${_currentEpisode!.author?.trim()}";
@@ -221,6 +232,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> togglePlayState() async {
+    _episodeChangedController.add(_currentEpisode);
     bloc.add(TogglePlay());
     await _playerService.togglePlaying();
   }
@@ -229,6 +241,7 @@ class PodcastPlayerRepositoryImp implements PlayerRepository {
   Future<void> stop() async {
     _retryCount = 0;
     _currentEpisode = null;
+    _episodeChangedController.add(null);
     await _playerService.release();
     bloc.add(TogglePlay());
   }

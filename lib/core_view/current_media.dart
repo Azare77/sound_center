@@ -1,28 +1,24 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/current_track.dart';
-import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/pages/play_track.dart'
     as cloud_page;
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/play_audio.dart'
     as audio_page;
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/current_audio.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
-import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/pages/play_podcast.dart'
     as podcast_page;
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/current_podcast.dart';
-import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
-import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/pages/play_stream.dart'
     as stream_page;
 import 'package:sound_center/features/stream/presentation/widgets/current_stream.dart';
@@ -47,18 +43,32 @@ class _CurrentMediaState extends State<CurrentMedia> {
   Widget? _currentPlayer;
   Widget? _playerPage;
 
+  late final List<StreamSubscription> _subs;
+
   @override
   void initState() {
     super.initState();
     _updatePlayer();
+    _subs = [
+      _localPlayer.audioChangedStream.listen((_) => _updatePlayer()),
+      _podcastPlayer.episodeChangedStream.listen((_) => _updatePlayer()),
+      _streamPlayer.streamChangedStream.listen((_) => _updatePlayer()),
+      _cloudPlayer.trackChangedStream.listen((_) => _updatePlayer()),
+    ];
+  }
+
+  @override
+  void dispose() {
+    for (final s in _subs) {
+      s.cancel();
+    }
+    super.dispose();
   }
 
   void _updatePlayer() {
     final newPlayer = _buildMediaPlayer();
     _playerPage ??= audio_page.PlayAudio();
-    if (newPlayer != null && !identical(_currentPlayer, newPlayer)) {
-      setState(() => _currentPlayer = newPlayer);
-    }
+    setState(() => _currentPlayer = newPlayer);
   }
 
   @override
@@ -75,7 +85,6 @@ class _CurrentMediaState extends State<CurrentMedia> {
       child: GestureDetector(
         onTap: () {
           if (_playerPage == null) return;
-
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
@@ -91,26 +100,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
             ),
           );
         },
-        child: MultiBlocListener(
-          listeners: [
-            BlocListener<LocalBloc, LocalState>(
-              listener: (_, _) => _updatePlayer(),
-            ),
-            BlocListener<PodcastBloc, PodcastState>(
-              listener: (_, _) => _updatePlayer(),
-            ),
-            BlocListener<StreamBloc, StreamState>(
-              listener: (_, _) => _updatePlayer(),
-            ),
-            BlocListener<CloudBloc, CloudState>(
-              listener: (_, _) => _updatePlayer(),
-            ),
-            BlocListener<SettingBloc, SettingState>(
-              listener: (_, _) => _updatePlayer(),
-            ),
-          ],
-          child: _currentPlayer ?? const SizedBox.shrink(),
-        ),
+        child: _currentPlayer ?? const SizedBox.shrink(),
       ),
     );
   }

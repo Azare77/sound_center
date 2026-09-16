@@ -72,7 +72,7 @@ class _CurrentTrackState extends State<CurrentTrack> {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        widget.track.author ?? "",
+        widget.track.author,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(

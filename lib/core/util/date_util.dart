@@ -49,8 +49,8 @@ String toJalali(DateTime date) {
   return '$jy/${jm.toString().padLeft(2, '0')}/${jd.toString().padLeft(2, '0')}';
 }
 
-String _toJalaliDateTime(DateTime date) {
-  final day = toJalali(date);
-  final time = DateFormat('HH:mm').format(date);
-  return "$day  $time";
-}
+// String _toJalaliDateTime(DateTime date) {
+//   final day = toJalali(date);
+//   final time = DateFormat('HH:mm').format(date);
+//   return "$day  $time";
+// }

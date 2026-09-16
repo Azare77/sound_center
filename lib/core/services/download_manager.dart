@@ -176,7 +176,6 @@ class DownloadManager {
   ) async {
     String key = track.title.trim();
     key += "-${track.author.trim()}";
-    print("🚀 [PodcastDownloader] شروع متد و بازگشت فوری تسک");
 
     final tempDir = await getTemporaryDirectory();
     final tempPath = '${tempDir.path}/Cloud/$key.m4a';
@@ -216,21 +215,20 @@ class DownloadManager {
     final pauseController = _cloudPauseControllers[key];
 
     try {
-      print("⏳ [PodcastDownloader] شروع دانلود سگمنت‌ها به صورت آسنکرون...");
       final file = await HlsDownloader.downloadAndMux(
         m3u8Url: m3u8Url,
         outputPath: tempPath,
         waitIfPaused: pauseController?.waitIfPaused,
         onProgress: (progress) {
-          print("📊 درصد پیشرفت ارسال شده به استریم: $progress");
           _cloudStates[key]?.progress = progress;
           _updateController.add(TaskProgressUpdate(task, progress));
         },
       );
 
-      print("pass Download");
       if (!await file.exists()) {
-        throw Exception("فایل صوتی به درستی دانلود یا ادغام نشده است.");
+        throw Exception(
+          "The audio file was not downloaded or merged correctly",
+        );
       }
 
       String? newFilePath;
@@ -251,7 +249,6 @@ class DownloadManager {
         final targetFile = File(uniquePath);
         await file.copy(targetFile.path);
         newFilePath = targetFile.path;
-        print("💾 Unique file saved on Desktop: $newFilePath");
       } else {
         // 🔄 Prepare a unique local temporary file name before moving to Scoped Storage on Mobile
         int counter = 1;
@@ -275,8 +272,6 @@ class DownloadManager {
         );
       }
 
-      print("newFilePath : $newFilePath");
-
       if (newFilePath != null) {
         _cloudStates[key]?.status = TaskStatus.complete;
         _cloudStates[key]?.progress = 1.0;
@@ -292,9 +287,7 @@ class DownloadManager {
       }
       final bloc = BlocProvider.of<LocalBloc>(NAVIGATOR_KEY.currentContext!);
       bloc.add(GetLocalAudios());
-      print("Finish");
     } catch (e) {
-      print("❌ خطا در دانلود پس‌زمینه کلاود: $e");
       _cloudStates[key]?.status = TaskStatus.failed;
       _updateController.add(TaskStatusUpdate(task, TaskStatus.failed));
     } finally {

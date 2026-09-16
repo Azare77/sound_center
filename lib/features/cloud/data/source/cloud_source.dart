@@ -105,44 +105,11 @@ class CloudSource {
   ) async {
     if (tracks.isEmpty) return [];
 
-    // مرحله ۱: حذف DRM-only ها با یک ریکوئست batch
     final ids = tracks.map((t) => t.id).toList();
     final metadataCheck = await client.tracks.hasPlayableTranscodingBatch(ids);
     final candidates = tracks
         .where((t) => metadataCheck[t.id] == true)
         .toList();
-    // if (candidates.isEmpty) return [];
     return candidates.map(CloudTrack.fromTrackSearchResult).toList();
-    // return _verifyActuallyResolvable(candidates);
-  }
-
-  Future<List<CloudTrack>> _verifyActuallyResolvable(
-    List<TrackSearchResult> candidates, {
-    int concurrency = 8,
-  }) async {
-    final result = <CloudTrack>[];
-
-    for (var i = 0; i < candidates.length; i += concurrency) {
-      final batch = candidates.skip(i).take(concurrency);
-
-      final checks = await Future.wait(
-        batch.map((track) async {
-          try {
-            final streams = await client.tracks.getStreams(track.id);
-
-            if (streams.isEmpty) {
-              return null;
-            }
-
-            return CloudTrack.fromTrackSearchResult(track);
-          } catch (_) {
-            return null;
-          }
-        }),
-      );
-
-      result.addAll(checks.whereType<CloudTrack>());
-    }
-    return result;
   }
 }

@@ -1,41 +1,43 @@
 // mp4_remux.dart
 //
-// Pure-Dart defragmenter برای CMAF/fragmented-MP4 (خروجی HLS با EXT-X-MAP).
-// معادل چیزیه که `ffmpeg -i in.mp4 -c copy out.m4a` انجام میده: بدون
-// transcode، فقط container رو از fragmented (moov با duration=0 + چند
-// moof/mdat) به flat (یک moov با جدول sample کامل + یک mdat) تبدیل می‌کنه.
+// Pure-Dart defragmenter for CMAF/fragmented-MP4 (HLS output with EXT-X-MAP).
+// Equivalent to what `ffmpeg -i in.mp4 -c copy out.m4a` does: without
+// transcoding, it only converts the container from fragmented (moov with
+// duration=0 + multiple moof/mdat) to flat (one moov with a complete sample
+// table + one mdat).
 //
-// فرض‌ها (برای مصرف audio-only مثل SoundCloud HLS معتبره):
-//   - یک track صوتی، بدون B-frame / composition-time-offset
-//   - هر segment دانلودی دقیقاً یک جفت moof+mdat هست (یک CMAF fragment)
-//   - edts (edit list) حذف می‌شه چون بعد از remux معنی نداره
+// Assumptions (valid for audio-only usage such as SoundCloud HLS):
+//   - One audio track, without B-frames / composition-time-offset
+//   - Each downloaded segment contains exactly one moof+mdat pair (one CMAF fragment)
+//   - edts (edit list) is removed because it is no longer meaningful after remux
 //
-// محدودیت شناخته‌شده: اگه پلی‌لیست شما چند track (مثلاً audio+video) یا
-// چند EXT-X-MAP داشته باشه، این کد باید قبل از استفاده اصلاح بشه — فعلاً
-// فقط اولین/تنها trak رو پردازش می‌کنه.
+// Known limitation: if the playlist contains multiple tracks (e.g. audio+video)
+// or multiple EXT-X-MAP entries, this code must be adjusted before use — currently
+// it only processes the first/only trak.
 
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 class HlsDownloader {
-  /// دانلود کامل یک استریم HLS با متد دانلود موازی برای افزایش سرعت چشمگیر.
+  /// Downloads a complete HLS stream using parallel downloads for a significant
+  /// speed improvement.
   ///
-  /// [waitIfPaused] در ابتدای هر iteration ورکر await می‌شه؛ اگه pause شده
-  /// باشه، ورکر همون‌جا معلق می‌مونه تا resume صدا زده بشه، بدون این‌که
-  /// segmentهایی که تا اون لحظه دانلود شدن از دست برن.
+  /// [waitIfPaused] is awaited at the beginning of each worker iteration. If
+  /// paused, the worker remains suspended there until resume is called, without
+  /// losing segments that have already been downloaded.
   static Future<File> downloadAndMux({
     required String m3u8Url,
     required String outputPath,
     required Function(double) onProgress,
     Future<void> Function()? waitIfPaused,
   }) async {
-    print('🌐 [HlsDownloader] دریافت مانیفست m3u8...');
     final playlistResp = await http.get(Uri.parse(m3u8Url));
     if (playlistResp.statusCode != 200) {
-      throw Exception('دریافت پلی‌لیست ناموفق بود: ${playlistResp.statusCode}');
+      throw Exception('filed getting playlist: ${playlistResp.statusCode}');
     }
     final lines = const LineSplitter().convert(playlistResp.body);
 
@@ -52,33 +54,29 @@ class HlsDownloader {
     }
 
     if (initUrl == null || segmentUrls.isEmpty) {
-      throw Exception('پلی‌لیست معتبر نیست یا سگمنتی پیدا نشد');
+      throw Exception('wrong playlist or no segment');
     }
 
-    print(
-      '📦 [HlsDownloader] تعداد کل سگمنت‌ها: ${segmentUrls.length}. شروع دانلود موازی...',
-    );
-
-    // ۱) دانلود فورا و مستقیم Init Segment
+    // 1) Download the Init Segment immediately and directly
     final initBytes = await _fetchBytes(initUrl);
     onProgress(0.05);
 
-    // ۲) تعریف آرایه برای نگهداری سگمنت‌های دانلود شده با حفظ ترتیب دیسک
+    // 2) Create an array to store downloaded segments while preserving disk order
     final downloadedSegments = List<List<int>?>.filled(
       segmentUrls.length,
       null,
     );
     int completedCount = 0;
 
-    // ۳) تنظیم میزان همزمانی (مثلا دانلود همزمان 8 سگمنت با هم)
+    // 3) Configure concurrency (e.g. download 8 segments simultaneously)
     const int maxConcurrentDownloads = 8;
     int currentTaskIndex = 0;
 
-    // تابع کمکی برای مدیریت صف موازی
+    // Helper function for managing the parallel queue
     Future<void> worker() async {
       while (currentTaskIndex < segmentUrls.length) {
-        // اگه pause شده، همین‌جا معلق می‌مونه تا resume بشه؛ segment بعدی
-        // رو شروع نمی‌کنه ولی segmentهای در حال دانلود فعلی رو کنسل نمی‌کنه.
+        // If paused, suspend here until resumed; do not start the next segment,
+        // but do not cancel segments that are currently being downloaded.
         await waitIfPaused?.call();
 
         final index = currentTaskIndex++;
@@ -89,24 +87,22 @@ class HlsDownloader {
           downloadedSegments[index] = bytes;
           completedCount++;
 
-          // آپدیت درصد پیشرفت به صورت زنده
+          // Update the progress percentage in real time
           double progressRatio =
               0.05 + (completedCount / segmentUrls.length) * 0.95;
           onProgress(progressRatio);
         } catch (e) {
-          print('❌ خطا در دانلود سگمنت شماره $index: $e');
           rethrow;
         }
       }
     }
 
-    // شروع کار ورکرها به صورت همزمان
+    // Start all workers concurrently
     final workers = List.generate(maxConcurrentDownloads, (_) => worker());
 
-    // انتظار برای اتمام دانلود تمام سگمنت‌ها
+    // Wait for all segments to finish downloading
     await Future.wait(workers);
 
-    print('💾 [HlsDownloader] در حال remux به flat MP4...');
     final result = remuxFragmentsToFlatMp4(
       initBytes: Uint8List.fromList(initBytes),
       fragmentBytesList: downloadedSegments
@@ -114,29 +110,9 @@ class HlsDownloader {
           .map((s) => Uint8List.fromList(s))
           .toList(),
     );
-    print('⏱️ duration محاسبه‌شده: ${result.durationMs}ms');
 
     final outFile = File(outputPath);
     await outFile.writeAsBytes(result.bytes);
-    // ۴) نوشتن همگی در فایل خروجی به ترتیب کاملا درست مانیفست
-    // print(
-    //   '💾 [HlsDownloader] تمام پارت‌ها دانلود شدند. در حال سرهم‌بندی (Mux) روی دیسک...',
-    // );
-    // final outFile = File(outputPath);
-    // final sink = outFile.openWrite();
-    //
-    // try {
-    //   sink.add(initBytes); // اول ftyp+moov
-    //   for (final segmentBytes in downloadedSegments) {
-    //     if (segmentBytes != null) {
-    //       sink.add(segmentBytes);
-    //     }
-    //   }
-    // } finally {
-    //   await sink.flush();
-    //   await sink.close();
-    //   print('✨ [HlsDownloader] فایل نهایی با موفقیت ساخته شد.');
-    // }
 
     return outFile;
   }
@@ -144,7 +120,7 @@ class HlsDownloader {
   static Future<List<int>> _fetchBytes(String url) async {
     final resp = await http.get(Uri.parse(url));
     if (resp.statusCode != 200) {
-      throw Exception('دانلود سگمنت ناموفق: (${resp.statusCode})');
+      throw Exception('Error in segment downloading: (${resp.statusCode})');
     }
     return resp.bodyBytes;
   }
@@ -166,24 +142,25 @@ class FlatMp4Result {
   FlatMp4Result(this.bytes, this.durationMs);
 }
 
-/// نقطه‌ی ورود اصلی. `initBytes` = init segment (از EXT-X-MAP)،
-/// `fragmentBytesList` = لیست segmentهای دانلودشده به همون ترتیب پلی‌لیست.
+/// Main entry point. `initBytes` = init segment (from EXT-X-MAP),
+/// `fragmentBytesList` = downloaded segments in the same order as the playlist.
 FlatMp4Result remuxFragmentsToFlatMp4({
   required Uint8List initBytes,
   required List<Uint8List> fragmentBytesList,
 }) {
+  // --- Parse fragments and build the sample tables ---
   final initBoxes = _Mp4Box.parseTop(initBytes);
   final ftyp = _Mp4Box.find(initBoxes, 'ftyp');
   final moov = _Mp4Box.find(initBoxes, 'moov');
   if (ftyp == null || moov == null) {
-    throw Mp4RemuxException('init segment فاقد ftyp یا moov است');
+    throw Mp4RemuxException('init segment without ftyp or moov');
   }
 
   final moovBoxes = _Mp4Box.parseTop(moov.payload);
   final mvhdBox = _Mp4Box.find(moovBoxes, 'mvhd');
   final trakBox = _Mp4Box.find(moovBoxes, 'trak');
   if (mvhdBox == null || trakBox == null) {
-    throw Mp4RemuxException('moov فاقد mvhd یا trak است');
+    throw Mp4RemuxException('moov is without mvhd or trak');
   }
 
   final movieTimescale = _readTimescale(mvhdBox.payload);
@@ -192,25 +169,25 @@ FlatMp4Result remuxFragmentsToFlatMp4({
   final tkhdBox = _Mp4Box.find(trakBoxes, 'tkhd');
   final mdiaBox = _Mp4Box.find(trakBoxes, 'mdia');
   if (tkhdBox == null || mdiaBox == null) {
-    throw Mp4RemuxException('trak فاقد tkhd یا mdia است');
+    throw Mp4RemuxException('trak is without tkhd or mdia');
   }
 
   final mdiaBoxes = _Mp4Box.parseTop(mdiaBox.payload);
   final mdhdBox = _Mp4Box.find(mdiaBoxes, 'mdhd');
   final minfBox = _Mp4Box.find(mdiaBoxes, 'minf');
   if (mdhdBox == null || minfBox == null) {
-    throw Mp4RemuxException('mdia فاقد mdhd یا minf است');
+    throw Mp4RemuxException('mdia is without mdhd or minf');
   }
   final mediaTimescale = _readTimescale(mdhdBox.payload);
 
   final minfBoxes = _Mp4Box.parseTop(minfBox.payload);
   final stblBox = _Mp4Box.find(minfBoxes, 'stbl');
-  if (stblBox == null) throw Mp4RemuxException('minf فاقد stbl است');
+  if (stblBox == null) throw Mp4RemuxException('minf is missing stbl');
   final stblBoxes = _Mp4Box.parseTop(stblBox.payload);
   final stsdBox = _Mp4Box.find(stblBoxes, 'stsd');
-  if (stsdBox == null) throw Mp4RemuxException('stbl فاقد stsd است');
+  if (stsdBox == null) throw Mp4RemuxException('stbl is without stsd');
 
-  // --- پارس فرگمنت‌ها و ساخت جدول سمپل‌ها ---
+  // --- Parse fragments and build sample tables ---
   final durations = <int>[];
   final sizes = <int>[];
   final chunkSampleCounts = <int>[];
@@ -223,9 +200,7 @@ FlatMp4Result remuxFragmentsToFlatMp4({
     mdatParts.add(frag.mdatPayload);
     for (final s in frag.samples) {
       if (s.duration == null || s.size == null) {
-        throw Mp4RemuxException(
-          'سمپل بدون duration/size — tfhd default ناقصه یا trun فلگ لازم رو نداره',
-        );
+        throw Mp4RemuxException("sample is without size or duration");
       }
       durations.add(s.duration!);
       sizes.add(s.size!);
@@ -233,7 +208,7 @@ FlatMp4Result remuxFragmentsToFlatMp4({
   }
 
   if (durations.isEmpty) {
-    throw Mp4RemuxException('هیچ سمپلی از فرگمنت‌ها استخراج نشد');
+    throw Mp4RemuxException('no sample out of fragments');
   }
 
   final totalDurationMediaTs = durations.fold<int>(0, (a, b) => a + b);
@@ -244,6 +219,7 @@ FlatMp4Result remuxFragmentsToFlatMp4({
   final stszBox = _buildStsz(sizes);
   final stscBox = _buildStsc(chunkSampleCounts);
 
+  // Build the moov box with the calculated duration and chunk offsets.
   Uint8List buildMoov(Uint8List stcoBox) {
     final newStblPayload = BytesBuilder()
       ..add(_Mp4Box.build('stsd', stsdBox.payload))
@@ -290,7 +266,7 @@ FlatMp4Result remuxFragmentsToFlatMp4({
       } else if (b.type == 'mdia') {
         newTrakPayload.add(newMdia);
       } else if (b.type == 'edts') {
-        continue; // بعد از remux، edit list قدیمی معتبر نیست
+        continue; // The old edit list is no longer valid after remux.
       } else {
         newTrakPayload.add(_Mp4Box.build(b.type, b.payload));
       }
@@ -309,7 +285,7 @@ FlatMp4Result remuxFragmentsToFlatMp4({
       } else if (b.type == 'trak') {
         newMoovPayload.add(newTrak);
       } else if (b.type == 'mvex') {
-        continue; // فایل نهایی fragmented نیست، mvex بی‌معنیه
+        continue; // The final file is not fragmented, so mvex is meaningless.
       } else {
         newMoovPayload.add(_Mp4Box.build(b.type, b.payload));
       }
@@ -317,13 +293,14 @@ FlatMp4Result remuxFragmentsToFlatMp4({
     return _Mp4Box.build('moov', newMoovPayload.toBytes());
   }
 
-  // مرحله‌ی اول: moov با stco placeholder (آفست صفر) فقط برای دونستن اندازه‌ی moov.
+  // First step: build moov with a placeholder stco (zero offsets) only to
+  // determine the size of the moov box.
   final placeholderStco = _buildStco(List.filled(chunkSampleCounts.length, 0));
   final moovForSizing = buildMoov(placeholderStco);
 
   final ftypBox = _Mp4Box.build('ftyp', ftyp.payload);
   final mdatDataOffset =
-      ftypBox.length + moovForSizing.length + 8; // +8 = هدر mdat
+      ftypBox.length + moovForSizing.length + 8; // +8 = mdat header
 
   final chunkOffsets = <int>[];
   int running = mdatDataOffset;
@@ -331,15 +308,16 @@ FlatMp4Result remuxFragmentsToFlatMp4({
     chunkOffsets.add(running);
     running += part.length;
   }
+
   final finalStco = _buildStco(chunkOffsets);
   final finalMoov = buildMoov(finalStco);
 
-  // چون stco (uint32) هم در placeholder هم در نسخه‌ی نهایی دقیقاً هم‌طوله
-  // (مگر فایل >4GB بشه که برای موزیک عملاً پیش نمیاد)، اندازه‌ی moov ثابت
-  // می‌مونه و offsetهای محاسبه‌شده معتبرن.
+  // Since stco (uint32) has exactly the same length in both the placeholder
+  // and final versions (unless the file is >4GB, which is unlikely for music),
+  // the moov size remains unchanged and the calculated offsets stay valid.
   if (finalMoov.length != moovForSizing.length) {
     throw Mp4RemuxException(
-      'اندازه moov بعد از محاسبه‌ی offset واقعی تغییر کرد — احتمالاً فایل >4GB است (نیاز به co64)',
+      'size of moov after offset calculation probably is more than  >4GB need cod64',
     );
   }
 
@@ -358,7 +336,7 @@ FlatMp4Result remuxFragmentsToFlatMp4({
   return FlatMp4Result(output.toBytes(), durationMs);
 }
 
-// ------------------------- پارس فرگمنت (moof+mdat) -------------------------
+// ------------------------- Parse fragment (moof+mdat) -------------------------
 
 class _TrunSample {
   final int? duration;
@@ -379,12 +357,12 @@ _FragmentInfo _parseFragment(Uint8List segmentBytes) {
   final moof = _Mp4Box.find(topBoxes, 'moof');
   final mdat = _Mp4Box.find(topBoxes, 'mdat');
   if (moof == null || mdat == null) {
-    throw Mp4RemuxException('یک segment فاقد moof یا mdat است');
+    throw Mp4RemuxException('one segment is without moof or mdat');
   }
 
   final moofBoxes = _Mp4Box.parseTop(moof.payload);
   final traf = _Mp4Box.find(moofBoxes, 'traf');
-  if (traf == null) throw Mp4RemuxException('moof فاقد traf است');
+  if (traf == null) throw Mp4RemuxException('moof is without traf');
   final trafBoxes = _Mp4Box.parseTop(traf.payload);
 
   int? defaultDuration;
@@ -405,7 +383,8 @@ _FragmentInfo _parseFragment(Uint8List segmentBytes) {
       defaultSize = bd.getUint32(off);
       off += 4;
     }
-    // default-sample-flags (0x000020) رو لازم نداریم (فقط برای stss/sync لازمه)
+    // We do not need default-sample-flags (0x000020)
+    // because they are only required for stss/sync.
   }
 
   final samples = <_TrunSample>[];
@@ -446,7 +425,7 @@ _FragmentInfo _parseFragment(Uint8List segmentBytes) {
   return _FragmentInfo(samples, mdat.payload);
 }
 
-// ------------------------- ساخت باکس‌های stbl -------------------------
+// ------------------------- Build stbl boxes -------------------------
 
 Uint8List _buildStts(List<int> durations) {
   final entries = <List<int>>[]; // [sampleCount, delta]
@@ -457,6 +436,7 @@ Uint8List _buildStts(List<int> durations) {
       entries.add([1, d]);
     }
   }
+
   final payload = BytesBuilder()
     ..add(_fullBoxHeader())
     ..add(_u32(entries.length));
@@ -505,9 +485,9 @@ Uint8List _buildStco(List<int> offsets) {
   return _Mp4Box.build('stco', payload.toBytes());
 }
 
-// ------------------------- patch کردن duration -------------------------
+// ------------------------- Patch duration -------------------------
 
-/// برای mvhd و mdhd: هر دو layout یکسان دارن
+/// For mvhd and mdhd: both use the same layout
 /// (version+flags, creation, modification, timescale, duration, ...).
 int _readTimescale(Uint8List fullBoxPayload) {
   final bd = ByteData.sublistView(fullBoxPayload);
@@ -527,7 +507,7 @@ Uint8List _patchFullBoxDuration(Uint8List fullBoxPayload, int newDuration) {
   return out;
 }
 
-/// tkhd لایه‌بندی متفاوتی داره: creation/modification/track_ID/reserved/duration
+/// tkhd has a different layout: creation/modification/track_ID/reserved/duration
 Uint8List _patchTkhdDuration(Uint8List fullBoxPayload, int newDuration) {
   final out = Uint8List.fromList(fullBoxPayload);
   final outBd = ByteData.sublistView(out);
@@ -542,7 +522,7 @@ Uint8List _patchTkhdDuration(Uint8List fullBoxPayload, int newDuration) {
   return out;
 }
 
-// ------------------------- helper های عمومی box -------------------------
+// ------------------------- General box helpers -------------------------
 
 List<int> _fullBoxHeader() => const [0, 0, 0, 0]; // version=0, flags=0
 

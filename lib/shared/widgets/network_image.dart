@@ -54,9 +54,7 @@ class NetworkCacheImage extends StatelessWidget {
   String _proxyUrl(String originalUrl, {required bool forHighQuality}) {
     final resolved = _resolveUrl(originalUrl, forHighQuality: forHighQuality);
     if (forHighQuality) {
-      return 'https://images.weserv.nl/'
-          '?url=${Uri.encodeComponent(resolved)}'
-          '&q=100&output=jpg';
+      return originalUrl;
     }
     return 'https://images.weserv.nl/'
         '?url=${Uri.encodeComponent(resolved)}'

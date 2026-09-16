@@ -45,6 +45,7 @@ class _HomeState extends State<Home>
 
   late final AnimationController _menuCtrl;
   bool _menuOpen = false;
+  bool _settingOpen = false;
 
   @override
   void initState() {
@@ -186,14 +187,20 @@ class _HomeState extends State<Home>
               child: AppBar(
                 title: const Text("Sound Center", textAlign: TextAlign.center),
                 leading: IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     _closeMenu();
-                    showDialog(
+                    setState(() => _settingOpen = true);
+                    await showDialog(
                       context: context,
                       builder: (_) => const Settings(),
                     );
+                    setState(() => _settingOpen = false);
                   },
-                  icon: const Icon(Icons.settings_rounded),
+                  icon: AnimatedRotation(
+                    turns: _settingOpen ? 0.5 : 0,
+                    duration: _menuDuration,
+                    child: const Icon(Icons.settings_rounded),
+                  ),
                 ),
                 actions: [_buildMenuButton(context)],
               ),
@@ -213,7 +220,7 @@ class _HomeState extends State<Home>
                 ],
               ),
             ),
-            const CurrentMedia(),
+            const CurrentMedia(key: Key("home")),
           ],
         ),
       ),

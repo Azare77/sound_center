@@ -20,24 +20,21 @@ class _CurrentTrackState extends State<CurrentTrack> {
   late bool isLoading = false;
 
   StreamSubscription<bool>? _loadingSub;
+  StreamSubscription<CloudTrack?>? _trackSub;
 
-  void _updateStatus() async {
-    await Future.delayed(Duration(milliseconds: 50));
-    isLoading = imp.isLoading();
-    if (isLoading) {
-      _updateStatus();
-      return;
-    }
-    if (mounted) {
-      setState(() {});
+  void _updateStatus(bool loading) async {
+    if (mounted && isLoading != loading) {
+      setState(() {
+        isLoading = loading;
+      });
     }
   }
 
   @override
   void initState() {
+    isLoading = imp.isLoading();
     _loadingSub = imp.loadingStream.listen((loading) {
-      isLoading = loading;
-      _updateStatus();
+      _updateStatus(loading);
     });
     super.initState();
   }
@@ -45,14 +42,12 @@ class _CurrentTrackState extends State<CurrentTrack> {
   @override
   void dispose() {
     _loadingSub?.cancel();
+    _trackSub?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      _updateStatus();
-    }
     return ListTile(
       leading: SizedBox(
         width: 50,

@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
+import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/play_pause_button.dart';
 
@@ -24,22 +27,27 @@ class _CurrentAudioState extends State<CurrentStream> {
   Uint8List? cover;
   String? coverUrl;
   final double size = 50;
+  StreamSubscription<bool>? _loadingSub;
 
-  void _updateStatus() async {
-    await Future.delayed(Duration(milliseconds: 200));
-    isLoading = imp.isLoading();
-    if (isLoading) {
-      _updateStatus();
-      return;
-    }
+  void _updateStatus(bool loading) async {
     if (mounted) {
-      setState(() {});
+      setState(() {
+        isLoading = loading;
+      });
     }
   }
 
   @override
   void initState() {
     isLoading = imp.isLoading();
+    _updatePlayingStream();
+    _loadingSub = imp.loadingStream.listen((loading) {
+      _updateStatus(loading);
+    });
+    super.initState();
+  }
+
+  void _updatePlayingStream() {
     final currentStream = imp.getCurrentStream;
     if (currentStream is AudioModel) {
       title = currentStream.title;
@@ -50,57 +58,65 @@ class _CurrentAudioState extends State<CurrentStream> {
       title = currentStream.title ?? 'Loading';
       coverUrl = currentStream.cover;
     }
-    super.initState();
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _loadingSub?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      _updateStatus();
-    }
-    return ListTile(
-      leading: SizedBox(
-        width: 50,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: coverUrl != null
-              ? NetworkCacheImage(url: coverUrl)
-              : Image(
-                  image: cover != null
-                      ? MemoryImage(cover!)
-                      : const AssetImage('assets/default-cover.png')
-                            as ImageProvider,
-                  width: size,
-                  height: size,
-                  fit: cover != null ? BoxFit.cover : BoxFit.scaleDown,
-                  filterQuality: FilterQuality.high,
-                  errorBuilder: (ctx, error, stack) => Image.asset(
-                    'assets/default-cover.png',
+    return BlocListener<StreamBloc, StreamState>(
+      listener: (BuildContext context, StreamState state) {
+        _updatePlayingStream();
+      },
+      child: ListTile(
+        leading: SizedBox(
+          width: 50,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: coverUrl != null
+                ? NetworkCacheImage(url: coverUrl)
+                : Image(
+                    image: cover != null
+                        ? MemoryImage(cover!)
+                        : const AssetImage('assets/default-cover.png')
+                              as ImageProvider,
                     width: size,
                     height: size,
-                    fit: BoxFit.scaleDown,
+                    fit: cover != null ? BoxFit.cover : BoxFit.scaleDown,
                     filterQuality: FilterQuality.high,
+                    errorBuilder: (ctx, error, stack) => Image.asset(
+                      'assets/default-cover.png',
+                      width: size,
+                      height: size,
+                      fit: BoxFit.scaleDown,
+                      filterQuality: FilterQuality.high,
+                    ),
                   ),
-                ),
+          ),
         ),
-      ),
-      title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text(
-        artist ?? '',
-        maxLines: 1,
-        style: TextStyle(
-          color: Theme.of(
-            context,
-          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-          fontSize: 13,
+        title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text(
+          artist ?? '',
+          maxLines: 1,
+          style: TextStyle(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+            fontSize: 13,
+          ),
         ),
-      ),
-      trailing: PlayPauseButton(
-        isLoading: isLoading,
-        isPlaying: imp.isPlaying(),
-        onPressed: () async {
-          imp.togglePlayState();
-        },
+        trailing: PlayPauseButton(
+          isLoading: isLoading,
+          isPlaying: imp.isPlaying(),
+          onPressed: () async {
+            imp.togglePlayState();
+          },
+        ),
       ),
     );
   }

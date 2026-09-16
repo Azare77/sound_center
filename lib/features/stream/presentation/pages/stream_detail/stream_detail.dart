@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/stream/data/repository/stream_repository_imp.dart';
@@ -70,7 +70,7 @@ class _StreamDetailState extends State<StreamDetail> {
       body: Column(
         children: [
           Expanded(child: content),
-          CurrentMedia(),
+          const CurrentMedia(key: Key("streamDetail")),
         ],
       ),
     );

@@ -57,6 +57,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       _positionController.add(pos.inMilliseconds);
     });
     _playerService.processState.listen((state) {
+      if (!hasSource()) return;
       bool loading = isLoading();
       _loadingController.add(loading);
       if (!loading && isPlaying()) _retryCount = 0;
@@ -142,6 +143,9 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     _currentStream = _playList[0];
     _playerService.setSourceByForce(AudioSource.stream);
     _streamChangedController.add(_currentStream);
+    // make sure that loading widget will show
+    await Future.delayed(Duration(milliseconds: 10));
+    _loadingController.add(true);
     late final String url;
     late final String title;
     Duration? duration;
@@ -258,7 +262,9 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   void addIcyMetadataListener(void Function(String? title) onTitle) {
     _icySubscription?.cancel();
     _icySubscription = _playerService.icyMetadataStream.listen((metadata) {
-      onTitle(metadata?.info?.title ?? metadata?.headers?.name);
+      if (hasSource()) {
+        onTitle(metadata?.info?.title ?? metadata?.headers?.name);
+      }
     });
   }
 
@@ -275,7 +281,6 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     if (hasSource() && (_currentStream is Source)) onMetadata.call();
     _updateTimer = Timer.periodic(Duration(seconds: 10), (_) {
       if (hasSource() && (_currentStream is Source)) {
-        // onMetadata.call();
       } else {
         _updateTimer?.cancel();
         _updateTimer = null;

@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core_view/current_media.dart';
@@ -76,7 +76,7 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
               },
             ),
           ),
-          CurrentMedia(),
+          const CurrentMedia(key: Key("downloadedEpisode")),
         ],
       ),
     );

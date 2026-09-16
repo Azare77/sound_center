@@ -65,6 +65,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _tracks[index] = _currentTrack!;
       _playerService.setSourceByForce(AudioSource.cloud);
       _trackChangedController.add(_currentTrack);
+      // make sure that loading widget will show
+      await Future.delayed(Duration(milliseconds: 10));
+      _loadingController.add(true);
       bloc.add(AutoPlay());
       File? file;
       try {
@@ -97,6 +100,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _positionController.add(pos.inMilliseconds);
     });
     _playerService.processState.listen((state) {
+      if (!hasSource()) return;
       bool loading = isLoading();
       _loadingController.add(loading);
     });
@@ -144,7 +148,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     _currentTrack = _tracks[index];
     _playerService.setSourceByForce(AudioSource.cloud);
     _trackChangedController.add(_currentTrack);
-    bloc.add(AutoPlay());
+    // make sure that loading widget will show
+    await Future.delayed(Duration(milliseconds: 10));
+    _loadingController.add(true);
     File? file;
     try {
       file = await NetworkCacheImage.customCacheManager.getSingleFile(
@@ -157,7 +163,11 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     );
     await _playerService.pause();
     final String? trackUrl = await getTrackUrl(_currentTrack!);
-    if (trackUrl == null || !hasSource()) return;
+    if (trackUrl == null || !hasSource()) {
+      await stop();
+      _playerService.setSourceByForce(null);
+      return;
+    }
     bool allowToPlay = await _playerService.setSource(
       trackUrl,
       AudioSource.cloud,
@@ -261,7 +271,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
         return cached;
       }
 
-      final streams = await sc.tracks.getStreams(track.id);
+      final streams = await sc.tracks
+          .getStreams(track.id)
+          .timeout(const Duration(seconds: 20));
       if (streams.isEmpty) {
         debugPrint('No transcodings returned for track ${track.id}');
         return null;

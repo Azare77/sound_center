@@ -170,7 +170,7 @@ class _PodcastDetailState extends State<PodcastDetail> {
               ],
             ),
           ),
-          CurrentMedia(),
+          const CurrentMedia(key: Key("podcastDetail")),
         ],
       ),
     );

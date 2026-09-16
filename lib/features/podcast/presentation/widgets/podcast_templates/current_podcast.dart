@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
@@ -16,30 +18,36 @@ class CurrentPodcast extends StatefulWidget {
 class _CurrentPodcastState extends State<CurrentPodcast> {
   final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
   late bool isLoading;
+  StreamSubscription<bool>? _loadingSub;
 
-  void _updateStatus() async {
-    await Future.delayed(Duration(milliseconds: 200));
-    isLoading = imp.isLoading();
-    if (isLoading) {
-      _updateStatus();
-      return;
-    }
-    if (mounted) {
-      setState(() {});
+  void _updateStatus(bool loading) async {
+    if (mounted && isLoading != loading) {
+      setState(() {
+        isLoading = loading;
+      });
     }
   }
 
   @override
   void initState() {
     isLoading = imp.isLoading();
+    _loadingSub = imp.loadingStream.listen((loading) {
+      _updateStatus(loading);
+    });
     super.initState();
   }
 
   @override
+  void dispose() {
+    _loadingSub?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      _updateStatus();
-    }
+    // if (isLoading) {
+    //   _updateStatus();
+    // }
     return ListTile(
       leading: SizedBox(
         width: 50,

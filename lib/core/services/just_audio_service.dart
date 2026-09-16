@@ -135,7 +135,7 @@ class JustAudioService {
     _loadingSource = true;
     _loadingController.add(true);
     _sourceChangedController.add(source);
-    onSourceSet?.call();
+    // onSourceSet?.call();
 
     if (wasLoading) {
       try {
@@ -201,7 +201,7 @@ class JustAudioService {
       await _player.setSpeed(1.0);
       _loadingSource = false;
       _loadingController.add(isLoading());
-      onSourceSet?.call();
+      // onSourceSet?.call();
       return true;
     } on _StaleSourceException {
       return false;
@@ -310,7 +310,7 @@ class JustAudioService {
     return true;
   }
 
-  void setSourceByForce(AudioSource source) {
+  void setSourceByForce(AudioSource? source) {
     _source = source;
   }
 

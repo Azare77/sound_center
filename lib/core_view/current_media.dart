@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
@@ -17,6 +18,7 @@ import 'package:sound_center/features/podcast/data/repository/podcast_player_rpo
 import 'package:sound_center/features/podcast/presentation/pages/play_podcast.dart'
     as podcast_page;
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/current_podcast.dart';
+import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/pages/play_stream.dart'
@@ -100,7 +102,10 @@ class _CurrentMediaState extends State<CurrentMedia> {
             ),
           );
         },
-        child: _currentPlayer ?? const SizedBox.shrink(),
+        child: BlocListener<SettingBloc, SettingState>(
+          listener: (_, _) => _updatePlayer(),
+          child: _currentPlayer ?? const SizedBox.shrink(),
+        ),
       ),
     );
   }
@@ -131,11 +136,18 @@ class _CurrentMediaState extends State<CurrentMedia> {
     _playerPage = null;
     if (_localPlayer.hasSource() && audio != null) {
       _playerPage = audio_page.PlayAudio();
-      return CurrentAudio(key: ValueKey(audio.id), audioEntity: audio);
+      return CurrentAudio(
+        key: ValueKey((widget.key, audio.id)),
+        audioEntity: audio,
+      );
     }
     if (_podcastPlayer.hasSource() && episode != null) {
       _playerPage = podcast_page.PlayPodcast();
-      return CurrentPodcast(key: Key(episode.guid), episode: episode);
+
+      return CurrentPodcast(
+        key: ValueKey((widget.key, episode.guid)),
+        episode: episode,
+      );
     }
     if (_streamPlayer.hasSource() && stream != null) {
       final stream = _streamPlayer.getCurrentStream;
@@ -149,11 +161,14 @@ class _CurrentMediaState extends State<CurrentMedia> {
         title = stream.title ?? '';
       }
       _playerPage = stream_page.PlayStream();
-      return CurrentStream(key: Key("$url-$title"), streamEntity: stream);
+      return CurrentStream(
+        key: ValueKey((widget.key, "$url-$title")),
+        streamEntity: stream,
+      );
     }
     if (_cloudPlayer.hasSource() && cloud != null) {
       _playerPage = cloud_page.PlayTrack();
-      return CurrentTrack(key: ValueKey(cloud.id), track: cloud);
+      return CurrentTrack(key: ValueKey((widget.key, cloud.id)), track: cloud);
     }
     return null;
   }

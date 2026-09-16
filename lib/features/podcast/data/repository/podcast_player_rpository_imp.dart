@@ -66,6 +66,9 @@ class PodcastPlayerRepositoryImp
       if (_episodes.isEmpty) _episodes = [_currentEpisode!];
       _playerService.setSourceByForce(AudioSource.podcast);
       _episodeChangedController.add(_currentEpisode);
+      // make sure that loading widget will show
+      await Future.delayed(Duration(milliseconds: 10));
+      _loadingController.add(true);
 
       String key = _currentEpisode!.title.trim();
       if (_currentEpisode!.author != null) {
@@ -103,6 +106,7 @@ class PodcastPlayerRepositoryImp
       _positionController.add(pos.inMilliseconds);
     });
     _playerService.processState.listen((state) {
+      if (!hasSource()) return;
       bool loading = isLoading();
       _loadingController.add(loading);
       if (!loading && isPlaying()) _retryCount = 0;
@@ -152,6 +156,9 @@ class PodcastPlayerRepositoryImp
     _currentEpisode = _episodes[index];
     _playerService.setSourceByForce(AudioSource.podcast);
     _episodeChangedController.add(_currentEpisode);
+    // make sure that loading widget will show
+    await Future.delayed(Duration(milliseconds: 10));
+    _loadingController.add(true);
 
     String key = _currentEpisode!.title.trim();
     if (_currentEpisode!.author != null) {

@@ -145,7 +145,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
               ],
             ),
           ),
-          CurrentMedia(),
+          const CurrentMedia(key: Key("playlistDetail")),
         ],
       ),
     );

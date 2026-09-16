@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,8 @@ import 'package:sound_center/features/settings/presentation/settings.dart';
 import 'package:sound_center/features/stream/presentation/pages/stream.dart';
 import 'package:sound_center/generated/l10n.dart';
 
+typedef NavItem = ({IconData icon, String title, bool badge});
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -24,7 +27,12 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with WidgetsBindingObserver {
+class _HomeState extends State<Home>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+  static const _menuDuration = Duration(milliseconds: 180);
+  static const _blurSigma = 8.0;
+  static const _scrimOpacity = 0.18;
+
   int index = 0;
   late final LocalPlayerRepositoryImp _localPlayer;
   late final PodcastPlayerRepositoryImp _podcastPlayer;
@@ -34,6 +42,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late final CloudPage _cloud;
   late final AppLinks appLinks;
   late final StreamSubscription<Uri> _linkSubscription;
+
+  late final AnimationController _menuCtrl;
+  bool _menuOpen = false;
 
   @override
   void initState() {
@@ -46,12 +57,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     initDeepLinks();
     _localPlayer = LocalPlayerRepositoryImp();
     _podcastPlayer = PodcastPlayerRepositoryImp();
+    _menuCtrl = AnimationController(vsync: this, duration: _menuDuration);
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _menuCtrl.dispose();
     _linkSubscription.cancel();
     super.dispose();
   }
@@ -69,6 +82,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       if (_lastHandledLink == normalized) return;
       _lastHandledLink = normalized;
+      _closeMenu();
 
       final params = uri.queryParameters;
 
@@ -81,12 +95,55 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           _stream.handleDeepLink(context, params);
           break;
       }
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
       _lastHandledLink = null;
     });
   }
 
+  List<NavItem> _navItems(BuildContext context) {
+    final hasNewEpisode = _podcast.haveNewEpisode(context);
+    return [
+      (
+        icon: Icons.music_note_rounded,
+        title: S.of(context).local,
+        badge: false,
+      ),
+      (
+        icon: Icons.podcasts_rounded,
+        title: S.of(context).podcast,
+        badge: hasNewEpisode,
+      ),
+      (icon: Icons.radio_rounded, title: S.of(context).stream, badge: false),
+      // TODO: کلید `cloud` را به l10n اضافه کن و این literal را با S.of(context).cloud عوض کن.
+      (icon: Icons.cloud_rounded, title: 'Cloud', badge: false),
+    ];
+  }
+
+  void _toggleMenu() {
+    if (_menuOpen) {
+      _closeMenu();
+    } else {
+      setState(() => _menuOpen = true);
+      _menuCtrl.forward();
+    }
+  }
+
+  void _closeMenu() {
+    if (!_menuOpen) return;
+    setState(() => _menuOpen = false);
+    _menuCtrl.reverse();
+  }
+
+  void _selectIndex(int i) {
+    if (i != index) setState(() => index = i);
+    _closeMenu();
+  }
+
   void onSwipe(DragEndDetails details) {
+    if (_menuOpen) {
+      _closeMenu();
+      return;
+    }
     if (details.primaryVelocity == null) return;
     setState(() {
       if (details.primaryVelocity! < 0) {
@@ -104,16 +161,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: index == 0,
-      onPopInvokedWithResult: (res, re) {
-        if (!res) {
-          final canSwitchPage = _podcast.resetPodcastPage(context);
-          final canSwitchStream = _stream.resetStreamPage(context);
-          final canSwitchCloud = _cloud.resetCloudPage(context);
-          if (index == 1 && canSwitchPage) setState(() => index = 0);
-          if (index == 2 && canSwitchStream) setState(() => index = 0);
-          if (index == 3 && canSwitchCloud) setState(() => index = 0);
+      canPop: index == 0 && !_menuOpen,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+
+        if (_menuOpen) {
+          _closeMenu();
+          return;
         }
+
+        final canSwitchPage = _podcast.resetPodcastPage(context);
+        final canSwitchStream = _stream.resetStreamPage(context);
+        final canSwitchCloud = _cloud.resetCloudPage(context);
+        if (index == 1 && canSwitchPage) setState(() => index = 0);
+        if (index == 2 && canSwitchStream) setState(() => index = 0);
+        if (index == 3 && canSwitchCloud) setState(() => index = 0);
       },
       child: Scaffold(
         appBar: PreferredSize(
@@ -123,49 +185,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             child: GestureDetector(
               onHorizontalDragEnd: onSwipe,
               child: AppBar(
-                title: Text("Sound Center", textAlign: TextAlign.center),
+                title: const Text("Sound Center", textAlign: TextAlign.center),
                 leading: IconButton(
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (_) => const Settings(),
-                  ),
-                  icon: Icon(Icons.settings_rounded),
+                  onPressed: () {
+                    _closeMenu();
+                    showDialog(
+                      context: context,
+                      builder: (_) => const Settings(),
+                    );
+                  },
+                  icon: const Icon(Icons.settings_rounded),
                 ),
-                actions: [
-                  IconButton(
-                    tooltip: index == 0
-                        ? S.of(context).podcast
-                        : index == 1
-                        ? S.of(context).stream
-                        : S.of(context).local,
-                    // use Bitwise Operations to change index between 0 and 1 (n)
-                    onPressed: () {
-                      setState(() {
-                        index++;
-                        if (index == 4) index = 0;
-                      });
-                    },
-                    icon: BlocBuilder<PodcastBloc, PodcastState>(
-                      builder: (BuildContext context, PodcastState state) {
-                        return Badge(
-                          label: SizedBox.shrink(),
-                          backgroundColor: Colors.red,
-                          isLabelVisible:
-                              index == 0 && _podcast.haveNewEpisode(context),
-                          child: Icon(
-                            index == 0
-                                ? Icons.podcasts_rounded
-                                : index == 1
-                                ? Icons.radio_rounded
-                                : index == 2
-                                ? Icons.cloud_rounded
-                                : Icons.music_note_rounded,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                actions: [_buildMenuButton(context)],
               ),
             ),
           ),
@@ -173,13 +204,157 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         body: Column(
           children: [
             Expanded(
-              child: IndexedStack(
-                index: index,
-                children: [_localAudios, _podcast, _stream, _cloud],
+              child: Stack(
+                children: [
+                  IndexedStack(
+                    index: index,
+                    children: [_localAudios, _podcast, _stream, _cloud],
+                  ),
+                  _buildMenuLayer(context),
+                ],
               ),
             ),
             const CurrentMedia(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuButton(BuildContext context) {
+    return BlocBuilder<PodcastBloc, PodcastState>(
+      builder: (context, state) {
+        final items = _navItems(context);
+        final showBadge = items.any((e) => e.badge) && index != 1;
+        return IconButton(
+          tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+          onPressed: _toggleMenu,
+          icon: Badge(
+            label: const SizedBox.shrink(),
+            backgroundColor: Colors.red,
+            isLabelVisible: showBadge,
+            child: AnimatedRotation(
+              turns: _menuOpen ? 0.125 : 0,
+              duration: _menuDuration,
+              child: Icon(items[index].icon),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMenuLayer(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _menuCtrl,
+      builder: (context, _) {
+        if (_menuCtrl.isDismissed) return const SizedBox.shrink();
+        final t = Curves.easeOut.transform(_menuCtrl.value);
+
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: _closeMenu,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: _blurSigma * t,
+                      sigmaY: _blurSigma * t,
+                    ),
+                    child: ColoredBox(
+                      color: Colors.black.withValues(alpha: _scrimOpacity * t),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Opacity(
+                opacity: t,
+                child: Transform.scale(
+                  scale: 0.9 + 0.1 * t,
+                  alignment: Alignment.topRight,
+                  child: _buildMenuCard(context),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildMenuCard(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      elevation: 8,
+      borderRadius: BorderRadius.circular(12),
+      clipBehavior: Clip.antiAlias,
+      color: scheme.surfaceContainerHigh,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 190, maxWidth: 260),
+        child: BlocBuilder<PodcastBloc, PodcastState>(
+          builder: (context, state) {
+            final items = _navItems(context);
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < items.length; i++)
+                  InkWell(
+                    onTap: () => _selectIndex(i),
+                    child: Container(
+                      color: i == index
+                          ? scheme.primary.withValues(alpha: 0.10)
+                          : null,
+                      padding: const EdgeInsetsDirectional.only(
+                        start: 16,
+                        end: 12,
+                        top: 12,
+                        bottom: 12,
+                      ),
+                      child: Row(
+                        children: [
+                          Badge(
+                            label: const SizedBox.shrink(),
+                            backgroundColor: Colors.red,
+                            isLabelVisible: items[i].badge,
+                            child: Icon(
+                              items[i].icon,
+                              color: i == index ? scheme.primary : null,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              items[i].title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: i == index
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                                color: i == index ? scheme.primary : null,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.check_rounded,
+                            size: 18,
+                            color: i == index
+                                ? scheme.primary
+                                : Colors.transparent,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -190,7 +365,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.detached) {
       Navigator.of(context).pushAndRemoveUntil(
-        NoAnimationPageRoute(page: Home()),
+        NoAnimationPageRoute(page: const Home()),
         (Route<dynamic> route) => false,
       );
       await saveLastPosition();

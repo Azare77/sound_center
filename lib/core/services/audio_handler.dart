@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/just_audio_service.dart' as service;
 import 'package:sound_center/core/util/audio/audio_util.dart';
+import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
@@ -20,6 +21,7 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   final StreamPlayerRepositoryImp _streamPlayer = StreamPlayerRepositoryImp();
   final PodcastPlayerRepositoryImp _podcastPlayer =
       PodcastPlayerRepositoryImp();
+  final CloudPlayerRepositoryImp _cloudPlayer = CloudPlayerRepositoryImp();
   service.AudioSource? _source;
 
   JustAudioNotificationHandler() {
@@ -144,6 +146,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _podcastPlayer.togglePlayState();
     } else if (_source == service.AudioSource.stream) {
       _streamPlayer.togglePlayState();
+    } else if (_source == service.AudioSource.cloud) {
+      _cloudPlayer.togglePlayState();
     }
   }
 
@@ -155,6 +159,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _podcastPlayer.togglePlayState();
     } else if (_source == service.AudioSource.stream) {
       _streamPlayer.togglePlayState();
+    } else if (_source == service.AudioSource.cloud) {
+      _cloudPlayer.togglePlayState();
     }
   }
 
@@ -176,6 +182,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _podcastPlayer.seek(position);
     } else if (_source == service.AudioSource.stream) {
       _streamPlayer.seek(position);
+    } else if (_source == service.AudioSource.cloud) {
+      _cloudPlayer.seek(position);
     }
   }
 
@@ -185,6 +193,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _localPlayer.next(force: true);
     } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.next();
+    } else if (_source == service.AudioSource.cloud) {
+      _cloudPlayer.next();
     }
   }
 
@@ -194,6 +204,8 @@ class JustAudioNotificationHandler extends BaseAudioHandler
       _localPlayer.previous();
     } else if (_source == service.AudioSource.podcast) {
       _podcastPlayer.previous();
+    } else if (_source == service.AudioSource.cloud) {
+      _cloudPlayer.previous();
     }
   }
 

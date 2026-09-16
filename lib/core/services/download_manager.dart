@@ -62,7 +62,7 @@ class _CloudPauseController {
   }
 }
 
-class PodcastDownloader {
+class DownloadManager {
   static final FileDownloader _downloader = FileDownloader();
 
   static final StreamController<TaskUpdate> _updateController =

@@ -5,8 +5,8 @@ import 'dart:ui';
 import 'package:background_downloader/background_downloader.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/services/download_manager.dart';
@@ -82,7 +82,7 @@ class _DownloadButtonState extends State<DownloadButton> {
   }
 
   Future<void> _start() async {
-    final task = await PodcastDownloader.downloadEpisode(widget.episode);
+    final task = await DownloadManager.downloadEpisode(widget.episode);
 
     if (task != null) {
       _task = task;
@@ -94,7 +94,7 @@ class _DownloadButtonState extends State<DownloadButton> {
 
   void _listen() {
     _sub?.cancel();
-    _sub = PodcastDownloader.updates.listen((u) {
+    _sub = DownloadManager.updates.listen((u) {
       if (u.task.taskId != _task?.taskId) return;
       if (!mounted) return;
 
@@ -112,11 +112,11 @@ class _DownloadButtonState extends State<DownloadButton> {
 
   void _toggle() async {
     if (_isRunning) {
-      PodcastDownloader.pause(_task!);
+      DownloadManager.pause(_task!);
     } else {
       if (_retrying) return;
 
-      bool res = await PodcastDownloader.resume(_task!);
+      bool res = await DownloadManager.resume(_task!);
       if (!res) {
         _retrying = true;
         await downloader.database.deleteRecordWithId(_task!.taskId);

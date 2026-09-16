@@ -52,7 +52,7 @@ Future<void> _init() async {
       JustAudioMediaKit.ensureInitialized();
     }
     await AndroidMediaStore.ensureInitialized();
-    await PodcastDownloader.init();
+    await DownloadManager.init();
     debugPrint('✅ _init() completed successfully');
   } catch (e, st) {
     debugPrint('❌ Error in _init(): $e\n$st');
@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (BuildContext context, state) {
-          PodcastDownloader.setupNotification();
+          DownloadManager.setupNotification();
           final currentTheme = ThemeManager.current;
           final isDarkMode = currentTheme.brightness == Brightness.dark;
           ThemeMode themMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;

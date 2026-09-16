@@ -56,7 +56,7 @@ class _DownloadTrackState extends State<DownloadTrack> {
     final Directory baseDir = await getTemporaryDirectory();
     fullPath = '${baseDir.path}/Cloud/$_key.mp3';
 
-    final cloudState = PodcastDownloader.cloudStateForKey(_key);
+    final cloudState = DownloadManager.cloudStateForKey(_key);
     if (cloudState != null) {
       _task = cloudState.task;
       _progress = cloudState.progress;
@@ -82,7 +82,7 @@ class _DownloadTrackState extends State<DownloadTrack> {
         .getTrackUrl(imp.getCurrentTrack!)
         .timeout(const Duration(seconds: 10));
     if (url == null) return;
-    final task = await PodcastDownloader.downloadCloudTrack(widget.track, url);
+    final task = await DownloadManager.downloadCloudTrack(widget.track, url);
 
     if (task != null) {
       _task = task;
@@ -94,7 +94,7 @@ class _DownloadTrackState extends State<DownloadTrack> {
 
   void _listen() {
     _sub?.cancel();
-    _sub = PodcastDownloader.updates.listen((u) {
+    _sub = DownloadManager.updates.listen((u) {
       if (u.task.taskId != _task?.taskId) return;
       if (!mounted) return;
 
@@ -116,23 +116,23 @@ class _DownloadTrackState extends State<DownloadTrack> {
   /// `pauseCloudDownload`/`resumeCloudDownload` استفاده کرد که واقعاً روی
   /// حلقه‌ی دانلود دستی HLS اثر می‌ذاره و segmentهای دانلودشده رو حفظ می‌کنه.
   void _toggle() async {
-    final isCloud = PodcastDownloader.isCloudTask(_task!);
+    final isCloud = DownloadManager.isCloudTask(_task!);
 
     if (isCloud) {
       if (_isRunning) {
-        PodcastDownloader.pauseCloudDownload(_key);
+        DownloadManager.pauseCloudDownload(_key);
       } else {
-        PodcastDownloader.resumeCloudDownload(_key);
+        DownloadManager.resumeCloudDownload(_key);
       }
       return;
     }
 
     if (_isRunning) {
-      PodcastDownloader.pause(_task!);
+      DownloadManager.pause(_task!);
     } else {
       if (_retrying) return;
 
-      bool res = await PodcastDownloader.resume(_task!);
+      bool res = await DownloadManager.resume(_task!);
       if (!res) {
         _retrying = true;
         await downloader.database.deleteRecordWithId(_task!.taskId);

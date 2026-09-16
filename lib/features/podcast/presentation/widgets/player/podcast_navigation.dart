@@ -35,6 +35,7 @@ class _PodcastNavigationState extends State<PodcastNavigation> {
 
   @override
   void initState() {
+    loading = imp.isLoading();
     super.initState();
     _setupPage();
   }

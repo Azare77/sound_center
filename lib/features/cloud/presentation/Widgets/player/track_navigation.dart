@@ -35,6 +35,7 @@ class _TrackNavigationState extends State<TrackNavigation> {
 
   @override
   void initState() {
+    loading = imp.isLoading();
     super.initState();
     _setupPage();
   }

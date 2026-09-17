@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
+import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_action_menu.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_item_template.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/pages/playlist_info/playlist_detail.dart';
@@ -51,7 +52,6 @@ class CloudListTemplate extends StatelessWidget {
             ),
           ),
           if (!hasTracks)
-            // فقط پلی‌لیست داریم -> لیست عمودی کامل با ارتفاع ثابت آیتم
             SliverFixedExtentList(
               itemExtent: LIST_ITEM_HEIGHT,
               delegate: SliverChildBuilderDelegate(
@@ -60,7 +60,6 @@ class CloudListTemplate extends StatelessWidget {
               ),
             )
           else
-            // تراک هم داریم -> نوار افقی، ولی همچنان داخل همون CustomScrollView
             SliverToBoxAdapter(
               child: SizedBox(
                 height: playlistRowHeight,
@@ -78,6 +77,12 @@ class CloudListTemplate extends StatelessWidget {
                         title: item.title,
                         artworkUrl: item.artworkUrl,
                         heroTag: item.id,
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => CloudActionMenu(track: item),
+                          );
+                        },
                         onTap: () {
                           Navigator.push(
                             context,
@@ -116,6 +121,12 @@ class CloudListTemplate extends StatelessWidget {
                       context,
                     ).add(PlayTrack(tracks: items.tracks, index: index));
                   },
+                  onLongPress: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => CloudActionMenu(track: item),
+                    );
+                  },
                   child: CloudItemTemplate(item: item),
                 ),
               );
@@ -131,6 +142,12 @@ class CloudListTemplate extends StatelessWidget {
     if (!_isValidItem(item)) return const SizedBox.shrink();
     return InkWell(
       key: ValueKey(item.id),
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (_) => CloudActionMenu(track: item),
+        );
+      },
       onTap: () {
         Navigator.push(
           context,
@@ -142,8 +159,6 @@ class CloudListTemplate extends StatelessWidget {
   }
 }
 
-/// کارت پلی‌لیست در نوار افقی: عکس همیشه مربع می‌ماند (با AspectRatio)
-/// و عنوان همیشه یک خط کامل نمایش داده می‌شود، صرف‌نظر از ارتفاع در دسترس.
 class _HorizontalPlaylistCard extends StatelessWidget {
   const _HorizontalPlaylistCard({
     super.key,
@@ -151,26 +166,26 @@ class _HorizontalPlaylistCard extends StatelessWidget {
     required this.artworkUrl,
     required this.heroTag,
     required this.onTap,
+    required this.onLongPress,
   });
 
   final String title;
   final String? artworkUrl;
   final Object heroTag;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 6,
           children: [
-            // عکس تمام فضای باقیمانده (بعد از کسر عنوان) را می‌گیرد
-            // و AspectRatio تضمین می‌کند همیشه مربع باشد، حتی اگر
-            // فضای عمودی محدود شود.
             Expanded(
               child: AspectRatio(
                 aspectRatio: 1,

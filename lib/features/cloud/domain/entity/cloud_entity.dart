@@ -102,6 +102,7 @@ class CloudPlaylist {
   final String? author;
   final String? artworkUrl;
   final DateTime createDate;
+  final Uri shareLink;
 
   CloudPlaylist({
     required this.id,
@@ -109,6 +110,7 @@ class CloudPlaylist {
     this.author,
     this.artworkUrl,
     required this.createDate,
+    required this.shareLink,
   });
 
   factory CloudPlaylist.fromPlaylistSearchResult(
@@ -120,6 +122,7 @@ class CloudPlaylist {
       author: playlist.user.fullName,
       artworkUrl: playlist.artworkUrl?.toString(),
       createDate: playlist.createdAt,
+      shareLink: playlist.permalinkUrl,
     );
   }
 }

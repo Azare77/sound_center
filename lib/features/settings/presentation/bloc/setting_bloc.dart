@@ -25,9 +25,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<ChangeNotificationState>((event, emit) async {
       await settingsRepository.setNotificationState(event.notificationState);
     });
-    on<ChangeImageQualityState>((event, emit) async {
-      await settingsRepository.setImageQualityState(event.highQuality);
-    });
     on<LoadSetting>((event, emit) {
       Locale savedLocale = settingsRepository.getLocale();
       String savedTheme = settingsRepository.getTheme();

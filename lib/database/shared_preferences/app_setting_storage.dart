@@ -78,15 +78,4 @@ class AppSettingStorage {
   static Future<void> setNotificationState(bool persist) async {
     await Storage.instance.prefs.setBool('notification_persist', persist);
   }
-
-  static bool getImageQualityState() {
-    final bool? highQuality = Storage.instance.prefs.getBool(
-      'high_image_quality',
-    );
-    return highQuality ?? true;
-  }
-
-  static Future<void> setImageQualityState(bool highQuality) async {
-    await Storage.instance.prefs.setBool('high_image_quality', highQuality);
-  }
 }

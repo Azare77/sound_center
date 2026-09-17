@@ -2,7 +2,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/settings/presentation/pages/about_dialog.dart';
 import 'package:sound_center/features/settings/presentation/pages/backup_dialog.dart';
-import 'package:sound_center/features/settings/presentation/pages/image_quality_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/notification_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
@@ -56,15 +55,6 @@ class Settings extends StatelessWidget {
                   );
                 },
                 child: Text(S.of(context).notification),
-              ),
-              TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => ImageQualitySettings(),
-                  );
-                },
-                child: Text(S.of(context).imageQuality),
               ),
               TextButton(
                 onPressed: () {

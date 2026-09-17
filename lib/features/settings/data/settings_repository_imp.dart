@@ -72,14 +72,4 @@ class SettingsRepositoryImp implements SettingRepository {
   Future<void> setNotificationState(bool persist) {
     return AppSettingStorage.setNotificationState(persist);
   }
-
-  @override
-  bool getImageQualityState() {
-    return AppSettingStorage.getImageQualityState();
-  }
-
-  @override
-  Future<void> setImageQualityState(bool highQuality) {
-    return AppSettingStorage.setImageQualityState(highQuality);
-  }
 }

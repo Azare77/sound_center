@@ -8,7 +8,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image/image.dart' as img;
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/database/shared_preferences/app_setting_storage.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 /// Privacy note (intentionally not removed, only documented):
@@ -23,8 +22,8 @@ class NetworkCacheImage extends StatelessWidget {
     super.key,
     required this.url,
     this.size = 50,
-    this.memCacheSize = 400,
-    this.quality = 75,
+    this.memCacheSize = 600,
+    this.quality = 80,
     this.fit = BoxFit.cover,
     this.blur = 0,
   });
@@ -46,12 +45,7 @@ class NetworkCacheImage extends StatelessWidget {
   // Resolve the URL to the specified quality.
   // Made static so it can be used both from build() and NetworkCacheImage.getFile()
   // (for places where the cached file is needed directly without the widget).
-  static String _resolveUrl(
-    String originalUrl, {
-    required bool forHighQuality,
-  }) {
-    if (!forHighQuality) return originalUrl;
-
+  static String _resolveUrl(String originalUrl) {
     const patterns = ['-large.', '-t500x500.', '-t300x300.'];
     for (final pattern in patterns) {
       if (originalUrl.contains(pattern)) {
@@ -66,39 +60,30 @@ class NetworkCacheImage extends StatelessWidget {
 
   static String _proxyUrl(
     String originalUrl, {
-    required bool forHighQuality,
     required int width,
     required int quality,
   }) {
-    final resolved = _resolveUrl(originalUrl, forHighQuality: forHighQuality);
-    if (forHighQuality) {
-      return 'https://images.weserv.nl/'
-          '?url=${Uri.encodeComponent(resolved)}'
-          '&q=100&output=jpg';
-    }
+    final resolved = _resolveUrl(originalUrl);
     return 'https://images.weserv.nl/'
         '?url=${Uri.encodeComponent(resolved)}'
         '&w=$width&h=$width&fit=cover&q=$quality&output=jpg';
   }
 
-  static String _cacheKey(
-    String resolvedUrl, {
-    required bool isHighQuality,
-    required int width,
-  }) => 'hq_${isHighQuality}_w${width}_$resolvedUrl';
+  static String _cacheKey(String resolvedUrl, {required int width}) =>
+      'hq_w${width}_$resolvedUrl';
 
   // High-quality cache manager (no compression and no resizing) — singleton,
   // because it always works with the same parameters (without resizing).
 
-  static final CacheManager _highQualityCacheManager = CacheManager(
-    Config(
-      'soundCenterHQImageCache',
-      stalePeriod: const Duration(days: 5),
-      maxNrOfCacheObjects: 50,
-      repo: JsonCacheInfoRepository(databaseName: 'hqImageCacheInfo'),
-      fileService: HttpFileService(),
-    ),
-  );
+  // static final CacheManager _highQualityCacheManager = CacheManager(
+  //   Config(
+  //     'soundCenterHQImageCache',
+  //     stalePeriod: const Duration(days: 5),
+  //     maxNrOfCacheObjects: 50,
+  //     repo: JsonCacheInfoRepository(databaseName: 'hqImageCacheInfo'),
+  //     fileService: HttpFileService(),
+  //   ),
+  // );
 
   // Low-quality cache managers, with one instance per (width, quality) combination.
   // This way, memCacheSize/quality passed to the widget actually affects the file
@@ -137,29 +122,17 @@ class NetworkCacheImage extends StatelessWidget {
 
   static Future<File?> getFile(
     String? url, {
-    int width = 400,
-    int quality = 75,
+    int width = 600,
+    int quality = 80,
   }) async {
     if (url == null || url.isEmpty) {
       return null;
     }
 
-    final bool highQuality = AppSettingStorage.getImageQualityState();
-    final resolvedUrl = _resolveUrl(url, forHighQuality: highQuality);
-    final proxy = _proxyUrl(
-      url,
-      forHighQuality: highQuality,
-      width: width,
-      quality: quality,
-    );
-    final cacheManager = highQuality
-        ? _highQualityCacheManager
-        : _lowQualityManagerFor(width, quality);
-    final cacheKey = _cacheKey(
-      resolvedUrl,
-      isHighQuality: highQuality,
-      width: width,
-    );
+    final resolvedUrl = _resolveUrl(url);
+    final proxy = _proxyUrl(url, width: width, quality: quality);
+    final cacheManager = _lowQualityManagerFor(width, quality);
+    final cacheKey = _cacheKey(resolvedUrl, width: width);
 
     try {
       return await cacheManager.getSingleFile(proxy, key: cacheKey);
@@ -174,24 +147,12 @@ class NetworkCacheImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (url == null || url!.isEmpty) return _fallback();
 
-    final bool highQuality = AppSettingStorage.getImageQualityState();
     final int width = memCacheSize;
 
-    final resolvedUrl = _resolveUrl(url!, forHighQuality: highQuality);
-    final proxy = _proxyUrl(
-      url!,
-      forHighQuality: highQuality,
-      width: width,
-      quality: quality,
-    );
-    final cacheManager = highQuality
-        ? _highQualityCacheManager
-        : _lowQualityManagerFor(width, quality);
-    final cacheKey = _cacheKey(
-      resolvedUrl,
-      isHighQuality: highQuality,
-      width: width,
-    );
+    final resolvedUrl = _resolveUrl(url!);
+    final proxy = _proxyUrl(url!, width: width, quality: quality);
+    final cacheManager = _lowQualityManagerFor(width, quality);
+    final cacheKey = _cacheKey(resolvedUrl, width: width);
 
     final image = CachedNetworkImage(
       imageUrl: proxy,
@@ -200,8 +161,8 @@ class NetworkCacheImage extends StatelessWidget {
       width: size,
       height: size,
       fit: fit,
-      memCacheWidth: highQuality ? null : width,
-      memCacheHeight: highQuality ? null : width,
+      memCacheWidth: width,
+      memCacheHeight: width,
       filterQuality: FilterQuality.high,
       placeholder: (_, _) => const Loading(),
       fadeInDuration: const Duration(milliseconds: 300),
@@ -214,8 +175,8 @@ class NetworkCacheImage extends StatelessWidget {
           width: size,
           height: size,
           fit: fit,
-          memCacheWidth: highQuality ? null : width,
-          memCacheHeight: highQuality ? null : width,
+          memCacheWidth: width,
+          memCacheHeight: width,
           placeholder: (_, _) => const Loading(),
           errorWidget: (_, _, _) => _fallback(),
         );
@@ -252,7 +213,7 @@ class FallbackHttpFileService extends HttpFileService {
   final int width;
   final int quality;
 
-  FallbackHttpFileService({this.width = 400, this.quality = 75});
+  FallbackHttpFileService({this.width = 600, this.quality = 80});
 
   @override
   Future<FileServiceResponse> get(

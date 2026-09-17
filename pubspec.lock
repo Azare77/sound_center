@@ -285,10 +285,10 @@ packages:
     dependency: transitive
     description:
       name: code_assets
-      sha256: cfd4f5f575a49c5f10ca856e9846073f1e6c3ee94912377eea5f6cefc5272941
+      sha256: "828110d598123b5ea96c00c9f3c72105bf79f8ee36c20a39b26209ade421ec57"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   collection:
     dependency: "direct main"
     description:
@@ -521,10 +521,11 @@ packages:
   flutter_colorpicker:
     dependency: "direct main"
     description:
-      name: flutter_colorpicker
-      sha256: "969de5f6f9e2a570ac660fb7b501551451ea2a1ab9e2097e89475f60e07816ea"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: fix-material_ui
+      resolved-ref: bd16a4cddc4e36f76da4aa521de74bdfbe65a787
+      url: "https://github.com/MindStudioOfficial/flutter_colorpicker"
+    source: git
     version: "1.1.0"
   flutter_html:
     dependency: "direct main"
@@ -873,10 +874,10 @@ packages:
     dependency: transitive
     description:
       name: native_toolchain_c
-      sha256: "9d233b6f2d9c52e1a2b5fbe70451d2c10ac674d3bb419d0ec8de14989d437c26"
+      sha256: "90eaad8059ebc2004a63810a4696ea9acdb02473e47ed3b6b3bafb100ac77e31"
       url: "https://pub.dev"
     source: hosted
-    version: "0.19.4"
+    version: "0.19.5"
   nested:
     dependency: transitive
     description:

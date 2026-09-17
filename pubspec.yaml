@@ -67,7 +67,10 @@ dependencies:
   text_scroll: ^0.2.1
   url_launcher: ^6.3.2
   toastification: ^3.2.0
-  flutter_colorpicker: ^1.1.0
+  flutter_colorpicker:
+    git:
+      url: https://github.com/MindStudioOfficial/flutter_colorpicker
+      ref: fix-material_ui
   #PODCAST
   podcast_search:
     git:

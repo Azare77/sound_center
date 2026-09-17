@@ -100,5 +100,6 @@
   "highQuality": "کیفیت بالا",
   "betterLook": "(ظاهر بهتر)",
   "compressed": "فشرده شده",
-  "betterForSlowConnectionAndSmallerCache": "(مناسب برای شبکه های کند و کش کوچک‌تر)"
+  "betterForSlowConnectionAndSmallerCache": "(مناسب برای شبکه های کند و کش کوچک‌تر)",
+  "clearHistory": "پاکسازی تاریخچه"
 }

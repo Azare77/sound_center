@@ -58,6 +58,7 @@ class _CloudToolBarState extends State<CloudToolBar> {
         children: [
           IconButton(
             icon: Icon(_showSearch ? Icons.close : Icons.search_rounded),
+            tooltip: S.of(context).clearHistory,
             onPressed: _toggleSearch,
           ),
           if (_showSearch)

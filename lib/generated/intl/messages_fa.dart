@@ -54,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "بررسی به‌روزرسانی از طریق GitHub",
     ),
+    "clearHistory": MessageLookupByLibrary.simpleMessage("پاکسازی تاریخچه"),
     "clicks": MessageLookupByLibrary.simpleMessage("کلیک ها"),
     "cloud": MessageLookupByLibrary.simpleMessage("SoundCloud"),
     "compressed": MessageLookupByLibrary.simpleMessage("فشرده شده"),

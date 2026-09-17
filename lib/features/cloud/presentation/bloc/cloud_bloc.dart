@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
@@ -26,11 +24,6 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
     player.setBloc(this);
     player.init();
 
-    Future<void> addToHistory(CloudTrack track) async {
-      bool res = await getCloudUseCase.addToHistory(track);
-      if (res && state.status is CloudHistory) add(LoadHistory());
-    }
-
     on<LoadHistory>((event, emit) async {
       final res = await getCloudUseCase.getPlaybackHistory();
       final status = CloudHistory(CloudEntity(playlists: [], tracks: res));
@@ -40,7 +33,7 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
       player.setPlayList(event.tracks);
       if (player.getCurrentTrack?.id != event.tracks[event.index].id ||
           !player.hasSource()) {
-        unawaited(addToHistory(event.tracks[event.index]));
+        add(AddToHistory(track: event.tracks[event.index]));
         await player.play(event.index, direct: true);
       } else if (!player.isPlaying()) {
         player.togglePlayState();
@@ -71,6 +64,10 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
       }
     });
 
+    on<AddToHistory>((event, emit) async {
+      bool res = await getCloudUseCase.addToHistory(event.track);
+      if (res && state.status is CloudHistory) add(LoadHistory());
+    });
     on<RemoveFromHistory>((event, emit) async {
       final res = await getCloudUseCase.removeFromHistory(event.track);
       if (res) add(LoadHistory());

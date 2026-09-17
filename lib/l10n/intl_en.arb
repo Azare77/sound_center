@@ -100,5 +100,6 @@
   "highQuality": "High Quality",
   "betterLook": "(better look)",
   "compressed": "Compressed",
-  "betterForSlowConnectionAndSmallerCache": "(better for slow connection and smaller cache)"
+  "betterForSlowConnectionAndSmallerCache": "(better for slow connection and smaller cache)",
+  "clearHistory": "Clear History"
 }

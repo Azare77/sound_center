@@ -59,16 +59,6 @@ class NetworkCacheImage extends StatelessWidget {
       }
     }
 
-    // No known pattern matched; instead of silently ignoring it, make this
-    // case traceable because it means the HQ request has effectively fallen
-    // back to the lower-quality URL.
-    assert(() {
-      debugPrint(
-        'NetworkCacheImage: no HQ pattern matched for "$originalUrl", '
-        'falling back to original URL as-is.',
-      );
-      return true;
-    }());
     return originalUrl;
   }
 

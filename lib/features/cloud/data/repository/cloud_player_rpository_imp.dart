@@ -81,13 +81,17 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       );
 
       final String? streamUrl = await getTrackUrl(_currentTrack!);
-      if (streamUrl == null || !hasSource()) return;
+      if (streamUrl == null || !hasSource()) {
+        await stop();
+        _trackChangedController.add(null);
+        return;
+      }
       bool res = await _playerService.setSource(streamUrl, AudioSource.cloud);
       if (res) {
         int position = PlayerStateStorage.getLastPosition();
         _playerService.seek(Duration(milliseconds: position));
       }
-      bloc.add(AutoPlay());
+      bloc.add(AddToHistory(track: _currentTrack!));
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
     }
@@ -146,6 +150,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     _currentTrack = _tracks[index];
     _playerService.setSourceByForce(AudioSource.cloud);
     _trackChangedController.add(_currentTrack);
+    bloc.add(AddToHistory(track: _currentTrack!));
     // make sure that loading widget will show
     await Future.delayed(Duration(milliseconds: 20));
     _loadingController.add(true);

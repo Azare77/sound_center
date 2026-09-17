@@ -73,7 +73,6 @@ class _ImageQualitySettingsState extends State<ImageQualitySettings> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Radio<bool>(value: persist),
             Expanded(

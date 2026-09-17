@@ -22,7 +22,8 @@ class LocalAudioRepositoryLinux implements AudioRepository {
     final List<File> audioFiles = await _scanAudioFiles(musicDir);
     List<AudioModel> files = [];
     AudioMetadata metadata;
-    for (File file in audioFiles) {
+    for (int i = 0; i < audioFiles.length; i++) {
+      File file = audioFiles[i];
       try {
         metadata = readMetadata(file, getImage: true);
       } catch (e) {
@@ -30,10 +31,10 @@ class LocalAudioRepositoryLinux implements AudioRepository {
         continue;
       }
       AudioModel audioModel = AudioModel(
-        id: files.length,
+        id: i,
         path: file.path,
         uri: file.uri.path,
-        title: metadata.title ?? "",
+        title: metadata.title ?? file.path.split("/").last,
         duration: metadata.duration?.inMilliseconds ?? 0,
         album: metadata.album ?? "",
         genre: "",
@@ -57,7 +58,8 @@ class LocalAudioRepositoryLinux implements AudioRepository {
             album.contains(like);
       }).toList();
     }
-    return files;
+    final sortedFiles = _sort(files, orderBy, desc);
+    return sortedFiles;
   }
 
   Future<List<File>> _scanAudioFiles(Directory dir) async {
@@ -74,6 +76,44 @@ class LocalAudioRepositoryLinux implements AudioRepository {
     }
 
     return files;
+  }
+
+  List<AudioModel> _sort(
+    List<AudioModel> audios,
+    AudioColumns order,
+    bool desc,
+  ) {
+    audios.sort((a, b) {
+      int compare = 0;
+      switch (order) {
+        case AudioColumns.id:
+          compare = a.id.compareTo(b.id);
+          break;
+        case AudioColumns.createdAt:
+          compare = (a.dateAdded).compareTo(b.dateAdded);
+          break;
+        case AudioColumns.title:
+          compare = (a.title).toLowerCase().compareTo((b.title).toLowerCase());
+          break;
+        case AudioColumns.artist:
+          compare = (a.artist).toLowerCase().compareTo(
+            (b.artist).toLowerCase(),
+          );
+          break;
+
+        case AudioColumns.album:
+          compare = (a.album).toLowerCase().compareTo((b.album).toLowerCase());
+          break;
+
+        case AudioColumns.duration:
+          compare = (a.duration).compareTo(b.duration);
+          break;
+      }
+
+      return desc ? -compare : compare;
+    });
+
+    return audios;
   }
 
   @override

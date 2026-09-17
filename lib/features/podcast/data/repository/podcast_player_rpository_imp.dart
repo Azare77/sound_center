@@ -67,7 +67,7 @@ class PodcastPlayerRepositoryImp
       _playerService.setSourceByForce(AudioSource.podcast);
       _episodeChangedController.add(_currentEpisode);
       // make sure that loading widget will show
-      await Future.delayed(Duration(milliseconds: 10));
+      await Future.delayed(Duration(milliseconds: 20));
       _loadingController.add(true);
 
       String key = _currentEpisode!.title.trim();
@@ -89,7 +89,6 @@ class PodcastPlayerRepositoryImp
         _currentEpisode!.contentUrl!,
         AudioSource.podcast,
         cachedFilePath: cacheFile,
-        onSourceSet: () => bloc.add(AutoPlayPodcast()),
       );
       if (res) {
         int position = PlayerStateStorage.getLastPosition();
@@ -157,7 +156,7 @@ class PodcastPlayerRepositoryImp
     _playerService.setSourceByForce(AudioSource.podcast);
     _episodeChangedController.add(_currentEpisode);
     // make sure that loading widget will show
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future.delayed(Duration(milliseconds: 20));
     _loadingController.add(true);
 
     String key = _currentEpisode!.title.trim();
@@ -177,7 +176,6 @@ class PodcastPlayerRepositoryImp
       _episodes[index].contentUrl!,
       AudioSource.podcast,
       cachedFilePath: cacheFile,
-      onSourceSet: () => bloc.add(AutoPlayPodcast()),
     );
     if (!allowToPlay) return;
     await PlayerStateStorage.saveLastEpisode(_currentEpisode!);

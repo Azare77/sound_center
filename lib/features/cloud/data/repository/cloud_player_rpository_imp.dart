@@ -66,7 +66,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _playerService.setSourceByForce(AudioSource.cloud);
       _trackChangedController.add(_currentTrack);
       // make sure that loading widget will show
-      await Future.delayed(Duration(milliseconds: 10));
+      await Future.delayed(Duration(milliseconds: 20));
       _loadingController.add(true);
       bloc.add(AutoPlay());
       File? file;
@@ -82,11 +82,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
 
       final String? streamUrl = await getTrackUrl(_currentTrack!);
       if (streamUrl == null || !hasSource()) return;
-      bool res = await _playerService.setSource(
-        streamUrl,
-        AudioSource.cloud,
-        onSourceSet: () => bloc.add(AutoPlay()),
-      );
+      bool res = await _playerService.setSource(streamUrl, AudioSource.cloud);
       if (res) {
         int position = PlayerStateStorage.getLastPosition();
         _playerService.seek(Duration(milliseconds: position));
@@ -151,7 +147,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     _playerService.setSourceByForce(AudioSource.cloud);
     _trackChangedController.add(_currentTrack);
     // make sure that loading widget will show
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future.delayed(Duration(milliseconds: 20));
     _loadingController.add(true);
     File? file;
     try {
@@ -173,7 +169,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     bool allowToPlay = await _playerService.setSource(
       trackUrl,
       AudioSource.cloud,
-      onSourceSet: () => bloc.add(AutoPlay()),
     );
     if (!allowToPlay) return;
     await PlayerStateStorage.saveLastCloudTrack(_currentTrack!);

@@ -77,15 +77,12 @@ class _ImageQualitySettingsState extends State<ImageQualitySettings> {
           children: [
             Radio<bool>(value: persist),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: Wrap(
-                  spacing: 5,
-                  children: [
-                    Text(languageName),
-                    Text(detail, style: infoTextStyle),
-                  ],
-                ),
+              child: Wrap(
+                spacing: 5,
+                children: [
+                  Text(languageName),
+                  Text(detail, style: infoTextStyle),
+                ],
               ),
             ),
           ],

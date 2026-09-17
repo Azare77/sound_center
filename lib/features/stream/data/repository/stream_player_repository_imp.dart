@@ -144,7 +144,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     _playerService.setSourceByForce(AudioSource.stream);
     _streamChangedController.add(_currentStream);
     // make sure that loading widget will show
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future.delayed(Duration(milliseconds: 20));
     _loadingController.add(true);
     late final String url;
     late final String title;
@@ -174,11 +174,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       duration: duration,
       cached: file?.uri,
     );
-    bool allowToPlay = await _playerService.setSource(
-      url,
-      AudioSource.stream,
-      onSourceSet: () => bloc.add(AutoPlayStream()),
-    );
+    bool allowToPlay = await _playerService.setSource(url, AudioSource.stream);
     if (!allowToPlay) return;
     await _playerService.play();
     bloc.add(AutoPlayStream());

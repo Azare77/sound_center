@@ -48,7 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "betterForSlowConnectionAndSmallerCache":
         MessageLookupByLibrary.simpleMessage(
-          "(مناسب برای شبکه های کند و کش کویچکتر)",
+          "(مناسب برای شبکه های کند و کش کوچک‌تر)",
         ),
     "betterLook": MessageLookupByLibrary.simpleMessage("(ظاهر بهتر)"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(

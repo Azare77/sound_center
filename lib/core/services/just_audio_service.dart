@@ -111,7 +111,6 @@ class JustAudioService {
     String path,
     AudioSource source, {
     String? cachedFilePath,
-    void Function()? onSourceSet,
   }) async {
     final int myId = ++_requestId;
     bool isStale() => myId != _requestId;
@@ -135,7 +134,6 @@ class JustAudioService {
     _loadingSource = true;
     _loadingController.add(true);
     _sourceChangedController.add(source);
-    // onSourceSet?.call();
 
     if (wasLoading) {
       try {
@@ -201,7 +199,6 @@ class JustAudioService {
       await _player.setSpeed(1.0);
       _loadingSource = false;
       _loadingController.add(isLoading());
-      // onSourceSet?.call();
       return true;
     } on _StaleSourceException {
       return false;
@@ -296,7 +293,7 @@ class JustAudioService {
     Duration? duration;
     while (duration == null) {
       duration = _player.duration;
-      await Future.delayed(Duration(milliseconds: 10));
+      await Future.delayed(Duration(milliseconds: 20));
     }
     return duration.inMilliseconds;
   }

@@ -11,18 +11,13 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/database/shared_preferences/app_setting_storage.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
-/// ---------------------------------------------------------------
-/// نکته حریم‌خصوصی (عمداً حذف نشد، فقط مستند شد):
-/// هر URL تصویر از طریق images.weserv.nl (یک proxy شخص ثالث) رد می‌شود.
-/// یعنی این سرویس متادیتای این‌که کاربر چه کاور/آلبومی را می‌بیند دریافت
-/// می‌کند. اگر حریم خصوصی برایتان مهم است، این تصمیم را آگاهانه بگیرید:
-/// یا خودتان یک image-resizing proxy روی سرور خودتان بزنید، یا این لایه
-/// را کاملاً حذف کنید و فقط از originalUrl استفاده کنید.
-/// ---------------------------------------------------------------
+/// Privacy note (intentionally not removed, only documented):
+/// Every image URL is routed through images.weserv.nl (a third-party proxy).
+/// This means the service receives metadata about which cover/album the user
+/// is viewing. If privacy is important to you, make this decision consciously:
+/// either run your own image-resizing proxy on your own server, or remove this
+/// layer entirely and use only the originalUrl.
 
-/// ---------------------------------------------------------------
-/// 1. ویجت اصلی
-/// ---------------------------------------------------------------
 class NetworkCacheImage extends StatelessWidget {
   const NetworkCacheImage({
     super.key,
@@ -37,23 +32,20 @@ class NetworkCacheImage extends StatelessWidget {
   final String? url;
   final double? size;
 
-  /// عرض/ارتفاعی که هم برای resize واقعی روی دیسک (در حالت کیفیت پایین)
-  /// و هم برای memCacheWidth/Height استفاده می‌شود. برخلاف نسخه قبلی،
-  /// این مقدار واقعاً روی فایل کش‌شده روی دیسک هم اثر می‌گذارد.
+  /// Width/height used both for actual resizing on disk (in low-quality mode)
+  /// and for memCacheWidth/Height. Unlike the previous version, this value
+  /// actually affects the cached file on disk as well.
   final int memCacheSize;
 
-  /// کیفیت فشرده‌سازی JPEG در حالت کیفیت پایین (۰ تا ۱۰۰).
+  /// JPEG compression quality in low-quality mode (0 to 100).
   final int quality;
 
   final BoxFit fit;
   final double blur;
 
-  // -----------------------------------------------------------------
-  // اصلاح آدرس به کیفیت مشخص‌شده.
-  // static شده تا هم از build() و هم از NetworkCacheImage.getFile()
-  // (برای جاهایی که بدون خود ویجت، مستقیم فایل کش‌شده لازم دارید)
-  // قابل استفاده باشد.
-  // -----------------------------------------------------------------
+  // Resolve the URL to the specified quality.
+  // Made static so it can be used both from build() and NetworkCacheImage.getFile()
+  // (for places where the cached file is needed directly without the widget).
   static String _resolveUrl(
     String originalUrl, {
     required bool forHighQuality,
@@ -67,8 +59,9 @@ class NetworkCacheImage extends StatelessWidget {
       }
     }
 
-    // هیچ پترن شناخته‌شده‌ای مچ نشد؛ به‌جای سکوت، این حالت را trace‌پذیر می‌کنیم
-    // چون یعنی درخواست HQ عملاً به کیفیت پایین fallback شده.
+    // No known pattern matched; instead of silently ignoring it, make this
+    // case traceable because it means the HQ request has effectively fallen
+    // back to the lower-quality URL.
     assert(() {
       debugPrint(
         'NetworkCacheImage: no HQ pattern matched for "$originalUrl", '
@@ -79,9 +72,8 @@ class NetworkCacheImage extends StatelessWidget {
     return originalUrl;
   }
 
-  // -----------------------------------------------------------------
-  // CDN‑proxy (weserv.nl)
-  // -----------------------------------------------------------------
+  // CDN proxy (weserv.nl)
+
   static String _proxyUrl(
     String originalUrl, {
     required bool forHighQuality,
@@ -105,10 +97,9 @@ class NetworkCacheImage extends StatelessWidget {
     required int width,
   }) => 'hq_${isHighQuality}_w${width}_$resolvedUrl';
 
-  // -----------------------------------------------------------------
-  // کش منیجر کیفیت بالا (بدون فشرده‌سازی و بدون تغییر ابعاد) — singleton،
-  // چون همیشه با همان پارامترها (بدون resize) کار می‌کند.
-  // -----------------------------------------------------------------
+  // High-quality cache manager (no compression and no resizing) — singleton,
+  // because it always works with the same parameters (without resizing).
+
   static final CacheManager _highQualityCacheManager = CacheManager(
     Config(
       'soundCenterHQImageCache',
@@ -119,12 +110,11 @@ class NetworkCacheImage extends StatelessWidget {
     ),
   );
 
-  // -----------------------------------------------------------------
-  // کش منیجرهای کیفیت پایین، به ازای هر ترکیب (width, quality) یک نمونه.
-  // این‌طوری memCacheSize/quality که به ویجت پاس می‌دهید واقعاً روی فایلی
-  // که روی دیسک کش می‌شود هم اثر می‌گذارد (نسخه قبلی این را نادیده می‌گرفت
-  // چون یک instance ثابت با width=400 برای همه استفاده می‌شد).
-  // -----------------------------------------------------------------
+  // Low-quality cache managers, with one instance per (width, quality) combination.
+  // This way, memCacheSize/quality passed to the widget actually affects the file
+  // cached on disk as well (the previous version ignored this because a single
+  // fixed instance with width=400 was used for everything).
+
   static final Map<String, CacheManager> _lowQualityManagers = {};
 
   static CacheManager _lowQualityManagerFor(int width, int quality) {
@@ -142,20 +132,19 @@ class NetworkCacheImage extends StatelessWidget {
     });
   }
 
-  // -----------------------------------------------------------------
-  // دسترسی مستقیم به فایل کش‌شده، بدون رندر ویجت — برای جاهایی که فقط
-  // File خام لازم دارید (مثلاً برای اشتراک‌گذاری، ست کردن روی نوتیفیکیشن،
-  // یا هر مصرف دیگری بیرون از درخت ویجت).
+  // Direct access to the cached file without rendering the widget — for places
+  // where only the raw File is needed (e.g. for sharing, setting it as a
+  // notification image, or any other use outside the widget tree).
   //
-  // جایگزین صحیح الگوی قبلی:
+  // Correct replacement for the previous pattern:
   //   NetworkCacheImage.customCacheManager.getSingleFile(url)
-  // که همیشه کیفیت پایین و بدون proxy برمی‌گرداند و به تنظیمات کاربر
-  // (AppSettingStorage.getImageQualityState) هیچ توجهی نمی‌کرد.
+  // which always returned a low-quality file without using the proxy and ignored
+  // the user's settings (AppSettingStorage.getImageQualityState).
   //
-  // این متد همان مسیر build() را طی می‌کند: چک تنظیمات کیفیت، ساخت آدرس
-  // proxy یا آدرس original بر همان اساس، و گرفتن فایل از cache manager
-  // درستِ متناظر با آن کیفیت/سایز.
-  // -----------------------------------------------------------------
+  // This method follows the same path as build(): check the quality setting,
+  // construct the proxy or original URL accordingly, and get the file from the
+  // appropriate cache manager for that quality/size.
+
   static Future<File?> getFile(
     String? url, {
     int width = 400,
@@ -186,7 +175,7 @@ class NetworkCacheImage extends StatelessWidget {
       return await cacheManager.getSingleFile(proxy, key: cacheKey);
     } catch (e) {
       debugPrint('NetworkCacheImage.getFile: proxy failed for $url → $e');
-      // همان fallback منطق ویجت: اگر proxy شکست خورد، برو سراغ URL اصلی.
+      // Same fallback logic as the widget: if the proxy fails, use the original URL.
       return cacheManager.getSingleFile(resolvedUrl, key: cacheKey);
     }
   }
@@ -224,7 +213,7 @@ class NetworkCacheImage extends StatelessWidget {
       memCacheWidth: highQuality ? null : width,
       memCacheHeight: highQuality ? null : width,
       filterQuality: FilterQuality.high,
-      placeholder: (_, __) => const Loading(),
+      placeholder: (_, _) => const Loading(),
       fadeInDuration: const Duration(milliseconds: 300),
       errorWidget: (context, _, error) {
         debugPrint('CDN proxy failed → falling back to original URL: $error');
@@ -237,15 +226,15 @@ class NetworkCacheImage extends StatelessWidget {
           fit: fit,
           memCacheWidth: highQuality ? null : width,
           memCacheHeight: highQuality ? null : width,
-          placeholder: (_, __) => const Loading(),
-          errorWidget: (_, __, ___) => _fallback(),
+          placeholder: (_, _) => const Loading(),
+          errorWidget: (_, _, _) => _fallback(),
         );
       },
     );
 
-    // ImageFiltered فقط وقتی واقعاً بلوری خواسته شده ساخته می‌شود؛
-    // در نسخه قبلی همیشه (حتی با blur=0) یک لایه اضافه به compositing
-    // tree اضافه می‌شد.
+    // ImageFiltered is only created when an actual blur is requested;
+    // in the previous version, an extra layer was always added to the
+    // compositing tree, even when blur=0.
     if (blur <= 0) return image;
 
     return ImageFiltered(
@@ -267,9 +256,8 @@ class NetworkCacheImage extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------
-/// 2. سرویس HTTP با fallback + compress
-/// ---------------------------------------------------------------
+/// 2. HTTP service with fallback + compression
+
 class FallbackHttpFileService extends HttpFileService {
   final int width;
   final int quality;
@@ -294,15 +282,16 @@ class FallbackHttpFileService extends HttpFileService {
         throw Exception('empty response body for $url');
       }
 
-      // weserv خودش resize/compress را انجام داده؛ decode مجدد فقط برای
-      // دور انداختن نتیجه، اتلاف CPU روی پرمصرف‌ترین مسیر کد است.
-      // بایت‌ها را همان‌طور که هستند برمی‌گردانیم.
+      // weserv has already performed the resizing/compression; decoding again
+      // just to discard the result wastes CPU on the most frequently used path.
+      // Return the bytes as-is.
       if (isProxy) {
         return _MemoryResponse(bytes, response.validTill, 'jpg');
       }
 
-      // این‌جا مسیر غیر-proxy است (مثلاً retry با originalUrl)؛ این‌جا
-      // واقعاً خودمان باید resize/compress کنیم، پس decode لازم است.
+      // This is the non-proxy path (e.g. a retry with originalUrl); here we
+      // actually need to perform the resizing/compression ourselves, so decoding
+      // is necessary.
       final img.Image? decoded = img.decodeImage(bytes);
       if (decoded == null) {
         throw Exception('failed to decode image bytes for $url');
@@ -310,7 +299,7 @@ class FallbackHttpFileService extends HttpFileService {
       final Uint8List compressed = _compress(decoded);
       return _MemoryResponse(compressed, response.validTill, 'jpg');
     } on Exception catch (e) {
-      debugPrint('دانلود ناموفق ($url) → $e');
+      debugPrint('Download failed ($url) → $e');
       if (isProxy) {
         return get(originalUrl, headers: headers);
       }
@@ -332,9 +321,8 @@ class FallbackHttpFileService extends HttpFileService {
   }
 }
 
-/// ---------------------------------------------------------------
-/// 3. پاسخ حافظه‌ای (بدون نوشتن روی دیسک)
-/// ---------------------------------------------------------------
+/// 3. In-memory response (without writing to disk)
+
 class _MemoryResponse implements FileServiceResponse {
   final Uint8List _bytes;
   final DateTime _validTill;

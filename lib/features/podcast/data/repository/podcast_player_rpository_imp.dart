@@ -245,6 +245,16 @@ class PodcastPlayerRepositoryImp
   }
 
   @override
+  Future<void> pause() async {
+    if (_playerService.isPlaying()) await togglePlayState();
+  }
+
+  @override
+  Future<void> resume() async {
+    if (!_playerService.isPlaying()) await togglePlayState();
+  }
+
+  @override
   Future<void> stop() async {
     _retryCount = 0;
     _currentEpisode = null;

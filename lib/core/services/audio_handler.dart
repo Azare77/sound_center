@@ -141,26 +141,26 @@ class JustAudioNotificationHandler extends BaseAudioHandler
   @override
   Future<void> play() async {
     if (_source == service.AudioSource.local) {
-      _localPlayer.togglePlayState();
+      _localPlayer.resume();
     } else if (_source == service.AudioSource.podcast) {
-      _podcastPlayer.togglePlayState();
+      _podcastPlayer.resume();
     } else if (_source == service.AudioSource.stream) {
-      _streamPlayer.togglePlayState();
+      _streamPlayer.resume();
     } else if (_source == service.AudioSource.cloud) {
-      _cloudPlayer.togglePlayState();
+      _cloudPlayer.resume();
     }
   }
 
   @override
   Future<void> pause() async {
     if (_source == service.AudioSource.local) {
-      _localPlayer.togglePlayState();
+      _localPlayer.pause();
     } else if (_source == service.AudioSource.podcast) {
-      _podcastPlayer.togglePlayState();
+      _podcastPlayer.pause();
     } else if (_source == service.AudioSource.stream) {
-      _streamPlayer.togglePlayState();
+      _streamPlayer.pause();
     } else if (_source == service.AudioSource.cloud) {
-      _cloudPlayer.togglePlayState();
+      _cloudPlayer.pause();
     }
   }
 

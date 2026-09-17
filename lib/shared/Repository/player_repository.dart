@@ -32,6 +32,10 @@ abstract class PlayerRepository {
 
   Future<void> togglePlayState();
 
+  Future<void> resume();
+
+  Future<void> pause();
+
   Future<void> seek(Duration position);
 
   Future<dynamic> next();

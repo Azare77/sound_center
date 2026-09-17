@@ -241,6 +241,16 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
+  Future<void> pause() async {
+    if (_playerService.isPlaying()) await togglePlayState();
+  }
+
+  @override
+  Future<void> resume() async {
+    if (!_playerService.isPlaying()) await togglePlayState();
+  }
+
+  @override
   Future<void> stop() async {
     _audioChangedController.add(null);
     await _playerService.release();

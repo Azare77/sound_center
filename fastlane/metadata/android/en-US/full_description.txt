@@ -1,35 +1,24 @@
-<p>
-Sound Center is a modern open-source audio player that combines local music playback with advanced streaming capabilities in a single application.
-</p>
-<p>
-Whether you want to manage your offline audio library or listen to your favorite podcasts and streams, Sound Center provides all the features you need through a simple, smooth, and user-friendly experience.
-</p>
-<p><b>Current Features:</b></p>
-<ul>
-<li>
-<b>Local Music Player:</b>
-High-quality playback of audio files stored on your device.
-</li>
-<li>
-<b>Podcast Player:</b>
+🎵 Sound Center is a modern, open-source audio player built to bring your music, podcasts, and online audio together in one seamless experience.
+
+Whether you're managing your personal music library, catching up on your favorite podcasts, or discovering new online audio, Sound Center gives you a simple, smooth, and powerful way to enjoy your content—all in one place.
+
+✨ Current Features:
+
+🎧 Local Music Player:
+Enjoy high-quality playback of the audio files stored on your device and keep your personal music library at your fingertips.
+
+🎙️ Podcast Player:
 Easily play and manage your favorite podcasts alongside your personal music collection.
-</li>
-<li>
-<b>Stream Player:</b>
-Search, play, and manage online audio streams.
-</li>
-</ul>
-<p><b>Planned Features for Future Versions:</b></p>
-<ul>
-<li>
-<b>Online Music Service Integration:</b>
-Support for services such as YouTube Music and SoundCloud in future releases.
-</li>
-<li>
-<b>Additional Tools:</b>
-Features such as lyrics search, tag editing, downloading, and more useful utilities.
-</li>
-</ul>
-<p>
-Join us on GitHub, contribute to the development, report issues, and follow the progress of Sound Center.
-</p>
+
+🌐 Stream Player:
+Discover, search, play, and manage online audio streams from a single, convenient interface.
+
+☁️ Cloud Player:
+Search, play, and manage DRM-free audio from SoundCloud directly within Sound Center.
+
+🚀 Planned Features for Future Versions:
+
+🛠️ Quality-of-Life Improvements:
+We're working on even more useful tools and features, including lyrics search, tag editing, downloading, song detection, and more.
+
+💡 Sound Center is continuously evolving. Join us on GitHub, contribute to the project, report issues, and follow the journey as Sound Center grows.

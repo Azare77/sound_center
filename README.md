@@ -23,24 +23,24 @@ Currently available on Android and Linux desktop, with support for English and F
 
 <div align="center">
 
-| Feature                                    | Status / Notes                             |
-|--------------------------------------------|--------------------------------------------|
-| **Local audio scanning & playback**        | ✔ Playlists, queue, seek, shuffle          |
-| **Podcast search, streaming & downloads**  | ✔ Search, stream, offline resume           |
-| **Background playback & system controls**  | ✔ `audio_service`, MPRIS on desktop        |
-| **Downloads manager**                      | ✔ Background using `background_downloader` |
-| **Localization**                           | ✔ English & Farsi (`intl`)                 |
-| **Custom Themes**                          | ✔ Create Custom Themes and share them      |
-| **Live audio streams (internet radio)**    | ✔ Search and play radio stations           |
-| **Third-party sources (SoundCloud, etc.)** | 🔧 Planned — adapter-based architecture    |
+| Feature                                   | Status / Notes                             |
+|-------------------------------------------|--------------------------------------------|
+| **Local audio scanning & playback**       | ✔ Playlists, queue, seek, shuffle          |
+| **Podcast search, streaming & downloads** | ✔ Search, stream, offline resume           |
+| **Background playback & system controls** | ✔ `audio_service`, MPRIS on desktop        |
+| **Downloads manager**                     | ✔ Background using `background_downloader` |
+| **Localization**                          | ✔ English & Farsi (`intl`)                 |
+| **Custom Themes**                         | ✔ Create Custom Themes and share them      |
+| **Live audio streams (internet radio)**   | ✔ Search and play radio stations           |
+| **Third-party sources (SoundCloud)**      | ✔ Search and play DRM free audios          |
 
 </div>
 
 ## Screenshots
 
-| ![Screenshot 1](info/screenshots/1.jpeg) | ![Screenshot 2](info/screenshots/2.jpeg) | ![Screenshot 3](info/screenshots/3.jpeg) | ![Screenshot 4](info/screenshots/4.jpeg) |
-|------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|
-| ![Screenshot 5](info/screenshots/5.jpeg) | ![Screenshot 6](info/screenshots/6.jpeg) | ![Screenshot 7](info/screenshots/7.jpeg) | ![Screenshot 8](info/screenshots/8.jpeg) |
+| ![Screenshot 1](info/screenshots/1.jpeg) | ![Screenshot 2](info/screenshots/2.jpeg) | ![Screenshot 3](info/screenshots/3.jpeg) | ![Screenshot 4](info/screenshots/4.jpeg) | ![Screenshot 5](info/screenshots/5.jpeg) |
+|------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|
+| ![Screenshot 6](info/screenshots/6.jpeg) | ![Screenshot 7](info/screenshots/7.jpeg) | ![Screenshot 8](info/screenshots/8.jpeg) | ![Screenshot 9](info/screenshots/9.jpeg) |                                          |
 
 ## Feedback & Support
 

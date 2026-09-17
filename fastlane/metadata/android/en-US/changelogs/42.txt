@@ -1,0 +1,10 @@
+What's New:
+- Added SoundCloud Cloud Player with support for searching and playing DRM-free audio.
+- Added song history tracking.
+
+Improvements:
+- Improved app navigation and overall user experience.
+- Improved App UI rebuild overhead
+
+Fixed:
+- Fixed loading indicator in current media widget

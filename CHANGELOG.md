@@ -1,3 +1,13 @@
+# 1.0.0
+
+* Add cloud based audios using SoundCloud (Only DRM Free audios)
+* Add cloud playback history
+* Add setting to choose network image quality
+* Improve navigation UX
+* Improve App UI rebuild overhead
+* Fix loading indicator in current media widget
+* Fix song resuming after sleep while paused on Desktop
+
 # 1.0.0-beta.6
 
 * Fixed notification cover image issues in Streams

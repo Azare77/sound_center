@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/pages/stream.dart';
 import 'package:sound_center/features/stream/presentation/widgets/direct_link_dialog.dart';
@@ -49,7 +49,11 @@ class _StreamToolBarState extends State<StreamToolBar> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height / 100;
+    double height = MediaQuery.heightOf(context) / 100;
+    final orientation = MediaQuery.orientationOf(context);
+    if (orientation == .landscape) {
+      height = MediaQuery.heightOf(context) / 50;
+    }
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
       height: _showSearch ? height * 9 : height * 7,

@@ -699,51 +699,6 @@ class S {
     return Intl.message('Tracks', name: 'tracks', desc: '', args: []);
   }
 
-  /// `Image Quality`
-  String get imageQuality {
-    return Intl.message(
-      'Image Quality',
-      name: 'imageQuality',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `High Quality`
-  String get highQuality {
-    return Intl.message(
-      'High Quality',
-      name: 'highQuality',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `(better look)`
-  String get betterLook {
-    return Intl.message(
-      '(better look)',
-      name: 'betterLook',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Compressed`
-  String get compressed {
-    return Intl.message('Compressed', name: 'compressed', desc: '', args: []);
-  }
-
-  /// `(better for slow connection and smaller cache)`
-  String get betterForSlowConnectionAndSmallerCache {
-    return Intl.message(
-      '(better for slow connection and smaller cache)',
-      name: 'betterForSlowConnectionAndSmallerCache',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Clear History`
   String get clearHistory {
     return Intl.message(

@@ -46,18 +46,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "backupRestoredSuccessfully": MessageLookupByLibrary.simpleMessage(
       "داده‌ها با موفقیت بازیابی شدند.",
     ),
-    "betterForSlowConnectionAndSmallerCache":
-        MessageLookupByLibrary.simpleMessage(
-          "(مناسب برای شبکه های کند و کش کوچک‌تر)",
-        ),
-    "betterLook": MessageLookupByLibrary.simpleMessage("(ظاهر بهتر)"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "بررسی به‌روزرسانی از طریق GitHub",
     ),
     "clearHistory": MessageLookupByLibrary.simpleMessage("پاکسازی تاریخچه"),
     "clicks": MessageLookupByLibrary.simpleMessage("کلیک ها"),
     "cloud": MessageLookupByLibrary.simpleMessage("SoundCloud"),
-    "compressed": MessageLookupByLibrary.simpleMessage("فشرده شده"),
     "copy": MessageLookupByLibrary.simpleMessage("کپی تم"),
     "country": MessageLookupByLibrary.simpleMessage("کشور"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("ساخت تم جدید"),
@@ -87,10 +81,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "format": MessageLookupByLibrary.simpleMessage("فرمت"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("دریافت کلید API"),
     "green": MessageLookupByLibrary.simpleMessage("سبز"),
-    "highQuality": MessageLookupByLibrary.simpleMessage("کیفیت بالا"),
     "host": MessageLookupByLibrary.simpleMessage("هاست"),
     "iconColor": MessageLookupByLibrary.simpleMessage("آیکون"),
-    "imageQuality": MessageLookupByLibrary.simpleMessage("کیفیت تصاویر"),
     "importData": MessageLookupByLibrary.simpleMessage("وارد کردن داده‌ها"),
     "language": MessageLookupByLibrary.simpleMessage("زبان"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("جدید ترین"),
@@ -111,7 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no": MessageLookupByLibrary.simpleMessage("نه"),
     "noAudio": MessageLookupByLibrary.simpleMessage("بدون موسیقی!!"),
     "noDrmFreeMusic": MessageLookupByLibrary.simpleMessage(
-      "موزیک آزاد و بدون قفل DRM وجود ندارد",
+      "آهنگ آزاد و بدون قفل DRM وجود ندارد",
     ),
     "noHistory": MessageLookupByLibrary.simpleMessage("بدون تاریخچه"),
     "noPodcast": MessageLookupByLibrary.simpleMessage("بدون پادکست"),

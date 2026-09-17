@@ -92,14 +92,9 @@
   "failedToRestoreBackup": "بازیابی داده‌ها ناموفق بود.",
   "STREAM_NAMES": "----------------- STREAM NAMES ----------------",
   "cloud": "SoundCloud",
-  "noDrmFreeMusic": "موزیک آزاد و بدون قفل DRM وجود ندارد",
+  "noDrmFreeMusic": "آهنگ آزاد و بدون قفل DRM وجود ندارد",
   "noHistory": "بدون تاریخچه",
   "playlists": "فهرست‌های پخش",
   "tracks": "آهنگ‌ها",
-  "imageQuality": "کیفیت تصاویر",
-  "highQuality": "کیفیت بالا",
-  "betterLook": "(ظاهر بهتر)",
-  "compressed": "فشرده شده",
-  "betterForSlowConnectionAndSmallerCache": "(مناسب برای شبکه های کند و کش کوچک‌تر)",
   "clearHistory": "پاکسازی تاریخچه"
 }

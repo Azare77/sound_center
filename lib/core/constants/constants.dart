@@ -13,8 +13,8 @@ const double LIST_ITEM_HEIGHT = 70;
 
 const double EXPANDED_HEIGHT = 300;
 
-const int VERSION_NUMBER = 3;
+const int VERSION_NUMBER = 4;
 
-const String VERSION_NAME = "v1.0.0-beta.6";
+const String VERSION_NAME = "v1.0.0";
 
 final GlobalKey<NavigatorState> NAVIGATOR_KEY = GlobalKey<NavigatorState>();

@@ -95,5 +95,10 @@
   "noDrmFreeMusic": "موزیک آزاد و بدون قفل DRM وجود ندارد",
   "noHistory": "بدون تاریخچه",
   "playlists": "فهرست‌های پخش",
-  "tracks": "آهنگ‌ها"
+  "tracks": "آهنگ‌ها",
+  "imageQuality": "کیفیت تصاویر",
+  "highQuality": "کیفیت بالا",
+  "betterLook": "(ظاهر بهتر)",
+  "compressed": "فشرده شده",
+  "betterForSlowConnectionAndSmallerCache": "(مناسب برای شبکه های کند و کش کویچکتر)"
 }

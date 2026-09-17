@@ -28,4 +28,8 @@ abstract class SettingRepository {
   bool getNotificationState();
 
   Future<void> setNotificationState(bool persist);
+
+  bool getImageQualityState();
+
+  Future<void> setImageQualityState(bool highQuality);
 }

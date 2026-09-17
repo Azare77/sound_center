@@ -46,11 +46,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "backupRestoredSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Backup restored successfully.",
     ),
+    "betterForSlowConnectionAndSmallerCache":
+        MessageLookupByLibrary.simpleMessage(
+          "(better for slow connection and smaller cache)",
+        ),
+    "betterLook": MessageLookupByLibrary.simpleMessage("(better look)"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "Check for Updates via GitHub",
     ),
     "clicks": MessageLookupByLibrary.simpleMessage("Clicks"),
     "cloud": MessageLookupByLibrary.simpleMessage("SoundCloud"),
+    "compressed": MessageLookupByLibrary.simpleMessage("Compressed"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),
     "country": MessageLookupByLibrary.simpleMessage("Country"),
     "createNewTheme": MessageLookupByLibrary.simpleMessage("Create New Theme"),
@@ -82,8 +88,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "format": MessageLookupByLibrary.simpleMessage("Format"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
+    "highQuality": MessageLookupByLibrary.simpleMessage("High Quality"),
     "host": MessageLookupByLibrary.simpleMessage("Host"),
     "iconColor": MessageLookupByLibrary.simpleMessage("Icon"),
+    "imageQuality": MessageLookupByLibrary.simpleMessage("Image Quality"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("Latest First"),

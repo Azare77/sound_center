@@ -161,11 +161,11 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       final stream = (_currentStream as Source);
       url = stream.listenUrl;
       title = stream.title ?? '';
-      cover = stream.cover ?? '';
+      cover = stream.cover;
     }
     File? file;
     try {
-      file = await NetworkCacheImage.customCacheManager.getSingleFile(cover);
+      file = await NetworkCacheImage.getFile(cover);
     } catch (_) {}
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromStream(
       url: url,

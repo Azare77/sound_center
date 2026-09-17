@@ -71,7 +71,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       bloc.add(AutoPlay());
       File? file;
       try {
-        file = await NetworkCacheImage.customCacheManager.getSingleFile("");
+        file = await NetworkCacheImage.getFile(
+          _currentTrack!.artworkUrl?.toString(),
+        );
       } catch (_) {}
       (audioHandler as JustAudioNotificationHandler).setMediaItemFromCloud(
         _currentTrack!,
@@ -153,8 +155,8 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     _loadingController.add(true);
     File? file;
     try {
-      file = await NetworkCacheImage.customCacheManager.getSingleFile(
-        _currentTrack!.artworkUrl?.toString() ?? '',
+      file = await NetworkCacheImage.getFile(
+        _currentTrack!.artworkUrl?.toString(),
       );
     } catch (_) {}
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromCloud(

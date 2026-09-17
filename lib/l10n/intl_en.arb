@@ -95,5 +95,10 @@
   "noDrmFreeMusic": "NO DRM FREE MUSIC",
   "noHistory": "No History",
   "playlists": "Playlists",
-  "tracks": "Tracks"
+  "tracks": "Tracks",
+  "imageQuality": "Image Quality",
+  "highQuality": "High Quality",
+  "betterLook": "(better look)",
+  "compressed": "Compressed",
+  "betterForSlowConnectionAndSmallerCache": "(better for slow connection and smaller cache)"
 }

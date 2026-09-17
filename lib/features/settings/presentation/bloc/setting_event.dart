@@ -16,6 +16,12 @@ class ChangeNotificationState extends SettingEvent {
   ChangeNotificationState(this.notificationState);
 }
 
+class ChangeImageQualityState extends SettingEvent {
+  bool highQuality;
+
+  ChangeImageQualityState(this.highQuality);
+}
+
 class ChangeTheme extends SettingEvent {
   final String themeId; // مثلاً "green" یا "custom:1735689123456"
 

@@ -169,6 +169,7 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     if (trackUrl == null || !hasSource()) {
       await stop();
       _playerService.setSourceByForce(null);
+      _trackChangedController.add(null);
       return;
     }
     bool allowToPlay = await _playerService.setSource(

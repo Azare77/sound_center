@@ -44,13 +44,11 @@ class CloudRepositoryImp implements CloudRepository {
   }
 
   Future<bool> isOnHistory(int trackId) async {
-    final existing = await (_database.select(
+    final rows = await (_database.select(
       _database.cloudHistoryTable,
-    )..where((tbl) => tbl.trackId.equals(trackId))).getSingleOrNull();
-    if (existing != null) {
-      return true;
-    }
-    return false;
+    )..where((tbl) => tbl.trackId.equals(trackId))).get();
+
+    return rows.isNotEmpty;
   }
 
   @override

@@ -21,29 +21,29 @@ class CurrentStream extends StatefulWidget {
 
 class _CurrentAudioState extends State<CurrentStream> {
   final StreamPlayerRepositoryImp imp = StreamPlayerRepositoryImp();
-  late bool isLoading;
+  bool isLoading = false;
+  bool isPlaying = false;
   late String title;
+
   String? artist;
   Uint8List? cover;
   String? coverUrl;
   final double size = 50;
-  StreamSubscription<bool>? _loadingSub;
 
-  void _updateStatus(bool loading) async {
-    if (mounted) {
-      setState(() {
-        isLoading = loading;
-      });
-    }
-  }
+  StreamSubscription<bool>? _loadingSub;
+  StreamSubscription<bool>? _playingSub;
 
   @override
   void initState() {
     isLoading = imp.isLoading();
-    _updatePlayingStream();
+    isPlaying = imp.isPlaying();
     _loadingSub = imp.loadingStream.listen((loading) {
-      _updateStatus(loading);
+      if (mounted && isLoading != loading) setState(() => isLoading = loading);
     });
+    _playingSub = imp.playingStream.listen((playing) {
+      if (mounted && isPlaying != playing) setState(() => isPlaying = playing);
+    });
+    _updatePlayingStream();
     super.initState();
   }
 
@@ -64,6 +64,7 @@ class _CurrentAudioState extends State<CurrentStream> {
   @override
   void dispose() {
     _loadingSub?.cancel();
+    _playingSub?.cancel();
     super.dispose();
   }
 

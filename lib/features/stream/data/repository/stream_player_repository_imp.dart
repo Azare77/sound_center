@@ -39,6 +39,9 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
   final _streamChangedController = StreamController<dynamic>.broadcast();
+  final _playingController = StreamController<bool>.broadcast();
+
+  Stream<bool> get playingStream => _playingController.stream;
 
   Stream<dynamic> get streamChangedStream => _streamChangedController.stream;
 
@@ -66,6 +69,9 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       if (dur != null) {
         _durationController.add(dur.inMilliseconds);
       }
+    });
+    _playerService.playingStream.listen((playing) {
+      _playingController.add(playing);
     });
   }
 
@@ -177,7 +183,6 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     bool allowToPlay = await _playerService.setSource(url, AudioSource.stream);
     if (!allowToPlay) return;
     await _playerService.play();
-    bloc.add(AutoPlayStream());
   }
 
   @override

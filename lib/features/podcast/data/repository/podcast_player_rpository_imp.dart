@@ -47,6 +47,9 @@ class PodcastPlayerRepositoryImp
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
   final _episodeChangedController = StreamController<Episode?>.broadcast();
+  final _playingController = StreamController<bool>.broadcast();
+
+  Stream<bool> get playingStream => _playingController.stream;
 
   Stream<Episode?> get episodeChangedStream => _episodeChangedController.stream;
 
@@ -115,6 +118,9 @@ class PodcastPlayerRepositoryImp
         _durationController.add(dur.inMilliseconds);
       }
     });
+    _playerService.playingStream.listen((playing) {
+      _playingController.add(playing);
+    });
   }
 
   bool isPlaying() {
@@ -181,7 +187,6 @@ class PodcastPlayerRepositoryImp
     await PlayerStateStorage.saveLastEpisode(_currentEpisode!);
     await PlayerStateStorage.saveSource(AudioSource.podcast);
     await _playerService.play();
-    bloc.add(AutoPlayPodcast());
   }
 
   Future<String?> _chach(String filename) async {

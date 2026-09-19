@@ -42,6 +42,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   final _durationController = StreamController<int>.broadcast();
   final _loadingController = StreamController<bool>.broadcast();
   final _trackChangedController = StreamController<CloudTrack?>.broadcast();
+  final _playingController = StreamController<bool>.broadcast();
+
+  Stream<bool> get playingStream => _playingController.stream;
 
   Stream<CloudTrack?> get trackChangedStream => _trackChangedController.stream;
 
@@ -110,6 +113,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       if (dur != null) {
         _durationController.add(dur.inMilliseconds);
       }
+    });
+    _playerService.playingStream.listen((playing) {
+      _playingController.add(playing);
     });
   }
 
@@ -180,7 +186,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
     await PlayerStateStorage.saveLastCloudTrack(_currentTrack!);
     await PlayerStateStorage.saveSource(AudioSource.cloud);
     await _playerService.play();
-    bloc.add(AutoPlay());
     unawaited(_precacheAdjacentTracks(index));
   }
 

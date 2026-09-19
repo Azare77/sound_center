@@ -54,6 +54,8 @@ class JustAudioService {
 
   Stream<Duration?> get duration => _player.durationStream;
 
+  Stream<bool> get playingStream => _player.playingStream;
+
   Stream<IcyMetadata?> get icyMetadataStream => _streamProxy.metadataStream;
 
   final _loadingController = StreamController<bool>.broadcast();

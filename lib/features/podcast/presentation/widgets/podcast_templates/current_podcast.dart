@@ -17,22 +17,21 @@ class CurrentPodcast extends StatefulWidget {
 
 class _CurrentPodcastState extends State<CurrentPodcast> {
   final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
-  late bool isLoading;
-  StreamSubscription<bool>? _loadingSub;
+  bool isLoading = false;
+  bool isPlaying = false;
 
-  void _updateStatus(bool loading) async {
-    if (mounted && isLoading != loading) {
-      setState(() {
-        isLoading = loading;
-      });
-    }
-  }
+  StreamSubscription<bool>? _loadingSub;
+  StreamSubscription<bool>? _playingSub;
 
   @override
   void initState() {
     isLoading = imp.isLoading();
+    isPlaying = imp.isPlaying();
     _loadingSub = imp.loadingStream.listen((loading) {
-      _updateStatus(loading);
+      if (mounted && isLoading != loading) setState(() => isLoading = loading);
+    });
+    _playingSub = imp.playingStream.listen((playing) {
+      if (mounted && isPlaying != playing) setState(() => isPlaying = playing);
     });
     super.initState();
   }
@@ -40,14 +39,12 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
   @override
   void dispose() {
     _loadingSub?.cancel();
+    _playingSub?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // if (isLoading) {
-    //   _updateStatus();
-    // }
     return ListTile(
       leading: SizedBox(
         width: 50,
@@ -79,7 +76,7 @@ class _CurrentPodcastState extends State<CurrentPodcast> {
       ),
       trailing: PlayPauseButton(
         isLoading: isLoading,
-        isPlaying: imp.isPlaying(),
+        isPlaying: isPlaying,
         onPressed: () async {
           imp.togglePlayState();
         },

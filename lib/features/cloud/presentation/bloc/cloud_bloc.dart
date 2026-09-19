@@ -33,7 +33,6 @@ class CloudBloc extends Bloc<CloudEvent, CloudState> {
       player.setPlayList(event.tracks);
       if (player.getCurrentTrack?.id != event.tracks[event.index].id ||
           !player.hasSource()) {
-        add(AddToHistory(track: event.tracks[event.index]));
         await player.play(event.index, direct: true);
       } else if (!player.isPlaying()) {
         player.togglePlayState();

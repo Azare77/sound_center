@@ -2,7 +2,6 @@
 
 * Add cloud based audios using SoundCloud (Only DRM Free audios)
 * Add cloud playback history
-* Add setting to choose network image quality
 * Improve navigation UX
 * Improve App UI rebuild overhead
 * Fix loading indicator in current media widget

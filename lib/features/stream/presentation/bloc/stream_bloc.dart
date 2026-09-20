@@ -131,9 +131,6 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       }
     });
 
-    on<AutoPlayStream>((event, emit) async {
-      emit(state.copyWith(state.status));
-    });
     on<TogglePlay>((event, emit) async {
       emit(state.copyWith(state.status));
     });

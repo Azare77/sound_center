@@ -1,5 +1,7 @@
-import 'package:material_ui/material_ui.dart';
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
@@ -25,15 +27,18 @@ class Episodes extends StatefulWidget {
 class _EpisodesState extends State<Episodes> {
   final PodcastPlayerRepositoryImp imp = PodcastPlayerRepositoryImp();
   Episode? currentEpisode;
+  late final StreamSubscription? episodeSub;
 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PodcastBloc>(context).stream.listen((state) {
-      if (currentEpisode?.guid != imp.getCurrentEpisode?.guid && mounted) {
-        setState(() {});
-      }
-    });
+    episodeSub = imp.episodeChangedStream.listen((_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    episodeSub?.cancel();
+    super.dispose();
   }
 
   @override

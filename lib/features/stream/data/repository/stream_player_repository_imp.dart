@@ -264,7 +264,6 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
     }
     await _playerService.release();
     await Future.delayed(Duration(seconds: 1));
-    bloc.add(AutoPlayStream());
     int currentRetry = _retryCount;
     await play(0);
     _retryCount = currentRetry;

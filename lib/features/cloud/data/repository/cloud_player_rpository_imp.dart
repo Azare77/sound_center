@@ -71,7 +71,6 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       // make sure that loading widget will show
       await Future.delayed(Duration(milliseconds: 20));
       _loadingController.add(true);
-      bloc.add(AutoPlay());
       File? file;
       try {
         file = await NetworkCacheImage.getFile(

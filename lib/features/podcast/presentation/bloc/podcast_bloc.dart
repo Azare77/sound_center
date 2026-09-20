@@ -82,9 +82,6 @@ class PodcastBloc extends Bloc<PodcastEvent, PodcastState> {
       await player.previous();
       emit(state.copyWith(state.status));
     });
-    on<AutoPlayPodcast>((event, emit) async {
-      emit(state.copyWith(state.status));
-    });
     on<TogglePlay>((event, emit) async {
       emit(state.copyWith(state.status));
     });

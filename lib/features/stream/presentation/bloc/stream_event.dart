@@ -86,5 +86,3 @@ class UpdateStreamInfo extends StreamEvent {
 }
 
 class TogglePlay extends StreamEvent {}
-
-class AutoPlayStream extends StreamEvent {}

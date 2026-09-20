@@ -45,8 +45,6 @@ class PlayNextPodcast extends PodcastEvent {}
 
 class PlayPreviousPodcast extends PodcastEvent {}
 
-class AutoPlayPodcast extends PodcastEvent {}
-
 class TogglePlay extends PodcastEvent {}
 
 //Download

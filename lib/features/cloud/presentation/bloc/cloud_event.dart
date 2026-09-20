@@ -15,8 +15,6 @@ class PlayNextTrack extends CloudEvent {}
 
 class PlayPreviousTrack extends CloudEvent {}
 
-class AutoPlay extends CloudEvent {}
-
 class TogglePlay extends CloudEvent {}
 
 class SearchCloud extends CloudEvent {

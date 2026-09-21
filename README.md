@@ -55,6 +55,13 @@ Please open an [Issue](https://github.com/azare77/sound_center/issues) or join t
   `permission_handler`).
 - Services: app uses iTunes/podcast index for Podcasts and Radio browser for streams
 
+### Support
+
+If you find this project useful, you can support its development with Bitcoin:
+
+* ₿ **Bitcoin:** [
+  `bc1qz55fanmmymj8kwe0jqkpj48ajm40wz5qnp2x78`](bitcoin:bc1qz55fanmmymj8kwe0jqkpj48ajm40wz5qnp2x78)
+
 ## License
 
 Sound Center - A music and podcast player bringing multiple playback modes into one app.

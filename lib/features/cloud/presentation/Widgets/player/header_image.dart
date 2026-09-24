@@ -15,7 +15,6 @@ class TrackHeaderImage extends StatelessWidget {
         child: NetworkCacheImage(
           url: url,
           size: null,
-          memCacheSize: 1024,
           fit: url != null ? BoxFit.cover : BoxFit.scaleDown,
         ),
       ),

@@ -72,4 +72,14 @@ class SettingsRepositoryImp implements SettingRepository {
   Future<void> setNotificationState(bool persist) {
     return AppSettingStorage.setNotificationState(persist);
   }
+
+  @override
+  PlayerStyle getPlayerStyle() {
+    return AppSettingStorage.getPlayerStyle();
+  }
+
+  @override
+  Future<void> setPlayerStyle(PlayerStyle style) {
+    return AppSettingStorage.setPlayerStyle(style);
+  }
 }

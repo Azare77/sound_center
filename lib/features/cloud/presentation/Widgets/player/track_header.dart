@@ -52,7 +52,7 @@ class _TrackHeaderState extends State<TrackHeader> {
     return SizedBox(
       child: BlocBuilder<CloudBloc, CloudState>(
         builder: (BuildContext context, CloudState state) {
-          CloudTrack currentTrack = playerRepository.getCurrentTrack!;
+          CloudTrack? currentTrack = playerRepository.getCurrentTrack;
           currentPlayList = playerRepository.getPlayList();
           currentIndex = playerRepository.index;
           _jumpToCorrectPage();
@@ -93,12 +93,12 @@ class _TrackHeaderState extends State<TrackHeader> {
                       child: slider,
                     ),
               ScrollingText(
-                currentTrack.title,
+                currentTrack?.title ?? "",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),
               ScrollingText(
-                currentTrack.author,
+                currentTrack?.author ?? "",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),

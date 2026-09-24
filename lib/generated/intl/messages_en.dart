@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Backup restored successfully.",
     ),
     "blur": MessageLookupByLibrary.simpleMessage("Blur"),
+    "blurCover": MessageLookupByLibrary.simpleMessage("Blur Cover"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "Check for Updates via GitHub",
     ),
@@ -115,6 +116,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "opacity": MessageLookupByLibrary.simpleMessage("Opacity"),
     "play": MessageLookupByLibrary.simpleMessage("Play"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("Play Speed"),
+    "playerStyle": MessageLookupByLibrary.simpleMessage("Player Style"),
     "playlists": MessageLookupByLibrary.simpleMessage("Playlists"),
     "podcast": MessageLookupByLibrary.simpleMessage("Podcast"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("Podcast Api"),
@@ -135,6 +137,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "shadowColor": MessageLookupByLibrary.simpleMessage("shadow"),
     "share": MessageLookupByLibrary.simpleMessage("Share"),
+    "solidColor": MessageLookupByLibrary.simpleMessage("Solid Color"),
     "soundCenter": MessageLookupByLibrary.simpleMessage("Sound Center"),
     "sourceCode": MessageLookupByLibrary.simpleMessage("Source Code"),
     "startedAt": MessageLookupByLibrary.simpleMessage("Started At"),

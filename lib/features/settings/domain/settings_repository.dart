@@ -4,6 +4,8 @@ import 'package:sound_center/shared/theme/themes.dart';
 
 enum PodcastProvider { itunes, podcatIndex }
 
+enum PlayerStyle { solid, blur }
+
 abstract class SettingRepository {
   Future<void> setPodcastProvider(PodcastProvider provider);
 
@@ -28,4 +30,8 @@ abstract class SettingRepository {
   bool getNotificationState();
 
   Future<void> setNotificationState(bool persist);
+
+  PlayerStyle getPlayerStyle();
+
+  Future<void> setPlayerStyle(PlayerStyle style);
 }

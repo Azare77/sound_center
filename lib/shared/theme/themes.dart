@@ -55,8 +55,8 @@ class AppThemeData {
       appBarShadowColor: Color(json['appBarShadowColor']),
       mediaColor: Color(json['mediaColor']),
       iconColor: Color(json['iconColor']),
-      blur: (json['blur'] as double?) ?? 5,
-      opacity: (json['opacity'] as double?) ?? 1,
+      blur: (json['blur'] as double?) ?? 12,
+      opacity: (json['opacity'] as double?) ?? 0.1,
     );
   }
 
@@ -219,8 +219,8 @@ AppThemeData _buildDarkTheme() {
     appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff202138),
     iconColor: Colors.white,
-    blur: 5,
-    opacity: 1,
+    blur: 12,
+    opacity: 0.1,
   );
 }
 
@@ -234,8 +234,8 @@ AppThemeData _buildGreenTheme() {
     appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff9ff3c7),
     iconColor: Colors.black,
-    blur: 5,
-    opacity: 1,
+    blur: 12,
+    opacity: 0.1,
   );
 }
 
@@ -249,8 +249,8 @@ AppThemeData _buildLightTheme() {
     appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xfff1f8dc),
     iconColor: Colors.black,
-    blur: 5,
-    opacity: 1,
+    blur: 12,
+    opacity: 0.1,
   );
 }
 

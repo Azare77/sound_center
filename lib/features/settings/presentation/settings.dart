@@ -4,12 +4,17 @@ import 'package:sound_center/features/settings/presentation/pages/about_dialog.d
 import 'package:sound_center/features/settings/presentation/pages/backup_dialog.dart';
 import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/notification_settings.dart';
+import 'package:sound_center/features/settings/presentation/pages/player_style_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/provider_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/theme_settings.dart';
 import 'package:sound_center/generated/l10n.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
+
+  void openDialog(BuildContext context, Widget page) {
+    showDialog(context: context, builder: (_) => page);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,42 +29,27 @@ class Settings extends StatelessWidget {
               Text(S.of(context).settings),
               Divider(),
               TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => ProviderSettings(),
-                  );
-                },
+                onPressed: () => openDialog(context, ProviderSettings()),
                 child: Text(S.of(context).podcastApi),
               ),
               TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => LanguageSettings(),
-                  );
-                },
+                onPressed: () => openDialog(context, LanguageSettings()),
                 child: Text(S.of(context).language),
               ),
               TextButton(
-                onPressed: () {
-                  showDialog(context: context, builder: (_) => ThemeSettings());
-                },
+                onPressed: () => openDialog(context, ThemeSettings()),
                 child: Text(S.of(context).theme),
               ),
               TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => NotificationSettings(),
-                  );
-                },
+                onPressed: () => openDialog(context, PlayerStyleSettings()),
+                child: Text(S.of(context).playerStyle),
+              ),
+              TextButton(
+                onPressed: () => openDialog(context, NotificationSettings()),
                 child: Text(S.of(context).notification),
               ),
               TextButton(
-                onPressed: () {
-                  showDialog(context: context, builder: (_) => BackupDialog());
-                },
+                onPressed: () => openDialog(context, BackupDialog()),
                 child: Text(S.of(context).backupRestore),
               ),
               TextButton(

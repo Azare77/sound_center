@@ -77,11 +77,6 @@ class _CurrentMediaState extends State<CurrentMedia> {
 
   @override
   Widget build(BuildContext context) {
-    final EdgeInsets edgeInsets = EdgeInsets.fromViewPadding(
-      WidgetsBinding.instance.platformDispatcher.views.first.padding,
-      WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio,
-    );
-    final paddingTop = edgeInsets.top;
     final paddingBottom = MediaQuery.of(context).padding.bottom;
 
     return Padding(
@@ -98,10 +93,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
               minHeight: MediaQuery.of(context).size.height,
             ),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            builder: (_) => Padding(
-              padding: EdgeInsets.only(top: paddingTop),
-              child: _playerPage!,
-            ),
+            builder: (_) => _playerPage!,
           );
         },
         child: BlocListener<SettingBloc, SettingState>(

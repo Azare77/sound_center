@@ -98,5 +98,8 @@
   "tracks": "آهنگ‌ها",
   "clearHistory": "پاکسازی تاریخچه",
   "blur": "محوشدگی",
-  "opacity": "شفافیت"
+  "opacity": "شفافیت",
+  "playerStyle": "سبک صفحه پخش",
+  "solidColor": "رنگ ثابت",
+  "blurCover": "کاور محو"
 }

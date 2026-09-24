@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "داده‌ها با موفقیت بازیابی شدند.",
     ),
     "blur": MessageLookupByLibrary.simpleMessage("محوشدگی"),
+    "blurCover": MessageLookupByLibrary.simpleMessage("کاور محو"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "بررسی به‌روزرسانی از طریق GitHub",
     ),
@@ -115,6 +116,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "opacity": MessageLookupByLibrary.simpleMessage("شفافیت"),
     "play": MessageLookupByLibrary.simpleMessage("پخش"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("سرعت پخش"),
+    "playerStyle": MessageLookupByLibrary.simpleMessage("سبک صفحه پخش"),
     "playlists": MessageLookupByLibrary.simpleMessage("فهرست‌های پخش"),
     "podcast": MessageLookupByLibrary.simpleMessage("پادکست"),
     "podcastApi": MessageLookupByLibrary.simpleMessage("سرویس دهنده پادکست"),
@@ -133,6 +135,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("تنظیمات"),
     "shadowColor": MessageLookupByLibrary.simpleMessage("سایه"),
     "share": MessageLookupByLibrary.simpleMessage("به اشتراک گذاری"),
+    "solidColor": MessageLookupByLibrary.simpleMessage("رنگ ثابت"),
     "soundCenter": MessageLookupByLibrary.simpleMessage("مرکز صدا"),
     "sourceCode": MessageLookupByLibrary.simpleMessage("کد منبع"),
     "startedAt": MessageLookupByLibrary.simpleMessage("شروع شده در"),

@@ -98,5 +98,8 @@
   "tracks": "Tracks",
   "clearHistory": "Clear History",
   "blur": "Blur",
-  "opacity": "Opacity"
+  "opacity": "Opacity",
+  "playerStyle": "Player Style",
+  "solidColor": "Solid Color",
+  "blurCover": "Blur Cover"
 }

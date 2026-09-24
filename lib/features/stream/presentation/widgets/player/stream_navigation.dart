@@ -22,14 +22,17 @@ class _StreamNavigationState extends State<StreamNavigation> {
   int pass = 0;
   bool seeking = false;
   bool loading = false;
+  bool playing = false;
 
   StreamSubscription<bool>? _loadingSub;
+  StreamSubscription<bool>? _playingSub;
   StreamSubscription<int>? _posSub;
   StreamSubscription<int>? _durSub;
 
   @override
   void initState() {
     loading = imp.isLoading();
+    playing = imp.isPlaying();
     super.initState();
     _setupStreams();
   }
@@ -39,12 +42,17 @@ class _StreamNavigationState extends State<StreamNavigation> {
     _posSub?.cancel();
     _durSub?.cancel();
     _loadingSub?.cancel();
+    _playingSub?.cancel();
     super.dispose();
   }
 
   void _setupStreams() {
     _loadingSub = imp.loadingStream.listen((loading) {
       this.loading = loading;
+      _updateUi();
+    });
+    _playingSub = imp.playingStream.listen((playing) {
+      this.playing = playing;
       _updateUi();
     });
 
@@ -111,7 +119,8 @@ class _StreamNavigationState extends State<StreamNavigation> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             PlayPauseButton(
-              isPlaying: loading,
+              isPlaying: playing,
+              isLoading: loading,
               onPressed: () async {
                 await imp.togglePlayState();
                 _updateUi();

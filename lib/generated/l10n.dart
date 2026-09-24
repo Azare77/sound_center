@@ -718,6 +718,26 @@ class S {
   String get opacity {
     return Intl.message('Opacity', name: 'opacity', desc: '', args: []);
   }
+
+  /// `Player Style`
+  String get playerStyle {
+    return Intl.message(
+      'Player Style',
+      name: 'playerStyle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Solid Color`
+  String get solidColor {
+    return Intl.message('Solid Color', name: 'solidColor', desc: '', args: []);
+  }
+
+  /// `Blur Cover`
+  String get blurCover {
+    return Intl.message('Blur Cover', name: 'blurCover', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

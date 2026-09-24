@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum PresetTheme { dark, green, light }
 
@@ -12,6 +12,8 @@ class AppThemeData {
   final Color appBarShadowColor;
   final Color iconColor;
   final Color mediaColor;
+  final double blur;
+  final double opacity;
 
   const AppThemeData({
     required this.id,
@@ -22,6 +24,8 @@ class AppThemeData {
     required this.appBarBackground,
     required this.appBarShadowColor,
     required this.iconColor,
+    this.blur = 5,
+    this.opacity = 1,
   });
 
   Map<String, dynamic> toJsonForStorage() {
@@ -34,6 +38,8 @@ class AppThemeData {
       'appBarShadowColor': (appBarShadowColor).toARGB32(),
       'mediaColor': mediaColor.toARGB32(),
       'iconColor': (iconColor).toARGB32(),
+      'blur': blur,
+      'opacity': opacity,
     };
   }
 
@@ -49,6 +55,8 @@ class AppThemeData {
       appBarShadowColor: Color(json['appBarShadowColor']),
       mediaColor: Color(json['mediaColor']),
       iconColor: Color(json['iconColor']),
+      blur: (json['blur'] as double?) ?? 5,
+      opacity: (json['opacity'] as double?) ?? 1,
     );
   }
 
@@ -61,6 +69,8 @@ class AppThemeData {
     Color? appBarShadowColor,
     Color? iconColor,
     Color? mediaColor,
+    double? blur,
+    double? opacity,
   }) {
     return AppThemeData(
       id: id ?? this.id,
@@ -71,6 +81,8 @@ class AppThemeData {
       appBarShadowColor: appBarShadowColor ?? this.appBarShadowColor,
       iconColor: iconColor ?? this.iconColor,
       mediaColor: mediaColor ?? this.mediaColor,
+      blur: blur ?? this.blur,
+      opacity: blur ?? this.opacity,
     );
   }
 }
@@ -207,6 +219,8 @@ AppThemeData _buildDarkTheme() {
     appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff202138),
     iconColor: Colors.white,
+    blur: 5,
+    opacity: 1,
   );
 }
 
@@ -220,6 +234,8 @@ AppThemeData _buildGreenTheme() {
     appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xff9ff3c7),
     iconColor: Colors.black,
+    blur: 5,
+    opacity: 1,
   );
 }
 
@@ -233,6 +249,8 @@ AppThemeData _buildLightTheme() {
     appBarShadowColor: const Color(0xFF601410),
     mediaColor: const Color(0xfff1f8dc),
     iconColor: Colors.black,
+    blur: 5,
+    opacity: 1,
   );
 }
 
@@ -245,6 +263,8 @@ AppThemeData _buildTheme({
   required Color appBarShadowColor,
   required Color mediaColor,
   required Color iconColor,
+  required double blur,
+  required double opacity,
 }) {
   return AppThemeData(
     id: id,
@@ -255,6 +275,8 @@ AppThemeData _buildTheme({
     scaffoldBackground: scaffoldBackground,
     thumbColor: thumbColor,
     mediaColor: mediaColor,
+    blur: blur,
+    opacity: opacity,
   );
 }
 

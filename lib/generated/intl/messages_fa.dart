@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "backupRestoredSuccessfully": MessageLookupByLibrary.simpleMessage(
       "داده‌ها با موفقیت بازیابی شدند.",
     ),
+    "blur": MessageLookupByLibrary.simpleMessage("محوشدگی"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "بررسی به‌روزرسانی از طریق GitHub",
     ),
@@ -111,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notification": MessageLookupByLibrary.simpleMessage("اعلان ها"),
     "ok": MessageLookupByLibrary.simpleMessage("حله"),
     "oldestFirst": MessageLookupByLibrary.simpleMessage("قدیمی ترین"),
+    "opacity": MessageLookupByLibrary.simpleMessage("شفافیت"),
     "play": MessageLookupByLibrary.simpleMessage("پخش"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("سرعت پخش"),
     "playlists": MessageLookupByLibrary.simpleMessage("فهرست‌های پخش"),

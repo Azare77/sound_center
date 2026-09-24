@@ -96,5 +96,7 @@
   "noHistory": "No History",
   "playlists": "Playlists",
   "tracks": "Tracks",
-  "clearHistory": "Clear History"
+  "clearHistory": "Clear History",
+  "blur": "Blur",
+  "opacity": "Opacity"
 }

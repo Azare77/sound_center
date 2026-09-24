@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "backupRestoredSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Backup restored successfully.",
     ),
+    "blur": MessageLookupByLibrary.simpleMessage("Blur"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "Check for Updates via GitHub",
     ),
@@ -111,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notification": MessageLookupByLibrary.simpleMessage("Notification"),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "oldestFirst": MessageLookupByLibrary.simpleMessage("Oldest First"),
+    "opacity": MessageLookupByLibrary.simpleMessage("Opacity"),
     "play": MessageLookupByLibrary.simpleMessage("Play"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("Play Speed"),
     "playlists": MessageLookupByLibrary.simpleMessage("Playlists"),

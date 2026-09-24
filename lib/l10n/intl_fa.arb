@@ -96,5 +96,7 @@
   "noHistory": "بدون تاریخچه",
   "playlists": "فهرست‌های پخش",
   "tracks": "آهنگ‌ها",
-  "clearHistory": "پاکسازی تاریخچه"
+  "clearHistory": "پاکسازی تاریخچه",
+  "blur": "محوشدگی",
+  "opacity": "شفافیت"
 }

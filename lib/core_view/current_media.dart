@@ -24,12 +24,14 @@ import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/pages/play_stream.dart'
     as stream_page;
 import 'package:sound_center/features/stream/presentation/widgets/current_stream.dart';
-import 'package:sound_center/shared/theme/themes.dart';
+import 'package:sound_center/shared/widgets/glass.dart';
 
 class CurrentMedia extends StatefulWidget {
-  const CurrentMedia({super.key, this.color});
+  const CurrentMedia({super.key, this.color, this.blur, this.opacity});
 
   final Color? color;
+  final double? blur;
+  final double? opacity;
 
   @override
   State<CurrentMedia> createState() => _CurrentMediaState();
@@ -177,12 +179,13 @@ class _CurrentMediaState extends State<CurrentMedia> {
     return Container(
       height: 70,
       margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: widget.color ?? ThemeManager.current.mediaColor,
-        borderRadius: BorderRadius.circular(25),
+      child: Glass(
+        radius: 25.0,
+        color: widget.color,
+        blur: widget.blur,
+        opacity: widget.opacity,
+        child: Center(child: child),
       ),
-      child: Center(child: child),
     );
   }
 }

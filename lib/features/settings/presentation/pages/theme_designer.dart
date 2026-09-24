@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -27,6 +27,8 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
   late Color shadowColor;
   late Color mediaColor;
   late Color iconColor;
+  late double blur;
+  late double opacity;
   late CustomTextEditingController _controller;
 
   @override
@@ -57,6 +59,8 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
     shadowColor = themeData.appBarTheme.shadowColor ?? Colors.transparent;
     iconColor = themeData.iconTheme.color ?? Colors.white;
     mediaColor = theme.mediaColor;
+    blur = theme.blur;
+    opacity = theme.opacity;
     _checkClipboard();
   }
 
@@ -76,6 +80,8 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
       shadowColor = themeData.appBarTheme.shadowColor ?? Colors.transparent;
       iconColor = themeData.iconTheme.color ?? Colors.white;
       mediaColor = theme.mediaColor;
+      blur = theme.blur;
+      opacity = theme.opacity;
       setState(() {});
     } catch (_) {}
   }
@@ -93,119 +99,171 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
       appBarShadowColor: shadowColor,
       mediaColor: mediaColor,
       iconColor: iconColor,
+      blur: blur,
+      opacity: opacity,
     );
     return Theme(
       data: ThemeManager.getThemeData(theme),
       child: Scaffold(
         appBar: AppBar(),
-        body: Column(
+        body: Stack(
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    spacing: 15,
-                    children: [
-                      TextFieldBox(
-                        controller: _controller,
-                        errorText: S.of(context).nameIsUsed,
-                        labelText: S.of(context).themeName,
-                        maxLines: 1,
-                        textInputAction: TextInputAction.done,
-                        margin: EdgeInsets.only(top: 10),
-                        validator: (text) {
-                          final name = text?.trim() ?? "";
-                          return name == widget.themeName ||
-                              (ThemeManager.getTheme(name) == null &&
-                                  name != 'green' &&
-                                  name != 'dark' &&
-                                  name != 'light');
-                        },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: SingleChildScrollView(
+                child: Column(
+                  spacing: 15,
+                  crossAxisAlignment: .start,
+                  children: [
+                    TextFieldBox(
+                      controller: _controller,
+                      errorText: S.of(context).nameIsUsed,
+                      labelText: S.of(context).themeName,
+                      maxLines: 1,
+                      textInputAction: TextInputAction.done,
+                      margin: EdgeInsets.only(top: 10),
+                      validator: (text) {
+                        final name = text?.trim() ?? "";
+                        return name == widget.themeName ||
+                            (ThemeManager.getTheme(name) == null &&
+                                name != 'green' &&
+                                name != 'dark' &&
+                                name != 'light');
+                      },
+                    ),
+                    RadioGroup<Brightness>(
+                      onChanged: (v) {
+                        setState(() => brightness = v!);
+                      },
+                      groupValue: brightness,
+                      child: Row(
+                        mainAxisAlignment: .spaceEvenly,
+                        children: [
+                          InkWell(
+                            onTap: () =>
+                                setState(() => brightness = Brightness.light),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Radio<Brightness>(value: Brightness.light),
+                                  Text(S.of(context).light),
+                                ],
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () =>
+                                setState(() => brightness = Brightness.dark),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Radio<Brightness>(value: Brightness.dark),
+                                  Text(S.of(context).dark),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      RadioGroup<Brightness>(
-                        onChanged: (v) {
-                          setState(() => brightness = v!);
-                        },
-                        groupValue: brightness,
-                        child: Row(
-                          mainAxisAlignment: .spaceEvenly,
-                          children: [
-                            InkWell(
-                              onTap: () =>
-                                  setState(() => brightness = Brightness.light),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Radio<Brightness>(value: Brightness.light),
-                                    Text(S.of(context).light),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () =>
-                                  setState(() => brightness = Brightness.dark),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Radio<Brightness>(value: Brightness.dark),
-                                    Text(S.of(context).dark),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                    ),
+                    _ItemEntry(
+                      text: S.of(context).appBarBackground,
+                      color: appBarBackground,
+                      onChanged: (current) =>
+                          setState(() => appBarBackground = current),
+                    ),
+                    _ItemEntry(
+                      text: S.of(context).scaffoldBackground,
+                      color: scaffoldBackground,
+                      onChanged: (current) =>
+                          setState(() => scaffoldBackground = current),
+                    ),
+                    _ItemEntry(
+                      text: S.of(context).shadowColor,
+                      color: shadowColor,
+                      onChanged: (current) =>
+                          setState(() => shadowColor = current),
+                    ),
+                    _ItemEntry(
+                      text: S.of(context).iconColor,
+                      color: iconColor,
+                      onChanged: (current) =>
+                          setState(() => iconColor = current),
+                    ),
+                    _ItemEntry(
+                      text: S.of(context).thumbColor,
+                      color: thumbColor,
+                      onChanged: (current) =>
+                          setState(() => thumbColor = current),
+                    ),
+                    _ItemEntry(
+                      text: S.of(context).currentMediaColor,
+                      color: mediaColor,
+                      onChanged: (current) =>
+                          setState(() => mediaColor = current),
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 70, child: Text(S.of(context).blur)),
+                        Expanded(
+                          child: Slider(
+                            min: 0,
+                            value: blur,
+                            max: 20,
+                            divisions: 2000,
+                            label: blur.toStringAsFixed(2),
+                            onChanged: (value) => setState(() => blur = value),
+                          ),
                         ),
-                      ),
-                      _ItemEntry(
-                        text: S.of(context).appBarBackground,
-                        color: appBarBackground,
-                        onChanged: (current) =>
-                            setState(() => appBarBackground = current),
-                      ),
-                      _ItemEntry(
-                        text: S.of(context).scaffoldBackground,
-                        color: scaffoldBackground,
-                        onChanged: (current) =>
-                            setState(() => scaffoldBackground = current),
-                      ),
-                      _ItemEntry(
-                        text: S.of(context).shadowColor,
-                        color: shadowColor,
-                        onChanged: (current) =>
-                            setState(() => shadowColor = current),
-                      ),
-                      _ItemEntry(
-                        text: S.of(context).iconColor,
-                        color: iconColor,
-                        onChanged: (current) =>
-                            setState(() => iconColor = current),
-                      ),
-                      _ItemEntry(
-                        text: S.of(context).thumbColor,
-                        color: thumbColor,
-                        onChanged: (current) =>
-                            setState(() => thumbColor = current),
-                      ),
-                      _ItemEntry(
-                        text: S.of(context).currentMediaColor,
-                        color: mediaColor,
-                        onChanged: (current) =>
-                            setState(() => mediaColor = current),
-                      ),
-                      _buildButtonRow(),
-                    ],
-                  ),
+                        SizedBox(
+                          width: 40,
+                          child: Text(
+                            blur.toStringAsFixed(2),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 70, child: Text(S.of(context).opacity)),
+                        Expanded(
+                          child: Slider(
+                            min: 0,
+                            value: opacity,
+                            max: 1,
+                            divisions: 100,
+                            label: opacity.toStringAsFixed(2),
+                            onChanged: (value) =>
+                                setState(() => opacity = value),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40,
+                          child: Text(
+                            opacity.toStringAsFixed(2),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                      ],
+                    ),
+                    _buildButtonRow(),
+                    SizedBox(height: 90),
+                  ],
                 ),
               ),
             ),
-            CurrentMedia(key: ValueKey(mediaColor), color: mediaColor),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: CurrentMedia(
+                key: ValueKey((mediaColor, blur, opacity)),
+                color: mediaColor,
+                blur: blur,
+                opacity: opacity,
+              ),
+            ),
           ],
         ),
       ),
@@ -228,6 +286,8 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
               appBarShadowColor: shadowColor,
               mediaColor: mediaColor,
               iconColor: iconColor,
+              blur: blur,
+              opacity: opacity,
             );
             Clipboard.setData(
               ClipboardData(text: jsonEncode(themeData.toJsonForStorage())),
@@ -256,6 +316,8 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
       appBarShadowColor: shadowColor,
       mediaColor: mediaColor,
       iconColor: iconColor,
+      blur: blur,
+      opacity: opacity,
     );
     ThemeManager.addCustomTheme(themeData);
     BlocProvider.of<SettingBloc>(context).add(ChangeTheme(themeData.id));

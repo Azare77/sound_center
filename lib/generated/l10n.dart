@@ -708,6 +708,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Blur`
+  String get blur {
+    return Intl.message('Blur', name: 'blur', desc: '', args: []);
+  }
+
+  /// `Opacity`
+  String get opacity {
+    return Intl.message('Opacity', name: 'opacity', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -48,13 +49,10 @@ class BackupDialog extends StatelessWidget {
       final file = await createBackupFile(backup);
 
       if (Platform.isLinux) {
-        final path = await FilePicker.saveFile(
+        await FilePicker.saveFile(
           fileName: file.path,
           bytes: file.readAsBytesSync(),
         );
-        if (path != null) {
-          await File(file.path).copy(path.path);
-        }
       } else {
         await SharePlus.instance.share(
           ShareParams(
@@ -142,8 +140,8 @@ class BackupDialog extends StatelessWidget {
 
         await AppSettingStorage.saveLocale(backup.locale);
 
-        if (backup.version >= 5) {
-          await AppSettingStorage.savePlayerStyle(backup.playerStyle);
+        if (backup.playerStyle != null) {
+          await AppSettingStorage.savePlayerStyle(backup.playerStyle!);
         }
 
         importResult.settings = true;
@@ -237,7 +235,7 @@ class AppBackup {
   final List<AppThemeData> themes;
   final Locale locale;
   final PodcastProvider provider;
-  final PlayerStyle playerStyle;
+  final PlayerStyle? playerStyle;
   final Map<String, String>? providerKeys;
 
   AppBackup({
@@ -262,7 +260,7 @@ class AppBackup {
         'locale': locale.languageCode,
         'provider': provider.name,
         'providerKeys': providerKeys,
-        'playerStyle': playerStyle,
+        'playerStyle': playerStyle?.name,
       },
     };
   }
@@ -274,7 +272,7 @@ class AppBackup {
   factory AppBackup.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
     return AppBackup(
-      version: data['version'] as int,
+      version: json['version'] as int,
       podcasts: (data['podcasts'] as List)
           .map((e) => SubscriptionEntity.fromJson(e))
           .toList(),
@@ -293,7 +291,7 @@ class AppBackup {
         (e) => e.name == data['provider'],
       ),
 
-      playerStyle: PlayerStyle.values.firstWhere(
+      playerStyle: PlayerStyle.values.firstWhereOrNull(
         (e) => e.name == data['playerStyle'],
       ),
 

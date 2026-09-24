@@ -24,8 +24,8 @@ class AppThemeData {
     required this.appBarBackground,
     required this.appBarShadowColor,
     required this.iconColor,
-    this.blur = 5,
-    this.opacity = 1,
+    this.blur = 12,
+    this.opacity = 0.1,
   });
 
   Map<String, dynamic> toJsonForStorage() {

@@ -75,7 +75,7 @@ class AppSettingStorage {
     return persist ?? false;
   }
 
-  static Future<void> setNotificationState(bool persist) async {
+  static Future<void> saveNotificationState(bool persist) async {
     await Storage.instance.prefs.setBool('notification_persist', persist);
   }
 
@@ -87,7 +87,7 @@ class AppSettingStorage {
     );
   }
 
-  static Future<void> setPlayerStyle(PlayerStyle style) async {
+  static Future<void> savePlayerStyle(PlayerStyle style) async {
     await Storage.instance.prefs.setString('playerStyle', style.name);
   }
 }

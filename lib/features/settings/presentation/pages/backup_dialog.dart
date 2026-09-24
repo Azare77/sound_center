@@ -36,12 +36,14 @@ class BackupDialog extends StatelessWidget {
       final streamRepo = StreamRepositoryImp(database);
 
       final backup = AppBackup(
+        version: VERSION_NUMBER,
         podcasts: await podcastRepo.getHome(),
         streams: await streamRepo.getSubscribedStreams(),
         themes: AppSettingStorage.getCustomThemes(),
         locale: AppSettingStorage.getLocale(),
         provider: AppSettingStorage.getSavedProvider(),
         providerKeys: AppSettingStorage.getPodcastIndexKeys(),
+        playerStyle: AppSettingStorage.getPlayerStyle(),
       );
       final file = await createBackupFile(backup);
 
@@ -140,6 +142,10 @@ class BackupDialog extends StatelessWidget {
 
         await AppSettingStorage.saveLocale(backup.locale);
 
+        if (backup.version >= 5) {
+          await AppSettingStorage.savePlayerStyle(backup.playerStyle);
+        }
+
         importResult.settings = true;
       } catch (_) {}
 
@@ -225,25 +231,29 @@ class BackupImportResult {
 }
 
 class AppBackup {
+  final int version;
   final List<SubscriptionEntity> podcasts;
   final List<StreamSubEntity> streams;
   final List<AppThemeData> themes;
   final Locale locale;
   final PodcastProvider provider;
+  final PlayerStyle playerStyle;
   final Map<String, String>? providerKeys;
 
   AppBackup({
+    required this.version,
     required this.podcasts,
     required this.streams,
     required this.themes,
     required this.locale,
     required this.provider,
+    required this.playerStyle,
     this.providerKeys,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'version': VERSION_NUMBER,
+      'version': version,
       'createdAt': DateTime.now().toUtc().toIso8601String(),
       'data': {
         'podcasts': podcasts.map((e) => e.toJson()).toList(),
@@ -252,6 +262,7 @@ class AppBackup {
         'locale': locale.languageCode,
         'provider': provider.name,
         'providerKeys': providerKeys,
+        'playerStyle': playerStyle,
       },
     };
   }
@@ -263,6 +274,7 @@ class AppBackup {
   factory AppBackup.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
     return AppBackup(
+      version: data['version'] as int,
       podcasts: (data['podcasts'] as List)
           .map((e) => SubscriptionEntity.fromJson(e))
           .toList(),
@@ -279,6 +291,10 @@ class AppBackup {
 
       provider: PodcastProvider.values.firstWhere(
         (e) => e.name == data['provider'],
+      ),
+
+      playerStyle: PlayerStyle.values.firstWhere(
+        (e) => e.name == data['playerStyle'],
       ),
 
       providerKeys: data['providerKeys'] != null

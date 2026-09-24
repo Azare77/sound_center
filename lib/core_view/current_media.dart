@@ -176,12 +176,13 @@ class _CurrentMediaState extends State<CurrentMedia> {
   Widget _buildPlayerContainer(Widget child) {
     return Container(
       height: 70,
+      margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
       width: double.infinity,
       decoration: BoxDecoration(
         color: widget.color ?? ThemeManager.current.mediaColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.circular(25),
       ),
-      child: child,
+      child: Center(child: child),
     );
   }
 }

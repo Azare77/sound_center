@@ -207,20 +207,21 @@ class _HomeState extends State<Home>
             ),
           ),
         ),
-        body: Column(
+        body: Stack(
           children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  IndexedStack(
-                    index: index,
-                    children: [_localAudios, _podcast, _stream, _cloud],
-                  ),
-                  _buildMenuLayer(context),
-                ],
-              ),
+            Stack(
+              children: [
+                IndexedStack(
+                  index: index,
+                  children: [_localAudios, _podcast, _stream, _cloud],
+                ),
+                _buildMenuLayer(context),
+              ],
             ),
-            const CurrentMedia(key: Key("home")),
+            const Align(
+              alignment: Alignment.bottomCenter,
+              child: CurrentMedia(key: Key("home")),
+            ),
           ],
         ),
       ),

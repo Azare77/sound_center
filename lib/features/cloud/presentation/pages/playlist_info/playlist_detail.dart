@@ -83,69 +83,68 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              controller: _sliverScrollController,
-              slivers: [
-                SliverAppBar(
-                  toolbarHeight: kToolbarHeight,
-                  elevation: 2,
-                  shadowColor: themeData.appBarTheme.shadowColor,
-                  backgroundColor: themeData.appBarTheme.backgroundColor,
-                  pinned: true,
-                  floating: false,
-                  leading: IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.arrow_back),
-                    color: toolbarCollapsed
-                        ? themeData.iconTheme.color
-                        : Colors.white,
-                  ),
-                  title: AnimatedOpacity(
-                    opacity: toolbarCollapsed ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: Text(widget.playlist.title),
-                  ),
-                  expandedHeight: EXPANDED_HEIGHT,
-                  flexibleSpace: PlaylistInfo(
-                    url: image,
-                    playlist: widget.playlist,
-                  ),
+          CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _sliverScrollController,
+            slivers: [
+              SliverAppBar(
+                toolbarHeight: kToolbarHeight,
+                elevation: 2,
+                shadowColor: themeData.appBarTheme.shadowColor,
+                backgroundColor: themeData.appBarTheme.backgroundColor,
+                pinned: true,
+                floating: false,
+                leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back),
+                  color: toolbarCollapsed
+                      ? themeData.iconTheme.color
+                      : Colors.white,
                 ),
-                if (tracks.isNotEmpty)
-                  SliverPinnedHeader(
-                    child: Material(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: Focus(
-                        onFocusChange: (f) async {
-                          if (f) {
-                            final offset = _sliverScrollController.offset;
-                            for (int i = 0; i <= 500; i++) {
-                              _sliverScrollController.jumpTo(offset);
-                              await Future.delayed(Duration(milliseconds: 1));
-                            }
+                title: AnimatedOpacity(
+                  opacity: toolbarCollapsed ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 500),
+                  child: Text(widget.playlist.title),
+                ),
+                expandedHeight: EXPANDED_HEIGHT,
+                flexibleSpace: PlaylistInfo(
+                  url: image,
+                  playlist: widget.playlist,
+                ),
+              ),
+              if (tracks.isNotEmpty)
+                SliverPinnedHeader(
+                  child: Material(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: Focus(
+                      onFocusChange: (f) async {
+                        if (f) {
+                          final offset = _sliverScrollController.offset;
+                          for (int i = 0; i <= 500; i++) {
+                            _sliverScrollController.jumpTo(offset);
+                            await Future.delayed(Duration(milliseconds: 1));
                           }
-                        },
-                        child: TrackToolBar(onChange: filter),
-                      ),
+                        }
+                      },
+                      child: TrackToolBar(onChange: filter),
                     ),
                   ),
-                tracks.isEmpty && !initialized
-                    ? SliverFillRemaining(child: Loading())
-                    : tracks.isNotEmpty && initialized
-                    ? Tracks(tracks: tracks, bestImageUrl: image)
-                    : SliverFillRemaining(
-                        child: Center(
-                          child: Text(S.of(context).noDrmFreeMusic),
-                        ),
-                      ),
-              ],
-            ),
+                ),
+              tracks.isEmpty && !initialized
+                  ? SliverFillRemaining(child: Loading())
+                  : tracks.isNotEmpty && initialized
+                  ? Tracks(tracks: tracks, bestImageUrl: image)
+                  : SliverFillRemaining(
+                      child: Center(child: Text(S.of(context).noDrmFreeMusic)),
+                    ),
+            ],
           ),
-          const CurrentMedia(key: Key("playlistDetail")),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: const CurrentMedia(key: Key("playlistDetail")),
+          ),
         ],
       ),
     );

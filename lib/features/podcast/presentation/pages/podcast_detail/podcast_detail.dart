@@ -2,9 +2,9 @@
 
 import 'dart:math';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core_view/current_media.dart';
@@ -105,72 +105,73 @@ class _PodcastDetailState extends State<PodcastDetail> {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              controller: _sliverScrollController,
-              slivers: [
-                SliverAppBar(
-                  toolbarHeight: kToolbarHeight,
-                  elevation: 2,
-                  shadowColor: themeData.appBarTheme.shadowColor,
-                  backgroundColor: themeData.appBarTheme.backgroundColor,
-                  pinned: true,
-                  floating: false,
-                  leading: IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.arrow_back),
-                    color: toolbarCollapsed
-                        ? themeData.iconTheme.color
-                        : Colors.white,
-                  ),
-                  title: AnimatedOpacity(
-                    opacity: toolbarCollapsed ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: Text(podcast?.title ?? ""),
-                  ),
-                  expandedHeight: EXPANDED_HEIGHT,
-                  flexibleSpace: PodcastInfo(
-                    subscribe: _subscribe,
-                    subscribed: subscribed,
-                    podcast: podcast,
-                    url: image,
-                  ),
+          CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _sliverScrollController,
+            slivers: [
+              SliverAppBar(
+                toolbarHeight: kToolbarHeight,
+                elevation: 2,
+                shadowColor: themeData.appBarTheme.shadowColor,
+                backgroundColor: themeData.appBarTheme.backgroundColor,
+                pinned: true,
+                floating: false,
+                leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back),
+                  color: toolbarCollapsed
+                      ? themeData.iconTheme.color
+                      : Colors.white,
                 ),
-                if (podcast != null)
-                  SliverPinnedHeader(
-                    child: Material(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: Focus(
-                        onFocusChange: (f) async {
-                          if (f) {
-                            final offset = _sliverScrollController.offset;
-                            for (int i = 0; i <= 500; i++) {
-                              _sliverScrollController.jumpTo(offset);
-                              await Future.delayed(Duration(milliseconds: 1));
-                            }
+                title: AnimatedOpacity(
+                  opacity: toolbarCollapsed ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 500),
+                  child: Text(podcast?.title ?? ""),
+                ),
+                expandedHeight: EXPANDED_HEIGHT,
+                flexibleSpace: PodcastInfo(
+                  subscribe: _subscribe,
+                  subscribed: subscribed,
+                  podcast: podcast,
+                  url: image,
+                ),
+              ),
+              if (podcast != null)
+                SliverPinnedHeader(
+                  child: Material(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: Focus(
+                      onFocusChange: (f) async {
+                        if (f) {
+                          final offset = _sliverScrollController.offset;
+                          for (int i = 0; i <= 500; i++) {
+                            _sliverScrollController.jumpTo(offset);
+                            await Future.delayed(Duration(milliseconds: 1));
                           }
-                        },
-                        child: EpisodesToolBar(
-                          onChange: filter,
-                          onOrderChange: sort,
-                        ),
+                        }
+                      },
+                      child: EpisodesToolBar(
+                        onChange: filter,
+                        onOrderChange: sort,
                       ),
                     ),
                   ),
-                podcast == null
-                    ? SliverFillRemaining(child: Loading())
-                    : Episodes(
-                        feedUrl: widget.feedUrl,
-                        episodes: episodes,
-                        bestImageUrl: image,
-                      ),
-              ],
-            ),
+                ),
+              podcast == null
+                  ? SliverFillRemaining(child: Loading())
+                  : Episodes(
+                      feedUrl: widget.feedUrl,
+                      episodes: episodes,
+                      bestImageUrl: image,
+                    ),
+            ],
           ),
-          const CurrentMedia(key: Key("podcastDetail")),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: CurrentMedia(key: Key("podcastDetail")),
+          ),
         ],
       ),
     );

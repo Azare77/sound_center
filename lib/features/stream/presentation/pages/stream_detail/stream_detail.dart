@@ -67,10 +67,13 @@ class _StreamDetailState extends State<StreamDetail> {
           );
     return Scaffold(
       appBar: widget.stream.uuid != null ? null : AppBar(),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(child: content),
-          const CurrentMedia(key: Key("streamDetail")),
+          content,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: const CurrentMedia(key: Key("streamDetail")),
+          ),
         ],
       ),
     );

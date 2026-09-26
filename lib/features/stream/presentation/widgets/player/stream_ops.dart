@@ -3,6 +3,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,7 +38,7 @@ class StreamOps extends StatelessWidget {
           height: 5,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: ThemeManager.current.iconColor,
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
           ),

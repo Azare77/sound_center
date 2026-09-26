@@ -82,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "format": MessageLookupByLibrary.simpleMessage("فرمت"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("دریافت کلید API"),
+    "glass": MessageLookupByLibrary.simpleMessage("شیشه‌ای"),
     "green": MessageLookupByLibrary.simpleMessage("سبز"),
     "host": MessageLookupByLibrary.simpleMessage("هاست"),
     "iconColor": MessageLookupByLibrary.simpleMessage("آیکون"),

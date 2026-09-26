@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/player/download_track.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 class TrackOps extends StatelessWidget {
   const TrackOps({super.key});
@@ -18,7 +19,7 @@ class TrackOps extends StatelessWidget {
           height: 5,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: ThemeManager.current.iconColor,
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
           ),

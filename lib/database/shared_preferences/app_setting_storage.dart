@@ -83,7 +83,7 @@ class AppSettingStorage {
     final String? style = Storage.instance.prefs.getString('playerStyle');
     return PlayerStyle.values.firstWhere(
       (e) => e.name == style,
-      orElse: () => PlayerStyle.blur,
+      orElse: () => PlayerStyle.blurCover,
     );
   }
 

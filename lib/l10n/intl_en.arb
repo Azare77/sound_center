@@ -101,5 +101,6 @@
   "opacity": "Opacity",
   "playerStyle": "Player Style",
   "solidColor": "Solid Color",
-  "blurCover": "Blur Cover"
+  "blurCover": "Blur Cover",
+  "glass": "Glass"
 }

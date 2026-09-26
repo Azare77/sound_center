@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui' show ImageFilter;
 
 import 'package:app_links/app_links.dart';
@@ -17,6 +18,7 @@ import 'package:sound_center/features/podcast/presentation/pages/podcast.dart';
 import 'package:sound_center/features/settings/presentation/settings.dart';
 import 'package:sound_center/features/stream/presentation/pages/stream.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 typedef NavItem = ({IconData icon, String title, bool badge});
 
@@ -30,8 +32,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   static const _menuDuration = Duration(milliseconds: 180);
-  static const _blurSigma = 8.0;
-  static const _scrimOpacity = 0.18;
 
   int index = 0;
   late final LocalPlayerRepositoryImp _localPlayer;
@@ -258,7 +258,8 @@ class _HomeState extends State<Home>
       builder: (context, _) {
         if (_menuCtrl.isDismissed) return const SizedBox.shrink();
         final t = Curves.easeOut.transform(_menuCtrl.value);
-
+        final blurSigma = ThemeManager.current.blur;
+        final scrimOpacity = ThemeManager.current.opacity;
         return Stack(
           children: [
             Positioned.fill(
@@ -268,11 +269,13 @@ class _HomeState extends State<Home>
                 child: ClipRect(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(
-                      sigmaX: _blurSigma * t,
-                      sigmaY: _blurSigma * t,
+                      sigmaX: max(1, blurSigma) * t,
+                      sigmaY: max(1, blurSigma) * t,
                     ),
                     child: ColoredBox(
-                      color: Colors.black.withValues(alpha: _scrimOpacity * t),
+                      color: Colors.black.withValues(
+                        alpha: min(0.3, scrimOpacity) * t,
+                      ),
                     ),
                   ),
                 ),

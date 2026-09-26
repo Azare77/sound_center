@@ -7,25 +7,27 @@ class Glass extends StatelessWidget {
   const Glass({
     super.key,
     this.radius = 0.0,
-    this.color,
+    required this.color,
     required this.child,
     this.blur,
     this.opacity,
     this.elevation = 0.0,
+    this.useBorder = true,
   });
 
   final double radius;
-  final Color? color;
+  final Color color;
   final double? blur;
   final double? opacity;
   final double elevation;
   final Widget child;
+  final bool useBorder;
 
   @override
   Widget build(BuildContext context) {
     final finalOpacity = opacity ?? ThemeManager.current.opacity;
     final finalBlur = blur ?? ThemeManager.current.blur;
-    final boxColor = color ?? ThemeManager.current.mediaColor;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
@@ -46,11 +48,15 @@ class Glass extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: finalBlur, sigmaY: finalBlur),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: boxColor.withValues(alpha: finalOpacity),
+              color: color.withValues(alpha: finalOpacity),
               borderRadius: BorderRadius.circular(radius),
-              border: Border.all(
-                color: ThemeManager.current.iconColor.withValues(alpha: 0.2),
-              ),
+              border: useBorder
+                  ? Border.all(
+                      color: ThemeManager.current.iconColor.withValues(
+                        alpha: 0.2,
+                      ),
+                    )
+                  : null,
             ),
             child: child,
           ),

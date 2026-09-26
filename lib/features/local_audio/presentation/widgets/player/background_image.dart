@@ -12,9 +12,9 @@ class LocalBackgroundImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imp = LocalPlayerRepositoryImp();
     return BlocBuilder<LocalBloc, LocalState>(
       builder: (context, state) {
+        final imp = LocalPlayerRepositoryImp();
         Uint8List? img = imp.getCurrentAudio?.cover;
         return BlurPlayerImage(img: img, source: AudioSource.local);
       },

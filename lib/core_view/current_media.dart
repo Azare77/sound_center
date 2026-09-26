@@ -24,6 +24,7 @@ import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/pages/play_stream.dart'
     as stream_page;
 import 'package:sound_center/features/stream/presentation/widgets/current_stream.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/glass.dart';
 
 class CurrentMedia extends StatefulWidget {
@@ -88,6 +89,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
             context: context,
             isScrollControlled: true,
             requestFocus: true,
+            backgroundColor: Colors.transparent,
             constraints: BoxConstraints(
               minWidth: MediaQuery.of(context).size.width,
               minHeight: MediaQuery.of(context).size.height,
@@ -173,7 +175,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
       margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
       child: Glass(
         radius: 25.0,
-        color: widget.color,
+        color: widget.color ?? ThemeManager.current.mediaColor,
         blur: widget.blur,
         opacity: widget.opacity,
         child: Center(child: child),

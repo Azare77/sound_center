@@ -738,6 +738,11 @@ class S {
   String get blurCover {
     return Intl.message('Blur Cover', name: 'blurCover', desc: '', args: []);
   }
+
+  /// `Glass`
+  String get glass {
+    return Intl.message('Glass', name: 'glass', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

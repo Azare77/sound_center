@@ -84,6 +84,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "format": MessageLookupByLibrary.simpleMessage("Format"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
+    "glass": MessageLookupByLibrary.simpleMessage("Glass"),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
     "host": MessageLookupByLibrary.simpleMessage("Host"),
     "iconColor": MessageLookupByLibrary.simpleMessage("Icon"),

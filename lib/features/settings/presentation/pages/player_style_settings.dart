@@ -27,26 +27,24 @@ class _PlayerStyleSettingsState extends State<PlayerStyleSettings> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Dialog(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12),
-          child: RadioGroup<PlayerStyle>(
-            onChanged: (v) {
-              setState(() => style = v!);
-              submit(style);
-            },
-            groupValue: style,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 5,
-              children: [
-                radioItem(PlayerStyle.solid, S.of(context).solidColor),
-                radioItem(PlayerStyle.blur, S.of(context).blurCover),
-              ],
-            ),
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12),
+        child: RadioGroup<PlayerStyle>(
+          onChanged: (v) {
+            setState(() => style = v!);
+            submit(style);
+          },
+          groupValue: style,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 5,
+            children: [
+              radioItem(PlayerStyle.solid, S.of(context).solidColor),
+              radioItem(PlayerStyle.blurCover, S.of(context).blurCover),
+              radioItem(PlayerStyle.glassy, S.of(context).glass),
+            ],
           ),
         ),
       ),

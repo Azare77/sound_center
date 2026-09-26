@@ -8,10 +8,10 @@ import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/main.dart';
-import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:sound_center/shared/Repository/base_player_repository.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 
-class StreamPlayerRepositoryImp implements PlayerRepository {
+class StreamPlayerRepositoryImp extends BasePlayerRepository {
   static final StreamPlayerRepositoryImp _instance =
       StreamPlayerRepositoryImp._internal();
 
@@ -20,67 +20,35 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   }
 
   StreamPlayerRepositoryImp._internal() {
-    _playerService.setOnStreamComplete(() => restart());
+    super.playerService.setOnStreamComplete(() => restart());
     _initialPlayerState();
   }
-
-  bool isLoading() {
-    return _playerService.isLoading();
-  }
-
-  final JustAudioService _playerService = JustAudioService();
 
   // final MpvService _playerService = MpvService();
   dynamic _currentStream;
 
   dynamic get getCurrentStream => _currentStream;
 
-  final _positionController = StreamController<int>.broadcast();
-  final _durationController = StreamController<int>.broadcast();
-  final _loadingController = StreamController<bool>.broadcast();
   final _streamChangedController = StreamController<dynamic>.broadcast();
-  final _playingController = StreamController<bool>.broadcast();
-
-  Stream<bool> get playingStream => _playingController.stream;
 
   Stream<dynamic> get streamChangedStream => _streamChangedController.stream;
-
-  Stream<int> get positionStream => _positionController.stream;
-
-  Stream<int> get durationStream => _durationController.stream;
-
-  Stream<bool> get loadingStream => _loadingController.stream;
 
   Timer? _updateTimer;
   StreamSubscription<IcyMetadata?>? _icySubscription;
   late final StreamBloc bloc;
 
   void _initialPlayerState() {
-    _playerService.position.listen((pos) {
-      _positionController.add(pos.inMilliseconds);
-    });
-    _playerService.processState.listen((state) {
+    super.playerService.processState.listen((state) {
       if (!hasSource()) return;
       bool loading = isLoading();
-      _loadingController.add(loading);
+      loadingController.add(loading);
       if (!loading && isPlaying()) _retryCount = 0;
     });
-    _playerService.duration.listen((dur) {
-      if (dur != null) {
-        _durationController.add(dur.inMilliseconds);
-      }
-    });
-    _playerService.playingStream.listen((playing) {
-      _playingController.add(playing);
-    });
   }
 
-  bool isPlaying() {
-    return _playerService.isPlaying();
-  }
-
+  @override
   bool hasSource() {
-    return _playerService.hasSource(AudioSource.stream);
+    return super.playerService.hasSource(AudioSource.stream);
   }
 
   void setBloc(StreamBloc bloc) {
@@ -147,11 +115,11 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   Future<void> play(int _, {bool direct = false}) async {
     _retryCount = 0;
     _currentStream = _playList[0];
-    _playerService.setSourceByForce(AudioSource.stream);
+    playerService.setSourceByForce(AudioSource.stream);
     _streamChangedController.add(_currentStream);
     // make sure that loading widget will show
     await Future.delayed(Duration(milliseconds: 20));
-    _loadingController.add(true);
+    loadingController.add(true);
     late final String url;
     late final String title;
     Duration? duration;
@@ -180,9 +148,12 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       duration: duration,
       cached: file?.uri,
     );
-    bool allowToPlay = await _playerService.setSource(url, AudioSource.stream);
+    bool allowToPlay = await super.playerService.setSource(
+      url,
+      AudioSource.stream,
+    );
     if (!allowToPlay) return;
-    await _playerService.play();
+    await playerService.play();
   }
 
   @override
@@ -192,34 +163,9 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   Future<dynamic> previous() async {}
 
   @override
-  int getCurrentPosition() {
-    int currentPosition = _playerService.getCurrentPosition();
-    return currentPosition;
-  }
-
-  @override
-  Future<int> getDuration() async {
-    int duration = await _playerService.getDuration();
-    return duration;
-  }
-
-  @override
-  Future<void> seek(Duration position) async {
-    await _playerService.seek(position);
-  }
-
-  Future<void> setSpeed(double speed) async {
-    await _playerService.setSpeed(speed);
-  }
-
-  double getSpeed() {
-    return _playerService.getSpeed();
-  }
-
-  @override
   Future<void> togglePlayState() async {
     if (_currentStream is AudioModel) {
-      await _playerService.togglePlaying();
+      await super.playerService.togglePlaying();
     } else {
       if (isPlaying()) {
         await stop();
@@ -232,23 +178,13 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  Future<void> pause() async {
-    if (_playerService.isPlaying()) await togglePlayState();
-  }
-
-  @override
-  Future<void> resume() async {
-    if (!_playerService.isPlaying()) await togglePlayState();
-  }
-
-  @override
   Future<void> stop() async {
     _retryCount = 0;
     _cancelIcyListener();
     _updateTimer?.cancel();
     _updateTimer = null;
     _streamChangedController.add(null);
-    await _playerService.release();
+    await super.playerService.release();
     await Future.delayed(Duration(milliseconds: 100));
     bloc.add(TogglePlay());
   }
@@ -262,7 +198,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
       await stop();
       return;
     }
-    await _playerService.release();
+    await super.playerService.release();
     await Future.delayed(Duration(seconds: 1));
     int currentRetry = _retryCount;
     await play(0);
@@ -271,7 +207,7 @@ class StreamPlayerRepositoryImp implements PlayerRepository {
 
   void addIcyMetadataListener(void Function(String? title) onTitle) {
     _icySubscription?.cancel();
-    _icySubscription = _playerService.icyMetadataStream.listen((metadata) {
+    _icySubscription = super.playerService.icyMetadataStream.listen((metadata) {
       if (hasSource()) {
         onTitle(metadata?.info?.title ?? metadata?.headers?.name);
       }

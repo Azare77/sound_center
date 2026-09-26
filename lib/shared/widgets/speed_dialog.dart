@@ -1,16 +1,24 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/Repository/base_player_repository.dart';
 
 class SpeedDialog extends StatefulWidget {
-  const SpeedDialog({super.key});
+  const SpeedDialog({super.key, required this.imp});
+
+  final BasePlayerRepository imp;
 
   @override
   State<SpeedDialog> createState() => _SpeedDialogState();
 }
 
 class _SpeedDialogState extends State<SpeedDialog> {
-  final CloudPlayerRepositoryImp imp = CloudPlayerRepositoryImp();
+  late double speed;
+
+  @override
+  void initState() {
+    speed = widget.imp.getSpeed();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +33,26 @@ class _SpeedDialogState extends State<SpeedDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(S.of(context).playSpeed),
-                Text(
-                  "${imp.getSpeed().toString()}x",
-                  textDirection: TextDirection.ltr,
-                ),
+                Text("$speed x", textDirection: TextDirection.ltr),
               ],
+            ),
+            Slider(
+              value: speed,
+              min: 0.25,
+              max: 3.0,
+              label: speed.toStringAsFixed(2),
+              divisions: 275,
+              inactiveColor: Colors.grey,
+              onChangeEnd: (value) async {
+                speed = double.parse(value.toStringAsFixed(2));
+                await widget.imp.setSpeed(speed);
+                setState(() {});
+              },
+              onChanged: (value) {
+                setState(() {
+                  speed = double.parse(value.toStringAsFixed(2));
+                });
+              },
             ),
             Wrap(
               textDirection: TextDirection.ltr,
@@ -52,8 +75,10 @@ class _SpeedDialogState extends State<SpeedDialog> {
   Widget speedButton(double speed) {
     return IconButton(
       onPressed: () async {
-        await imp.setSpeed(speed);
-        setState(() {});
+        await widget.imp.setSpeed(speed);
+        setState(() {
+          this.speed = speed;
+        });
       },
       icon: Text("${speed}x", textDirection: TextDirection.ltr),
     );

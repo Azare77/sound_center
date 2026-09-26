@@ -213,8 +213,11 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                             value: blur,
                             max: 20,
                             divisions: 2000,
+                            inactiveColor: Colors.grey,
                             label: blur.toStringAsFixed(2),
-                            onChanged: (value) => setState(() => blur = value),
+                            onChanged: (value) => setState(() {
+                              blur = double.parse(value.toStringAsFixed(2));
+                            }),
                           ),
                         ),
                         SizedBox(
@@ -235,9 +238,11 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                             value: opacity,
                             max: 1,
                             divisions: 100,
+                            inactiveColor: Colors.grey,
                             label: opacity.toStringAsFixed(2),
-                            onChanged: (value) =>
-                                setState(() => opacity = value),
+                            onChanged: (value) => setState(() {
+                              opacity = double.parse(value.toStringAsFixed(2));
+                            }),
                           ),
                         ),
                         SizedBox(

@@ -9,12 +9,12 @@ import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/database/shared_preferences/player_state_storage.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/main.dart';
+import 'package:sound_center/shared/Repository/base_player_repository.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 
-class PodcastPlayerRepositoryImp
-    with NowPlayingNotifier<Episode?>
-    implements PlayerRepository {
+class PodcastPlayerRepositoryImp extends BasePlayerRepository
+    with NowPlayingNotifier<Episode?> {
   static final PodcastPlayerRepositoryImp _instance =
       PodcastPlayerRepositoryImp._internal();
 
@@ -23,16 +23,11 @@ class PodcastPlayerRepositoryImp
   }
 
   PodcastPlayerRepositoryImp._internal() {
-    _playerService.setOnPodcastComplete(() => next());
-    _playerService.setOnPodcastError(() => restart());
+    super.playerService.setOnPodcastComplete(() => next());
+    super.playerService.setOnPodcastError(() => restart());
     _initialPlayerState();
   }
 
-  bool isLoading() {
-    return _playerService.isLoading();
-  }
-
-  final JustAudioService _playerService = JustAudioService();
   List<Episode> _episodes = [];
 
   Episode? _currentEpisode;
@@ -43,21 +38,9 @@ class PodcastPlayerRepositoryImp
 
   String feedUrl = "";
 
-  final _positionController = StreamController<int>.broadcast();
-  final _durationController = StreamController<int>.broadcast();
-  final _loadingController = StreamController<bool>.broadcast();
   final _episodeChangedController = StreamController<Episode?>.broadcast();
-  final _playingController = StreamController<bool>.broadcast();
-
-  Stream<bool> get playingStream => _playingController.stream;
 
   Stream<Episode?> get episodeChangedStream => _episodeChangedController.stream;
-
-  Stream<int> get positionStream => _positionController.stream;
-
-  Stream<int> get durationStream => _durationController.stream;
-
-  Stream<bool> get loadingStream => _loadingController.stream;
 
   late final PodcastBloc bloc;
 
@@ -67,11 +50,11 @@ class PodcastPlayerRepositoryImp
       _currentEpisode = PlayerStateStorage.getLastEpisode();
       if (_currentEpisode == null) return;
       if (_episodes.isEmpty) _episodes = [_currentEpisode!];
-      _playerService.setSourceByForce(AudioSource.podcast);
+      super.playerService.setSourceByForce(AudioSource.podcast);
       _episodeChangedController.add(_currentEpisode);
       // make sure that loading widget will show
       await Future.delayed(Duration(milliseconds: 20));
-      _loadingController.add(true);
+      loadingController.add(true);
 
       String key = _currentEpisode!.title.trim();
       if (_currentEpisode!.author != null) {
@@ -88,14 +71,14 @@ class PodcastPlayerRepositoryImp
       );
       index = 0;
       _episodes[index] = _currentEpisode!;
-      bool res = await _playerService.setSource(
+      bool res = await super.playerService.setSource(
         _currentEpisode!.contentUrl!,
         AudioSource.podcast,
         cachedFilePath: cacheFile,
       );
       if (res) {
         int position = PlayerStateStorage.getLastPosition();
-        _playerService.seek(Duration(milliseconds: position));
+        super.playerService.seek(Duration(milliseconds: position));
       }
     } catch (e, st) {
       debugPrint('init() failed: $e\n$st');
@@ -103,31 +86,17 @@ class PodcastPlayerRepositoryImp
   }
 
   void _initialPlayerState() {
-    _playerService.position.listen((pos) {
-      _positionController.add(pos.inMilliseconds);
-    });
-    _playerService.processState.listen((state) {
+    super.playerService.processState.listen((state) {
       if (!hasSource()) return;
       bool loading = isLoading();
-      _loadingController.add(loading);
+      loadingController.add(loading);
       if (!loading && isPlaying()) _retryCount = 0;
     });
-    _playerService.duration.listen((dur) {
-      if (dur != null) {
-        _durationController.add(dur.inMilliseconds);
-      }
-    });
-    _playerService.playingStream.listen((playing) {
-      _playingController.add(playing);
-    });
   }
 
-  bool isPlaying() {
-    return _playerService.isPlaying();
-  }
-
+  @override
   bool hasSource() {
-    return _playerService.hasSource(AudioSource.podcast);
+    return super.playerService.hasSource(AudioSource.podcast);
   }
 
   void setBloc(PodcastBloc bloc) {
@@ -158,11 +127,11 @@ class PodcastPlayerRepositoryImp
     _retryCount = 0;
     this.index = index;
     _currentEpisode = _episodes[index];
-    _playerService.setSourceByForce(AudioSource.podcast);
+    super.playerService.setSourceByForce(AudioSource.podcast);
     _episodeChangedController.add(_currentEpisode);
     // make sure that loading widget will show
     await Future.delayed(Duration(milliseconds: 20));
-    _loadingController.add(true);
+    loadingController.add(true);
 
     String key = _currentEpisode!.title.trim();
     if (_currentEpisode!.author != null) {
@@ -177,7 +146,7 @@ class PodcastPlayerRepositoryImp
       _episodes[index],
       file?.uri,
     );
-    bool allowToPlay = await _playerService.setSource(
+    bool allowToPlay = await super.playerService.setSource(
       _episodes[index].contentUrl!,
       AudioSource.podcast,
       cachedFilePath: cacheFile,
@@ -185,7 +154,7 @@ class PodcastPlayerRepositoryImp
     if (!allowToPlay) return;
     await PlayerStateStorage.saveLastEpisode(_currentEpisode!);
     await PlayerStateStorage.saveSource(AudioSource.podcast);
-    await _playerService.play();
+    await super.playerService.play();
   }
 
   Future<String?> _chach(String filename) async {
@@ -213,45 +182,10 @@ class PodcastPlayerRepositoryImp
   }
 
   @override
-  int getCurrentPosition() {
-    int currentPosition = _playerService.getCurrentPosition();
-    return currentPosition;
-  }
-
-  @override
-  Future<int> getDuration() async {
-    int duration = await _playerService.getDuration();
-    return duration;
-  }
-
-  @override
-  Future<void> seek(Duration position) async {
-    await _playerService.seek(position);
-  }
-
-  Future<void> setSpeed(double speed) async {
-    await _playerService.setSpeed(speed);
-  }
-
-  double getSpeed() {
-    return _playerService.getSpeed();
-  }
-
-  @override
   Future<void> togglePlayState() async {
     _episodeChangedController.add(_currentEpisode);
     bloc.add(TogglePlay());
-    await _playerService.togglePlaying();
-  }
-
-  @override
-  Future<void> pause() async {
-    if (_playerService.isPlaying()) await togglePlayState();
-  }
-
-  @override
-  Future<void> resume() async {
-    if (!_playerService.isPlaying()) await togglePlayState();
+    await super.playerService.togglePlaying();
   }
 
   @override
@@ -259,7 +193,7 @@ class PodcastPlayerRepositoryImp
     _retryCount = 0;
     _currentEpisode = null;
     _episodeChangedController.add(null);
-    await _playerService.release();
+    await super.playerService.release();
     bloc.add(TogglePlay());
   }
 
@@ -272,16 +206,16 @@ class PodcastPlayerRepositoryImp
       await stop();
       return;
     }
-    bool wasPlaying = _playerService.isPlaying();
-    int position = _playerService.getCurrentPosition();
-    await _playerService.release();
+    bool wasPlaying = super.playerService.isPlaying();
+    int position = super.playerService.getCurrentPosition();
+    await super.playerService.release();
     await Future.delayed(Duration(milliseconds: 500));
     int currentRetry = _retryCount;
     await play(index);
     _retryCount = currentRetry;
     await seek(Duration(milliseconds: position));
     if (!wasPlaying) {
-      await _playerService.togglePlaying();
+      await super.playerService.togglePlaying();
     }
   }
 

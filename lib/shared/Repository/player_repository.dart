@@ -47,4 +47,10 @@ abstract class PlayerRepository {
   Future<void> changeRepeatState();
 
   Future<void> changeShuffleState();
+
+  bool hasSource();
+
+  double getSpeed();
+
+  Future<void> setSpeed(double speed);
 }

@@ -9,9 +9,10 @@ import 'package:sound_center/database/shared_preferences/player_state_storage.da
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/main.dart';
+import 'package:sound_center/shared/Repository/base_player_repository.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 
-class LocalPlayerRepositoryImp implements PlayerRepository {
+class LocalPlayerRepositoryImp extends BasePlayerRepository {
   static final LocalPlayerRepositoryImp _instance =
       LocalPlayerRepositoryImp._internal();
 
@@ -20,15 +21,13 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   LocalPlayerRepositoryImp._internal() {
-    _playerService.setOnComplete(() => next());
+    super.playerService.setOnComplete(() => next());
     _initialPlayerState();
   }
 
   final _audioChangedController = StreamController<AudioEntity?>.broadcast();
 
   Stream<AudioEntity?> get audioChangedStream => _audioChangedController.stream;
-
-  final JustAudioService _playerService = JustAudioService();
 
   void init() async {
     try {
@@ -37,14 +36,14 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
       _currentAudio = PlayerStateStorage.getLastAudio();
       if (_currentAudio == null) return;
       if (shuffleMode == ShuffleMode.shuffle) _shuffleAudios();
-      bool res = await _playerService.setSource(
+      bool res = await super.playerService.setSource(
         _currentAudio!.path,
         AudioSource.local,
       );
       _audioChangedController.add(_currentAudio);
       if (!res) return;
       int position = PlayerStateStorage.getLastPosition();
-      await _playerService.seek(Duration(milliseconds: position));
+      await super.playerService.seek(Duration(milliseconds: position));
       if (Platform.isLinux) {
         final file = File(_currentAudio!.path);
         _currentAudio!.cover = AudioUtil.getLinuxCover(file);
@@ -80,33 +79,25 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   int shuffleIndex = 0;
   AudioRepeatMode repeatMode = AudioRepeatMode.repeatAll;
   ShuffleMode shuffleMode = ShuffleMode.noShuffle;
-  final _positionController = StreamController<int>.broadcast();
-  final _durationController = StreamController<int>.broadcast();
 
-  Stream<int> get positionStream => _positionController.stream;
-
-  Stream<int> get durationStream => _durationController.stream;
   late final LocalBloc bloc;
 
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
     shuffleMode = PlayerStateStorage.getShuffleMode();
-    _playerService.position.listen((pos) {
-      _positionController.add(pos.inMilliseconds);
-    });
-    _playerService.duration.listen((dur) {
-      if (dur != null) {
-        _durationController.add(dur.inMilliseconds);
-      }
-    });
+    // super.playerService.position.listen((pos) {
+    //   positionController.add(pos.inMilliseconds);
+    // });
+    // super.playerService.duration.listen((dur) {
+    //   if (dur != null) {
+    //     durationController.add(dur.inMilliseconds);
+    //   }
+    // });
   }
 
-  bool isPlaying() {
-    return _playerService.isPlaying();
-  }
-
+  @override
   bool hasSource() {
-    return _playerService.hasSource(AudioSource.local);
+    return super.playerService.hasSource(AudioSource.local);
   }
 
   bool isShuffle() {
@@ -169,7 +160,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
 
   @override
   Future<void> play(int index, {bool direct = false}) async {
-    bool res = await _playerService.setSource(
+    bool res = await super.playerService.setSource(
       audios[index].path,
       AudioSource.local,
     );
@@ -186,7 +177,7 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
         coverSize: CoverSize.banner,
       );
     }
-    _playerService.play();
+    super.playerService.play();
     bloc.add(AutoPlayNext());
     (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
       audios[index],
@@ -217,43 +208,16 @@ class LocalPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  int getCurrentPosition() {
-    int currentPosition = _playerService.getCurrentPosition();
-    return currentPosition;
-  }
-
-  @override
-  Future<int> getDuration() async {
-    int duration = await _playerService.getDuration();
-    return duration;
-  }
-
-  @override
-  Future<void> seek(Duration position) async {
-    await _playerService.seek(position);
-  }
-
-  @override
   Future<void> togglePlayState() async {
     _audioChangedController.add(_currentAudio);
     bloc.add(TogglePlay());
-    await _playerService.togglePlaying();
-  }
-
-  @override
-  Future<void> pause() async {
-    if (_playerService.isPlaying()) await togglePlayState();
-  }
-
-  @override
-  Future<void> resume() async {
-    if (!_playerService.isPlaying()) await togglePlayState();
+    await super.playerService.togglePlaying();
   }
 
   @override
   Future<void> stop() async {
     _audioChangedController.add(null);
-    await _playerService.release();
+    await super.playerService.release();
     bloc.add(TogglePlay());
   }
 

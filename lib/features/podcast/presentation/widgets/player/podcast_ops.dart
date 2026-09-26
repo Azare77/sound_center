@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
-import 'package:sound_center/features/podcast/presentation/widgets/player/speed_dialog.dart';
 import 'package:sound_center/shared/theme/themes.dart';
+import 'package:sound_center/shared/widgets/speed_dialog.dart';
 
 class PodcastOps extends StatelessWidget {
   const PodcastOps({super.key});
@@ -15,7 +15,10 @@ class PodcastOps extends StatelessWidget {
       children: [
         IconButton(
           onPressed: () {
-            showDialog(context: context, builder: (_) => SpeedDialog());
+            showDialog(
+              context: context,
+              builder: (_) => SpeedDialog(imp: playerRepository),
+            );
           },
           icon: Icon(Icons.speed_rounded),
         ),

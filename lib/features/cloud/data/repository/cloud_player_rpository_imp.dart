@@ -8,11 +8,11 @@ import 'package:sound_center/database/shared_preferences/player_state_storage.da
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/main.dart';
-import 'package:sound_center/shared/Repository/player_repository.dart';
+import 'package:sound_center/shared/Repository/base_player_repository.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:soundcloud_explode_dart/soundcloud_explode_dart.dart';
 
-class CloudPlayerRepositoryImp implements PlayerRepository {
+class CloudPlayerRepositoryImp extends BasePlayerRepository {
   static final CloudPlayerRepositoryImp _instance =
       CloudPlayerRepositoryImp._internal();
 
@@ -21,15 +21,10 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   }
 
   CloudPlayerRepositoryImp._internal() {
-    _playerService.setOnCloudComplete(() => next());
+    super.playerService.setOnCloudComplete(() => next());
     _initialPlayerState();
   }
 
-  bool isLoading() {
-    return _playerService.isLoading();
-  }
-
-  final JustAudioService _playerService = JustAudioService();
   List<CloudTrack> _tracks = [];
 
   CloudTrack? _currentTrack;
@@ -38,21 +33,9 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
 
   int index = 0;
 
-  final _positionController = StreamController<int>.broadcast();
-  final _durationController = StreamController<int>.broadcast();
-  final _loadingController = StreamController<bool>.broadcast();
   final _trackChangedController = StreamController<CloudTrack?>.broadcast();
-  final _playingController = StreamController<bool>.broadcast();
-
-  Stream<bool> get playingStream => _playingController.stream;
 
   Stream<CloudTrack?> get trackChangedStream => _trackChangedController.stream;
-
-  Stream<int> get positionStream => _positionController.stream;
-
-  Stream<int> get durationStream => _durationController.stream;
-
-  Stream<bool> get loadingStream => _loadingController.stream;
 
   late final CloudBloc bloc;
 
@@ -66,11 +49,11 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       if (_tracks.isEmpty) _tracks = [_currentTrack!];
       index = 0;
       _tracks[index] = _currentTrack!;
-      _playerService.setSourceByForce(AudioSource.cloud);
+      super.playerService.setSourceByForce(AudioSource.cloud);
       _trackChangedController.add(_currentTrack);
       // make sure that loading widget will show
       await Future.delayed(Duration(milliseconds: 20));
-      _loadingController.add(true);
+      loadingController.add(true);
       File? file;
       try {
         file = await NetworkCacheImage.getFile(
@@ -88,10 +71,13 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
         _trackChangedController.add(null);
         return;
       }
-      bool res = await _playerService.setSource(streamUrl, AudioSource.cloud);
+      bool res = await super.playerService.setSource(
+        streamUrl,
+        AudioSource.cloud,
+      );
       if (res) {
         int position = PlayerStateStorage.getLastPosition();
-        _playerService.seek(Duration(milliseconds: position));
+        super.playerService.seek(Duration(milliseconds: position));
       }
       bloc.add(AddToHistory(track: _currentTrack!));
     } catch (e, st) {
@@ -100,30 +86,11 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   }
 
   void _initialPlayerState() {
-    _playerService.position.listen((pos) {
-      _positionController.add(pos.inMilliseconds);
-    });
-    _playerService.processState.listen((state) {
+    super.playerService.processState.listen((state) {
       if (!hasSource()) return;
       bool loading = isLoading();
-      _loadingController.add(loading);
+      loadingController.add(loading);
     });
-    _playerService.duration.listen((dur) {
-      if (dur != null) {
-        _durationController.add(dur.inMilliseconds);
-      }
-    });
-    _playerService.playingStream.listen((playing) {
-      _playingController.add(playing);
-    });
-  }
-
-  bool isPlaying() {
-    return _playerService.isPlaying();
-  }
-
-  bool hasSource() {
-    return _playerService.hasSource(AudioSource.cloud);
   }
 
   void setBloc(CloudBloc bloc) {
@@ -153,12 +120,12 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
     _currentTrack = _tracks[index];
-    _playerService.setSourceByForce(AudioSource.cloud);
+    super.playerService.setSourceByForce(AudioSource.cloud);
     _trackChangedController.add(_currentTrack);
     bloc.add(AddToHistory(track: _currentTrack!));
     // make sure that loading widget will show
     await Future.delayed(Duration(milliseconds: 20));
-    _loadingController.add(true);
+    loadingController.add(true);
     File? file;
     try {
       file = await NetworkCacheImage.getFile(
@@ -169,22 +136,22 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       _tracks[index],
       file?.uri,
     );
-    await _playerService.pause();
+    await super.playerService.pause();
     final String? trackUrl = await getTrackUrl(_currentTrack!);
     if (trackUrl == null || !hasSource()) {
       await stop();
-      _playerService.setSourceByForce(null);
+      super.playerService.setSourceByForce(null);
       _trackChangedController.add(null);
       return;
     }
-    bool allowToPlay = await _playerService.setSource(
+    bool allowToPlay = await super.playerService.setSource(
       trackUrl,
       AudioSource.cloud,
     );
     if (!allowToPlay) return;
     await PlayerStateStorage.saveLastCloudTrack(_currentTrack!);
     await PlayerStateStorage.saveSource(AudioSource.cloud);
-    await _playerService.play();
+    await super.playerService.play();
     unawaited(_precacheAdjacentTracks(index));
   }
 
@@ -203,52 +170,17 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
   }
 
   @override
-  int getCurrentPosition() {
-    int currentPosition = _playerService.getCurrentPosition();
-    return currentPosition;
-  }
-
-  @override
-  Future<int> getDuration() async {
-    int duration = await _playerService.getDuration();
-    return duration;
-  }
-
-  @override
-  Future<void> seek(Duration position) async {
-    await _playerService.seek(position);
-  }
-
-  Future<void> setSpeed(double speed) async {
-    await _playerService.setSpeed(speed);
-  }
-
-  double getSpeed() {
-    return _playerService.getSpeed();
-  }
-
-  @override
   Future<void> togglePlayState() async {
     _trackChangedController.add(_currentTrack);
     bloc.add(TogglePlay());
-    await _playerService.togglePlaying();
-  }
-
-  @override
-  Future<void> pause() async {
-    if (_playerService.isPlaying()) await togglePlayState();
-  }
-
-  @override
-  Future<void> resume() async {
-    if (!_playerService.isPlaying()) await togglePlayState();
+    await super.playerService.togglePlaying();
   }
 
   @override
   Future<void> stop() async {
     _currentTrack = null;
     _trackChangedController.add(null);
-    await _playerService.release();
+    await super.playerService.release();
     bloc.add(TogglePlay());
   }
 
@@ -308,5 +240,10 @@ class CloudPlayerRepositoryImp implements PlayerRepository {
       debugPrint('getTrackUrl failed: $e\n$st');
       return null;
     }
+  }
+
+  @override
+  bool hasSource() {
+    return super.playerService.hasSource(AudioSource.cloud);
   }
 }

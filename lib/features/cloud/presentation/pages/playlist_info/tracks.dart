@@ -5,6 +5,7 @@ import 'package:sound_center/features/cloud/data/repository/cloud_player_rposito
 import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/cloud_item_template.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 class Tracks extends StatefulWidget {
   const Tracks({super.key, required this.tracks, this.bestImageUrl});
@@ -40,7 +41,9 @@ class _TracksState extends State<Tracks> {
         return Container(
           key: ValueKey(track.id),
           height: LIST_ITEM_HEIGHT,
-          color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
+          color: isCurrent
+              ? ThemeManager.current.mediaColor
+              : Colors.transparent,
           child: InkWell(
             onTap: () {
               setState(() {});

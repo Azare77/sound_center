@@ -8,6 +8,7 @@ import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dar
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_status.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/podcast_templates/episode/episode_template.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class DownloadedEpisodes extends StatefulWidget {
@@ -55,7 +56,7 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
                       final isCurrent = currentEpisode?.guid == episode.guid;
                       return Material(
                         color: isCurrent
-                            ? Color(0x1D1BF1D8)
+                            ? ThemeManager.current.mediaColor
                             : Colors.transparent,
                         child: InkWell(
                           onTap: () {

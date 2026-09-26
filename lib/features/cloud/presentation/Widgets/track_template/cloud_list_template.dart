@@ -8,6 +8,7 @@ import 'package:sound_center/features/cloud/presentation/Widgets/track_template/
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/cloud/presentation/pages/playlist_info/playlist_detail.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
@@ -114,7 +115,9 @@ class CloudListTemplate extends StatelessWidget {
               if (!_isValidItem(item)) return const SizedBox.shrink();
               return Material(
                 key: ValueKey(item.id),
-                color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
+                color: isCurrent
+                    ? ThemeManager.current.mediaColor
+                    : Colors.transparent,
                 child: InkWell(
                   onTap: () {
                     BlocProvider.of<CloudBloc>(

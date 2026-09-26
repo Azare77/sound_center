@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
@@ -8,6 +8,7 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.d
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_action_menu.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_template.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 
 class AudioListTemplate extends StatefulWidget {
@@ -48,7 +49,9 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
           final isCurrent = currentAudio?.id == audio.id;
           return Material(
             key: ValueKey(audio.id),
-            color: isCurrent ? Color(0x1D1BF1D8) : Colors.transparent,
+            color: isCurrent
+                ? ThemeManager.current.mediaColor
+                : Colors.transparent,
             child: InkWell(
               onTap: () =>
                   context.read<event.LocalBloc>().add(event.PlayAudio(index)),

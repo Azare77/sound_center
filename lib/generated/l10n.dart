@@ -329,6 +329,11 @@ class S {
     return Intl.message('Green', name: 'green', desc: '', args: []);
   }
 
+  /// `Orange`
+  String get orange {
+    return Intl.message('Orange', name: 'orange', desc: '', args: []);
+  }
+
   /// `Purple`
   String get purple {
     return Intl.message('Purple', name: 'purple', desc: '', args: []);

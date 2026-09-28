@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:sound_center/core/constants/constants.dart';
@@ -45,27 +46,37 @@ class PlayQueue extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          requestFocus: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-          ),
+          requestFocus: false,
           backgroundColor: coverType == PlayerStyle.solid
               ? null
               : Colors.transparent,
           constraints: BoxConstraints(minWidth: size.width),
           builder: (context) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                return SizedBox(
-                  height: constraints.maxHeight * 0.8,
-                  child: item,
-                );
-              },
+            return SizedBox(
+              height: MediaQuery.heightOf(context) * 0.8,
+              child: item,
             );
           },
         );
       },
-      child: Text("⌃\n${S.of(context).playQueue}", textAlign: TextAlign.center),
+      child: SizedBox(
+        width: size.width,
+        child: Column(
+          spacing: 2,
+          children: [
+            SvgPicture.asset(
+              "assets/icons/show-queue.svg",
+              height: 15,
+              width: 15,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).iconTheme.color!,
+                BlendMode.srcIn,
+              ),
+            ),
+            Text(S.of(context).playQueue),
+          ],
+        ),
+      ),
     );
   }
 }

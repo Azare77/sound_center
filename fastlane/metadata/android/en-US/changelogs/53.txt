@@ -1,0 +1,8 @@
+What's New:
+- Added Play Queue with the ability to manage playback order.
+- Added new visual effects to the Current Media and Bottom Player.
+- Added opacity and blur effects to the Theme Designer.
+- Made the Current Media widget floating.
+
+Improvements:
+- Improved the codebase by extracting shared logic between Player Repositories.

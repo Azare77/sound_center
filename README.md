@@ -38,9 +38,10 @@ Currently available on Android and Linux desktop, with support for English and F
 
 ## Screenshots
 
-| ![Screenshot 1](info/screenshots/1.jpeg) | ![Screenshot 2](info/screenshots/2.jpeg) | ![Screenshot 3](info/screenshots/3.jpeg) | ![Screenshot 4](info/screenshots/4.jpeg) | ![Screenshot 5](info/screenshots/5.jpeg) |
-|------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|
-| ![Screenshot 6](info/screenshots/6.jpeg) | ![Screenshot 7](info/screenshots/7.jpeg) | ![Screenshot 8](info/screenshots/8.jpeg) | ![Screenshot 9](info/screenshots/9.jpeg) |                                          |
+| ![Screenshot 1](info/screenshots/1.jpeg)   | ![Screenshot 2](info/screenshots/2.jpeg) | ![Screenshot 3](info/screenshots/3.jpeg) | ![Screenshot 4](info/screenshots/4.jpeg) | ![Screenshot 5](info/screenshots/5.jpeg)   |
+|--------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|--------------------------------------------|
+| ![Screenshot 6](info/screenshots/6.jpeg)   | ![Screenshot 7](info/screenshots/7.jpeg) | ![Screenshot 8](info/screenshots/8.jpeg) | ![Screenshot 9](info/screenshots/9.jpeg) | ![Screenshot 10](info/screenshots/10.jpeg) |
+| ![Screenshot 11](info/screenshots/11.jpeg) |                                          |                                          |                                          |                                            |
 
 ## Feedback & Support
 

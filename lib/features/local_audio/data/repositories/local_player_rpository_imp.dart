@@ -31,7 +31,7 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
 
   void init() async {
     try {
-      _loadBanner();
+      unawaited(_loadBanner());
       if (PlayerStateStorage.getSource() != AudioSource.local) return;
       _currentAudio = PlayerStateStorage.getLastAudio();
       if (_currentAudio == null) return;
@@ -110,7 +110,7 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
     for (AudioEntity track in tracks) {
       audios.add(track);
     }
-    _loadBanner();
+    unawaited(_loadBanner());
   }
 
   List<AudioEntity> getPlayList() {

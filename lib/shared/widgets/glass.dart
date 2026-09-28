@@ -29,16 +29,31 @@ class Glass extends StatelessWidget {
   Widget build(BuildContext context) {
     final finalOpacity = opacity ?? ThemeManager.current.opacity;
     final finalBlur = blur ?? ThemeManager.current.blur;
+
     final border = onlyTopBorderRadius
         ? BorderRadius.vertical(top: Radius.circular(borderRadius))
         : BorderRadius.circular(borderRadius);
+
+    final content = DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: finalOpacity),
+        borderRadius: border,
+        border: useBorder
+            ? Border.all(
+                color: ThemeManager.current.iconColor.withValues(alpha: 0.2),
+              )
+            : null,
+      ),
+      child: child,
+    );
+
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: border,
         boxShadow: elevation > 0
             ? [
                 BoxShadow(
-                  offset: Offset(0, 5),
+                  offset: const Offset(0, 5),
                   blurRadius: elevation * 1.5,
                   spreadRadius: elevation * 0.5,
                   color: Colors.black.withValues(alpha: 0.5),
@@ -48,22 +63,9 @@ class Glass extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: border,
-        child: BackdropFilter(
+        child: BackdropFilter.grouped(
           filter: ImageFilter.blur(sigmaX: finalBlur, sigmaY: finalBlur),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: finalOpacity),
-              borderRadius: border,
-              border: useBorder
-                  ? Border.all(
-                      color: ThemeManager.current.iconColor.withValues(
-                        alpha: 0.2,
-                      ),
-                    )
-                  : null,
-            ),
-            child: child,
-          ),
+          child: content,
         ),
       ),
     );

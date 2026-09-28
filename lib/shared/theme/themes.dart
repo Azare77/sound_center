@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-enum PresetTheme { dark, green, light }
+enum PresetTheme { dark, green, light, orange }
 
 class AppThemeData {
   final String id;
@@ -105,6 +105,7 @@ class ThemeManager {
   static final AppThemeData dark = _buildDarkTheme();
   static final AppThemeData green = _buildGreenTheme();
   static final AppThemeData light = _buildLightTheme();
+  static final AppThemeData orange = _buildOrangeTheme();
 
   static final Map<String, AppThemeData> _customThemes = {};
 
@@ -173,6 +174,16 @@ class ThemeManager {
 
   static void removeCustomTheme(String id) => _customThemes.remove(id);
 
+  static void replaceCustomTheme(String oldId, AppThemeData newTheme) {
+    final index = _customThemes.keys.toList().indexOf(oldId);
+    if (index == -1) return;
+    final entries = _customThemes.entries.toList();
+    entries[index] = MapEntry(newTheme.id, newTheme);
+    _customThemes
+      ..clear()
+      ..addEntries(entries);
+  }
+
   static void setTheme(String themeId, Locale locale) {
     _locale = locale;
     _current = fromId(themeId);
@@ -192,6 +203,7 @@ class ThemeManager {
     dark,
     light,
     green,
+    orange,
     ..._customThemes.values,
   ];
 
@@ -251,6 +263,21 @@ AppThemeData _buildLightTheme() {
     iconColor: Colors.black,
     blur: 12,
     opacity: 0.1,
+  );
+}
+
+AppThemeData _buildOrangeTheme() {
+  return _buildTheme(
+    id: 'orange',
+    brightness: Brightness.dark,
+    scaffoldBackground: const Color(0xff120706),
+    thumbColor: const Color(0xffff3e00),
+    appBarBackground: const Color(0xff120503),
+    appBarShadowColor: const Color(0xffea1530),
+    mediaColor: const Color(0xff842b06),
+    iconColor: const Color(0xffef7914),
+    blur: 5,
+    opacity: 0.15,
   );
 }
 

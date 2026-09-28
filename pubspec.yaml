@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+4
+version: 1.1.0+5
 
 environment:
   sdk: ^3.10.4
@@ -33,7 +33,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  material_ui: ^1.3.0
+  material_ui: ^1.4.0
   intl: ^0.20.3
   collection: ^1.19.1
   #GET AUDIO DATA FROM DISK
@@ -76,8 +76,8 @@ dependencies:
     git:
       url: https://github.com/BerkayOez/podcast_search
       ref: fix/missing_dio_exception_type
-  cached_network_image: ^4.0.0
-  background_downloader: ^9.6.2
+  cached_network_image: ^4.0.2
+  background_downloader: ^9.6.3
   #STREAM
   radio_browser_api: ^2.1.0
   #Cloud

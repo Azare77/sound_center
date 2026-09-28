@@ -115,6 +115,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ok": MessageLookupByLibrary.simpleMessage("حله"),
     "oldestFirst": MessageLookupByLibrary.simpleMessage("قدیمی ترین"),
     "opacity": MessageLookupByLibrary.simpleMessage("شفافیت"),
+    "orange": MessageLookupByLibrary.simpleMessage("نارنجی"),
     "play": MessageLookupByLibrary.simpleMessage("پخش"),
     "playQueue": MessageLookupByLibrary.simpleMessage("صف پخش"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("سرعت پخش"),

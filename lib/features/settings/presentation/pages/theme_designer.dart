@@ -208,16 +208,19 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                       children: [
                         SizedBox(width: 70, child: Text(S.of(context).blur)),
                         Expanded(
-                          child: Slider(
-                            min: 0,
-                            value: blur,
-                            max: 20,
-                            divisions: 2000,
-                            inactiveColor: Colors.grey,
-                            label: blur.toStringAsFixed(2),
-                            onChanged: (value) => setState(() {
-                              blur = double.parse(value.toStringAsFixed(2));
-                            }),
+                          child: Directionality(
+                            textDirection: .ltr,
+                            child: Slider(
+                              min: 0,
+                              value: blur,
+                              max: 20,
+                              divisions: 2000,
+                              inactiveColor: Colors.grey,
+                              label: blur.toStringAsFixed(2),
+                              onChanged: (value) => setState(() {
+                                blur = double.parse(value.toStringAsFixed(2));
+                              }),
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -233,16 +236,21 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
                       children: [
                         SizedBox(width: 70, child: Text(S.of(context).opacity)),
                         Expanded(
-                          child: Slider(
-                            min: 0,
-                            value: opacity,
-                            max: 1,
-                            divisions: 100,
-                            inactiveColor: Colors.grey,
-                            label: opacity.toStringAsFixed(2),
-                            onChanged: (value) => setState(() {
-                              opacity = double.parse(value.toStringAsFixed(2));
-                            }),
+                          child: Directionality(
+                            textDirection: .ltr,
+                            child: Slider(
+                              min: 0,
+                              value: opacity,
+                              max: 1,
+                              divisions: 100,
+                              inactiveColor: Colors.grey,
+                              label: opacity.toStringAsFixed(2),
+                              onChanged: (value) => setState(() {
+                                opacity = double.parse(
+                                  value.toStringAsFixed(2),
+                                );
+                              }),
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -276,43 +284,44 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
   }
 
   Widget _buildButtonRow() {
-    return Row(
-      mainAxisAlignment: .spaceEvenly,
-      children: [
-        ElevatedButton(onPressed: saveTheme, child: Text(S.of(context).ok)),
-        ElevatedButton(
-          onPressed: () {
-            AppThemeData themeData = AppThemeData(
-              id: _controller.text.trim(),
-              brightness: brightness,
-              scaffoldBackground: scaffoldBackground,
-              thumbColor: thumbColor,
-              appBarBackground: appBarBackground,
-              appBarShadowColor: shadowColor,
-              mediaColor: mediaColor,
-              iconColor: iconColor,
-              blur: blur,
-              opacity: opacity,
-            );
-            Clipboard.setData(
-              ClipboardData(text: jsonEncode(themeData.toJsonForStorage())),
-            );
-          },
-          child: Text(S.of(context).copy),
-        ),
-      ],
+    return Directionality(
+      textDirection: .ltr,
+      child: Row(
+        mainAxisAlignment: .spaceEvenly,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              AppThemeData themeData = AppThemeData(
+                id: _controller.text.trim(),
+                brightness: brightness,
+                scaffoldBackground: scaffoldBackground,
+                thumbColor: thumbColor,
+                appBarBackground: appBarBackground,
+                appBarShadowColor: shadowColor,
+                mediaColor: mediaColor,
+                iconColor: iconColor,
+                blur: blur,
+                opacity: opacity,
+              );
+              Clipboard.setData(
+                ClipboardData(text: jsonEncode(themeData.toJsonForStorage())),
+              );
+            },
+            child: Text(S.of(context).copy),
+          ),
+          ElevatedButton(onPressed: saveTheme, child: Text(S.of(context).ok)),
+        ],
+      ),
     );
   }
 
   void saveTheme() {
-    if (widget.themeName != null) {
-      ThemeManager.removeCustomTheme(widget.themeName!);
-    }
     if (!_controller.isValid()) {
-      int allCustomThemes = ThemeManager.allCustomThemes.length;
+      final allCustomThemes = ThemeManager.allCustomThemes.length;
       _controller.text = "Custom Theme-${allCustomThemes + 1}";
     }
-    AppThemeData themeData = AppThemeData(
+
+    final themeData = AppThemeData(
       id: _controller.text.trim(),
       brightness: brightness,
       scaffoldBackground: scaffoldBackground,
@@ -324,8 +333,14 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
       blur: blur,
       opacity: opacity,
     );
-    ThemeManager.addCustomTheme(themeData);
+    if (widget.themeName != null) {
+      ThemeManager.replaceCustomTheme(widget.themeName!, themeData);
+    } else {
+      ThemeManager.addCustomTheme(themeData);
+    }
+
     BlocProvider.of<SettingBloc>(context).add(ChangeTheme(themeData.id));
+
     Navigator.pop(context);
   }
 }

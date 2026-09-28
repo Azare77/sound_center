@@ -1,5 +1,4 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/shared/theme/themes.dart';
 
 class Handler extends StatelessWidget {
   const Handler({super.key});
@@ -11,7 +10,7 @@ class Handler extends StatelessWidget {
       height: 5,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: ThemeManager.current.iconColor,
+          color: Theme.of(context).iconTheme.color,
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
       ),

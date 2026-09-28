@@ -1,9 +1,11 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/player/background_image.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/player/track_header.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/player/track_navigation.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/player/track_ops.dart';
 import 'package:sound_center/shared/extensions/player_top_margin.dart';
+import 'package:sound_center/shared/widgets/play_queue.dart';
 
 class PlayTrack extends StatelessWidget {
   const PlayTrack({super.key});
@@ -14,6 +16,7 @@ class PlayTrack extends StatelessWidget {
       builder: (context, orientation) {
         final isLandscape = orientation == Orientation.landscape;
         return Stack(
+          alignment: Alignment.center,
           children: [
             CloudBackgroundImage(),
             Container(
@@ -48,6 +51,10 @@ class PlayTrack extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+            Positioned(
+              bottom: 10,
+              child: PlayQueue(imp: CloudPlayerRepositoryImp()),
             ),
           ],
         );

@@ -1,9 +1,11 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/background_image.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/header.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/podcast_navigation.dart';
 import 'package:sound_center/features/podcast/presentation/widgets/player/podcast_ops.dart';
 import 'package:sound_center/shared/extensions/player_top_margin.dart';
+import 'package:sound_center/shared/widgets/play_queue.dart';
 
 class PlayPodcast extends StatelessWidget {
   const PlayPodcast({super.key});
@@ -14,6 +16,7 @@ class PlayPodcast extends StatelessWidget {
       builder: (context, orientation) {
         final isLandscape = orientation == Orientation.landscape;
         return Stack(
+          alignment: Alignment.center,
           children: [
             PodcastBackgroundImage(),
             Container(
@@ -48,6 +51,10 @@ class PlayPodcast extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+            Positioned(
+              bottom: 10,
+              child: PlayQueue(imp: PodcastPlayerRepositoryImp()),
             ),
           ],
         );

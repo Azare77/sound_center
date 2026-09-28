@@ -28,7 +28,7 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
     _initialPlayerState();
   }
 
-  List<Episode> _episodes = [];
+  List<Episode> episodes = [];
 
   Episode? _currentEpisode;
 
@@ -49,7 +49,7 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
       if (PlayerStateStorage.getSource() != AudioSource.podcast) return;
       _currentEpisode = PlayerStateStorage.getLastEpisode();
       if (_currentEpisode == null) return;
-      if (_episodes.isEmpty) _episodes = [_currentEpisode!];
+      if (episodes.isEmpty) episodes = [_currentEpisode!];
       super.playerService.setSourceByForce(AudioSource.podcast);
       _episodeChangedController.add(_currentEpisode);
       // make sure that loading widget will show
@@ -70,7 +70,7 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
         file?.uri,
       );
       index = 0;
-      _episodes[index] = _currentEpisode!;
+      episodes[index] = _currentEpisode!;
       bool res = await super.playerService.setSource(
         _currentEpisode!.contentUrl!,
         AudioSource.podcast,
@@ -106,14 +106,29 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
   @override
   void setPlayList(dynamic episodes) {
     assert(episodes is List<Episode>);
-    _episodes.clear();
+    this.episodes.clear();
     for (Episode episode in episodes) {
-      _episodes.add(episode);
+      this.episodes.add(episode);
     }
   }
 
   List<Episode> getPlayList() {
-    return _episodes;
+    return episodes;
+  }
+
+  void reorderQueue(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
+      newIndex--;
+    }
+
+    final episode = episodes.removeAt(oldIndex);
+    episodes.insert(newIndex, episode);
+
+    if (_currentEpisode != null) {
+      index = episodes.indexWhere(
+        (episode) => episode.guid == _currentEpisode!.guid,
+      );
+    }
   }
 
   @override
@@ -126,7 +141,7 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
   Future<void> play(int index, {bool direct = false}) async {
     _retryCount = 0;
     this.index = index;
-    _currentEpisode = _episodes[index];
+    _currentEpisode = episodes[index];
     super.playerService.setSourceByForce(AudioSource.podcast);
     _episodeChangedController.add(_currentEpisode);
     // make sure that loading widget will show
@@ -143,11 +158,11 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
       file = await NetworkCacheImage.getFile(_currentEpisode!.imageUrl);
     } catch (_) {}
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromEpisode(
-      _episodes[index],
+      episodes[index],
       file?.uri,
     );
     bool allowToPlay = await super.playerService.setSource(
-      _episodes[index].contentUrl!,
+      episodes[index].contentUrl!,
       AudioSource.podcast,
       cachedFilePath: cacheFile,
     );
@@ -171,14 +186,14 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
   Future<Episode> next() async {
     index = getIndex(true);
     await play(index);
-    return _episodes[index];
+    return episodes[index];
   }
 
   @override
   Future<Episode> previous() async {
     index = getIndex(false);
     await play(index);
-    return _episodes[index];
+    return episodes[index];
   }
 
   @override
@@ -220,7 +235,7 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
   }
 
   int getIndex(bool forward) {
-    index = (index + (forward ? 1 : -1) + _episodes.length) % _episodes.length;
+    index = (index + (forward ? 1 : -1) + episodes.length) % episodes.length;
     return index;
   }
 }

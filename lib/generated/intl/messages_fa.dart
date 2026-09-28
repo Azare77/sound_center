@@ -116,6 +116,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "oldestFirst": MessageLookupByLibrary.simpleMessage("قدیمی ترین"),
     "opacity": MessageLookupByLibrary.simpleMessage("شفافیت"),
     "play": MessageLookupByLibrary.simpleMessage("پخش"),
+    "playQueue": MessageLookupByLibrary.simpleMessage("صف پخش"),
     "playSpeed": MessageLookupByLibrary.simpleMessage("سرعت پخش"),
     "playerStyle": MessageLookupByLibrary.simpleMessage("سبک صفحه پخش"),
     "playlists": MessageLookupByLibrary.simpleMessage("فهرست‌های پخش"),

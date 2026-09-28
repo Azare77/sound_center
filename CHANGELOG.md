@@ -1,3 +1,11 @@
+# 1.1.0
+
+* Add Play Queue and manage order of play
+* Add a few effects to current media and play bottom shit
+* Add opacity and blur effect into theme designer
+* make current media widget floating
+* Improve Code base by extract shared logic between Player Repositories
+
 # 1.0.0
 
 * Add cloud based audios using SoundCloud (Only DRM Free audios)

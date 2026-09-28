@@ -14,6 +14,7 @@ class PlayStream extends StatelessWidget {
       builder: (context, orientation) {
         final isLandscape = orientation == Orientation.landscape;
         return Stack(
+          alignment: Alignment.center,
           children: [
             StreamBackgroundImage(),
             Container(

@@ -75,6 +75,9 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
   List<int> _shuffle = [];
 
   List<int> get shuffleList => _shuffle;
+
+  List<AudioEntity> get shuffledAudios =>
+      _shuffle.map((index) => audios[index]).toList();
   int index = 0;
   int shuffleIndex = 0;
   AudioRepeatMode repeatMode = AudioRepeatMode.repeatAll;
@@ -85,14 +88,6 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
   void _initialPlayerState() {
     repeatMode = PlayerStateStorage.getRepeatMode();
     shuffleMode = PlayerStateStorage.getShuffleMode();
-    // super.playerService.position.listen((pos) {
-    //   positionController.add(pos.inMilliseconds);
-    // });
-    // super.playerService.duration.listen((dur) {
-    //   if (dur != null) {
-    //     durationController.add(dur.inMilliseconds);
-    //   }
-    // });
   }
 
   @override
@@ -158,6 +153,20 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
     _shuffle.insert(0, index);
   }
 
+  void reorderQueue(int oldIndex, int newIndex) {
+    if (shuffleMode == ShuffleMode.shuffle) {
+      final movedIndex = _shuffle.removeAt(oldIndex);
+      _shuffle.insert(newIndex, movedIndex);
+
+      shuffleIndex = _shuffle.indexOf(index);
+    } else {
+      final movedAudio = audios.removeAt(oldIndex);
+      audios.insert(newIndex, movedAudio);
+
+      index = audios.indexWhere((audio) => audio.id == _currentAudio?.id);
+    }
+  }
+
   @override
   Future<void> play(int index, {bool direct = false}) async {
     bool res = await super.playerService.setSource(
@@ -168,8 +177,9 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
     this.index = index;
     _currentAudio = audios[index];
     _audioChangedController.add(_currentAudio);
-    if (direct && shuffleMode == ShuffleMode.shuffle) {
-      _shuffleAudios();
+    if (shuffleMode == ShuffleMode.shuffle) {
+      shuffleIndex = _shuffle.indexOf(index);
+      if (direct) _shuffleAudios();
     }
     if (audios[index].cover == null) {
       audios[index].cover = await AudioUtil.getCover(

@@ -9,11 +9,8 @@ abstract class BasePlayerRepository extends PlayerRepository {
   }
 
   final JustAudioService _playerService = JustAudioService();
-  static bool _initialized = false;
 
   void _initialize() {
-    if (_initialized) return;
-    _initialized = true;
     _playerService.position.listen((pos) {
       positionController.add(pos.inMilliseconds);
     });
@@ -53,7 +50,7 @@ abstract class BasePlayerRepository extends PlayerRepository {
 
   @override
   Future<void> resume() async {
-    if (_playerService.isPlaying()) await togglePlayState();
+    if (!_playerService.isPlaying()) await togglePlayState();
   }
 
   bool isLoading() {

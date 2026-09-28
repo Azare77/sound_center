@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/player/download_track.dart';
-import 'package:sound_center/shared/theme/themes.dart';
+import 'package:sound_center/shared/widgets/handler.dart';
 
 class TrackOps extends StatelessWidget {
   const TrackOps({super.key});
@@ -14,16 +14,7 @@ class TrackOps extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         DownloadTrack(track: playerRepository.getCurrentTrack!),
-        SizedBox(
-          width: 40,
-          height: 5,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: ThemeManager.current.iconColor,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-            ),
-          ),
-        ),
+        Handler(),
         IconButton(
           onPressed: () async {
             final track = playerRepository.getCurrentTrack!;

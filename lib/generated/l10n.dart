@@ -743,6 +743,11 @@ class S {
   String get glass {
     return Intl.message('Glass', name: 'glass', desc: '', args: []);
   }
+
+  /// `Play Queue`
+  String get playQueue {
+    return Intl.message('Play Queue', name: 'playQueue', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

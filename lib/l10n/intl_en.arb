@@ -102,5 +102,6 @@
   "playerStyle": "Player Style",
   "solidColor": "Solid Color",
   "blurCover": "Blur Cover",
-  "glass": "Glass"
+  "glass": "Glass",
+  "playQueue": "Play Queue"
 }

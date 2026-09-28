@@ -23,20 +23,24 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
   void initState() {
     super.initState();
     searchNotifier = PodcastSearchController.showSearchField;
-    searchNotifier.addListener(() {
-      if (_showSearch) {
-        _controller.clear();
-        setState(() {
-          _showSearch = PodcastSearchController.showSearchField.value;
-        });
-      }
-    });
+    searchNotifier.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_showSearch) {
+      _controller.clear();
+
+      setState(() {
+        _showSearch = searchNotifier.value;
+      });
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    searchNotifier.dispose();
+    searchNotifier.removeListener(_onSearchChanged);
+    // searchNotifier.dispose();
     super.dispose();
   }
 

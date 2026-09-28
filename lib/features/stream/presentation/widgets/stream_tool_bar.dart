@@ -30,20 +30,24 @@ class _StreamToolBarState extends State<StreamToolBar> {
     super.initState();
     bloc = BlocProvider.of<StreamBloc>(context);
     searchNotifier = StreamSearchController.showSearchField;
-    searchNotifier.addListener(() {
-      if (_showSearch) {
-        _controller.clear();
-        setState(() {
-          _showSearch = StreamSearchController.showSearchField.value;
-        });
-      }
-    });
+    searchNotifier.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_showSearch) {
+      _controller.clear();
+
+      setState(() {
+        _showSearch = searchNotifier.value;
+      });
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    searchNotifier.dispose();
+    searchNotifier.removeListener(_onSearchChanged);
+    // searchNotifier.dispose();
     super.dispose();
   }
 

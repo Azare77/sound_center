@@ -5,8 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/confirm_dialog.dart';
+import 'package:sound_center/shared/widgets/handler.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/speed_dialog.dart';
 
@@ -46,16 +46,7 @@ class PlayerOps extends StatelessWidget {
             svg: "assets/icons/trash-can.svg",
           ),
         ),
-        SizedBox(
-          width: 40,
-          height: 5,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: ThemeManager.current.iconColor,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-            ),
-          ),
-        ),
+        Handler(),
         MediaControllerButton(
           width: 50,
           height: 50,

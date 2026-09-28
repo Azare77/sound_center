@@ -27,20 +27,24 @@ class _CloudToolBarState extends State<CloudToolBar> {
     super.initState();
     bloc = BlocProvider.of<CloudBloc>(context);
     searchNotifier = CloudSearchController.showSearchField;
-    searchNotifier.addListener(() {
-      if (_showSearch) {
-        _controller.clear();
-        setState(() {
-          _showSearch = CloudSearchController.showSearchField.value;
-        });
-      }
-    });
+    searchNotifier.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_showSearch) {
+      _controller.clear();
+
+      setState(() {
+        _showSearch = searchNotifier.value;
+      });
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    searchNotifier.dispose();
+    searchNotifier.removeListener(_onSearchChanged);
+    // searchNotifier.dispose();
     super.dispose();
   }
 

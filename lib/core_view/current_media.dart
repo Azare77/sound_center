@@ -174,7 +174,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
       height: 70,
       margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
       child: Glass(
-        radius: 25.0,
+        borderRadius: 25.0,
         color: widget.color ?? ThemeManager.current.mediaColor,
         blur: widget.blur,
         opacity: widget.opacity,

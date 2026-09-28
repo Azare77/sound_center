@@ -6,31 +6,35 @@ import 'package:sound_center/shared/theme/themes.dart';
 class Glass extends StatelessWidget {
   const Glass({
     super.key,
-    this.radius = 0.0,
+    this.borderRadius = 0.0,
     required this.color,
     required this.child,
     this.blur,
     this.opacity,
     this.elevation = 0.0,
     this.useBorder = true,
+    this.onlyTopBorderRadius = false,
   });
 
-  final double radius;
+  final double borderRadius;
   final Color color;
   final double? blur;
   final double? opacity;
   final double elevation;
   final Widget child;
   final bool useBorder;
+  final bool onlyTopBorderRadius;
 
   @override
   Widget build(BuildContext context) {
     final finalOpacity = opacity ?? ThemeManager.current.opacity;
     final finalBlur = blur ?? ThemeManager.current.blur;
-
+    final border = onlyTopBorderRadius
+        ? BorderRadius.vertical(top: Radius.circular(borderRadius))
+        : BorderRadius.circular(borderRadius);
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
+        borderRadius: border,
         boxShadow: elevation > 0
             ? [
                 BoxShadow(
@@ -43,13 +47,13 @@ class Glass extends StatelessWidget {
             : null,
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
+        borderRadius: border,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: finalBlur, sigmaY: finalBlur),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: color.withValues(alpha: finalOpacity),
-              borderRadius: BorderRadius.circular(radius),
+              borderRadius: border,
               border: useBorder
                   ? Border.all(
                       color: ThemeManager.current.iconColor.withValues(

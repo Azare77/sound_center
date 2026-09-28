@@ -25,7 +25,7 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
     _initialPlayerState();
   }
 
-  List<CloudTrack> _tracks = [];
+  List<CloudTrack> tracks = [];
 
   CloudTrack? _currentTrack;
 
@@ -46,9 +46,9 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
       if (PlayerStateStorage.getSource() != AudioSource.cloud) return;
       _currentTrack = PlayerStateStorage.getLastCloudTrack();
       if (_currentTrack == null) return;
-      if (_tracks.isEmpty) _tracks = [_currentTrack!];
+      if (tracks.isEmpty) tracks = [_currentTrack!];
       index = 0;
-      _tracks[index] = _currentTrack!;
+      tracks[index] = _currentTrack!;
       super.playerService.setSourceByForce(AudioSource.cloud);
       _trackChangedController.add(_currentTrack);
       // make sure that loading widget will show
@@ -100,14 +100,23 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
   @override
   void setPlayList(dynamic episodes) {
     assert(episodes is List);
-    _tracks.clear();
+    tracks.clear();
     for (var track in episodes) {
-      _tracks.add(track);
+      tracks.add(track);
     }
   }
 
   List<CloudTrack> getPlayList() {
-    return _tracks;
+    return tracks;
+  }
+
+  void reorderQueue(int oldIndex, int newIndex) {
+    final track = tracks.removeAt(oldIndex);
+    tracks.insert(newIndex, track);
+
+    if (_currentTrack != null) {
+      index = tracks.indexWhere((track) => track.id == _currentTrack!.id);
+    }
   }
 
   @override
@@ -119,7 +128,7 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
   @override
   Future<void> play(int index, {bool direct = false}) async {
     this.index = index;
-    _currentTrack = _tracks[index];
+    _currentTrack = tracks[index];
     super.playerService.setSourceByForce(AudioSource.cloud);
     _trackChangedController.add(_currentTrack);
     bloc.add(AddToHistory(track: _currentTrack!));
@@ -133,7 +142,7 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
       );
     } catch (_) {}
     (audioHandler as JustAudioNotificationHandler).setMediaItemFromCloud(
-      _tracks[index],
+      tracks[index],
       file?.uri,
     );
     await super.playerService.pause();
@@ -159,14 +168,14 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
   Future next() async {
     index = getIndex(true);
     await play(index);
-    return _tracks[index];
+    return tracks[index];
   }
 
   @override
   Future previous() async {
     index = getIndex(false);
     await play(index);
-    return _tracks[index];
+    return tracks[index];
   }
 
   @override
@@ -185,7 +194,7 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
   }
 
   int getIndex(bool forward) {
-    index = (index + (forward ? 1 : -1) + _tracks.length) % _tracks.length;
+    index = (index + (forward ? 1 : -1) + tracks.length) % tracks.length;
     return index;
   }
 
@@ -193,11 +202,11 @@ class CloudPlayerRepositoryImp extends BasePlayerRepository {
     final List<Future<void>> tasks = [];
     // آهنگ قبلی
     if (index > 0) {
-      tasks.add(getTrackUrl(_tracks[index - 1]).then((_) {}));
+      tasks.add(getTrackUrl(tracks[index - 1]).then((_) {}));
     }
     // آهنگ بعدی
-    if (index < _tracks.length - 1) {
-      tasks.add(getTrackUrl(_tracks[index + 1]).then((_) {}));
+    if (index < tracks.length - 1) {
+      tasks.add(getTrackUrl(tracks[index + 1]).then((_) {}));
     }
 
     if (tasks.isNotEmpty) {

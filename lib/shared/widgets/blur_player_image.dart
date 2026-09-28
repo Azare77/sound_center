@@ -32,7 +32,7 @@ class BlurPlayerImage extends StatelessWidget {
       final opacity = min(0.3, ThemeManager.current.opacity);
       final blur = max(1.0, ThemeManager.current.blur);
       return Glass(
-        radius: 0,
+        borderRadius: 0,
         color: backgroundColor,
         opacity: opacity,
         blur: blur,

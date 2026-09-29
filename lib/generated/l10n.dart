@@ -753,6 +753,56 @@ class S {
   String get playQueue {
     return Intl.message('Play Queue', name: 'playQueue', desc: '', args: []);
   }
+
+  /// `All Songs`
+  String get categoryAllSongs {
+    return Intl.message(
+      'All Songs',
+      name: 'categoryAllSongs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Favorites`
+  String get categoryFavorites {
+    return Intl.message(
+      'Favorites',
+      name: 'categoryFavorites',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Playlists`
+  String get categoryPlaylists {
+    return Intl.message(
+      'Playlists',
+      name: 'categoryPlaylists',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Artists`
+  String get categoryArtists {
+    return Intl.message('Artists', name: 'categoryArtists', desc: '', args: []);
+  }
+
+  /// `Albums`
+  String get categoryAlbums {
+    return Intl.message('Albums', name: 'categoryAlbums', desc: '', args: []);
+  }
+
+  /// `Genres`
+  String get categoryGenres {
+    return Intl.message('Genres', name: 'categoryGenres', desc: '', args: []);
+  }
+
+  /// `Folders`
+  String get categoryFolders {
+    return Intl.message('Folders', name: 'categoryFolders', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

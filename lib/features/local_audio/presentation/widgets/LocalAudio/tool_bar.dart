@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
+import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/order_menu.dart';
@@ -12,7 +13,16 @@ import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/text_field_box.dart';
 
 class ToolBar extends StatefulWidget {
-  const ToolBar({super.key});
+  const ToolBar({
+    super.key,
+    required this.onQueryChanged,
+    required this.index,
+    required this.onOrderChange,
+  });
+
+  final ValueChanged<String> onQueryChanged;
+  final Function(AudioColumns, bool) onOrderChange;
+  final int? index;
 
   @override
   State<ToolBar> createState() => _ToolBarState();
@@ -31,12 +41,11 @@ class _ToolBarState extends State<ToolBar> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.heightOf(context) / 100;
-    final orientation = MediaQuery.orientationOf(context);
-    if (orientation == .landscape) {
+    if (MediaQuery.orientationOf(context) == .landscape) {
       height = MediaQuery.heightOf(context) / 50;
     }
     return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       height: _showSearch ? height * 9 : height * 7,
       child: Row(
         children: [
@@ -52,21 +61,39 @@ class _ToolBarState extends State<ToolBar> {
                 maxLines: 1,
                 autofocus: true,
                 hintText: S.of(context).searchHint,
-                onChanged: (text) {
-                  BlocProvider.of<LocalBloc>(
-                    context,
-                  ).add(Search(query: text.trim()));
-                },
+                onChanged: (text) => widget.onQueryChanged(text.trim()),
               ),
             ),
           if (!_showSearch) const Spacer(),
-          MediaControllerButton(
-            svg: 'assets/icons/shuffle.svg',
-            height: 42,
-            width: 42,
-            onPressed: _shufflePlay,
+
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeOutCubic,
+            transitionBuilder: (child, animation) => SizeTransition(
+              sizeFactor: animation,
+              axis: Axis.horizontal,
+              child: Center(
+                child: ScaleTransition(scale: animation, child: child),
+              ),
+            ),
+            child: widget.index != null && widget.index! > 1
+                ? const SizedBox.shrink(key: ValueKey('hidden'))
+                : Row(
+                    key: const ValueKey('visible'),
+                    mainAxisSize: .min,
+                    children: [
+                      if (widget.index != null)
+                        MediaControllerButton(
+                          svg: 'assets/icons/shuffle.svg',
+                          height: 42,
+                          width: 42,
+                          onPressed: _shufflePlay,
+                        ),
+                      OrderMenu(onChange: widget.onOrderChange),
+                    ],
+                  ),
           ),
-          OrderMenu(),
         ],
       ),
     );
@@ -74,24 +101,108 @@ class _ToolBarState extends State<ToolBar> {
 
   void _toggleSearch() {
     setState(() => _showSearch = !_showSearch);
-
     if (!_showSearch) {
-      final text = _controller.text.trim();
-      if (text.isNotEmpty) {
-        context.read<LocalBloc>().add(Search());
-      }
       _controller.clear();
+      widget.onQueryChanged('');
     }
   }
 
   void _shufflePlay() {
     final bloc = context.read<LocalBloc>();
-    final status = bloc.state.status as LocalAudioStatus;
-
-    if (status.audios.isEmpty) return;
+    final status = bloc.state.status;
+    if (status is! LocalAudioStatus || status.audios.isEmpty) return;
 
     LocalPlayerRepositoryImp().shuffleMode = ShuffleMode.shuffle;
-    final randomIndex = Random().nextInt(status.audios.length);
-    bloc.add(PlayAudio(randomIndex));
+    bloc.add(
+      PlayAudio(
+        audios: status.audios,
+        index: Random().nextInt(status.audios.length),
+      ),
+    );
   }
 }
+
+// class ToolBar extends StatefulWidget {
+//   const ToolBar({super.key});
+//
+//   @override
+//   State<ToolBar> createState() => _ToolBarState();
+// }
+//
+// class _ToolBarState extends State<ToolBar> {
+//   bool _showSearch = false;
+//   final _controller = TextEditingController();
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     double height = MediaQuery.heightOf(context) / 100;
+//     final orientation = MediaQuery.orientationOf(context);
+//     if (orientation == .landscape) {
+//       height = MediaQuery.heightOf(context) / 50;
+//     }
+//     return AnimatedContainer(
+//       duration: Duration(milliseconds: 300),
+//       height: _showSearch ? height * 9 : height * 7,
+//       child: Row(
+//         children: [
+//           IconButton(
+//             icon: Icon(_showSearch ? Icons.close : Icons.search_rounded),
+//             onPressed: _toggleSearch,
+//           ),
+//           if (_showSearch)
+//             Expanded(
+//               child: TextFieldBox(
+//                 controller: _controller,
+//                 textInputAction: TextInputAction.search,
+//                 maxLines: 1,
+//                 autofocus: true,
+//                 hintText: S.of(context).searchHint,
+//                 onChanged: (text) {
+//                   BlocProvider.of<LocalBloc>(
+//                     context,
+//                   ).add(Search(query: text.trim()));
+//                 },
+//               ),
+//             ),
+//           if (!_showSearch) const Spacer(),
+//           MediaControllerButton(
+//             svg: 'assets/icons/shuffle.svg',
+//             height: 42,
+//             width: 42,
+//             onPressed: _shufflePlay,
+//           ),
+//           OrderMenu(),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   void _toggleSearch() {
+//     setState(() => _showSearch = !_showSearch);
+//
+//     if (!_showSearch) {
+//       final text = _controller.text.trim();
+//       if (text.isNotEmpty) {
+//         context.read<LocalBloc>().add(Search());
+//       }
+//       _controller.clear();
+//     }
+//   }
+//
+//   void _shufflePlay() {
+//     final bloc = context.read<LocalBloc>();
+//     final status = bloc.state.status as LocalAudioStatus;
+//
+//     if (status.audios.isEmpty) return;
+//
+//     LocalPlayerRepositoryImp().shuffleMode = ShuffleMode.shuffle;
+//     final randomIndex = Random().nextInt(status.audios.length);
+//     bloc.add(PlayAudio(randomIndex));
+//   }
+// }

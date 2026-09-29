@@ -1,8 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:math';
-
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -19,6 +16,7 @@ import 'package:sound_center/features/podcast/presentation/widgets/podcast_templ
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/shared/widgets/sliver_pinned_header.dart';
 import 'package:sound_center/shared/widgets/toast_message.dart';
 
 class PodcastDetail extends StatefulWidget {
@@ -240,48 +238,5 @@ class _PodcastDetailState extends State<PodcastDetail> {
       }
     });
     setState(() {});
-  }
-}
-
-class SliverPinnedHeader extends SingleChildRenderObjectWidget {
-  const SliverPinnedHeader({super.key, required Widget super.child});
-
-  @override
-  RenderSliverPinnedHeader createRenderObject(BuildContext context) {
-    return RenderSliverPinnedHeader();
-  }
-}
-
-class RenderSliverPinnedHeader extends RenderSliverSingleBoxAdapter {
-  @override
-  void performLayout() {
-    child!.layout(constraints.asBoxConstraints(), parentUsesSize: true);
-    double childExtent;
-    switch (constraints.axis) {
-      case Axis.horizontal:
-        childExtent = child!.size.width;
-        break;
-      case Axis.vertical:
-        childExtent = child!.size.height;
-        break;
-    }
-    final paintedChildExtent = min(
-      childExtent,
-      constraints.remainingPaintExtent - constraints.overlap,
-    );
-    geometry = SliverGeometry(
-      paintExtent: paintedChildExtent,
-      maxPaintExtent: childExtent,
-      maxScrollObstructionExtent: childExtent,
-      paintOrigin: constraints.overlap,
-      scrollExtent: childExtent,
-      layoutExtent: max(0.0, paintedChildExtent - constraints.scrollOffset),
-      hasVisualOverflow: paintedChildExtent < childExtent,
-    );
-  }
-
-  @override
-  double childMainAxisPosition(RenderBox child) {
-    return 0;
   }
 }

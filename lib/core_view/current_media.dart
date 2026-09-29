@@ -59,6 +59,8 @@ class _CurrentMediaState extends State<CurrentMedia> {
       _podcastPlayer.episodeChangedStream.listen((_) => _updatePlayer()),
       _streamPlayer.streamChangedStream.listen((_) => _updatePlayer()),
       _cloudPlayer.trackChangedStream.listen((_) => _updatePlayer()),
+      _cloudPlayer.trackChangedStream.listen((_) => _updatePlayer()),
+      _cloudPlayer.playingStream.listen((_) => _updatePlayer()),
     ];
   }
 

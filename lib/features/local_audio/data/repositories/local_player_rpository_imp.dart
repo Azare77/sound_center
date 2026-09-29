@@ -149,7 +149,10 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
   void _shuffleAudios() {
     shuffleMode = ShuffleMode.shuffle;
     shuffleIndex = 0;
-    _shuffle = List.generate(audios.length, (i) => i)..shuffle();
+    _shuffle = List.generate(audios.length, (i) => i)
+      ..remove(index)
+      ..shuffle();
+
     _shuffle.insert(0, index);
   }
 

@@ -1,8 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:math';
-
-import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core_view/current_media.dart';
@@ -14,6 +11,7 @@ import 'package:sound_center/features/cloud/presentation/pages/playlist_info/tra
 import 'package:sound_center/features/cloud/presentation/pages/playlist_info/tracks.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
+import 'package:sound_center/shared/widgets/sliver_pinned_header.dart';
 
 class PlaylistDetail extends StatefulWidget {
   const PlaylistDetail({super.key, required this.playlist});
@@ -160,48 +158,5 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
           .toList();
     }
     setState(() {});
-  }
-}
-
-class SliverPinnedHeader extends SingleChildRenderObjectWidget {
-  const SliverPinnedHeader({super.key, required Widget super.child});
-
-  @override
-  RenderSliverPinnedHeader createRenderObject(BuildContext context) {
-    return RenderSliverPinnedHeader();
-  }
-}
-
-class RenderSliverPinnedHeader extends RenderSliverSingleBoxAdapter {
-  @override
-  void performLayout() {
-    child!.layout(constraints.asBoxConstraints(), parentUsesSize: true);
-    double childExtent;
-    switch (constraints.axis) {
-      case Axis.horizontal:
-        childExtent = child!.size.width;
-        break;
-      case Axis.vertical:
-        childExtent = child!.size.height;
-        break;
-    }
-    final paintedChildExtent = min(
-      childExtent,
-      constraints.remainingPaintExtent - constraints.overlap,
-    );
-    geometry = SliverGeometry(
-      paintExtent: paintedChildExtent,
-      maxPaintExtent: childExtent,
-      maxScrollObstructionExtent: childExtent,
-      paintOrigin: constraints.overlap,
-      scrollExtent: childExtent,
-      layoutExtent: max(0.0, paintedChildExtent - constraints.scrollOffset),
-      hasVisualOverflow: paintedChildExtent < childExtent,
-    );
-  }
-
-  @override
-  double childMainAxisPosition(RenderBox child) {
-    return 0;
   }
 }

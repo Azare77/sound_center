@@ -51,6 +51,7 @@ class _DownloadedEpisodesState extends State<DownloadedEpisodes> {
                   return ListView.builder(
                     itemExtent: LIST_ITEM_HEIGHT,
                     itemCount: status.episodes.length,
+                    padding: const EdgeInsets.only(bottom: 120),
                     itemBuilder: (context, index) {
                       Episode episode = status.episodes[index];
                       final isCurrent = currentEpisode?.guid == episode.guid;

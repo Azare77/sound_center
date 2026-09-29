@@ -48,6 +48,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "blur": MessageLookupByLibrary.simpleMessage("Blur"),
     "blurCover": MessageLookupByLibrary.simpleMessage("Blur Cover"),
+    "categoryAlbums": MessageLookupByLibrary.simpleMessage("Albums"),
+    "categoryAllSongs": MessageLookupByLibrary.simpleMessage("All Songs"),
+    "categoryArtists": MessageLookupByLibrary.simpleMessage("Artists"),
+    "categoryFavorites": MessageLookupByLibrary.simpleMessage("Favorites"),
+    "categoryFolders": MessageLookupByLibrary.simpleMessage("Folders"),
+    "categoryGenres": MessageLookupByLibrary.simpleMessage("Genres"),
+    "categoryPlaylists": MessageLookupByLibrary.simpleMessage("Playlists"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "Check for Updates via GitHub",
     ),

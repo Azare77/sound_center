@@ -24,10 +24,10 @@ class BlurPlayerImage extends StatelessWidget {
       return Container(
         width: MediaQuery.widthOf(context),
         height: MediaQuery.heightOf(context),
-        color: ThemeManager.current.scaffoldBackground,
+        color: Theme.of(context).scaffoldBackgroundColor,
       );
     }
-    Color backgroundColor = ThemeManager.current.scaffoldBackground;
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     if (coverType == PlayerStyle.glassy) {
       final opacity = min(0.3, ThemeManager.current.opacity);
       final blur = max(1.0, ThemeManager.current.blur);

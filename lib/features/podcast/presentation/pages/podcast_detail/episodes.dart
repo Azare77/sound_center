@@ -45,30 +45,33 @@ class _EpisodesState extends State<Episodes> {
   @override
   Widget build(BuildContext context) {
     currentEpisode = imp.getCurrentEpisode;
-    return SliverList(
-      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-        Episode episode = widget.episodes[index];
-        episode.imageUrl ??= widget.bestImageUrl;
-        final isCurrent = currentEpisode?.guid == episode.guid;
-        return Container(
-          key: ValueKey(episode.guid),
-          height: LIST_ITEM_HEIGHT,
-          color: isCurrent
-              ? ThemeManager.current.mediaColor
-              : Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              setState(() {});
-              imp.feedUrl = widget.feedUrl;
+    return SliverPadding(
+      padding: const EdgeInsets.only(bottom: 120),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+          Episode episode = widget.episodes[index];
+          episode.imageUrl ??= widget.bestImageUrl;
+          final isCurrent = currentEpisode?.guid == episode.guid;
+          return Container(
+            key: ValueKey(episode.guid),
+            height: LIST_ITEM_HEIGHT,
+            color: isCurrent
+                ? ThemeManager.current.mediaColor
+                : Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                setState(() {});
+                imp.feedUrl = widget.feedUrl;
 
-              BlocProvider.of<PodcastBloc>(
-                context,
-              ).add(PlayPodcast(episodes: widget.episodes, index: index));
-            },
-            child: EpisodeTemplate(episode: episode),
-          ),
-        );
-      }, childCount: widget.episodes.length),
+                BlocProvider.of<PodcastBloc>(
+                  context,
+                ).add(PlayPodcast(episodes: widget.episodes, index: index));
+              },
+              child: EpisodeTemplate(episode: episode),
+            ),
+          );
+        }, childCount: widget.episodes.length),
+      ),
     );
   }
 }

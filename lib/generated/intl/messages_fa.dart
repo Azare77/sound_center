@@ -48,6 +48,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "blur": MessageLookupByLibrary.simpleMessage("محوشدگی"),
     "blurCover": MessageLookupByLibrary.simpleMessage("کاور محو"),
+    "categoryAlbums": MessageLookupByLibrary.simpleMessage("آلبوم‌ها"),
+    "categoryAllSongs": MessageLookupByLibrary.simpleMessage("همه آهنگ‌ها"),
+    "categoryArtists": MessageLookupByLibrary.simpleMessage("خواننده‌ها"),
+    "categoryFavorites": MessageLookupByLibrary.simpleMessage("علاقه‌مندی‌ها"),
+    "categoryFolders": MessageLookupByLibrary.simpleMessage("پوشه ها"),
+    "categoryGenres": MessageLookupByLibrary.simpleMessage("سبک‌ها"),
+    "categoryPlaylists": MessageLookupByLibrary.simpleMessage("لیست‌های پخش"),
     "checkForUpdates": MessageLookupByLibrary.simpleMessage(
       "بررسی به‌روزرسانی از طریق GitHub",
     ),

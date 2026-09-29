@@ -44,6 +44,7 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
         itemCount: widget.audios.length,
         controller: _scrollController,
         itemExtent: LIST_ITEM_HEIGHT,
+        padding: const EdgeInsets.only(bottom: 120),
         itemBuilder: (context, index) {
           final audio = widget.audios[index];
           final isCurrent = currentAudio?.id == audio.id;
@@ -53,8 +54,9 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
                 ? ThemeManager.current.mediaColor
                 : Colors.transparent,
             child: InkWell(
-              onTap: () =>
-                  context.read<event.LocalBloc>().add(event.PlayAudio(index)),
+              onTap: () => context.read<event.LocalBloc>().add(
+                event.PlayAudio(audios: widget.audios, index: index),
+              ),
               onLongPress: () {
                 showDialog(
                   context: context,

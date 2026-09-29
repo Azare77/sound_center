@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_status.dart';
@@ -96,6 +96,7 @@ class _StreamPageState extends State<StreamPage> {
                   },
                   child: ListView.builder(
                     itemCount: status.streams.length,
+                    padding: const EdgeInsets.only(bottom: 120),
                     itemBuilder: (context, index) {
                       final stream = status.streams[index];
                       return InkWell(
@@ -127,6 +128,7 @@ class _StreamPageState extends State<StreamPage> {
                 }
                 return ListView.builder(
                   itemCount: status.streams.length,
+                  padding: const EdgeInsets.only(bottom: 120),
                   itemBuilder: (context, index) {
                     final stream = status.streams[index];
                     return InkWell(

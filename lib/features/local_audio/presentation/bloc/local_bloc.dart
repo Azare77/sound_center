@@ -43,7 +43,7 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     });
     on<PlayAudio>((event, emit) async {
       LocalAudioStatus status = state.status as LocalAudioStatus;
-      player.setPlayList(status.audios);
+      player.setPlayList(event.audios);
       if (player.getCurrentAudio?.id != status.audios[event.index].id ||
           !player.hasSource()) {
         await player.play(event.index, direct: true);
@@ -82,14 +82,14 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     });
 
     on<Search>((event, emit) async {
-      List<AudioEntity> audios = await getAudioUseCase.search(
-        params: event.query,
-        orderBy: event.column,
-        desc: event.desc,
-      );
-      LocalAudioStatus status = state.status as LocalAudioStatus;
-      status.audios = audios;
-      emit(state.copyWith(status));
+      // List<AudioEntity> audios = await getAudioUseCase.search(
+      //   params: event.query,
+      //   orderBy: event.column,
+      //   desc: event.desc,
+      // );
+      // LocalAudioStatus status = state.status as LocalAudioStatus;
+      // status.audios = audios;
+      // emit(state.copyWith(status));
     });
   }
 }

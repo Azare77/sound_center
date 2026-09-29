@@ -36,9 +36,10 @@ class GetLocalAudios extends LocalEvent {
 }
 
 class PlayAudio extends LocalEvent {
+  final List<AudioEntity> audios;
   final int index;
 
-  PlayAudio(this.index);
+  PlayAudio({required this.audios, required this.index});
 }
 
 class PlayNextAudio extends LocalEvent {}

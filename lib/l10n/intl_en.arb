@@ -104,5 +104,12 @@
   "solidColor": "Solid Color",
   "blurCover": "Blur Cover",
   "glass": "Glass",
-  "playQueue": "Play Queue"
+  "playQueue": "Play Queue",
+  "categoryAllSongs": "All Songs",
+  "categoryFavorites": "Favorites",
+  "categoryPlaylists": "Playlists",
+  "categoryArtists": "Artists",
+  "categoryAlbums": "Albums",
+  "categoryGenres": "Genres",
+  "categoryFolders": "Folders"
 }

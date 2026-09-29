@@ -20,6 +20,7 @@ class PodcastListTemplate extends StatelessWidget {
     return ListView.builder(
       itemCount: podcasts.length,
       itemExtent: LIST_ITEM_HEIGHT,
+      padding: const EdgeInsets.only(bottom: 120),
       itemBuilder: (context, index) {
         final podcast = podcasts[index];
         return InkWell(

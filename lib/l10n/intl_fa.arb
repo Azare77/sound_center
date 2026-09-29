@@ -104,5 +104,12 @@
   "solidColor": "رنگ ثابت",
   "blurCover": "کاور محو",
   "glass": "شیشه‌ای",
-  "playQueue": "صف پخش"
+  "playQueue": "صف پخش",
+  "categoryAllSongs": "همه آهنگ‌ها",
+  "categoryFavorites": "علاقه‌مندی‌ها",
+  "categoryPlaylists": "لیست‌های پخش",
+  "categoryArtists": "خواننده‌ها",
+  "categoryAlbums": "آلبوم‌ها",
+  "categoryGenres": "سبک‌ها",
+  "categoryFolders": "پوشه ها"
 }

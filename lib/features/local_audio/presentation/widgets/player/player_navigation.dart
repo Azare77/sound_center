@@ -24,6 +24,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
   int total = 1;
   int pass = 0;
   bool seeking = false;
+  bool isFavorite = false;
 
   StreamSubscription<int>? _posSub;
   StreamSubscription<int>? _durSub;
@@ -95,7 +96,6 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
             convertTime(total),
           ],
         ),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

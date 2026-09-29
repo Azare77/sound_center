@@ -1,14 +1,36 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/database/shared_preferences/loca_order_storage.dart';
 import 'package:sound_center/database/shared_preferences/shared_preferences.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/generated/l10n.dart';
-import 'package:sound_center/shared/widgets/text_view.dart'; // اگر TextView یک ویجت سفارشی‌ت باشه
+import 'package:sound_center/shared/widgets/text_view.dart';
 
-class OrderMenu extends StatelessWidget {
-  const OrderMenu({super.key});
+class OrderMenu extends StatefulWidget {
+  const OrderMenu({super.key, required this.onChange});
+
+  final Function(AudioColumns, bool) onChange;
+
+  @override
+  State<OrderMenu> createState() => _OrderMenuState();
+}
+
+class _OrderMenuState extends State<OrderMenu> {
+  late bool desc;
+
+  late AudioColumns currentColumn;
+
+  @override
+  void initState() {
+    desc = LocalOrderStorage.getSavedDesc();
+    currentColumn = LocalOrderStorage.getSavedColumn();
+    super.initState();
+  }
+
+  void triggerChange() {
+    widget.onChange.call(currentColumn, desc);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +38,10 @@ class OrderMenu extends StatelessWidget {
       icon: const Icon(Icons.sort_rounded),
       onSelected: (column) {
         BlocProvider.of<LocalBloc>(context).add(Search(column: column));
+        currentColumn = column;
+        triggerChange();
       },
       itemBuilder: (context) {
-        final currentColumn = LocalOrderStorage.getSavedColumn();
         return <PopupMenuEntry<AudioColumns>>[
           _buildItem(AudioColumns.title, currentColumn, S.of(context).title),
           _buildItem(AudioColumns.artist, currentColumn, S.of(context).artist),
@@ -34,18 +57,19 @@ class OrderMenu extends StatelessWidget {
             value: null,
             enabled: false,
             child: StatefulBuilder(
-              builder: (context, setState) {
-                final desc = LocalOrderStorage.getSavedDesc();
+              builder: (context, setMenuState) {
                 return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextView(S.of(context).descending),
-                    const Spacer(),
                     Switch(
                       value: desc,
                       onChanged: (value) {
+                        desc = value;
                         Storage.instance.prefs.setBool('desc', value);
-                        BlocProvider.of<LocalBloc>(context).add(Search());
-                        setState(() {});
+
+                        setMenuState(() {});
+                        triggerChange();
                       },
                     ),
                   ],
@@ -55,8 +79,6 @@ class OrderMenu extends StatelessWidget {
           ),
         ];
       },
-
-      // child: const Icon(Icons.sort_rounded),
     );
   }
 

@@ -53,11 +53,15 @@ class CloudListTemplate extends StatelessWidget {
             ),
           ),
           if (!hasTracks)
-            SliverFixedExtentList(
-              itemExtent: LIST_ITEM_HEIGHT,
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _buildVerticalPlaylistItem(context, index),
-                childCount: items.playlists.length,
+            SliverPadding(
+              padding: const EdgeInsets.only(bottom: 120),
+              sliver: SliverFixedExtentList(
+                itemExtent: LIST_ITEM_HEIGHT,
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) =>
+                      _buildVerticalPlaylistItem(context, index),
+                  childCount: items.playlists.length,
+                ),
               ),
             )
           else
@@ -107,33 +111,36 @@ class CloudListTemplate extends StatelessWidget {
               child: Text(S.of(context).tracks, style: _sectionTitleStyle),
             ),
           ),
-          SliverFixedExtentList(
-            itemExtent: LIST_ITEM_HEIGHT,
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final item = items.tracks[index];
-              final isCurrent = currentAudio?.id == item.id;
-              if (!_isValidItem(item)) return const SizedBox.shrink();
-              return Material(
-                key: ValueKey(item.id),
-                color: isCurrent
-                    ? ThemeManager.current.mediaColor
-                    : Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<CloudBloc>(
-                      context,
-                    ).add(PlayTrack(tracks: items.tracks, index: index));
-                  },
-                  onLongPress: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => CloudActionMenu(track: item),
-                    );
-                  },
-                  child: CloudItemTemplate(item: item),
-                ),
-              );
-            }, childCount: items.tracks.length),
+          SliverPadding(
+            padding: const EdgeInsets.only(bottom: 120),
+            sliver: SliverFixedExtentList(
+              itemExtent: LIST_ITEM_HEIGHT,
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final item = items.tracks[index];
+                final isCurrent = currentAudio?.id == item.id;
+                if (!_isValidItem(item)) return const SizedBox.shrink();
+                return Material(
+                  key: ValueKey(item.id),
+                  color: isCurrent
+                      ? ThemeManager.current.mediaColor
+                      : Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      BlocProvider.of<CloudBloc>(
+                        context,
+                      ).add(PlayTrack(tracks: items.tracks, index: index));
+                    },
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => CloudActionMenu(track: item),
+                      );
+                    },
+                    child: CloudItemTemplate(item: item),
+                  ),
+                );
+              }, childCount: items.tracks.length),
+            ),
           ),
         ],
       ],

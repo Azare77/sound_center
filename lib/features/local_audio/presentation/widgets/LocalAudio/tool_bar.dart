@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/order_menu.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
@@ -109,14 +109,14 @@ class _ToolBarState extends State<ToolBar> {
 
   void _shufflePlay() {
     final bloc = context.read<LocalBloc>();
-    final status = bloc.state.status;
-    if (status is! LocalAudioStatus || status.audios.isEmpty) return;
+
+    if (AudioUtil.allAudios.isEmpty) return;
 
     LocalPlayerRepositoryImp().shuffleMode = ShuffleMode.shuffle;
     bloc.add(
       PlayAudio(
-        audios: status.audios,
-        index: Random().nextInt(status.audios.length),
+        audios: AudioUtil.allAudios,
+        index: Random().nextInt(AudioUtil.allAudios.length),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/core/usecase/usecase.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
 import 'package:sound_center/features/stream/domain/repository/stream_repository.dart';
@@ -47,7 +47,7 @@ class GetStreamsUseCase implements UseCase {
     return _streamRepository.detectStreamType(url);
   }
 
-  Future<AudioModel> getAudio(String url) async {
+  Future<AudioEntity> getAudio(String url) async {
     return _streamRepository.loadAudioInfo(url);
   }
 

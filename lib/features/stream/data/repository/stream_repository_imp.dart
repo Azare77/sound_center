@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:radio_browser_api/src/models/list_response.dart';
 import 'package:radio_browser_api/src/models/station.dart';
 import 'package:sound_center/database/drift/database.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/stream/data/source/radio_browser.dart';
 import 'package:sound_center/features/stream/data/source/stream_source.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
@@ -39,10 +39,10 @@ class StreamRepositoryImp implements StreamRepository {
   }
 
   @override
-  Future<AudioModel> loadAudioInfo(String url) async {
+  Future<AudioEntity> loadAudioInfo(String url) async {
     AudioMetadata? metadata = await _source.getStaticFileMetadata(url);
     if (metadata != null) {
-      return AudioModel(
+      return AudioEntity(
         id: -1,
         title: metadata.title ?? '',
         path: url,
@@ -58,7 +58,7 @@ class StreamRepositoryImp implements StreamRepository {
       );
     }
 
-    return AudioModel(
+    return AudioEntity(
       id: -1,
       title: "Unknown",
       path: url,

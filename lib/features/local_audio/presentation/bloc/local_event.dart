@@ -35,6 +35,22 @@ class GetLocalAudios extends LocalEvent {
   }
 }
 
+class GetFavorites extends LocalEvent {}
+
+class AddToFavorites extends LocalEvent {
+  final AudioEntity audio;
+
+  AddToFavorites({required this.audio});
+}
+
+class RemoveFromFavorites extends LocalEvent {
+  final AudioEntity audio;
+
+  RemoveFromFavorites({required this.audio});
+}
+
+class GetPlaylists extends LocalEvent {}
+
 class PlayAudio extends LocalEvent {
   final List<AudioEntity> audios;
   final int index;

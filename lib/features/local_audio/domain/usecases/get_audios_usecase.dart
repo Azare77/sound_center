@@ -1,6 +1,7 @@
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/usecase/usecase.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 
 class GetAudioUseCase implements UseCase {
@@ -34,5 +35,25 @@ class GetAudioUseCase implements UseCase {
 
   Future<bool> deleteAudio(AudioEntity audio) async {
     return await _audioRepository.deleteAudio(audio);
+  }
+
+  Future<List<PlayListEntity>> getPlaylists() async {
+    return await _audioRepository.getPlaylists();
+  }
+
+  Future<bool> createPlaylist(PlayListEntity playlist) async {
+    return await _audioRepository.createPlaylist(playlist);
+  }
+
+  Future<List<AudioEntity>> getFavorites() async {
+    return await _audioRepository.getFavoriteAudios();
+  }
+
+  Future<bool> fave(int audioId) async {
+    return await _audioRepository.faveAudio(audioId);
+  }
+
+  Future<bool> unfave(int audioId) async {
+    return await _audioRepository.unfaveAudio(audioId);
   }
 }

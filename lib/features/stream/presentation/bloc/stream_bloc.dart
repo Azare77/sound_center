@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:sound_center/database/drift/database.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/data/repository/stream_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
@@ -77,18 +77,18 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     on<StreamStaticFile>((event, emit) async {
       final stream = player.getCurrentStream;
       if (player.hasSource() &&
-          (stream is AudioModel && stream.path == event.url)) {
+          (stream is AudioEntity && stream.path == event.url)) {
         return;
       }
       player.setPlayList(event.toAudio());
       await player.play(0, direct: true);
       emit(state.copyWith(state.status));
-      AudioModel audio = await getStreamUseCase.getAudio(event.url);
+      AudioEntity audio = await getStreamUseCase.getAudio(event.url);
       add(LoadStaticFileInfo(audio));
     });
     on<LoadStaticFileInfo>((event, emit) async {
       final stream = player.getCurrentStream;
-      if (stream is AudioModel && stream.path == event.audio.path) {
+      if (stream is AudioEntity && stream.path == event.audio.path) {
         player.updateCurrentFileInfo(event.audio);
         emit(state.copyWith(state.status));
       }

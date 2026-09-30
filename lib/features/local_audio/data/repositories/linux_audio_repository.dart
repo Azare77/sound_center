@@ -1,15 +1,18 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:crypto/crypto.dart';
+import 'package:sound_center/core/util/audio/audio_util.dart';
+import 'package:sound_center/features/local_audio/data/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 
-class LocalAudioRepositoryLinux implements AudioRepository {
-  List<AudioModel> allSongs = [];
+class LocalAudioRepositoryLinux extends AudioRepositoryImp {
+  List<AudioEntity> allSongs = [];
 
   @override
-  Future<List<AudioModel>> fetchLocalAudios({
+  Future<List<AudioEntity>> fetchLocalAudios({
     String? like,
     required AudioColumns orderBy,
     required bool desc,
@@ -29,24 +32,29 @@ class LocalAudioRepositoryLinux implements AudioRepository {
 
       try {
         final metadata = readMetadata(file, getImage: true);
-
+        final title = metadata.title ?? file.path.split('/').last;
+        final artist = metadata.artist ?? '';
+        final album = metadata.album ?? '';
+        final duration = metadata.duration?.inMilliseconds ?? 0;
+        final fileSize = file.lengthSync();
         allSongs.add(
-          AudioModel(
-            id: i,
+          AudioEntity(
+            id: generateStableId(title, artist, album, duration, fileSize),
             path: file.path,
             uri: file.uri.path,
-            title: metadata.title ?? file.path.split('/').last,
-            duration: metadata.duration?.inMilliseconds ?? 0,
-            album: metadata.album ?? '',
+            title: title,
+            duration: duration,
+            album: album,
             genre: metadata.genres.firstOrNull ?? '',
-            dateAdded: DateTime.now(),
+            dateAdded: metadata.file.lastModifiedSync(),
             trackNum: metadata.trackNumber ?? 0,
             isPodcast: false,
             isAlarm: false,
-            artist: metadata.artist ?? '',
+            artist: artist,
             cover: metadata.pictures.firstOrNull?.bytes,
           ),
         );
+        AudioUtil.allAudios = allSongs;
       } catch (_) {
         continue;
       }
@@ -66,9 +74,22 @@ class LocalAudioRepositoryLinux implements AudioRepository {
       }).toList();
     }
 
-    allSongs = _sort(allSongs, orderBy, desc);
+    allSongs = super.sort(allSongs, orderBy, desc);
 
     return allSongs;
+  }
+
+  int generateStableId(
+    String title,
+    String artist,
+    String album,
+    int durationMs,
+    int fileSize,
+  ) {
+    final key = '${title}_${artist}_${album}_${durationMs}_$fileSize';
+    final bytes = utf8.encode(key);
+    final digest = md5.convert(bytes);
+    return digest.bytes.take(4).fold(0, (prev, byte) => (prev << 8) | byte);
   }
 
   Future<List<File>> _scanAudioFiles(Directory dir) async {
@@ -88,51 +109,12 @@ class LocalAudioRepositoryLinux implements AudioRepository {
     return files;
   }
 
-  List<AudioModel> _sort(
-    List<AudioModel> audios,
-    AudioColumns order,
-    bool desc,
-  ) {
-    audios.sort((a, b) {
-      int compare = 0;
-
-      switch (order) {
-        case AudioColumns.id:
-          compare = a.id.compareTo(b.id);
-          break;
-
-        case AudioColumns.createdAt:
-          compare = a.dateAdded.compareTo(b.dateAdded);
-          break;
-
-        case AudioColumns.title:
-          compare = a.title.toLowerCase().compareTo(b.title.toLowerCase());
-          break;
-
-        case AudioColumns.artist:
-          compare = a.artist.toLowerCase().compareTo(b.artist.toLowerCase());
-          break;
-
-        case AudioColumns.album:
-          compare = a.album.toLowerCase().compareTo(b.album.toLowerCase());
-          break;
-
-        case AudioColumns.duration:
-          compare = a.duration.compareTo(b.duration);
-          break;
-      }
-
-      return desc ? -compare : compare;
-    });
-
-    return audios;
-  }
-
   @override
   Future<bool> deleteAudio(AudioEntity audio) async {
     final file = File(audio.path);
 
     if (await file.exists()) {
+      super.removeAudioFromAllPlaylists(audioId: audio.id);
       await file.delete();
       return true;
     }

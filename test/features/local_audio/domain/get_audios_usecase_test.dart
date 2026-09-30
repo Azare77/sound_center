@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/domain/usecases/get_audios_usecase.dart';
 
@@ -16,7 +16,7 @@ void main() {
   });
 
   test('call returns repository result', () async {
-    final audio = AudioModel(
+    final audio = AudioEntity(
       id: 1,
       path: '/f.mp3',
       title: 't',
@@ -44,7 +44,7 @@ void main() {
   });
 
   test('search forwards like parameter to repository', () async {
-    final audio = AudioModel(
+    final audio = AudioEntity(
       id: 2,
       path: '/g.mp3',
       title: 't2',

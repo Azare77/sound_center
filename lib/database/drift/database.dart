@@ -8,22 +8,24 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sound_center/core/constants/constants.dart';
 
+import 'cloud/cloud_history.dart';
+import 'local/favorite.dart';
 import 'local/playlist.dart';
 import 'podcast/download.dart';
 import 'podcast/subscription.dart';
 import 'stream/stream_subscription.dart';
-import 'cloud/cloud_history.dart';
 
 part 'database.g.dart';
 
-// @DriftDatabase(tables: [LocalAudiosTable, PlaylistTable])
 @DriftDatabase(
   tables: [
     PlaylistTable,
+    PlaylistItemTable,
     SubscriptionTable,
     DownloadTable,
     StreamSubscriptionTable,
     CloudHistoryTable,
+    FavoriteTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -34,7 +36,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnectionSync());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -62,6 +64,12 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 4) {
         await m.createTable(cloudHistoryTable);
+      }
+      if (from < 5) {
+        await m.drop(playlistTable);
+        await m.createTable(favoriteTable);
+        await m.createTable(playlistTable);
+        await m.createTable(playlistItemTable);
       }
     },
   );

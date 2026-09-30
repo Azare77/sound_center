@@ -8,7 +8,6 @@ import 'package:sound_center/features/cloud/domain/entity/cloud_entity.dart';
 import 'package:sound_center/features/cloud/presentation/Widgets/track_template/current_track.dart';
 import 'package:sound_center/features/cloud/presentation/pages/play_track.dart'
     as cloud_page;
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/play_audio.dart'
@@ -151,7 +150,7 @@ class _CurrentMediaState extends State<CurrentMedia> {
       final stream = _streamPlayer.getCurrentStream;
       late String url;
       late String title;
-      if (stream is AudioModel) {
+      if (stream is AudioEntity) {
         url = stream.path;
         title = stream.title;
       } else if (stream is Source) {

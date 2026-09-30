@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
@@ -23,6 +24,8 @@ class _LocalAudiosState extends State<LocalAudios>
   int _lastIndex = 0;
   String _query = '';
   List<AudioEntity> _audios = const [];
+  List<AudioEntity> _favorites = const [];
+  List<PlayListEntity> _playlists = const [];
 
   @override
   void initState() {
@@ -65,7 +68,13 @@ class _LocalAudiosState extends State<LocalAudios>
     return BlocListener<LocalBloc, LocalState>(
       listener: (context, state) {
         final s = state.status;
-        if (s is LocalAudioStatus) setState(() => _audios = s.audios);
+        if (s is LocalAudioStatus) {
+          setState(() => _audios = s.audios);
+        } else if (s is LocalFavoriteStatus) {
+          setState(() => _favorites = s.audios);
+        } else if (s is LocalPlayListsStatus) {
+          setState(() => _playlists = s.playlists);
+        }
       },
       child: Column(
         children: [
@@ -81,6 +90,8 @@ class _LocalAudiosState extends State<LocalAudios>
                   desc,
                 );
                 setState(() => _audios = audios);
+                audios = AudioUtil.sort(_favorites, column, desc);
+                setState(() => _favorites = audios);
               },
             ),
           ),
@@ -121,7 +132,13 @@ class _LocalAudiosState extends State<LocalAudios>
                       for (final c in Category.values)
                         CategoryPage(
                           category: c,
-                          items: _audios,
+                          items: switch (c) {
+                            Category.favorites => _favorites,
+                            _ => _audios,
+                          },
+                          playlists: c == Category.playlists
+                              ? _playlists
+                              : const [],
                           query: _query,
                         ),
                     ],

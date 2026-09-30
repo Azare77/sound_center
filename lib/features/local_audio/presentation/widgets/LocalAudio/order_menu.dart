@@ -46,7 +46,11 @@ class _OrderMenuState extends State<OrderMenu> {
           _buildItem(AudioColumns.title, currentColumn, S.of(context).title),
           _buildItem(AudioColumns.artist, currentColumn, S.of(context).artist),
           _buildItem(AudioColumns.album, currentColumn, S.of(context).album),
-          _buildItem(AudioColumns.id, currentColumn, S.of(context).createTime),
+          _buildItem(
+            AudioColumns.createdAt,
+            currentColumn,
+            S.of(context).createTime,
+          ),
           _buildItem(
             AudioColumns.duration,
             currentColumn,

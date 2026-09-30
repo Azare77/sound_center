@@ -7,6 +7,7 @@ import 'package:sound_center/features/local_audio/data/repositories/linux_audio_
 import 'package:sound_center/features/local_audio/data/repositories/local_audio_repository.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/domain/usecases/get_audios_usecase.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
@@ -32,6 +33,8 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
         .then((audios) {
           player.setPlayList(audios);
           add(GetLocalAudios());
+          add(GetFavorites());
+          add(GetPlaylists());
           player.init();
         });
     on<GetLocalAudios>((event, emit) async {
@@ -42,9 +45,8 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       emit(state.copyWith(LocalAudioStatus(audios: audios)));
     });
     on<PlayAudio>((event, emit) async {
-      LocalAudioStatus status = state.status as LocalAudioStatus;
       player.setPlayList(event.audios);
-      if (player.getCurrentAudio?.id != status.audios[event.index].id ||
+      if (player.getCurrentAudio?.id != event.audios[event.index].id ||
           !player.hasSource()) {
         await player.play(event.index, direct: true);
       } else if (!player.isPlaying()) {
@@ -53,15 +55,13 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     });
 
     on<PlayNextAudio>((event, emit) async {
-      LocalAudioStatus status = state.status as LocalAudioStatus;
       await player.next(force: true);
-      emit(state.copyWith(status));
+      emit(state.copyWith(state.status));
     });
 
     on<PlayPreviousAudio>((event, emit) async {
-      LocalAudioStatus status = state.status as LocalAudioStatus;
       await player.previous();
-      emit(state.copyWith(status));
+      emit(state.copyWith(state.status));
     });
 
     on<AutoPlayNext>((event, emit) async {
@@ -90,6 +90,24 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       // LocalAudioStatus status = state.status as LocalAudioStatus;
       // status.audios = audios;
       // emit(state.copyWith(status));
+    });
+
+    on<GetPlaylists>((event, emit) async {
+      final List<PlayListEntity> playlists = await getAudioUseCase
+          .getPlaylists();
+      emit(state.copyWith(LocalPlayListsStatus(playlists: playlists)));
+    });
+    on<GetFavorites>((event, emit) async {
+      final List<AudioEntity> favorites = await getAudioUseCase.getFavorites();
+      emit(state.copyWith(LocalFavoriteStatus(audios: favorites)));
+    });
+    on<AddToFavorites>((event, emit) async {
+      final bool res = await getAudioUseCase.fave(event.audio.id);
+      if (res) add(GetFavorites());
+    });
+    on<RemoveFromFavorites>((event, emit) async {
+      final bool res = await getAudioUseCase.unfave(event.audio.id);
+      if (res) add(GetFavorites());
     });
   }
 }

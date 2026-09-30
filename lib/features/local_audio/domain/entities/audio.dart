@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:on_audio_query/on_audio_query.dart';
+
 class AudioEntity {
   AudioEntity({
     required this.id,
@@ -31,6 +33,60 @@ class AudioEntity {
   final bool isAlarm;
   final DateTime dateAdded;
   Uint8List? cover;
+
+  AudioEntity copyWith({
+    int? id,
+    String? uri,
+    String? path,
+    String? title,
+    int? duration,
+    String? album,
+    String? artist,
+    String? genre,
+    int? trackNum,
+    bool? isPodcast,
+    bool? isAlarm,
+    DateTime? dateAdded,
+    Uint8List? cover,
+  }) {
+    return AudioEntity(
+      id: id ?? this.id,
+      uri: uri ?? this.uri,
+      path: path ?? this.path,
+      title: title ?? this.title,
+      duration: duration ?? this.duration,
+      album: album ?? this.album,
+      artist: artist ?? this.artist,
+      genre: genre ?? this.genre,
+      trackNum: trackNum ?? this.trackNum,
+      isPodcast: isPodcast ?? this.isPodcast,
+      isAlarm: isAlarm ?? this.isAlarm,
+      dateAdded: dateAdded ?? this.dateAdded,
+      cover: cover ?? this.cover,
+    );
+  }
+
+  factory AudioEntity.fromSongModel(SongModel song) {
+    return AudioEntity(
+      id: song.id,
+      uri: song.uri,
+      path: song.data,
+      title: song.title,
+      dateAdded: DateTime.fromMillisecondsSinceEpoch(
+        (song.dateAdded ?? 0) * 1000,
+      ),
+      duration: song.duration ?? 0,
+      trackNum: song.track ?? 0,
+      isPodcast: song.isPodcast ?? false,
+      isAlarm: song.isAlarm ?? false,
+      cover: null,
+      album: song.album == "<unknown>" || song.album == null ? "" : song.album!,
+      genre: song.genre == "<unknown>" || song.genre == null ? "" : song.genre!,
+      artist: song.artist == "<unknown>" || song.artist == null
+          ? ""
+          : song.artist!,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

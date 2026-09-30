@@ -49,8 +49,8 @@ class StreamStaticFile extends StreamEvent {
 
   StreamStaticFile(this.url);
 
-  AudioModel toAudio() {
-    return AudioModel(
+  AudioEntity toAudio() {
+    return AudioEntity(
       id: -1,
       path: url,
       title: '',
@@ -67,7 +67,7 @@ class StreamStaticFile extends StreamEvent {
 }
 
 class LoadStaticFileInfo extends StreamEvent {
-  final AudioModel audio;
+  final AudioEntity audio;
 
   LoadStaticFileInfo(this.audio);
 }

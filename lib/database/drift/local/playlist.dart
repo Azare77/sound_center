@@ -5,6 +5,12 @@ class PlaylistTable extends Table with TableMixin {
   TextColumn get title => text()();
 
   IntColumn get order => integer()();
+}
 
-  IntColumn get audio => integer()();
+class PlaylistItemTable extends Table with TableMixin {
+  IntColumn get playlistId => integer().references(PlaylistTable, #id)();
+
+  IntColumn get audioId => integer()();
+
+  IntColumn get order => integer()();
 }

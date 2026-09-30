@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:just_audio/just_audio.dart' show IcyMetadata;
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/main.dart';
@@ -66,7 +66,7 @@ class StreamPlayerRepositoryImp extends BasePlayerRepository {
     return _playList;
   }
 
-  void updateCurrentFileInfo(AudioModel audio) {
+  void updateCurrentFileInfo(AudioEntity audio) {
     _currentStream = audio;
     _playList[0] = audio;
     updateNotification();
@@ -85,7 +85,7 @@ class StreamPlayerRepositoryImp extends BasePlayerRepository {
     String? artist;
     dynamic cover;
     int? duration;
-    if (item is AudioModel) {
+    if (item is AudioEntity) {
       url = item.path;
       title = item.title;
       artist = item.artist;
@@ -124,13 +124,13 @@ class StreamPlayerRepositoryImp extends BasePlayerRepository {
     late final String title;
     Duration? duration;
     dynamic cover;
-    if (_currentStream is AudioModel) {
-      final audio = (_currentStream as AudioModel);
+    if (_currentStream is AudioEntity) {
+      final audio = (_currentStream as AudioEntity);
       url = audio.path;
       title = audio.title;
       cover = audio.cover;
       duration = Duration(milliseconds: audio.duration);
-      (_currentStream as AudioModel).duration;
+      (_currentStream as AudioEntity).duration;
     } else if (_currentStream is Source) {
       final stream = (_currentStream as Source);
       url = stream.listenUrl;
@@ -164,7 +164,7 @@ class StreamPlayerRepositoryImp extends BasePlayerRepository {
 
   @override
   Future<void> togglePlayState() async {
-    if (_currentStream is AudioModel) {
+    if (_currentStream is AudioEntity) {
       await super.playerService.togglePlaying();
     } else {
       if (isPlaying()) {

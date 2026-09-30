@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
@@ -55,7 +55,7 @@ class _StreamHeaderState extends State<StreamHeader> {
         late final String title;
         late final String? artist;
         final currentStream = imp.getCurrentStream;
-        if (currentStream is AudioModel) {
+        if (currentStream is AudioEntity) {
           title = currentStream.title;
           artist = currentStream.artist;
         } else if (currentStream is Source) {
@@ -85,7 +85,7 @@ class _StreamHeaderState extends State<StreamHeader> {
               Uint8List? cover;
               String? coverUrl;
               late final String url;
-              if (currentStream is AudioModel) {
+              if (currentStream is AudioEntity) {
                 cover = currentStream.cover;
                 url = currentStream.path;
               } else if (currentStream is Source) {

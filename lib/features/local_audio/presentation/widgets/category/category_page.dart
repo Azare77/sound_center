@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/entities/categories.dart';
+import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/category_list_template.dart';
@@ -13,11 +14,13 @@ class CategoryPage extends StatefulWidget {
     super.key,
     required this.category,
     required this.items,
+    required this.playlists,
     required this.query,
   });
 
   final Category category;
   final List<AudioEntity> items;
+  final List<PlayListEntity> playlists;
   final String query;
 
   @override
@@ -117,8 +120,19 @@ class _CategoryPageState extends State<CategoryPage>
   Widget build(BuildContext context) {
     super.build(context);
 
+    if (widget.category == Category.favorites) {
+      return AudioListTemplate(_filterAudios(widget.items));
+    }
+
+    if (widget.category == Category.playlists) {
+      return CategoryListTemplate(
+        key: const ValueKey('playlists'),
+        category: Category.playlists,
+        items: widget.playlists,
+      );
+    }
+
     if (!_isGrouped) {
-      // TODO: favorites و playlists داده‌ی واقعی خودشان را لازم دارند
       return AudioListTemplate(_filterAudios(widget.items));
     }
 
@@ -128,8 +142,13 @@ class _CategoryPageState extends State<CategoryPage>
         if (snapshot.hasError) {
           return Center(child: Text('${snapshot.error}'));
         }
+
         final data = snapshot.data;
-        if (data == null) return Loading(label: S.of(context).scanning);
+
+        if (data == null) {
+          return Loading(label: S.of(context).scanning);
+        }
+
         return CategoryListTemplate(
           key: ValueKey(widget.category.name),
           category: widget.category,

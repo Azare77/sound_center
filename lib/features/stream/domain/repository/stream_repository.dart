@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:radio_browser_api/radio_browser_api.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_sub_entity.dart';
 
@@ -20,7 +20,7 @@ abstract class StreamRepository {
 
   Future<IcecastStream?> loadIcecastStream(String url);
 
-  Future<AudioModel> loadAudioInfo(String url);
+  Future<AudioEntity> loadAudioInfo(String url);
 
   Future<List<StreamSubEntity>> getSubscribedStreams();
 

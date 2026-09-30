@@ -4,6 +4,7 @@ import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:sound_center/features/local_audio/data/repositories/local_audio_repository.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/entities/categories.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
@@ -13,6 +14,8 @@ enum CoverSize { thumbnail, banner }
 class AudioUtil {
   static final OnAudioQuery _audioQuery = OnAudioQuery();
   static final Map<String, Uint8List?> _coverCache = {};
+  static final repo = LocalAudioRepository();
+  static List<AudioEntity> allAudios = [];
 
   static Future<Uint8List?> getCover(
     int audioId, {
@@ -171,5 +174,9 @@ class AudioUtil {
     });
 
     return audios;
+  }
+
+  static Future<bool> isFavorite(int audioId) async {
+    return await repo.isFavorite(audioId);
   }
 }

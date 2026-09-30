@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/shared/widgets/handler.dart';
@@ -21,7 +21,7 @@ class StreamOps extends StatelessWidget {
           onPressed: () async {
             late final String? url;
             final currentStream = playerRepository.getCurrentStream;
-            if (currentStream is AudioModel) {
+            if (currentStream is AudioEntity) {
               url = currentStream.uri;
             } else if (currentStream is Source) {
               url = currentStream.listenUrl;
@@ -54,7 +54,7 @@ class StreamOps extends StatelessWidget {
                   ShareParams(text: currentStream.listenUrl),
                 );
               }
-            } else if (currentStream is AudioModel) {
+            } else if (currentStream is AudioEntity) {
               await SharePlus.instance.share(
                 ShareParams(text: currentStream.uri),
               );

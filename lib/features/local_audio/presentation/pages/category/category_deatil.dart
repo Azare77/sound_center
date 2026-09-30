@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/core_view/current_media.dart';
@@ -10,8 +10,6 @@ import 'package:sound_center/database/shared_preferences/loca_order_storage.dart
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/tool_bar.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
@@ -35,10 +33,11 @@ class _CategoryDetailState extends State<CategoryDetail> {
   bool toolbarCollapsed = false;
   List<AudioEntity> allAudios = [];
   List<AudioEntity> audios = [];
+  StreamSubscription<AudioEntity?>? _audioSub;
 
   void _init() {
-    final status = BlocProvider.of<LocalBloc>(context).state.status;
-    allAudios = (status as LocalAudioStatus).audios;
+    allAudios = AudioUtil.allAudios;
+    final title = widget.title.trim();
     switch (widget.category) {
       case Category.allSongs:
         throw UnimplementedError();
@@ -48,15 +47,15 @@ class _CategoryDetailState extends State<CategoryDetail> {
         throw UnimplementedError();
       case Category.artists:
         allAudios = allAudios
-            .where((audio) => audio.artist == widget.title)
+            .where((audio) => audio.artist.trim() == title)
             .toList();
       case Category.albums:
         allAudios = allAudios
-            .where((audio) => audio.album == widget.title)
+            .where((audio) => audio.album.trim() == title)
             .toList();
       case Category.genres:
         allAudios = allAudios
-            .where((audio) => audio.genre == widget.title)
+            .where((audio) => audio.genre.trim() == title)
             .toList();
       case Category.folders:
         allAudios = allAudios
@@ -64,8 +63,8 @@ class _CategoryDetailState extends State<CategoryDetail> {
               (audio) =>
                   File(
                     audio.path,
-                  ).parent.path.split(Platform.pathSeparator).last ==
-                  widget.title,
+                  ).parent.path.split(Platform.pathSeparator).last.trim() ==
+                  title,
             )
             .toList();
     }
@@ -79,11 +78,15 @@ class _CategoryDetailState extends State<CategoryDetail> {
   @override
   void initState() {
     super.initState();
+    _audioSub = repository.audioChangedStream.listen((ms) async {
+      setState(() {});
+    });
     _init();
   }
 
   @override
   void dispose() {
+    _audioSub?.cancel();
     super.dispose();
   }
 

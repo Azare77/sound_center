@@ -1,7 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
-import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 
 class CategoryBar extends StatefulWidget {
   const CategoryBar({super.key});

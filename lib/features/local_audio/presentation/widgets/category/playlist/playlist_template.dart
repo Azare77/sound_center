@@ -29,7 +29,10 @@ class PlaylistTemplate extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: Icon(Icons.queue_music_rounded, size: size - 10),
+            child: Hero(
+              tag: item.title,
+              child: Icon(Icons.queue_music_rounded, size: size - 10),
+            ),
           ),
 
           // --- متن‌ها ---

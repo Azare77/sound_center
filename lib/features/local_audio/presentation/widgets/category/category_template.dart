@@ -30,7 +30,10 @@ class CategoryTemplate extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: Icon(icon, size: size - 10),
+            child: Hero(
+              tag: item.name,
+              child: Icon(icon, size: size - 10),
+            ),
           ),
 
           // --- متن‌ها ---

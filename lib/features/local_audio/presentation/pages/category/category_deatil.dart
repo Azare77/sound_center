@@ -15,7 +15,6 @@ import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.d
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/list_header.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/tool_bar.dart';
-import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class CategoryDetail extends StatefulWidget {

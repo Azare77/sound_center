@@ -94,7 +94,10 @@ class ListHeader extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(icon, color: cs.onPrimary, size: 30),
+                child: Hero(
+                  tag: title,
+                  child: Icon(icon, color: cs.onPrimary, size: 30),
+                ),
               ),
               Expanded(
                 child: Column(

@@ -6,9 +6,18 @@ import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
 class AudioTemplate extends StatefulWidget {
-  const AudioTemplate({super.key, required this.audioEntity});
+  const AudioTemplate({
+    super.key,
+    required this.audioEntity,
+    this.isMultiple = false,
+    this.isSelected = false,
+    this.onChanged,
+  });
 
   final AudioEntity audioEntity;
+  final bool isMultiple;
+  final bool isSelected;
+  final ValueChanged<bool?>? onChanged;
 
   @override
   State<AudioTemplate> createState() => _AudioTemplateState();
@@ -17,6 +26,7 @@ class AudioTemplate extends StatefulWidget {
 class _AudioTemplateState extends State<AudioTemplate> {
   Uint8List? cover;
   final double size = 50;
+  final double spacing = 10;
 
   @override
   void initState() {
@@ -46,8 +56,20 @@ class _AudioTemplateState extends State<AudioTemplate> {
       height: LIST_ITEM_HEIGHT,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
-        spacing: 10,
         children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
+            child: widget.isMultiple
+                ? Checkbox(
+                    key: const ValueKey('checkbox'),
+                    value: widget.isSelected,
+                    onChanged: widget.onChanged,
+                  )
+                : const SizedBox.shrink(key: ValueKey('empty')),
+          ),
+          if (widget.isMultiple) SizedBox(width: spacing),
           // --- تصویر ---
           SizedBox(
             width: size,
@@ -73,7 +95,7 @@ class _AudioTemplateState extends State<AudioTemplate> {
               ),
             ),
           ),
-
+          SizedBox(width: spacing),
           // --- متن‌ها ---
           Expanded(
             child: Column(
@@ -96,6 +118,7 @@ class _AudioTemplateState extends State<AudioTemplate> {
               ],
             ),
           ),
+          SizedBox(width: spacing),
           Text(
             AudioUtil.convertTime(widget.audioEntity.duration),
             style: infoTextStyle,

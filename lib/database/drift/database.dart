@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -66,7 +65,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(cloudHistoryTable);
       }
       if (from < 5) {
-        await m.drop(playlistTable);
+        final count = await playlistTable.count().getSingle();
+        if (count == 0) {
+          await m.drop(playlistTable);
+        }
         await m.createTable(favoriteTable);
         await m.createTable(playlistTable);
         await m.createTable(playlistItemTable);

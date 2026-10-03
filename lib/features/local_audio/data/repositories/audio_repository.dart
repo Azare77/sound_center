@@ -77,21 +77,25 @@ abstract class AudioRepositoryImp implements AudioRepository {
   }
 
   @override
-  Future<List<PlayListEntity>> getPlaylists() async {
-    final List<PlayListEntity> result = [];
+  Future<List<PlaylistEntity>> getPlaylists() async {
+    final List<PlaylistEntity> result = [];
     final subs = await _getPlaylists();
     for (PlaylistTableData item in subs) {
       final items = await _getPlayListItems(item.id);
-      final audios = AudioUtil.allAudios
-          .where((audio) => items.any((item) => item.audioId == audio.id))
+      final audios = items
+          .map(
+            (item) => AudioUtil.allAudios.firstWhere(
+              (audio) => audio.id == item.audioId,
+            ),
+          )
           .toList();
-      result.add(PlayListEntity.fromDrift(item, audios));
+      result.add(PlaylistEntity.fromDrift(item, audios));
     }
     return result;
   }
 
   @override
-  Future<bool> createPlaylist(PlayListEntity playlist) async {
+  Future<bool> createPlaylist(PlaylistEntity playlist) async {
     await database.into(database.playlistTable).insert(playlist.toDrift());
     return true;
   }
@@ -135,10 +139,7 @@ abstract class AudioRepositoryImp implements AudioRepository {
   }
 
   @override
-  Future<bool> addToPlaylist({
-    required int playlistId,
-    required int audioId,
-  }) async {
+  Future<bool> addToPlaylist(int playlistId, int audioId) async {
     if (await isAudioInPlaylist(audioId: audioId, playlistId: playlistId)) {
       return true;
     }
@@ -160,19 +161,18 @@ abstract class AudioRepositoryImp implements AudioRepository {
     return true;
   }
 
-  Future<bool> changePlaylistItemOrder({
-    required int playlistId,
-    required int itemId,
-    required int newOrder,
-  }) async {
+  @override
+  Future<bool> changePlaylistItemOrder(
+    int playlistId,
+    int itemId,
+    int newOrder,
+  ) async {
     final items =
         await (database.select(database.playlistItemTable)
               ..where((t) => t.playlistId.equals(playlistId))
               ..orderBy([(t) => OrderingTerm.asc(t.order)]))
             .get();
-
-    final oldIndex = items.indexWhere((item) => item.id == itemId);
-
+    final oldIndex = items.indexWhere((item) => item.audioId == itemId);
     if (oldIndex == -1) return false;
 
     final targetIndex = newOrder.clamp(0, items.length - 1);
@@ -195,14 +195,12 @@ abstract class AudioRepositoryImp implements AudioRepository {
   }
 
   @override
-  Future<bool> removeFromPlaylist({
-    required int playlistId,
-    required int itemId,
-  }) async {
+  Future<bool> removeFromPlaylist(int playlistId, int itemId) async {
     return database.transaction(() async {
       final item =
           await (database.select(database.playlistItemTable)..where(
-                (t) => t.id.equals(itemId) & t.playlistId.equals(playlistId),
+                (t) =>
+                    t.audioId.equals(itemId) & t.playlistId.equals(playlistId),
               ))
               .getSingleOrNull();
 
@@ -212,13 +210,24 @@ abstract class AudioRepositoryImp implements AudioRepository {
 
       final deleted =
           await (database.delete(database.playlistItemTable)..where(
-                (t) => t.id.equals(itemId) & t.playlistId.equals(playlistId),
+                (t) =>
+                    t.audioId.equals(itemId) & t.playlistId.equals(playlistId),
               ))
               .go();
 
       if (deleted == 0) {
         return false;
       }
+
+      await database.customUpdate(
+        '''
+      UPDATE playlist_item_table
+      SET "order" = "order" - 1
+      WHERE playlist_id = ? AND "order" > ?
+      ''',
+        variables: [Variable.withInt(playlistId), Variable.withInt(item.order)],
+        updates: {database.playlistItemTable},
+      );
 
       return true;
     });

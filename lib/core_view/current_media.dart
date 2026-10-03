@@ -12,7 +12,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/play_audio.dart'
     as audio_page;
-import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/current_audio.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/current_audio.dart';
 import 'package:sound_center/features/podcast/data/repository/podcast_player_rpository_imp.dart';
 import 'package:sound_center/features/podcast/presentation/pages/play_podcast.dart'
     as podcast_page;

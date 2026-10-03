@@ -6,6 +6,7 @@ import 'package:sound_center/features/local_audio/domain/entities/local_play_lis
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/category_list_template.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/playlist/playlist_list_template.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
@@ -20,7 +21,7 @@ class CategoryPage extends StatefulWidget {
 
   final Category category;
   final List<AudioEntity> items;
-  final List<PlayListEntity> playlists;
+  final List<PlaylistEntity> playlists;
   final String query;
 
   @override
@@ -68,6 +69,12 @@ class _CategoryPageState extends State<CategoryPage>
               _norm(a.album).contains(q),
         )
         .toList();
+  }
+
+  List<PlaylistEntity> _filterPlaylists(List<PlaylistEntity> playlist) {
+    final q = _norm(widget.query);
+    if (q.isEmpty) return playlist;
+    return playlist.where((a) => _norm(a.title).contains(q)).toList();
   }
 
   List<Object> _filterGrouped(List<Object> data) {
@@ -125,11 +132,7 @@ class _CategoryPageState extends State<CategoryPage>
     }
 
     if (widget.category == Category.playlists) {
-      return CategoryListTemplate(
-        key: const ValueKey('playlists'),
-        category: Category.playlists,
-        items: widget.playlists,
-      );
+      return PlaylistListTemplate(_filterPlaylists(widget.playlists));
     }
 
     if (!_isGrouped) {

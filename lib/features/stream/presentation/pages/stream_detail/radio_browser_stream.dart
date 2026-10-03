@@ -214,6 +214,7 @@ class _RadioStreamViewState extends State<RadioStreamView> {
                                 ),
                               ],
                             ),
+                            SizedBox(height: 120),
                           ],
                         ),
                       ),

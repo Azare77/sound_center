@@ -51,6 +51,38 @@ class RemoveFromFavorites extends LocalEvent {
 
 class GetPlaylists extends LocalEvent {}
 
+class AddToPlaylist extends LocalEvent {
+  final int playlistId;
+  final List<AudioEntity> audios;
+
+  AddToPlaylist({required this.playlistId, required this.audios});
+}
+
+class RemoveFromPlaylist extends LocalEvent {
+  final int playlistId;
+  final List<AudioEntity> audios;
+
+  RemoveFromPlaylist({required this.playlistId, required this.audios});
+}
+
+class CreatePlaylist extends LocalEvent {
+  final PlaylistEntity playlist;
+
+  CreatePlaylist({required this.playlist});
+}
+
+class ChangePlaylistOrder extends LocalEvent {
+  final int playlistId;
+  final int itemId;
+  final int newOrder;
+
+  ChangePlaylistOrder({
+    required this.playlistId,
+    required this.itemId,
+    required this.newOrder,
+  });
+}
+
 class PlayAudio extends LocalEvent {
   final List<AudioEntity> audios;
   final int index;

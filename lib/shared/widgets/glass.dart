@@ -63,10 +63,12 @@ class Glass extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: border,
-        child: BackdropFilter.grouped(
-          filter: ImageFilter.blur(sigmaX: finalBlur, sigmaY: finalBlur),
-          child: content,
-        ),
+        child: finalBlur > 0
+            ? BackdropFilter.grouped(
+                filter: ImageFilter.blur(sigmaX: finalBlur, sigmaY: finalBlur),
+                child: content,
+              )
+            : content,
       ),
     );
   }

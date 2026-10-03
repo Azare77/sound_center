@@ -11,7 +11,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/tool_bar.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/tool_bar.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class CategoryDetail extends StatefulWidget {
@@ -132,27 +132,4 @@ class _CategoryDetailState extends State<CategoryDetail> {
     }
     setState(() {});
   }
-
-  // void sort(PodcastOrder order) {
-  //   audios.sort((a, b) {
-  //     switch (order) {
-  //       case PodcastOrder.AZ:
-  //         return a.title.toLowerCase().compareTo(b.title.toLowerCase());
-  //
-  //       case PodcastOrder.ZA:
-  //         return b.title.toLowerCase().compareTo(a.title.toLowerCase());
-  //
-  //       case PodcastOrder.NEWEST:
-  //         final aDate = a.publicationDate ?? DateTime(1970);
-  //         final bDate = b.publicationDate ?? DateTime(1970);
-  //         return bDate.compareTo(aDate);
-  //
-  //       case PodcastOrder.OLDEST:
-  //         final aDate = a.publicationDate ?? DateTime(1970);
-  //         final bDate = b.publicationDate ?? DateTime(1970);
-  //         return aDate.compareTo(bDate);
-  //     }
-  //   });
-  //   setState(() {});
-  // }
 }

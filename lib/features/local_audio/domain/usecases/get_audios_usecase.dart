@@ -37,12 +37,28 @@ class GetAudioUseCase implements UseCase {
     return await _audioRepository.deleteAudio(audio);
   }
 
-  Future<List<PlayListEntity>> getPlaylists() async {
+  Future<List<PlaylistEntity>> getPlaylists() async {
     return await _audioRepository.getPlaylists();
   }
 
-  Future<bool> createPlaylist(PlayListEntity playlist) async {
+  Future<bool> createPlaylist(PlaylistEntity playlist) async {
     return await _audioRepository.createPlaylist(playlist);
+  }
+
+  Future<bool> addToPlaylist(int playlistId, int audioId) async {
+    return await _audioRepository.addToPlaylist(playlistId, audioId);
+  }
+
+  Future<bool> removeFromPlaylist(int playlistId, int audioId) async {
+    return await _audioRepository.removeFromPlaylist(playlistId, audioId);
+  }
+
+  Future<bool> changeOrder(int playlistId, int itemId, int newOrder) async {
+    return await _audioRepository.changePlaylistItemOrder(
+      playlistId,
+      itemId,
+      newOrder,
+    );
   }
 
   Future<List<AudioEntity>> getFavorites() async {

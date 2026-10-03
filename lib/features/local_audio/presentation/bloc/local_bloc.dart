@@ -30,7 +30,7 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
           orderBy: LocalOrderStorage.getSavedColumn(),
           desc: LocalOrderStorage.getSavedDesc(),
         )
-        .then((audios) {
+        .then((audios) async {
           player.setPlayList(audios);
           add(GetLocalAudios());
           add(GetFavorites());
@@ -93,10 +93,39 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
     });
 
     on<GetPlaylists>((event, emit) async {
-      final List<PlayListEntity> playlists = await getAudioUseCase
+      final List<PlaylistEntity> playlists = await getAudioUseCase
           .getPlaylists();
       emit(state.copyWith(LocalPlayListsStatus(playlists: playlists)));
     });
+
+    on<CreatePlaylist>((event, emit) async {
+      final bool res = await getAudioUseCase.createPlaylist(event.playlist);
+      if (res) add(GetPlaylists());
+    });
+
+    on<AddToPlaylist>((event, emit) async {
+      for (AudioEntity audio in event.audios) {
+        await getAudioUseCase.addToPlaylist(event.playlistId, audio.id);
+      }
+      add(GetPlaylists());
+    });
+
+    on<RemoveFromPlaylist>((event, emit) async {
+      for (AudioEntity audio in event.audios) {
+        await getAudioUseCase.removeFromPlaylist(event.playlistId, audio.id);
+      }
+      add(GetPlaylists());
+    });
+
+    on<ChangePlaylistOrder>((event, emit) async {
+      final bool res = await getAudioUseCase.changeOrder(
+        event.playlistId,
+        event.itemId,
+        event.newOrder,
+      );
+      if (res) add(GetPlaylists());
+    });
+
     on<GetFavorites>((event, emit) async {
       final List<AudioEntity> favorites = await getAudioUseCase.getFavorites();
       emit(state.copyWith(LocalFavoriteStatus(audios: favorites)));

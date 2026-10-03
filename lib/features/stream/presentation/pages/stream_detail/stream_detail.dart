@@ -69,7 +69,7 @@ class _StreamDetailState extends State<StreamDetail> {
       appBar: widget.stream.uuid != null ? null : AppBar(),
       body: Stack(
         children: [
-          Padding(padding: const EdgeInsets.only(bottom: 120), child: content),
+          content,
           Align(
             alignment: Alignment.bottomCenter,
             child: const CurrentMedia(key: Key("streamDetail")),

@@ -1,14 +1,13 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
-import 'package:sound_center/features/local_audio/domain/entities/categories.dart';
+import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/generated/l10n.dart';
 
-class CategoryTemplate extends StatelessWidget {
-  const CategoryTemplate({super.key, required this.item, required this.icon});
+class PlaylistTemplate extends StatelessWidget {
+  const PlaylistTemplate({super.key, required this.item});
 
-  final dynamic item;
-  final IconData icon;
+  final PlaylistEntity item;
 
   final double size = 50;
 
@@ -30,7 +29,7 @@ class CategoryTemplate extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: Icon(icon, size: size - 10),
+            child: Icon(Icons.playlist_play_rounded, size: size - 10),
           ),
 
           // --- متن‌ها ---
@@ -41,7 +40,7 @@ class CategoryTemplate extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.name,
+                  item.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 16),
@@ -50,24 +49,17 @@ class CategoryTemplate extends StatelessWidget {
                   spacing: 10,
                   children: [
                     Text(
-                      "${S.of(context).tracks} : ${item.totalAudios.toString()}",
+                      "${S.of(context).tracks} : ${item.itemCount.toString()}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: infoTextStyle,
                     ),
-                    if (item is ArtistEntity)
-                      Text(
-                        "${S.of(context).album} : ${item.totalAlbums.toString()}",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: infoTextStyle,
-                      ),
                   ],
                 ),
               ],
             ),
           ),
-          Text(AudioUtil.convertTime(item.totalLength), style: infoTextStyle),
+          Text(AudioUtil.convertTime(item.totalDuration), style: infoTextStyle),
         ],
       ),
     );

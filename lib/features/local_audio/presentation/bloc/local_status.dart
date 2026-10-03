@@ -19,7 +19,7 @@ class LocalFavoriteStatus extends LocalStatus {
 }
 
 class LocalPlayListsStatus extends LocalStatus {
-  List<PlayListEntity> playlists;
+  List<PlaylistEntity> playlists;
 
   LocalPlayListsStatus({required this.playlists});
 }

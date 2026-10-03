@@ -1,5 +1,4 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/features/local_audio/data/model/audio.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -46,16 +45,19 @@ abstract class AudioRepository {
 
   Future<bool> unfaveAudio(int audioId);
 
-  Future<List<PlayListEntity>> getPlaylists();
+  Future<List<PlaylistEntity>> getPlaylists();
 
-  Future<bool> createPlaylist(PlayListEntity playlist);
+  Future<bool> createPlaylist(PlaylistEntity playlist);
 
   Future<bool> deletePlaylist(int id);
 
-  Future<bool> addToPlaylist({required int playlistId, required int audioId});
+  Future<bool> addToPlaylist(int playlistId, int audioId);
 
-  Future<bool> removeFromPlaylist({
-    required int playlistId,
-    required int itemId,
-  });
+  Future<bool> changePlaylistItemOrder(
+    int playlistId,
+    int itemId,
+    int newOrder,
+  );
+
+  Future<bool> removeFromPlaylist(int playlistId, int itemId);
 }

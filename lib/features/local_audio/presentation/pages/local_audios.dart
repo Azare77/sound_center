@@ -6,8 +6,9 @@ import 'package:sound_center/features/local_audio/domain/entities/local_play_lis
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/tool_bar.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/category/category_page.dart';
+import 'package:sound_center/features/local_audio/presentation/pages/category/category_page.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/playlist/create_playlist_dilaog.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/tool_bar.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
@@ -25,7 +26,7 @@ class _LocalAudiosState extends State<LocalAudios>
   String _query = '';
   List<AudioEntity> _audios = const [];
   List<AudioEntity> _favorites = const [];
-  List<PlayListEntity> _playlists = const [];
+  List<PlaylistEntity> _playlists = const [];
 
   @override
   void initState() {
@@ -44,7 +45,7 @@ class _LocalAudiosState extends State<LocalAudios>
     final i = _tabController.index;
     if (i == _lastIndex) return;
     _lastIndex = i;
-    // setState(() {});
+    setState(() {});
   }
 
   @override
@@ -76,75 +77,94 @@ class _LocalAudiosState extends State<LocalAudios>
           setState(() => _playlists = s.playlists);
         }
       },
-      child: Column(
-        children: [
-          ListenableBuilder(
-            listenable: _tabController,
-            builder: (context, _) => ToolBar(
-              onQueryChanged: _setQuery,
-              index: _tabController.index,
-              onOrderChange: (column, desc) {
-                List<AudioEntity> audios = AudioUtil.sort(
-                  _audios,
-                  column,
-                  desc,
-                );
-                setState(() => _audios = audios);
-                audios = AudioUtil.sort(_favorites, column, desc);
-                setState(() => _favorites = audios);
-              },
+      child: Scaffold(
+        body: Column(
+          children: [
+            ListenableBuilder(
+              listenable: _tabController,
+              builder: (context, _) => ToolBar(
+                onQueryChanged: _setQuery,
+                index: _tabController.index,
+                onOrderChange: (column, desc) {
+                  List<AudioEntity> audios = AudioUtil.sort(
+                    _audios,
+                    column,
+                    desc,
+                  );
+                  setState(() => _audios = audios);
+                  audios = AudioUtil.sort(_favorites, column, desc);
+                  setState(() => _favorites = audios);
+                },
+              ),
             ),
-          ),
-          TabBar(
-            controller: _tabController,
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            dividerColor: Colors.transparent,
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicatorPadding: const EdgeInsets.symmetric(vertical: 6),
-            indicator: BoxDecoration(
-              color: Theme.of(
+            TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              dividerColor: Colors.transparent,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorPadding: const EdgeInsets.symmetric(vertical: 6),
+              indicator: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              splashBorderRadius: BorderRadius.circular(12),
+              overlayColor: WidgetStatePropertyAll(Colors.transparent),
+              labelColor: Theme.of(context).colorScheme.primary,
+              unselectedLabelColor: Theme.of(
                 context,
-              ).colorScheme.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              ).colorScheme.onSurfaceVariant,
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.normal,
+              ),
+              tabs: [
+                for (final c in Category.values)
+                  Tab(child: Text(c.title(context))),
+              ],
             ),
-            splashBorderRadius: BorderRadius.circular(12),
-            overlayColor: WidgetStatePropertyAll(Colors.transparent),
-            labelColor: Theme.of(context).colorScheme.primary,
-            unselectedLabelColor: Theme.of(
-              context,
-            ).colorScheme.onSurfaceVariant,
-            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            unselectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.normal,
+            Expanded(
+              child: _audios.isEmpty
+                  ? Loading(label: S.of(context).scanning)
+                  : TabBarView(
+                      controller: _tabController,
+                      children: [
+                        for (final c in Category.values)
+                          CategoryPage(
+                            category: c,
+                            items: switch (c) {
+                              Category.favorites => _favorites,
+                              _ => _audios,
+                            },
+                            playlists: c == Category.playlists
+                                ? _playlists
+                                : const [],
+                            query: _query,
+                          ),
+                      ],
+                    ),
             ),
-            tabs: [
-              for (final c in Category.values)
-                Tab(child: Text(c.title(context))),
-            ],
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 100.0),
+          child: AnimatedScale(
+            scale: _tabController.index == 2 ? 1 : 0,
+            duration: const Duration(milliseconds: 300),
+            alignment: Alignment.center,
+            child: FloatingActionButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => CreatePlaylistDialog(),
+                );
+              },
+              child: Icon(Icons.playlist_add_rounded),
+            ),
           ),
-          Expanded(
-            child: _audios.isEmpty
-                ? Loading(label: S.of(context).scanning)
-                : TabBarView(
-                    controller: _tabController,
-                    children: [
-                      for (final c in Category.values)
-                        CategoryPage(
-                          category: c,
-                          items: switch (c) {
-                            Category.favorites => _favorites,
-                            _ => _audios,
-                          },
-                          playlists: c == Category.playlists
-                              ? _playlists
-                              : const [],
-                          query: _query,
-                        ),
-                    ],
-                  ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -144,6 +144,7 @@ class _IcecastStreamViewState extends State<IcecastStreamView> {
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: stream!.source.length,
+                padding: EdgeInsets.only(bottom: 120),
                 itemBuilder: (context, index) {
                   final source = stream!.source[index];
 

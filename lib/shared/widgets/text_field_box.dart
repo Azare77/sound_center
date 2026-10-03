@@ -1,5 +1,6 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 class TextFieldBox extends StatefulWidget {
   const TextFieldBox({
@@ -108,6 +109,10 @@ class _TextFieldBoxState extends State<TextFieldBox> {
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = BorderRadius.all(Radius.circular(5));
+    final borderSide = BorderSide(
+      color: ThemeManager.current.iconColor.withValues(alpha: 0.2),
+    );
     return Container(
       margin: widget.margin,
       child: TextField(
@@ -138,6 +143,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
           hintText: widget.hintText,
           hintStyle: const TextStyle(color: Colors.grey),
           helperStyle: const TextStyle(color: Colors.grey),
+
           counterText: '',
           isDense: widget.isDense,
           error: widget.validator != null
@@ -150,18 +156,21 @@ class _TextFieldBoxState extends State<TextFieldBox> {
           suffixIcon: widget.suffixIcon,
           prefixIcon: widget.prefixIcon,
           border: widget.useBorder
-              ? const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+              ? OutlineInputBorder(
+                  borderRadius: borderRadius,
+                  borderSide: borderSide,
                 )
               : InputBorder.none,
           focusedBorder: widget.useBorder
-              ? const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+              ? OutlineInputBorder(
+                  borderRadius: borderRadius,
+                  borderSide: borderSide,
                 )
               : InputBorder.none,
           enabledBorder: widget.useBorder
-              ? const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+              ? OutlineInputBorder(
+                  borderRadius: borderRadius,
+                  borderSide: borderSide,
                 )
               : InputBorder.none,
         ),

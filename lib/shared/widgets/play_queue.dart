@@ -228,7 +228,7 @@ class _QueueState extends State<Queue> {
               },
               itemBuilder: (context, index) {
                 final item = queue[index];
-                return listItem(item, index);
+                return queueListItem(item, index);
               },
             ),
           ),
@@ -237,7 +237,7 @@ class _QueueState extends State<Queue> {
     );
   }
 
-  Widget listItem(dynamic item, int index) {
+  Widget queueListItem(dynamic item, int index) {
     Color color = Colors.transparent;
     Widget content = const SizedBox.shrink();
     GestureTapCallback? onTap;

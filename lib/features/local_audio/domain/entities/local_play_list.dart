@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
-class PlayListEntity {
+class PlaylistEntity {
   final int id;
   final String title;
   final int order;
@@ -10,7 +10,7 @@ class PlayListEntity {
   final int totalDuration;
   final List<AudioEntity> audios;
 
-  PlayListEntity({
+  PlaylistEntity({
     required this.id,
     required this.title,
     required this.order,
@@ -19,7 +19,7 @@ class PlayListEntity {
     required this.audios,
   });
 
-  factory PlayListEntity.fromDrift(
+  factory PlaylistEntity.fromDrift(
     PlaylistTableData item,
     List<AudioEntity> audios,
   ) {
@@ -27,7 +27,7 @@ class PlayListEntity {
     for (AudioEntity audio in audios) {
       duration += audio.duration;
     }
-    return PlayListEntity(
+    return PlaylistEntity(
       id: item.id,
       title: item.title,
       order: item.order,

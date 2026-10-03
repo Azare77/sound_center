@@ -114,7 +114,7 @@ class LocalAudioRepositoryLinux extends AudioRepositoryImp {
     final file = File(audio.path);
 
     if (await file.exists()) {
-      super.removeAudioFromAllPlaylists(audioId: audio.id);
+      await super.removeAudioFromAllPlaylists(audio.id);
       await file.delete();
       return true;
     }

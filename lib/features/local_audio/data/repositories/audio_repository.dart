@@ -233,7 +233,7 @@ abstract class AudioRepositoryImp implements AudioRepository {
     });
   }
 
-  Future<bool> removeAudioFromAllPlaylists({required int audioId}) async {
+  Future<bool> removeAudioFromAllPlaylists(int audioId) async {
     return database.transaction(() async {
       final items = await (database.select(
         database.playlistItemTable,

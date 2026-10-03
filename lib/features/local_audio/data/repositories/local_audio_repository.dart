@@ -54,8 +54,8 @@ class LocalAudioRepository extends AudioRepositoryImp {
 
   @override
   Future<bool> deleteAudio(AudioEntity audio) async {
-    final res = await super.removeAudioFromAllPlaylists(audioId: audio.id);
+    final res = await _localStorageSource.deleteAudio(audio);
     if (!res) return false;
-    return await _localStorageSource.deleteAudio(audio);
+    return await super.removeAudioFromAllPlaylists(audio.id);
   }
 }

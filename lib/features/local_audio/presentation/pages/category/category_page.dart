@@ -6,7 +6,7 @@ import 'package:sound_center/features/local_audio/domain/entities/local_play_lis
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/category_list_template.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/playlist/playlist_list_template.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/playlist_list_template.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 

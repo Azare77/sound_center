@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/core_view/current_media.dart';
@@ -10,8 +11,11 @@ import 'package:sound_center/database/shared_preferences/loca_order_storage.dart
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
+import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/list_header.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/tool_bar.dart';
+import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class CategoryDetail extends StatefulWidget {
@@ -34,6 +38,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
   List<AudioEntity> allAudios = [];
   List<AudioEntity> audios = [];
   StreamSubscription<AudioEntity?>? _audioSub;
+  late final LocalBloc bloc;
 
   void _init() {
     allAudios = AudioUtil.allAudios;
@@ -78,6 +83,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
   @override
   void initState() {
     super.initState();
+    bloc = BlocProvider.of<LocalBloc>(context);
     _audioSub = repository.audioChangedStream.listen((ms) async {
       setState(() {});
     });
@@ -93,11 +99,17 @@ class _CategoryDetailState extends State<CategoryDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(elevation: 0),
       body: Stack(
         children: [
           Column(
+            spacing: 10,
             children: [
+              ListHeader(
+                title: widget.title,
+                audios: audios,
+                category: widget.category,
+              ),
               ToolBar(
                 onQueryChanged: filter,
                 onOrderChange: (column, desc) {

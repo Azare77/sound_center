@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/playlist.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/playlist/playlist_template.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/playlist_template.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
 

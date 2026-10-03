@@ -8,11 +8,12 @@ import 'package:sound_center/core_view/current_media.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
+import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_template.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/playlist/action_bar.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/playlist/add_audio_to_playlist_dialog.dart';
-import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/list_header.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/action_bar.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/add_audio_to_playlist_dialog.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 
 class Playlist extends StatefulWidget {
@@ -75,135 +76,6 @@ class _PlaylistState extends State<Playlist> {
         selectedAudios.add(audio);
       }
     });
-  }
-
-  Widget _buildHeader() {
-    ColorScheme cs = Theme.of(context).colorScheme;
-    TextTheme tt = Theme.of(context).textTheme;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(28),
-          bottomRight: Radius.circular(28),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: cs.primary.withValues(alpha: 0.35),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Theme.of(context).appBarTheme.backgroundColor!,
-            Theme.of(
-              context,
-            ).appBarTheme.backgroundColor!.withValues(alpha: 0.6),
-          ],
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 18,
-        children: [
-          Row(
-            spacing: 15,
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [cs.primary, cs.tertiary],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: cs.primary.withValues(alpha: 0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.queue_music_rounded,
-                  color: cs.onPrimary,
-                  size: 30,
-                ),
-              ),
-              Column(
-                spacing: 4,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.playlist.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: tt.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: cs.onPrimaryContainer,
-                    ),
-                  ),
-                  Text(
-                    '${S.of(context).tracks} : ${audios.length}',
-                    style: tt.bodyMedium?.copyWith(
-                      color: cs.onPrimaryContainer.withValues(alpha: 0.75),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          Row(
-            spacing: 10,
-            children: [
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: audios.isEmpty
-                      ? null
-                      : () => bloc.add(PlayAudio(audios: audios, index: 0)),
-                  label: Text(S.of(context).play),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: audios.isEmpty
-                      ? null
-                      : () {
-                          final shuffled = List<AudioEntity>.from(audios)
-                            ..shuffle();
-                          bloc.add(PlayAudio(audios: shuffled, index: 0));
-                        },
-                  label: Text(S.of(context).shufflePlay),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    foregroundColor: cs.onPrimaryContainer,
-                    side: BorderSide(
-                      color: cs.onPrimaryContainer.withValues(alpha: 0.4),
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildAudioList() {
@@ -311,7 +183,11 @@ class _PlaylistState extends State<Playlist> {
             body: Column(
               spacing: 10,
               children: [
-                _buildHeader(),
+                ListHeader(
+                  title: widget.playlist.title,
+                  audios: audios,
+                  category: Category.playlists,
+                ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
                   height: multipleSelect ? 30 : 0,

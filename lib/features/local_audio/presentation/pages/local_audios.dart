@@ -7,7 +7,7 @@ import 'package:sound_center/features/local_audio/domain/repositories/audio_repo
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/category/category_page.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/playlist/create_playlist_dilaog.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/create_playlist_dilaog.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/tool_bar.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/loading.dart';

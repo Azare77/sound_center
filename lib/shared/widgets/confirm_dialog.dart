@@ -9,25 +9,28 @@ class ConfirmDialog extends StatelessWidget {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 20,
-          children: [
-            Text(S.of(context).areYouSureAboutThat),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text(S.of(context).yes),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(S.of(context).no),
-                ),
-              ],
-            ),
-          ],
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 20,
+            children: [
+              Text(S.of(context).areYouSureAboutThat),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(S.of(context).no),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text(S.of(context).yes),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

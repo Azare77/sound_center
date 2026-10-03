@@ -76,6 +76,7 @@ class LocalAudioRepositoryLinux extends AudioRepositoryImp {
 
     allSongs = super.sort(allSongs, orderBy, desc);
     await super.removeMissingFiles(allSongs);
+    await super.removeMissingFavorites(allSongs);
     return allSongs;
   }
 

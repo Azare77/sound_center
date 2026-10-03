@@ -47,6 +47,7 @@ class LocalAudioRepository extends AudioRepositoryImp {
       allAudios = super.sort(allAudios, orderBy, desc);
       AudioUtil.allAudios = allAudios;
       await super.removeMissingFiles(allAudios);
+      await super.removeMissingFavorites(allAudios);
       return allAudios;
     } catch (_) {
       return [];

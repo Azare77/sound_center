@@ -33,8 +33,6 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
         .then((audios) async {
           player.setPlayList(audios);
           add(GetLocalAudios());
-          add(GetFavorites());
-          add(GetPlaylists());
           player.init();
         });
     on<GetLocalAudios>((event, emit) async {
@@ -43,6 +41,8 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
         desc: event.desc,
       );
       emit(state.copyWith(LocalAudioStatus(audios: audios)));
+      add(GetFavorites());
+      add(GetPlaylists());
     });
     on<PlayAudio>((event, emit) async {
       player.setPlayList(event.audios);

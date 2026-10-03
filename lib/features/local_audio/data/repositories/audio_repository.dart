@@ -243,12 +243,23 @@ abstract class AudioRepositoryImp implements AudioRepository {
         return false;
       }
 
-      final deleted = await (database.delete(
-        database.playlistItemTable,
-      )..where((t) => t.audioId.equals(audioId))).go();
+      for (final item in items) {
+        await (database.delete(
+          database.playlistItemTable,
+        )..where((t) => t.id.equals(item.id))).go();
 
-      if (deleted == 0) {
-        return false;
+        await database.customUpdate(
+          '''
+        UPDATE playlist_item_table
+        SET "order" = "order" - 1
+        WHERE playlist_id = ? AND "order" > ?
+        ''',
+          variables: [
+            Variable.withInt(item.playlistId),
+            Variable.withInt(item.order),
+          ],
+          updates: {database.playlistItemTable},
+        );
       }
 
       return true;
@@ -268,6 +279,22 @@ abstract class AudioRepositoryImp implements AudioRepository {
     for (final audioId in missingAudioIds) {
       await removeAudioFromAllPlaylists(audioId);
     }
+  }
+
+  Future<void> removeMissingFavorites(List<AudioEntity> audios) async {
+    final existingAudioIds = audios.map((audio) => audio.id).toSet();
+
+    await database.transaction(() async {
+      final favorites = await database.select(database.favoriteTable).get();
+
+      for (final favorite in favorites) {
+        if (!existingAudioIds.contains(favorite.audioId)) {
+          await (database.delete(
+            database.favoriteTable,
+          )..where((t) => t.audioId.equals(favorite.audioId))).go();
+        }
+      }
+    });
   }
 
   List<AudioEntity> sort(

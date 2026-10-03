@@ -255,6 +255,21 @@ abstract class AudioRepositoryImp implements AudioRepository {
     });
   }
 
+  Future<void> removeMissingFiles(List<AudioEntity> audios) async {
+    final existingAudioIds = audios.map((audio) => audio.id).toSet();
+
+    final records = await database.select(database.playlistItemTable).get();
+
+    final missingAudioIds = records
+        .map((record) => record.audioId)
+        .where((audioId) => !existingAudioIds.contains(audioId))
+        .toSet();
+
+    for (final audioId in missingAudioIds) {
+      await removeAudioFromAllPlaylists(audioId);
+    }
+  }
+
   List<AudioEntity> sort(
     List<AudioEntity> audios,
     AudioColumns order,

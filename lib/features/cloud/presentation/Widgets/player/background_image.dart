@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/features/cloud/data/repository/cloud_player_rpository_imp.dart';
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
-import 'package:sound_center/shared/widgets/blur_player_image.dart';
+import 'package:sound_center/shared/widgets/player/blur_player_image.dart';
 
 class CloudBackgroundImage extends StatelessWidget {
   const CloudBackgroundImage({super.key});

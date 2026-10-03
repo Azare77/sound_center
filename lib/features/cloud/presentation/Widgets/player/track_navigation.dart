@@ -7,7 +7,7 @@ import 'package:sound_center/features/cloud/data/repository/cloud_player_rposito
 import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
-import 'package:sound_center/shared/widgets/play_pause_button.dart';
+import 'package:sound_center/shared/widgets/player/play_pause_button.dart';
 
 class TrackNavigation extends StatefulWidget {
   const TrackNavigation({super.key});

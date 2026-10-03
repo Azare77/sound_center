@@ -7,7 +7,7 @@ import 'package:sound_center/features/podcast/data/repository/podcast_player_rpo
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
-import 'package:sound_center/shared/widgets/play_pause_button.dart';
+import 'package:sound_center/shared/widgets/player/play_pause_button.dart';
 
 class PodcastNavigation extends StatefulWidget {
   const PodcastNavigation({super.key});

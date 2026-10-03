@@ -8,7 +8,7 @@ import 'package:sound_center/features/stream/data/repository/stream_player_repos
 import 'package:sound_center/features/stream/domain/entity/stream_info.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/shared/widgets/network_image.dart';
-import 'package:sound_center/shared/widgets/play_pause_button.dart';
+import 'package:sound_center/shared/widgets/player/play_pause_button.dart';
 
 class CurrentStream extends StatefulWidget {
   const CurrentStream({super.key, required this.streamEntity});

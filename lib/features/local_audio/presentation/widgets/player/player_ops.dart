@@ -6,7 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/shared/widgets/confirm_dialog.dart';
-import 'package:sound_center/shared/widgets/handler.dart';
+import 'package:sound_center/shared/widgets/player/handler.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/speed_dialog.dart';
 

@@ -19,7 +19,7 @@ import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 import 'package:sound_center/shared/widgets/glass.dart';
-import 'package:sound_center/shared/widgets/handler.dart';
+import 'package:sound_center/shared/widgets/player/handler.dart';
 
 class PlayQueue extends StatelessWidget {
   const PlayQueue({super.key, required this.imp});

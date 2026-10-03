@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
-import 'package:sound_center/shared/widgets/play_pause_button.dart';
+import 'package:sound_center/shared/widgets/player/play_pause_button.dart';
 
 class CurrentAudio extends StatefulWidget {
   const CurrentAudio({super.key, required this.audioEntity});

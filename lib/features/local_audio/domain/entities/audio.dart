@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:intl/intl.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class AudioEntity {
@@ -67,6 +68,18 @@ class AudioEntity {
   }
 
   factory AudioEntity.fromSongModel(SongModel song) {
+    final unknown = Intl.message("Unknown", name: "unknown");
+
+    String metadataOrUnknown(String? value) {
+      final metadata = value?.trim();
+
+      if (metadata == null || metadata.isEmpty || metadata == '<unknown>') {
+        return unknown;
+      }
+
+      return metadata;
+    }
+
     return AudioEntity(
       id: song.id,
       uri: song.uri,
@@ -80,11 +93,9 @@ class AudioEntity {
       isPodcast: song.isPodcast ?? false,
       isAlarm: song.isAlarm ?? false,
       cover: null,
-      album: song.album == "<unknown>" || song.album == null ? "" : song.album!,
-      genre: song.genre == "<unknown>" || song.genre == null ? "" : song.genre!,
-      artist: song.artist == "<unknown>" || song.artist == null
-          ? ""
-          : song.artist!,
+      album: metadataOrUnknown(song.album),
+      genre: metadataOrUnknown(song.genre),
+      artist: metadataOrUnknown(song.artist),
     );
   }
 

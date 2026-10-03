@@ -5,6 +5,7 @@ import 'package:sound_center/database/shared_preferences/app_setting_storage.dar
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_list_template.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/tool_bar.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/glass.dart';
@@ -20,7 +21,15 @@ class AddAudioToPlaylistDialog extends StatefulWidget {
 }
 
 class _AddAudioToPlaylistDialogState extends State<AddAudioToPlaylistDialog> {
-  final List<AudioEntity> audios = [];
+  List<AudioEntity> audios = [];
+  List<AudioEntity> selected = [];
+  final List<AudioEntity> allAudios = AudioUtil.allAudios;
+
+  @override
+  void initState() {
+    audios = allAudios;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +47,24 @@ class _AddAudioToPlaylistDialogState extends State<AddAudioToPlaylistDialog> {
           child: Column(
             spacing: 15,
             children: [
+              ToolBar(
+                onQueryChanged: filter,
+                onOrderChange: (column, desc) {
+                  setState(() {
+                    audios = AudioUtil.sort(audios, column, desc);
+                  });
+                },
+                index: null,
+              ),
               Expanded(
                 child: AudioListTemplate(
-                  AudioUtil.allAudios,
+                  audios,
                   multipleSelect: true,
                   onAudioTap: (audio) {
-                    if (audios.contains(audio)) {
-                      audios.remove(audio);
+                    if (selected.contains(audio)) {
+                      selected.remove(audio);
                     } else {
-                      audios.add(audio);
+                      selected.add(audio);
                     }
                   },
                 ),
@@ -56,10 +74,10 @@ class _AddAudioToPlaylistDialogState extends State<AddAudioToPlaylistDialog> {
                   BlocProvider.of<LocalBloc>(context).add(
                     AddToPlaylist(
                       playlistId: widget.playlistId,
-                      audios: audios,
+                      audios: selected,
                     ),
                   );
-                  Navigator.pop(context, audios);
+                  Navigator.pop(context, selected);
                 },
                 child: Text(S.of(context).ok),
               ),
@@ -68,5 +86,17 @@ class _AddAudioToPlaylistDialogState extends State<AddAudioToPlaylistDialog> {
         ),
       ),
     );
+  }
+
+  void filter(String name) {
+    name = name.trim().toLowerCase();
+    if (name.isEmpty) {
+      audios = allAudios;
+    } else {
+      audios = allAudios
+          .where((item) => item.title.toLowerCase().contains(name))
+          .toList();
+    }
+    setState(() {});
   }
 }

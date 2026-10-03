@@ -1,14 +1,19 @@
+import 'dart:ui';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core_view/current_media.dart';
+import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_template.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/playlist/action_bar.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/playlist/add_audio_to_playlist_dialog.dart';
+import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/theme/themes.dart';
 
 class Playlist extends StatefulWidget {
   const Playlist({super.key, required this.playlist});
@@ -24,6 +29,7 @@ class _PlaylistState extends State<Playlist> {
 
   late List<AudioEntity> audios;
   late final LocalBloc bloc;
+  late final LocalPlayerRepositoryImp imp;
 
   bool multipleSelect = false;
   final List<AudioEntity> selectedAudios = [];
@@ -31,7 +37,7 @@ class _PlaylistState extends State<Playlist> {
   @override
   void initState() {
     super.initState();
-
+    imp = LocalPlayerRepositoryImp();
     bloc = BlocProvider.of<LocalBloc>(context);
     audios = List<AudioEntity>.from(widget.playlist.audios);
   }
@@ -42,8 +48,6 @@ class _PlaylistState extends State<Playlist> {
     super.dispose();
   }
 
-  // دیگه نیازی به ذخیره/بازگردانی دستیِ offset نیست، چون ویجتِ لیست
-  // دیگه هیچ‌وقت dispose/remount نمی‌شه و ScrollPosition خودش حفظ می‌مونه.
   void enterMultipleSelect(AudioEntity audio) {
     setState(() {
       multipleSelect = true;
@@ -73,12 +77,135 @@ class _PlaylistState extends State<Playlist> {
     });
   }
 
-  // نکتهٔ کلیدی: به‌جای سوییچ بین دو نوع ویجت مختلف (ListView.builder و
-  // ReorderableListView.builder)، همیشه همون یک ReorderableListView.builder
-  // رو نگه می‌داریم و فقط itemBuilder و رفتار reorder رو شرطی می‌کنیم.
-  // چون runtimeType و موقعیت ویجت در تری عوض نمی‌شه، Element و در نتیجه
-  // ScrollPosition وصل‌شده به _scrollController هیچ‌وقت dispose نمی‌شه،
-  // پس پرش به بالا موقع تغییر حالت کلاً رخ نمی‌ده.
+  Widget _buildHeader() {
+    ColorScheme cs = Theme.of(context).colorScheme;
+    TextTheme tt = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(28),
+          bottomRight: Radius.circular(28),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: cs.primary.withValues(alpha: 0.35),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Theme.of(context).appBarTheme.backgroundColor!,
+            Theme.of(
+              context,
+            ).appBarTheme.backgroundColor!.withValues(alpha: 0.6),
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 18,
+        children: [
+          Row(
+            spacing: 15,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [cs.primary, cs.tertiary],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: cs.primary.withValues(alpha: 0.35),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.queue_music_rounded,
+                  color: cs.onPrimary,
+                  size: 30,
+                ),
+              ),
+              Column(
+                spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.playlist.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: tt.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: cs.onPrimaryContainer,
+                    ),
+                  ),
+                  Text(
+                    '${S.of(context).tracks} : ${audios.length}',
+                    style: tt.bodyMedium?.copyWith(
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.75),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          Row(
+            spacing: 10,
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: audios.isEmpty
+                      ? null
+                      : () => bloc.add(PlayAudio(audios: audios, index: 0)),
+                  label: Text(S.of(context).play),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: audios.isEmpty
+                      ? null
+                      : () {
+                          final shuffled = List<AudioEntity>.from(audios)
+                            ..shuffle();
+                          bloc.add(PlayAudio(audios: shuffled, index: 0));
+                        },
+                  label: Text(S.of(context).shufflePlay),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    foregroundColor: cs.onPrimaryContainer,
+                    side: BorderSide(
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.4),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAudioList() {
     return ReorderableListView.builder(
       scrollController: _scrollController,
@@ -86,12 +213,28 @@ class _PlaylistState extends State<Playlist> {
       itemCount: audios.length,
       itemExtent: LIST_ITEM_HEIGHT,
       proxyDecorator: (child, index, animation) {
-        return Material(color: Colors.transparent, elevation: 0, child: child);
+        return AnimatedBuilder(
+          animation: animation,
+          builder: (context, c) {
+            final t = Curves.easeOut.transform(animation.value);
+            final scale = lerpDouble(1, 1.03, t)!;
+            return Transform.scale(
+              scale: scale,
+              child: Material(
+                color: Colors.transparent,
+                elevation: lerpDouble(0, 8, t)!,
+                shadowColor: Colors.black45,
+                borderRadius: BorderRadius.circular(16),
+                child: c,
+              ),
+            );
+          },
+          child: child,
+        );
       },
+
       padding: const EdgeInsets.only(bottom: 120),
       onReorderItem: (oldIndex, newIndex) {
-        // موقع انتخاب چندتایی، drag handle اصلاً رندر نمی‌شه (پایین‌تر)
-        // پس این callback عملاً قابل فراخوانی نیست، اما به‌خاطر ایمنی نگهش می‌داریم.
         if (multipleSelect) return;
 
         bloc.add(
@@ -109,14 +252,17 @@ class _PlaylistState extends State<Playlist> {
       },
       itemBuilder: (context, index) {
         final audio = audios[index];
-
+        final isCurrent = imp.getCurrentAudio?.id == audio.id;
         if (multipleSelect) {
           return Material(
             key: ValueKey(audio.id),
-            color: Colors.transparent,
+            color: isCurrent
+                ? ThemeManager.current.mediaColor
+                : Colors.transparent,
             child: InkWell(
               onTap: () => toggleAudio(audio),
               child: AudioTemplate(
+                key: ValueKey(audio.id),
                 audioEntity: audio,
                 isMultiple: true,
                 isSelected: selectedAudios.contains(audio),
@@ -131,6 +277,7 @@ class _PlaylistState extends State<Playlist> {
           index,
           onLongPress: () => enterMultipleSelect(audio),
           onTap: () => bloc.add(PlayAudio(audios: audios, index: index)),
+          isCurrent: imp.getCurrentAudio?.id == audio.id,
         );
       },
     );
@@ -153,7 +300,7 @@ class _PlaylistState extends State<Playlist> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: Text(widget.playlist.title),
+              elevation: 0,
               leading: multipleSelect
                   ? IconButton(
                       onPressed: exitMultipleSelect,
@@ -162,10 +309,12 @@ class _PlaylistState extends State<Playlist> {
                   : null,
             ),
             body: Column(
+              spacing: 10,
               children: [
+                _buildHeader(),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
-                  height: multipleSelect ? 50 : 0,
+                  height: multipleSelect ? 30 : 0,
                   curve: Curves.easeOut,
                   child: ActionBar(
                     playlistId: widget.playlist.id,
@@ -232,20 +381,21 @@ Widget queueListItem(
   int index, {
   required GestureTapCallback onTap,
   required GestureTapCallback onLongPress,
+  required bool isCurrent,
 }) {
   return Material(
     key: ValueKey((item.id, index)),
-    color: Colors.transparent,
+    color: isCurrent ? ThemeManager.current.mediaColor : Colors.transparent,
     child: Row(
       children: [
         ReorderableDragStartListener(
           index: index,
           child: SizedBox(
-            width: 60,
+            width: 40,
             height: LIST_ITEM_HEIGHT,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              child: const Center(child: Icon(Icons.drag_handle)),
+              child: const Icon(Icons.drag_indicator_rounded),
             ),
           ),
         ),

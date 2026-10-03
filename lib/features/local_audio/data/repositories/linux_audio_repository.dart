@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:crypto/crypto.dart';
+import 'package:intl/intl.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
@@ -31,10 +32,23 @@ class LocalAudioRepositoryLinux extends AudioRepositoryImp {
       final file = audioFiles[i];
 
       try {
+        String unknown = Intl.message("Unknown", name: "unknown");
         final metadata = readMetadata(file, getImage: true);
-        final title = metadata.title ?? file.path.split('/').last;
-        final artist = metadata.artist ?? '';
-        final album = metadata.album ?? '';
+        final title = metadata.title?.isNotEmpty == true
+            ? metadata.title!
+            : file.path.split('/').last;
+
+        final artist = metadata.artist?.isNotEmpty == true
+            ? metadata.artist!
+            : unknown;
+
+        final album = metadata.album?.isNotEmpty == true
+            ? metadata.album!
+            : unknown;
+
+        final genre = metadata.genres.firstOrNull?.isNotEmpty == true
+            ? metadata.genres.first
+            : unknown;
         final duration = metadata.duration?.inMilliseconds ?? 0;
         final fileSize = file.lengthSync();
         allSongs.add(
@@ -45,7 +59,7 @@ class LocalAudioRepositoryLinux extends AudioRepositoryImp {
             title: title,
             duration: duration,
             album: album,
-            genre: metadata.genres.firstOrNull ?? '',
+            genre: genre,
             dateAdded: metadata.file.lastModifiedSync(),
             trackNum: metadata.trackNumber ?? 0,
             isPodcast: false,

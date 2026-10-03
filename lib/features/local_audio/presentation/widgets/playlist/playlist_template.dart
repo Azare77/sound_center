@@ -29,7 +29,7 @@ class PlaylistTemplate extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: Icon(Icons.playlist_play_rounded, size: size - 10),
+            child: Icon(Icons.queue_music_rounded, size: size - 10),
           ),
 
           // --- متن‌ها ---

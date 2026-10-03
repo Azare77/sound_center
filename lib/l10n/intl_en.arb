@@ -2,6 +2,7 @@
   "title": "Title",
   "artist": "Artist",
   "album": "Album",
+  "unknown": "Unknown",
   "createTime": "Create time",
   "duration": "Duration",
   "descending": "Descending",
@@ -111,5 +112,6 @@
   "categoryArtists": "Artists",
   "categoryAlbums": "Albums",
   "categoryGenres": "Genres",
-  "categoryFolders": "Folders"
+  "categoryFolders": "Folders",
+  "shufflePlay": "Shuffle Play"
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
@@ -215,6 +216,26 @@ class _QueueState extends State<Queue> {
               buildDefaultDragHandles: false,
               itemCount: queue.length,
               itemExtent: LIST_ITEM_HEIGHT,
+              proxyDecorator: (child, index, animation) {
+                return AnimatedBuilder(
+                  animation: animation,
+                  builder: (context, c) {
+                    final t = Curves.easeOut.transform(animation.value);
+                    final scale = lerpDouble(1, 1.03, t)!;
+                    return Transform.scale(
+                      scale: scale,
+                      child: Material(
+                        color: Colors.transparent,
+                        elevation: lerpDouble(0, 8, t)!,
+                        shadowColor: Colors.black45,
+                        borderRadius: BorderRadius.circular(16),
+                        child: c,
+                      ),
+                    );
+                  },
+                  child: child,
+                );
+              },
               onReorderItem: (oldIndex, newIndex) {
                 setState(() {
                   if (local != null) {
@@ -280,11 +301,11 @@ class _QueueState extends State<Queue> {
           ReorderableDragStartListener(
             index: index,
             child: SizedBox(
-              width: 60,
+              width: 40,
               height: LIST_ITEM_HEIGHT,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                child: const Center(child: Icon(Icons.drag_handle)),
+                child: const Icon(Icons.drag_indicator_rounded),
               ),
             ),
           ),

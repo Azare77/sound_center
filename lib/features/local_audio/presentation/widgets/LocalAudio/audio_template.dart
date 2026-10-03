@@ -77,6 +77,7 @@ class _AudioTemplateState extends State<AudioTemplate> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image(
+                key: ValueKey(widget.audioEntity.id),
                 image: cover != null
                     ? MemoryImage(cover!)
                     : const AssetImage('assets/default-cover.png')

@@ -54,6 +54,10 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
         );
       }
       index = audios.indexWhere((a) => a.id == _currentAudio!.id);
+      if (index == -1) {
+        _currentAudio = null;
+        return;
+      }
       shuffleIndex = shuffleList.indexWhere((a) => a == index);
       audios[index] = _currentAudio!;
       (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
@@ -315,6 +319,7 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
   }
 
   Future<void> _loadBanner() async {
+    return;
     if (Platform.isLinux) return;
     for (int i = 0; i < audios.length; i++) {
       final audio = audios[i];

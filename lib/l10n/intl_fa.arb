@@ -2,6 +2,7 @@
   "title": "عنوان",
   "artist": "هنرمند",
   "album": "آلبوم",
+  "unknown": "نامشخص",
   "createTime": "تاریخ ایجاد",
   "duration": "مدت",
   "descending": "نزولی",
@@ -111,5 +112,6 @@
   "categoryArtists": "خواننده‌ها",
   "categoryAlbums": "آلبوم‌ها",
   "categoryGenres": "سبک‌ها",
-  "categoryFolders": "پوشه ها"
+  "categoryFolders": "پوشه ها",
+  "shufflePlay": "پخش تصادفی"
 }

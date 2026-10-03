@@ -69,6 +69,11 @@ class S {
     return Intl.message('Album', name: 'album', desc: '', args: []);
   }
 
+  /// `Unknown`
+  String get unknown {
+    return Intl.message('Unknown', name: 'unknown', desc: '', args: []);
+  }
+
   /// `Create time`
   String get createTime {
     return Intl.message('Create time', name: 'createTime', desc: '', args: []);
@@ -802,6 +807,16 @@ class S {
   /// `Folders`
   String get categoryFolders {
     return Intl.message('Folders', name: 'categoryFolders', desc: '', args: []);
+  }
+
+  /// `Shuffle Play`
+  String get shufflePlay {
+    return Intl.message(
+      'Shuffle Play',
+      name: 'shufflePlay',
+      desc: '',
+      args: [],
+    );
   }
 }
 

@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/widgets/scrolling_text.dart';
 
 class ListHeader extends StatelessWidget {
@@ -17,6 +21,15 @@ class ListHeader extends StatelessWidget {
   final String title;
   final List<AudioEntity> audios;
   final Category category;
+
+  void _shufflePlay(BuildContext context) {
+    final bloc = context.read<LocalBloc>();
+    final imp = LocalPlayerRepositoryImp();
+    if (audios.isEmpty) return;
+
+    imp.shuffleMode = ShuffleMode.shuffle;
+    bloc.add(PlayAudio(audios: audios, index: Random().nextInt(audios.length)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,11 +157,7 @@ class ListHeader extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: audios.isEmpty
                       ? null
-                      : () {
-                          final shuffled = List<AudioEntity>.from(audios)
-                            ..shuffle();
-                          bloc.add(PlayAudio(audios: shuffled, index: 0));
-                        },
+                      : () => _shufflePlay(context),
                   label: Text(S.of(context).shufflePlay),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),

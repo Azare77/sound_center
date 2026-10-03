@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
@@ -31,7 +32,7 @@ class _PlaylistState extends State<Playlist> {
   late List<AudioEntity> audios;
   late final LocalBloc bloc;
   late final LocalPlayerRepositoryImp imp;
-
+  StreamSubscription<AudioEntity?>? _audioSub;
   bool multipleSelect = false;
   final List<AudioEntity> selectedAudios = [];
 
@@ -41,10 +42,14 @@ class _PlaylistState extends State<Playlist> {
     imp = LocalPlayerRepositoryImp();
     bloc = BlocProvider.of<LocalBloc>(context);
     audios = List<AudioEntity>.from(widget.playlist.audios);
+    _audioSub = imp.audioChangedStream.listen((ms) async {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
+    _audioSub?.cancel();
     _scrollController.dispose();
     super.dispose();
   }

@@ -78,10 +78,10 @@ class RenamePlaylist extends LocalEvent {
   RenamePlaylist({required this.playlistId, required this.newTitle});
 }
 
-class DeletePlaylist extends LocalEvent {
-  final int playlist;
+class DeletePlaylists extends LocalEvent {
+  final List<int> playlistIds;
 
-  DeletePlaylist({required this.playlist});
+  DeletePlaylists({required this.playlistIds});
 }
 
 class ChangePlaylistOrder extends LocalEvent {
@@ -111,8 +111,8 @@ class AutoPlayNext extends LocalEvent {}
 
 class TogglePlay extends LocalEvent {}
 
-class DeleteAudio extends LocalEvent {
-  AudioEntity audio;
+class DeleteAudios extends LocalEvent {
+  List<AudioEntity> audios;
 
-  DeleteAudio(this.audio);
+  DeleteAudios(this.audios);
 }

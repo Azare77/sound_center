@@ -73,9 +73,11 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       emit(state.copyWith(state.status));
     });
 
-    on<DeleteAudio>((event, emit) async {
-      await player.removeAudio(event.audio);
-      await getAudioUseCase.deleteAudio(event.audio);
+    on<DeleteAudios>((event, emit) async {
+      for (AudioEntity audio in event.audios) {
+        await player.removeAudio(audio);
+        await getAudioUseCase.deleteAudio(audio);
+      }
       add(GetLocalAudios());
     });
 
@@ -109,9 +111,11 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       if (res) add(GetPlaylists());
     });
 
-    on<DeletePlaylist>((event, emit) async {
-      final bool res = await getAudioUseCase.deletePlaylist(event.playlist);
-      if (res) add(GetPlaylists());
+    on<DeletePlaylists>((event, emit) async {
+      for (int id in event.playlistIds) {
+        await getAudioUseCase.deletePlaylist(id);
+      }
+      add(GetPlaylists());
     });
 
     on<AddToPlaylist>((event, emit) async {

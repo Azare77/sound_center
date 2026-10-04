@@ -62,7 +62,7 @@ class _PlaylistActionDialogState extends State<PlaylistActionDialog> {
                 if (res) {
                   BlocProvider.of<LocalBloc>(
                     context,
-                  ).add(DeletePlaylist(playlist: widget.playlistId));
+                  ).add(DeletePlaylists(playlistIds: [widget.playlistId]));
                   Navigator.pop(context);
                 }
               },

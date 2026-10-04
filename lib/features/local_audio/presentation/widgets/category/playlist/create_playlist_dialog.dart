@@ -36,7 +36,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
         RenamePlaylist(playlistId: widget.playlistId!, newTitle: title.trim()),
       );
     }
-    Navigator.pop(context, true);
+    Navigator.pop(context, title.trim());
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:sound_center/features/local_audio/data/repositories/local_player
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart'
     as event;
+import 'package:sound_center/features/local_audio/presentation/util/multi_select_controller.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_action_menu.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudio/audio_template.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -20,6 +21,10 @@ class AudioListTemplate extends StatefulWidget {
   });
 
   final List<AudioEntity> audios;
+
+  /// حالت مالتی‌سلکتِ تحمیلیِ بیرونی (مثلاً هنگام انتخاب آهنگ برای ساخت
+  /// پلی‌لیست). این حالت کاملاً مستقل از MultiSelectController سراسری است
+  /// و رفتار قبلی‌اش دست‌نخورده باقی مانده.
   final bool multipleSelect;
   final ValueChanged<AudioEntity>? onAudioTap;
 
@@ -57,6 +62,63 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
       return Center(child: TextView(S.of(context).noAudio));
     }
 
+    if (widget.multipleSelect) {
+      // حالت تحمیلی بیرونی: دقیقاً همان رفتار قبلی، بدون تغییر.
+      return _buildList(
+        context,
+        currentAudio,
+        isSelected: (a) => selectedAudios.contains(a),
+        isMultiple: true,
+        onItemTap: (audio, index) {
+          widget.onAudioTap?.call(audio);
+          toggleAudio(audio);
+        },
+        onItemLongPress: (audio) => showDialog(
+          context: context,
+          builder: (_) => AudioActionMenu(audio: audio),
+        ),
+      );
+    }
+
+    // حالت عادیِ صفحه: به کنترلر سراسری مالتی‌سلکت وصل می‌شود.
+    // دو تا ValueListenableBuilder لازم است: یکی برای روشن/خاموش بودنِ حالت
+    // انتخاب (multiSelect)، یکی برای خودِ ست انتخاب‌شده‌ها (selected) — در
+    // غیر این صورت toggle شدن یک آیتم باعث rebuild چک‌باکس‌ها نمی‌شود.
+    return ValueListenableBuilder<bool>(
+      valueListenable: MultiSelectController.multiSelect,
+      builder: (context, active, _) => ValueListenableBuilder<Set<Object>>(
+        valueListenable: MultiSelectController.selected,
+        builder: (context, _, __) => _buildList(
+          context,
+          currentAudio,
+          isSelected: MultiSelectController.isSelected,
+          isMultiple: active,
+          onItemTap: (audio, index) {
+            if (active) {
+              MultiSelectController.toggle(audio);
+            } else {
+              context.read<event.LocalBloc>().add(
+                event.PlayAudio(audios: widget.audios, index: index),
+              );
+            }
+          },
+          onItemLongPress: (audio) {
+            if (active) return; // حین انتخاب، long-press کاری انجام نمی‌دهد
+            MultiSelectController.enable(audio); // req 1
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildList(
+    BuildContext context,
+    AudioEntity? currentAudio, {
+    required bool Function(AudioEntity) isSelected,
+    required bool isMultiple,
+    required void Function(AudioEntity audio, int index) onItemTap,
+    required void Function(AudioEntity audio) onItemLongPress,
+  }) {
     return Column(
       children: [
         Expanded(
@@ -72,7 +134,6 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
               itemBuilder: (context, index) {
                 final audio = widget.audios[index];
                 final isCurrent = currentAudio?.id == audio.id;
-                final isSelected = selectedAudios.contains(audio);
 
                 return Material(
                   key: ValueKey(audio.id),
@@ -80,30 +141,15 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
                       ? ThemeManager.current.mediaColor
                       : Colors.transparent,
                   child: InkWell(
-                    onTap: () {
-                      if (widget.multipleSelect) {
-                        widget.onAudioTap?.call(audio);
-                        toggleAudio(audio);
-                      } else {
-                        context.read<event.LocalBloc>().add(
-                          event.PlayAudio(audios: widget.audios, index: index),
-                        );
-                      }
-                    },
-                    onLongPress: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AudioActionMenu(audio: audio),
-                      );
-                    },
+                    onTap: () => onItemTap(audio, index),
+                    onLongPress: () => onItemLongPress(audio),
                     child: AudioTemplate(
                       audioEntity: audio,
-                      isMultiple: widget.multipleSelect,
-                      isSelected: isSelected,
+                      isMultiple: isMultiple,
+                      isSelected: isSelected(audio),
                       onChanged: (value) {
                         if (value == null) return;
-                        widget.onAudioTap?.call(audio);
-                        toggleAudio(audio);
+                        onItemTap(audio, index);
                       },
                     ),
                   ),

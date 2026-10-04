@@ -34,7 +34,9 @@ class AudioActionMenu extends StatelessWidget {
                       ) ??
                       false;
                   if (res) {
-                    BlocProvider.of<LocalBloc>(context).add(DeleteAudio(audio));
+                    BlocProvider.of<LocalBloc>(
+                      context,
+                    ).add(DeleteAudios([audio]));
                   }
                   Navigator.pop(context);
                 },

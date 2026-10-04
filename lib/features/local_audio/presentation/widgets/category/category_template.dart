@@ -5,10 +5,20 @@ import 'package:sound_center/features/local_audio/domain/entities/categories.dar
 import 'package:sound_center/generated/l10n.dart';
 
 class CategoryTemplate extends StatelessWidget {
-  const CategoryTemplate({super.key, required this.item, required this.icon});
+  const CategoryTemplate({
+    super.key,
+    required this.item,
+    required this.icon,
+    this.isMultiple = false,
+    this.isSelected = false,
+    this.onChanged,
+  });
 
   final dynamic item;
   final IconData icon;
+  final bool isMultiple;
+  final bool isSelected;
+  final ValueChanged<bool?>? onChanged;
 
   final double size = 50;
 
@@ -24,8 +34,20 @@ class CategoryTemplate extends StatelessWidget {
       height: LIST_ITEM_HEIGHT,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
-        spacing: 10,
         children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
+            child: isMultiple
+                ? Checkbox(
+                    key: const ValueKey('checkbox'),
+                    value: isSelected,
+                    onChanged: onChanged,
+                  )
+                : const SizedBox.shrink(key: ValueKey('empty')),
+          ),
+          if (isMultiple) const SizedBox(width: 10),
           // --- تصویر ---
           SizedBox(
             width: size,
@@ -35,7 +57,7 @@ class CategoryTemplate extends StatelessWidget {
               child: Icon(icon, size: size - 10),
             ),
           ),
-
+          const SizedBox(width: 10),
           // --- متن‌ها ---
           Expanded(
             child: Column(

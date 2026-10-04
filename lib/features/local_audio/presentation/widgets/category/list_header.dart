@@ -16,9 +16,11 @@ class ListHeader extends StatelessWidget {
     required this.title,
     required this.audios,
     required this.category,
+    this.playlistRename,
   });
 
   final String title;
+  final Function? playlistRename;
   final List<AudioEntity> audios;
   final Category category;
 
@@ -117,12 +119,29 @@ class ListHeader extends StatelessWidget {
                   spacing: 4,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ScrollingText(
-                      title,
-                      style: tt.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: cs.onPrimaryContainer,
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 5,
+                      children: [
+                        Expanded(
+                          child: ScrollingText(
+                            title,
+                            style: tt.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: cs.onPrimaryContainer,
+                            ),
+                          ),
+                        ),
+                        if (category == Category.playlists)
+                          IconButton(
+                            onPressed: () => playlistRename?.call(),
+                            iconSize: 18,
+                            icon: Icon(
+                              Icons.edit_rounded,
+                              color: cs.onPrimaryContainer,
+                            ),
+                          ),
+                      ],
                     ),
                     Text(
                       '${S.of(context).tracks} : ${audios.length}',

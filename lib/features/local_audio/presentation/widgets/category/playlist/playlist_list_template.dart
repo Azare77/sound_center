@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/playlist.dart';
-import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/playlist_action_dialog.dart';
+import 'package:sound_center/features/local_audio/presentation/util/multi_select_controller.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/playlist_template.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
@@ -30,36 +30,55 @@ class _PlaylistListTemplateState extends State<PlaylistListTemplate> {
     if (widget.playlists.isEmpty) {
       return Center(child: TextView(S.of(context).noAudio));
     }
-    return Scrollbar(
-      controller: _scrollController,
-      thumbVisibility: true,
-      interactive: true,
-      child: ListView.builder(
-        itemCount: widget.playlists.length,
-        controller: _scrollController,
-        itemExtent: LIST_ITEM_HEIGHT,
-        padding: const EdgeInsets.only(bottom: 120),
-        itemBuilder: (context, index) {
-          final playlist = widget.playlists[index];
-          return InkWell(
-            onLongPress: () {
-              showDialog(
-                context: context,
-                builder: (_) => PlaylistActionDialog(
-                  playlistId: playlist.id,
-                  title: playlist.title,
+    return ValueListenableBuilder<bool>(
+      valueListenable: MultiSelectController.multiSelect,
+      builder: (context, active, _) => ValueListenableBuilder<Set<Object>>(
+        valueListenable: MultiSelectController.selected,
+        builder: (context, _, __) => Scrollbar(
+          controller: _scrollController,
+          thumbVisibility: true,
+          interactive: true,
+          child: ListView.builder(
+            itemCount: widget.playlists.length,
+            controller: _scrollController,
+            itemExtent: LIST_ITEM_HEIGHT,
+            padding: const EdgeInsets.only(bottom: 120),
+            itemBuilder: (context, index) {
+              final playlist = widget.playlists[index];
+              final isSelected = MultiSelectController.isSelected(playlist);
+
+              void onToggle() => MultiSelectController.toggle(playlist);
+
+              return InkWell(
+                onLongPress: () {
+                  if (active) return;
+                  MultiSelectController.enable(playlist); // req 1
+                },
+                onTap: () {
+                  if (active) {
+                    onToggle();
+                    return;
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => Playlist(playlist: playlist),
+                    ),
+                  );
+                },
+                child: PlaylistTemplate(
+                  item: playlist,
+                  isMultiple: active,
+                  isSelected: isSelected,
+                  onChanged: (value) {
+                    if (value == null) return;
+                    onToggle();
+                  },
                 ),
               );
             },
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => Playlist(playlist: playlist)),
-              );
-            },
-            child: PlaylistTemplate(item: playlist),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

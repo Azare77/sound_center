@@ -40,7 +40,6 @@ class _PodcastToolBarState extends State<PodcastToolBar> {
   void dispose() {
     _controller.dispose();
     searchNotifier.removeListener(_onSearchChanged);
-    // searchNotifier.dispose();
     super.dispose();
   }
 

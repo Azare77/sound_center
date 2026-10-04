@@ -17,6 +17,11 @@ class AudioUtil {
   static final repo = LocalAudioRepository();
   static List<AudioEntity> allAudios = [];
 
+  static void seedCoverCache(int id, CoverSize size, Uint8List cover) {
+    final key = '$id-${size.name}';
+    _coverCache[key] = cover;
+  }
+
   static Future<Uint8List?> getCover(
     int audioId, {
     CoverSize coverSize = CoverSize.thumbnail,

@@ -15,6 +15,7 @@ import 'package:sound_center/features/local_audio/presentation/widgets/LocalAudi
 import 'package:sound_center/features/local_audio/presentation/widgets/category/list_header.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/action_bar.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/add_audio_to_playlist_dialog.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/create_playlist_dialog.dart';
 import 'package:sound_center/shared/theme/themes.dart';
 
 class Playlist extends StatefulWidget {
@@ -35,9 +36,11 @@ class _PlaylistState extends State<Playlist> {
   StreamSubscription<AudioEntity?>? _audioSub;
   bool multipleSelect = false;
   final List<AudioEntity> selectedAudios = [];
+  late String title;
 
   @override
   void initState() {
+    title = widget.playlist.title;
     super.initState();
     imp = LocalPlayerRepositoryImp();
     bloc = BlocProvider.of<LocalBloc>(context);
@@ -190,7 +193,21 @@ class _PlaylistState extends State<Playlist> {
               spacing: 10,
               children: [
                 ListHeader(
-                  title: widget.playlist.title,
+                  title: title,
+                  playlistRename: () async {
+                    String? res = await showDialog(
+                      context: context,
+                      builder: (_) => CreatePlaylistDialog(
+                        playlistId: widget.playlist.id,
+                        title: title,
+                      ),
+                    );
+                    if (res != null && res.isNotEmpty) {
+                      setState(() {
+                        title = res;
+                      });
+                    }
+                  },
                   audios: audios,
                   category: Category.playlists,
                 ),

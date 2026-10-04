@@ -1,15 +1,22 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
+import 'package:sound_center/features/local_audio/domain/entities/categories.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_status.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/category/category_page.dart';
+import 'package:sound_center/features/local_audio/presentation/util/multi_select_controller.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/create_playlist_dialog.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/tool_bar.dart';
 import 'package:sound_center/generated/l10n.dart';
+import 'package:sound_center/shared/widgets/confirm_dialog.dart';
 import 'package:sound_center/shared/widgets/loading.dart';
 
 class LocalAudios extends StatefulWidget {
@@ -27,10 +34,12 @@ class _LocalAudiosState extends State<LocalAudios>
   List<AudioEntity> _audios = const [];
   List<AudioEntity> _favorites = const [];
   List<PlaylistEntity> _playlists = const [];
+  late LocalBloc bloc;
 
   @override
   void initState() {
     super.initState();
+    bloc = BlocProvider.of<LocalBloc>(context);
     WidgetsBinding.instance.addObserver(this);
     _tabController = TabController(length: Category.values.length, vsync: this)
       ..addListener(_onTabChanged);
@@ -45,6 +54,7 @@ class _LocalAudiosState extends State<LocalAudios>
     final i = _tabController.index;
     if (i == _lastIndex) return;
     _lastIndex = i;
+    MultiSelectController.disable();
     setState(() {});
   }
 
@@ -66,6 +76,157 @@ class _LocalAudiosState extends State<LocalAudios>
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: MultiSelectController.multiSelect,
+      child: _buildScaffold(),
+      builder: (context, multiSelectActive, child) => PopScope(
+        canPop: !multiSelectActive,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) MultiSelectController.disable();
+        },
+        child: CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.escape): () {
+              if (MultiSelectController.isActive) {
+                MultiSelectController.disable();
+              }
+            },
+          },
+          child: Focus(autofocus: true, child: child!),
+        ),
+      ),
+    );
+  }
+
+  void _handleShare(Category category, Set<Object> items) async {
+    List<AudioEntity> sharingAudios = [];
+    switch (category) {
+      case Category.favorites:
+        final audios = items.cast<AudioEntity>();
+        sharingAudios = audios.toList();
+        break;
+      case Category.allSongs:
+        final audios = items.cast<AudioEntity>();
+        sharingAudios = audios.toList();
+        break;
+      case Category.artists:
+        final artists = items.cast<ArtistEntity>();
+        for (ArtistEntity item in artists) {
+          sharingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+      case Category.albums:
+        final albums = items.cast<AlbumEntity>();
+        for (AlbumEntity item in albums) {
+          sharingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+      case Category.genres:
+        final genres = items.cast<GenreEntity>();
+        for (GenreEntity item in genres) {
+          sharingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+      case Category.folders:
+        final folders = items.cast<FolderEntity>();
+        for (FolderEntity item in folders) {
+          sharingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+      default:
+        break;
+    }
+    if (!Platform.isLinux) {
+      await SharePlus.instance.share(
+        ShareParams(
+          files: sharingAudios.map((audio) => XFile(audio.path)).toList(),
+        ),
+      );
+    }
+  }
+
+  void _handleDelete(Category category, Set<Object> items) async {
+    bool res =
+        await showDialog(context: context, builder: (_) => ConfirmDialog()) ??
+        false;
+    if (!res) return;
+    List<AudioEntity> removingAudios = [];
+    switch (category) {
+      case Category.favorites:
+        final audios = items.cast<AudioEntity>();
+        removingAudios = audios.toList();
+        break;
+      case Category.allSongs:
+        final audios = items.cast<AudioEntity>();
+        removingAudios = audios.toList();
+        break;
+      case Category.playlists:
+        final playlists = items.cast<PlaylistEntity>();
+        final playlistIds = playlists.map((playlist) => playlist.id).toList();
+        bloc.add(DeletePlaylists(playlistIds: playlistIds));
+        break;
+      case Category.artists:
+        final artists = items.cast<ArtistEntity>();
+        for (ArtistEntity item in artists) {
+          removingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+      case Category.albums:
+        final albums = items.cast<AlbumEntity>();
+        for (AlbumEntity item in albums) {
+          removingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+      case Category.genres:
+        final genres = items.cast<GenreEntity>();
+        for (GenreEntity item in genres) {
+          removingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+      case Category.folders:
+        final folders = items.cast<FolderEntity>();
+        for (FolderEntity item in folders) {
+          removingAudios.addAll(
+            AudioUtil.allAudios
+                .where((audio) => audio.artist.trim() == item.name)
+                .toList(),
+          );
+        }
+        break;
+    }
+
+    bloc.add(DeleteAudios(removingAudios));
+  }
+
+  Widget _buildScaffold() {
     return BlocListener<LocalBloc, LocalState>(
       listener: (context, state) {
         final s = state.status;
@@ -94,6 +255,14 @@ class _LocalAudiosState extends State<LocalAudios>
                   setState(() => _audios = audios);
                   audios = AudioUtil.sort(_favorites, column, desc);
                   setState(() => _favorites = audios);
+                },
+                onShare: (items) {
+                  _handleShare(Category.values[_tabController.index], items);
+                  MultiSelectController.disable();
+                },
+                onDelete: (items) {
+                  _handleDelete(Category.values[_tabController.index], items);
+                  MultiSelectController.disable();
                 },
               ),
             ),

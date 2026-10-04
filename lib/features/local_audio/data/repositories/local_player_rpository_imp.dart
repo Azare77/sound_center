@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/just_audio_service.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
@@ -319,16 +320,49 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
   }
 
   Future<void> _loadBanner() async {
-    return;
     if (Platform.isLinux) return;
+    if (audios.isEmpty) return;
+
+    final params = _LoadCoversParams(
+      audioIds: audios.map((a) => a.id).toList(),
+      coverSize: CoverSize.banner,
+      rootIsolateToken: RootIsolateToken.instance!,
+    );
+
+    final Map<String, Uint8List?> covers = await compute(
+      _loadCoversInIsolate,
+      params,
+    );
+
     for (int i = 0; i < audios.length; i++) {
-      final audio = audios[i];
-      audio.cover ??= await AudioUtil.getCover(
-        audio.id,
-        coverSize: CoverSize.banner,
-      );
-      audios[i] = audio;
-      AudioUtil.getCover(audio.id, coverSize: CoverSize.thumbnail);
+      final cover = covers['${audios[i].id}'];
+      if (cover == null) continue;
+      audios[i].cover = cover;
+      AudioUtil.seedCoverCache(audios[i].id, CoverSize.banner, cover);
     }
   }
+}
+
+class _LoadCoversParams {
+  const _LoadCoversParams({
+    required this.audioIds,
+    required this.coverSize,
+    required this.rootIsolateToken,
+  });
+
+  final List<int> audioIds;
+  final CoverSize coverSize;
+  final RootIsolateToken rootIsolateToken;
+}
+
+Future<Map<String, Uint8List?>> _loadCoversInIsolate(
+  _LoadCoversParams params,
+) async {
+  BackgroundIsolateBinaryMessenger.ensureInitialized(params.rootIsolateToken);
+
+  final Map<String, Uint8List?> result = {};
+  for (final id in params.audioIds) {
+    result['$id'] = await AudioUtil.getCover(id, coverSize: params.coverSize);
+  }
+  return result;
 }

@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/presentation/pages/playlist.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/playlist_action_dialog.dart';
 import 'package:sound_center/features/local_audio/presentation/widgets/category/playlist/playlist_template.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/widgets/text_view.dart';
@@ -39,15 +40,24 @@ class _PlaylistListTemplateState extends State<PlaylistListTemplate> {
         itemExtent: LIST_ITEM_HEIGHT,
         padding: const EdgeInsets.only(bottom: 120),
         itemBuilder: (context, index) {
-          final list = widget.playlists[index];
+          final playlist = widget.playlists[index];
           return InkWell(
+            onLongPress: () {
+              showDialog(
+                context: context,
+                builder: (_) => PlaylistActionDialog(
+                  playlistId: playlist.id,
+                  title: playlist.title,
+                ),
+              );
+            },
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => Playlist(playlist: list)),
+                MaterialPageRoute(builder: (_) => Playlist(playlist: playlist)),
               );
             },
-            child: PlaylistTemplate(item: list),
+            child: PlaylistTemplate(item: playlist),
           );
         },
       ),

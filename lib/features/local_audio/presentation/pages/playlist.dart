@@ -178,6 +178,7 @@ class _PlaylistState extends State<Playlist> {
           child: Scaffold(
             appBar: AppBar(
               elevation: 0,
+              scrolledUnderElevation: 0,
               leading: multipleSelect
                   ? IconButton(
                       onPressed: exitMultipleSelect,
@@ -244,7 +245,13 @@ class _PlaylistState extends State<Playlist> {
                         }
 
                         setState(() {
-                          audios.addAll(inserted);
+                          audios.addAll(
+                            inserted.where(
+                              (audio) => !audios.any(
+                                (existing) => existing.id == audio.id,
+                              ),
+                            ),
+                          );
                         });
                       },
                       child: const Icon(Icons.add_rounded),

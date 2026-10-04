@@ -71,6 +71,19 @@ class CreatePlaylist extends LocalEvent {
   CreatePlaylist({required this.playlist});
 }
 
+class RenamePlaylist extends LocalEvent {
+  final int playlistId;
+  final String newTitle;
+
+  RenamePlaylist({required this.playlistId, required this.newTitle});
+}
+
+class DeletePlaylist extends LocalEvent {
+  final int playlist;
+
+  DeletePlaylist({required this.playlist});
+}
+
 class ChangePlaylistOrder extends LocalEvent {
   final int playlistId;
   final int itemId;

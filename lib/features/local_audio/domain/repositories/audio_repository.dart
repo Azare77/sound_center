@@ -49,6 +49,8 @@ abstract class AudioRepository {
 
   Future<bool> createPlaylist(PlaylistEntity playlist);
 
+  Future<bool> renamePlaylist(int playlistId, String newTitle);
+
   Future<bool> deletePlaylist(int id);
 
   Future<bool> addToPlaylist(int playlistId, int audioId);

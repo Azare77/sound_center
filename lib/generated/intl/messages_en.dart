@@ -81,6 +81,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "downloading": MessageLookupByLibrary.simpleMessage("Downloading"),
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
+    "editTitle": MessageLookupByLibrary.simpleMessage("Edit Title"),
     "errorInDownload": MessageLookupByLibrary.simpleMessage(
       "Error In Download",
     ),

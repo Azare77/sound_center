@@ -154,6 +154,11 @@ class S {
     return Intl.message('OK', name: 'ok', desc: '', args: []);
   }
 
+  /// `Edit Title`
+  String get editTitle {
+    return Intl.message('Edit Title', name: 'editTitle', desc: '', args: []);
+  }
+
   /// `Play Speed`
   String get playSpeed {
     return Intl.message('Play Speed', name: 'playSpeed', desc: '', args: []);

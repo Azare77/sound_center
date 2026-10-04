@@ -45,6 +45,14 @@ class GetAudioUseCase implements UseCase {
     return await _audioRepository.createPlaylist(playlist);
   }
 
+  Future<bool> deletePlaylist(int playlist) async {
+    return await _audioRepository.deletePlaylist(playlist);
+  }
+
+  Future<bool> renamePlaylist(int playlistId, String newTitle) async {
+    return await _audioRepository.renamePlaylist(playlistId, newTitle);
+  }
+
   Future<bool> addToPlaylist(int playlistId, int audioId) async {
     return await _audioRepository.addToPlaylist(playlistId, audioId);
   }

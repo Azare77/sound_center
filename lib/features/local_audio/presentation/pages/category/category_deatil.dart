@@ -98,7 +98,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(elevation: 0),
+      appBar: AppBar(elevation: 0, scrolledUnderElevation: 0),
       body: Stack(
         children: [
           Column(

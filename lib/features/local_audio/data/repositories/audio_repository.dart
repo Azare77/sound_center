@@ -101,6 +101,15 @@ abstract class AudioRepositoryImp implements AudioRepository {
   }
 
   @override
+  Future<bool> renamePlaylist(int playlistId, String newTitle) async {
+    await (database.update(database.playlistTable)
+          ..where((tbl) => tbl.id.equals(playlistId)))
+        .write(PlaylistTableCompanion(title: Value(newTitle)));
+
+    return true;
+  }
+
+  @override
   Future<bool> deletePlaylist(int playlistId) async {
     return database.transaction(() async {
       await (database.delete(

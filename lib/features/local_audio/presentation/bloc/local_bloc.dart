@@ -101,6 +101,19 @@ class LocalBloc extends Bloc<LocalEvent, LocalState> {
       if (res) add(GetPlaylists());
     });
 
+    on<RenamePlaylist>((event, emit) async {
+      final bool res = await getAudioUseCase.renamePlaylist(
+        event.playlistId,
+        event.newTitle,
+      );
+      if (res) add(GetPlaylists());
+    });
+
+    on<DeletePlaylist>((event, emit) async {
+      final bool res = await getAudioUseCase.deletePlaylist(event.playlist);
+      if (res) add(GetPlaylists());
+    });
+
     on<AddToPlaylist>((event, emit) async {
       for (AudioEntity audio in event.audios) {
         await getAudioUseCase.addToPlaylist(event.playlistId, audio.id);

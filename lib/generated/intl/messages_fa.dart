@@ -79,6 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "downloading": MessageLookupByLibrary.simpleMessage("در حال دانلود"),
     "duration": MessageLookupByLibrary.simpleMessage("مدت"),
+    "editTitle": MessageLookupByLibrary.simpleMessage("ویرایش عنوان"),
     "errorInDownload": MessageLookupByLibrary.simpleMessage("خطا در دانلود"),
     "errorInLoading": MessageLookupByLibrary.simpleMessage("خطا در بارگذاری"),
     "exportData": MessageLookupByLibrary.simpleMessage(

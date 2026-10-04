@@ -1,5 +1,4 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:sound_center/features/stream/data/repository/stream_player_repository_imp.dart';
 import 'package:sound_center/features/stream/presentation/widgets/player/background_image.dart';
 import 'package:sound_center/features/stream/presentation/widgets/player/stream_header.dart';
 import 'package:sound_center/features/stream/presentation/widgets/player/stream_navigation.dart';
@@ -16,7 +15,6 @@ class PlayStream extends StatelessWidget {
       playerOps: StreamOps(),
       header: StreamHeader(),
       navigation: StreamNavigation(),
-      playerRepository: StreamPlayerRepositoryImp(),
     );
   }
 }

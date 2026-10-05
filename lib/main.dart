@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:android_media_store/android_media_store.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:open_with_app/open_with_app.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/core/services/audio_handler.dart';
 import 'package:sound_center/core/services/download_manager.dart';
@@ -16,6 +18,7 @@ import 'package:sound_center/features/cloud/presentation/bloc/cloud_bloc.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
 import 'package:sound_center/features/podcast/presentation/bloc/podcast_bloc.dart';
 import 'package:sound_center/features/settings/presentation/bloc/setting_bloc.dart';
+import 'package:sound_center/features/settings/presentation/pages/backup_dialog.dart';
 import 'package:sound_center/features/stream/presentation/bloc/stream_bloc.dart';
 import 'package:sound_center/generated/l10n.dart';
 import 'package:sound_center/shared/theme/themes.dart';
@@ -25,9 +28,31 @@ late final AudioHandler audioHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  String? initialBackupPath;
+  if (Platform.isAndroid || Platform.isIOS) {
+    final openWithApp = OpenWithApp();
+    try {
+      initialBackupPath = await openWithApp.getInitialFile();
+    } catch (e, st) {
+      debugPrint('❌ getInitialFile failed: $e\n$st');
+    }
+  }
+
   await Storage.instance.init();
   await _init();
-  runApp(const MyApp());
+
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => LocalBloc()),
+        BlocProvider(create: (_) => PodcastBloc()),
+        BlocProvider(create: (_) => SettingBloc()),
+        BlocProvider(create: (_) => StreamBloc()),
+        BlocProvider(create: (_) => CloudBloc()),
+      ],
+      child: MyApp(initialBackupPath: initialBackupPath),
+    ),
+  );
 }
 
 Future<void> _init() async {
@@ -59,45 +84,70 @@ Future<void> _init() async {
   }
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key, this.initialBackupPath});
 
-  // This widget is the root of your application.
+  final String? initialBackupPath;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final OpenWithApp _openWithApp = OpenWithApp();
+  StreamSubscription<String>? _backupSub;
+
+  @override
+  void initState() {
+    super.initState();
+    if (Platform.isLinux) return;
+    if (widget.initialBackupPath != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _openBackup(widget.initialBackupPath!);
+      });
+    }
+
+    _backupSub = _openWithApp.getFileStream().listen(_openBackup);
+  }
+
+  @override
+  void dispose() {
+    _backupSub?.cancel();
+    super.dispose();
+  }
+
+  void _openBackup(String path) {
+    print(path);
+    BackupDialog dialog = BackupDialog();
+    dialog.restoreFromFile(context, path);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => LocalBloc()),
-        BlocProvider(create: (_) => PodcastBloc()),
-        BlocProvider(create: (_) => SettingBloc()),
-        BlocProvider(create: (_) => StreamBloc()),
-        BlocProvider(create: (_) => CloudBloc()),
-      ],
-      child: BlocBuilder<SettingBloc, SettingState>(
-        builder: (BuildContext context, state) {
-          DownloadManager.setupNotification();
-          final currentTheme = ThemeManager.current;
-          final isDarkMode = currentTheme.brightness == Brightness.dark;
-          ThemeMode themMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
-          return ToastificationWrapper(
-            child: MaterialApp(
-              navigatorKey: NAVIGATOR_KEY,
-              debugShowCheckedModeBanner: false,
-              locale: state.locale,
-              supportedLocales: S.delegate.supportedLocales,
-              localizationsDelegates: const [
-                S.delegate,
-                ...GlobalMaterialLocalizations.delegates,
-              ],
-              title: "Sound Center",
-              theme: ThemeManager.getThemeData(currentTheme),
-              darkTheme: ThemeManager.getThemeData(currentTheme),
-              themeMode: themMode,
-              home: Home(),
-            ),
-          );
-        },
-      ),
+    return BlocBuilder<SettingBloc, SettingState>(
+      builder: (BuildContext context, state) {
+        DownloadManager.setupNotification();
+        final currentTheme = ThemeManager.current;
+        final isDarkMode = currentTheme.brightness == Brightness.dark;
+        ThemeMode themMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+        return ToastificationWrapper(
+          child: MaterialApp(
+            navigatorKey: NAVIGATOR_KEY,
+            debugShowCheckedModeBanner: false,
+            locale: state.locale,
+            supportedLocales: S.delegate.supportedLocales,
+            localizationsDelegates: const [
+              S.delegate,
+              ...GlobalMaterialLocalizations.delegates,
+            ],
+            title: "Sound Center",
+            theme: ThemeManager.getThemeData(currentTheme),
+            darkTheme: ThemeManager.getThemeData(currentTheme),
+            themeMode: themMode,
+            home: Home(),
+          ),
+        );
+      },
     );
   }
 }

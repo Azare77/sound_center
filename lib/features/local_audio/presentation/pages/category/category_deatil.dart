@@ -97,12 +97,17 @@ class _CategoryDetailState extends State<CategoryDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return Scaffold(
       appBar: AppBar(elevation: 0, scrolledUnderElevation: 0),
       body: Stack(
         children: [
           Column(
-            spacing: 10,
+            // Tighter gap in landscape: the header already takes less
+            // height there, no need to add extra breathing room on top.
+            spacing: isLandscape ? 4 : 10,
             children: [
               ListHeader(
                 title: widget.title,

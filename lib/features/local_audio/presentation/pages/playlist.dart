@@ -165,6 +165,9 @@ class _PlaylistState extends State<Playlist> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): exitMultipleSelect,
@@ -190,7 +193,9 @@ class _PlaylistState extends State<Playlist> {
                   : null,
             ),
             body: Column(
-              spacing: 10,
+              // Header is already compact in landscape (see ListHeader),
+              // so the extra gap between sections isn't needed there.
+              spacing: isLandscape ? 4 : 10,
               children: [
                 ListHeader(
                   title: title,
@@ -247,7 +252,10 @@ class _PlaylistState extends State<Playlist> {
             floatingActionButton: multipleSelect
                 ? null
                 : Padding(
-                    padding: const EdgeInsets.only(bottom: 100),
+                    // CurrentMedia is a shorter bar in landscape (it's a
+                    // mini-player), so the FAB doesn't need to clear as
+                    // much space above the bottom edge there.
+                    padding: EdgeInsets.only(bottom: isLandscape ? 70 : 100),
                     child: FloatingActionButton(
                       onPressed: () async {
                         final List<AudioEntity>? inserted = await showDialog(

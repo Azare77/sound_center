@@ -29,6 +29,12 @@ import '../../../stream/presentation/bloc/stream_bloc.dart';
 class BackupDialog extends StatelessWidget {
   const BackupDialog({super.key});
 
+  void restoreFromFile(BuildContext context, String path) async {
+    final content = await File(path).readAsString();
+    final backup = AppBackup.fromJson(jsonDecode(content));
+    await _importBackup(context, backup);
+  }
+
   Future<void> _exportData(BuildContext context) async {
     try {
       final database = AppDatabase();
@@ -83,21 +89,36 @@ class BackupDialog extends StatelessWidget {
     return file;
   }
 
-  Future<void> _importBackup(BuildContext context) async {
+  Future<void> _importBackup(BuildContext context, AppBackup? backup) async {
     final importResult = BackupImportResult();
     final textStyle = ThemeManager.getThemeData(
       ThemeManager.current,
     ).textTheme.bodyMedium;
+    final String successful = Intl.message(
+      'Backup restored successfully.',
+      name: 'backupRestoredSuccessfully',
+    );
+    final String partial = Intl.message(
+      'Backup partially restored. Some data could not be imported.',
+      name: 'backupPartiallyRestoredSomeDataCouldNotBeImported',
+    );
+    final String fail = Intl.message(
+      'Failed to restore backup.',
+      name: 'failedToRestoreBackup',
+    );
+
     try {
-      final result = await FilePicker.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['scbak'],
-      );
+      if (backup == null) {
+        final result = await FilePicker.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['scbak'],
+        );
 
-      if (result.isEmpty) return;
+        if (result.isEmpty) return;
 
-      final content = await File(result.single.path!).readAsString();
-      final backup = AppBackup.fromJson(jsonDecode(content));
+        final content = await File(result.single.path!).readAsString();
+        backup = AppBackup.fromJson(jsonDecode(content));
+      }
 
       final db = AppDatabase();
       final podcastRepo = PodcastRepositoryImp(db);
@@ -108,14 +129,14 @@ class BackupDialog extends StatelessWidget {
       final settingBloc = context.read<SettingBloc>();
 
       try {
-        for (final podcast in backup.podcasts) {
+        for (final podcast in backup.podcasts ?? []) {
           await podcastRepo.subscribe(podcast);
         }
         importResult.podcasts = true;
       } catch (_) {}
       podcastBloc.add(GetSubscribedPodcasts());
       try {
-        for (final stream in backup.streams) {
+        for (final stream in backup.streams ?? []) {
           await streamRepo.subscribeToStream(stream);
         }
         importResult.streams = true;
@@ -123,22 +144,31 @@ class BackupDialog extends StatelessWidget {
       streamBloc.add(GetSubscribedStreams());
 
       try {
-        final themes = backup.themes
+        final themes = (backup.themes ?? [])
             .map(_resolveThemeId)
             .whereType<AppThemeData>()
             .toList();
-        await AppSettingStorage.saveCustomThemes(themes);
+
+        if (themes.isNotEmpty) {
+          await AppSettingStorage.saveCustomThemes(themes);
+        }
+
         final keys = backup.providerKeys;
 
-        if (keys != null) {
+        if (keys != null && keys['key'] != null && keys['secret'] != null) {
           await AppSettingStorage.setPodcastIndexKeys(
             keys['key']!,
             keys['secret']!,
           );
-          await AppSettingStorage.saveProvider(backup.provider);
         }
 
-        await AppSettingStorage.saveLocale(backup.locale);
+        if (backup.provider != null) {
+          await AppSettingStorage.saveProvider(backup.provider!);
+        }
+
+        if (backup.locale != null) {
+          await AppSettingStorage.saveLocale(backup.locale!);
+        }
 
         if (backup.playerStyle != null) {
           await AppSettingStorage.savePlayerStyle(backup.playerStyle!);
@@ -150,30 +180,16 @@ class BackupDialog extends StatelessWidget {
       settingBloc.add(LoadSetting());
 
       if (importResult.isSuccess) {
-        ToastMessage.showInfoMessage(
-          title: Text(
-            S.of(context).backupRestoredSuccessfully,
-            style: textStyle,
-          ),
-        );
+        ToastMessage.showInfoMessage(title: Text(successful, style: textStyle));
       } else if (importResult.hasPartialSuccess) {
-        ToastMessage.showInfoMessage(
-          title: Text(
-            S.of(context).backupPartiallyRestoredSomeDataCouldNotBeImported,
-            style: textStyle,
-          ),
-        );
+        ToastMessage.showInfoMessage(title: Text(partial, style: textStyle));
       } else {
-        ToastMessage.showInfoMessage(
-          title: Text(S.of(context).failedToRestoreBackup, style: textStyle),
-        );
+        ToastMessage.showInfoMessage(title: Text(fail, style: textStyle));
       }
     } catch (_) {
-      ToastMessage.showInfoMessage(
-        title: Text(S.of(context).failedToRestoreBackup, style: textStyle),
-      );
+      ToastMessage.showInfoMessage(title: Text(fail, style: textStyle));
     } finally {
-      Navigator.pop(context);
+      if (backup == null) Navigator.pop(context);
     }
   }
 
@@ -208,7 +224,7 @@ class BackupDialog extends StatelessWidget {
               child: Text(S.of(context).exportData),
             ),
             TextButton(
-              onPressed: () => _importBackup(context),
+              onPressed: () => _importBackup(context, null),
               child: Text(S.of(context).importData),
             ),
           ],
@@ -229,23 +245,23 @@ class BackupImportResult {
 }
 
 class AppBackup {
-  final int version;
-  final List<SubscriptionEntity> podcasts;
-  final List<StreamSubEntity> streams;
-  final List<AppThemeData> themes;
-  final Locale locale;
-  final PodcastProvider provider;
+  final int? version;
+  final List<SubscriptionEntity>? podcasts;
+  final List<StreamSubEntity>? streams;
+  final List<AppThemeData>? themes;
+  final Locale? locale;
+  final PodcastProvider? provider;
   final PlayerStyle? playerStyle;
   final Map<String, String>? providerKeys;
 
   AppBackup({
-    required this.version,
-    required this.podcasts,
-    required this.streams,
-    required this.themes,
-    required this.locale,
-    required this.provider,
-    required this.playerStyle,
+    this.version,
+    this.podcasts,
+    this.streams,
+    this.themes,
+    this.locale,
+    this.provider,
+    this.playerStyle,
     this.providerKeys,
   });
 
@@ -254,11 +270,11 @@ class AppBackup {
       'version': version,
       'createdAt': DateTime.now().toUtc().toIso8601String(),
       'data': {
-        'podcasts': podcasts.map((e) => e.toJson()).toList(),
-        'streams': streams.map((e) => e.toJson()).toList(),
-        'themes': themes.map((e) => e.toJsonForStorage()).toList(),
-        'locale': locale.languageCode,
-        'provider': provider.name,
+        'podcasts': podcasts?.map((e) => e.toJson()).toList(),
+        'streams': streams?.map((e) => e.toJson()).toList(),
+        'themes': themes?.map((e) => e.toJsonForStorage()).toList(),
+        'locale': locale?.languageCode,
+        'provider': provider?.name,
         'providerKeys': providerKeys,
         'playerStyle': playerStyle?.name,
       },
@@ -270,30 +286,36 @@ class AppBackup {
   }
 
   factory AppBackup.fromJson(Map<String, dynamic> json) {
-    final data = json['data'];
+    final data = json['data'] as Map<String, dynamic>? ?? {};
+
     return AppBackup(
-      version: json['version'] as int,
-      podcasts: (data['podcasts'] as List)
-          .map((e) => SubscriptionEntity.fromJson(e))
+      version: json['version'] as int?,
+
+      podcasts: (data['podcasts'] as List?)
+          ?.map((e) => SubscriptionEntity.fromJson(e))
           .toList(),
 
-      streams: (data['streams'] as List)
-          .map((e) => StreamSubEntity.fromJson(e))
+      streams: (data['streams'] as List?)
+          ?.map((e) => StreamSubEntity.fromJson(e))
           .toList(),
 
-      themes: (data['themes'] as List)
-          .map((e) => AppThemeData.fromJsonForStorage(e))
+      themes: (data['themes'] as List?)
+          ?.map((e) => AppThemeData.fromJsonForStorage(e))
           .toList(),
 
-      locale: Locale(data['locale'] as String),
+      locale: data['locale'] != null ? Locale(data['locale'] as String) : null,
 
-      provider: PodcastProvider.values.firstWhere(
-        (e) => e.name == data['provider'],
-      ),
+      provider: data['provider'] != null
+          ? PodcastProvider.values.firstWhereOrNull(
+              (e) => e.name == data['provider'],
+            )
+          : null,
 
-      playerStyle: PlayerStyle.values.firstWhereOrNull(
-        (e) => e.name == data['playerStyle'],
-      ),
+      playerStyle: data['playerStyle'] != null
+          ? PlayerStyle.values.firstWhereOrNull(
+              (e) => e.name == data['playerStyle'],
+            )
+          : null,
 
       providerKeys: data['providerKeys'] != null
           ? Map<String, String>.from(data['providerKeys'])

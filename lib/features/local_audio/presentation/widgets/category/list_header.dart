@@ -103,8 +103,9 @@ class ListHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 5,
             children: [
-              Expanded(
+              Flexible(
                 child: ScrollingText(
+                  key: ValueKey(title),
                   title,
                   style: (isLandscape ? tt.titleMedium : tt.titleLarge)
                       ?.copyWith(

@@ -1,0 +1,12 @@
+What's New:
+- Added categorized tabs for content such as Favorites, Artists, and Folders.
+- Improved music sharing and deletion experience.
+
+Improvements:
+- Improved cover loading performance.
+- Improved backup file loading performance.
+- Improved Play Queue track swap animations.
+- Improved overall app performance and user experience.
+
+Fixed:
+- Fixed various issues related to content loading and interaction.

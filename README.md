@@ -23,8 +23,8 @@ Currently available on Android and Linux desktop, with support for English and F
 
 <div align="center">
 
-| Feature                                   | Status / Notes                             |
-|-------------------------------------------|--------------------------------------------|
+| Feature                                   | Status / Notes                              |
+|-------------------------------------------|---------------------------------------------|
 | **Local audio scanning & playback**       | ✔ Playlists, queue, seek, shuffle          |
 | **Podcast search, streaming & downloads** | ✔ Search, stream, offline resume           |
 | **Background playback & system controls** | ✔ `audio_service`, MPRIS on desktop        |
@@ -38,10 +38,10 @@ Currently available on Android and Linux desktop, with support for English and F
 
 ## Screenshots
 
-| ![Screenshot 1](info/screenshots/1.jpeg)   | ![Screenshot 2](info/screenshots/2.jpeg) | ![Screenshot 3](info/screenshots/3.jpeg) | ![Screenshot 4](info/screenshots/4.jpeg) | ![Screenshot 5](info/screenshots/5.jpeg)   |
-|--------------------------------------------|------------------------------------------|------------------------------------------|------------------------------------------|--------------------------------------------|
-| ![Screenshot 6](info/screenshots/6.jpeg)   | ![Screenshot 7](info/screenshots/7.jpeg) | ![Screenshot 8](info/screenshots/8.jpeg) | ![Screenshot 9](info/screenshots/9.jpeg) | ![Screenshot 10](info/screenshots/10.jpeg) |
-| ![Screenshot 11](info/screenshots/11.jpeg) |                                          |                                          |                                          |                                            |
+| ![Screenshot 1](fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpeg)  | ![Screenshot 2](fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpeg)  | ![Screenshot 3](fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpeg) | ![Screenshot 4](fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpeg) | ![Screenshot 5](fastlane/metadata/android/en-US/images/phoneScreenshots/05.jpeg)  |
+|-----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|----------------------------------------------------------------------------------|----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| ![Screenshot 6](fastlane/metadata/android/en-US/images/phoneScreenshots/06.jpeg)  | ![Screenshot 7](fastlane/metadata/android/en-US/images/phoneScreenshots/07.jpeg)  | ![Screenshot 8](fastlane/metadata/android/en-US/images/phoneScreenshots/08.jpeg) | ![Screenshot 9](fastlane/metadata/android/en-US/images/phoneScreenshots/09.jpeg) | ![Screenshot 10](fastlane/metadata/android/en-US/images/phoneScreenshots/10.jpeg) |
+| ![Screenshot 11](fastlane/metadata/android/en-US/images/phoneScreenshots/11.jpeg) | ![Screenshot 12](fastlane/metadata/android/en-US/images/phoneScreenshots/12.jpeg) |                                                                                  |                                                                                  |                                                                                   |
 
 ## Feedback & Support
 
@@ -65,18 +65,16 @@ If you find this project useful, you can support its development with Bitcoin:
 
 ## License
 
-Sound Center - A music and podcast player bringing multiple playback modes into one app.
-Copyright (C) 2026 Ali Zare
+Sound Center - A music and podcast player bringing multiple playback modes into one app. Copyright
+(C) 2026 Ali Zare
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with this program. If not,
+see <https://www.gnu.org/licenses/>.

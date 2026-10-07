@@ -1,3 +1,11 @@
+# 1.2.0
+
+* Add tabs for categorized content such as Favorites, Artists, and Folders
+* Improve the music delete and share experience
+* Improve cover loading performance
+* Improve backup file loading performance
+* Improve Play Queue track swap animations
+
 # 1.1.0
 
 * Add Play Queue and manage order of play

@@ -57,19 +57,19 @@ class _AudioTemplateState extends State<AudioTemplate> {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) =>
-                ScaleTransition(scale: animation, child: child),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
             child: widget.isMultiple
-                ? Checkbox(
-                    key: const ValueKey('checkbox'),
-                    value: widget.isSelected,
-                    onChanged: widget.onChanged,
+                ? Padding(
+                    padding: EdgeInsetsDirectional.only(end: spacing),
+                    child: Checkbox(
+                      value: widget.isSelected,
+                      onChanged: widget.onChanged,
+                    ),
                   )
-                : const SizedBox.shrink(key: ValueKey('empty')),
+                : const SizedBox.shrink(),
           ),
-          if (widget.isMultiple) SizedBox(width: spacing),
           // --- تصویر ---
           SizedBox(
             width: size,

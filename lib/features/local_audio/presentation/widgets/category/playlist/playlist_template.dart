@@ -33,17 +33,15 @@ class PlaylistTemplate extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) =>
-                ScaleTransition(scale: animation, child: child),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
             child: isMultiple
-                ? Checkbox(
-                    key: const ValueKey('checkbox'),
-                    value: isSelected,
-                    onChanged: onChanged,
+                ? Padding(
+                    padding: EdgeInsetsGeometry.directional(end: 10),
+                    child: Checkbox(value: isSelected, onChanged: onChanged),
                   )
-                : const SizedBox.shrink(key: ValueKey('empty')),
+                : const SizedBox.shrink(),
           ),
           if (isMultiple) const SizedBox(width: 10),
           // --- تصویر ---

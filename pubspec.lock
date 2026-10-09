@@ -1107,12 +1107,11 @@ packages:
   podcast_search:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "fix/missing_dio_exception_type"
-      resolved-ref: "9103b973a57f86d2dd720c4c07a729a7f0cf7d16"
-      url: "https://github.com/BerkayOez/podcast_search"
-    source: git
-    version: "0.7.15"
+      name: podcast_search
+      sha256: "820904dc40c5311770b0185ab8542d691aeeb9e17bd85a9e0ac5ffbd02cb52f9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.16"
   pool:
     dependency: transitive
     description:

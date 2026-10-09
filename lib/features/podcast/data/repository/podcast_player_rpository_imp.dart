@@ -117,9 +117,7 @@ class PodcastPlayerRepositoryImp extends BasePlayerRepository
   }
 
   void reorderQueue(int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) {
-      newIndex--;
-    }
+    if (oldIndex == newIndex) return;
 
     final episode = episodes.removeAt(oldIndex);
     episodes.insert(newIndex, episode);

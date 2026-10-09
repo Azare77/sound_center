@@ -73,10 +73,7 @@ dependencies:
       url: https://github.com/MindStudioOfficial/flutter_colorpicker
       ref: fix-material_ui
   #PODCAST
-  podcast_search:
-    git:
-      url: https://github.com/BerkayOez/podcast_search
-      ref: fix/missing_dio_exception_type
+  podcast_search: ^0.7.16
   cached_network_image: ^4.0.2
   background_downloader: ^9.6.3
   #STREAM

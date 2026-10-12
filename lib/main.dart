@@ -117,7 +117,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _openBackup(String path) {
-    print(path);
     BackupDialog dialog = BackupDialog();
     dialog.restoreFromFile(context, path);
   }

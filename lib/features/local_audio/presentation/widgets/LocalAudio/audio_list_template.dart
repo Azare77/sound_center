@@ -88,7 +88,7 @@ class _AudioListTemplateState extends State<AudioListTemplate> {
       valueListenable: MultiSelectController.multiSelect,
       builder: (context, active, _) => ValueListenableBuilder<Set<Object>>(
         valueListenable: MultiSelectController.selected,
-        builder: (context, _, __) => _buildList(
+        builder: (context, _, _) => _buildList(
           context,
           currentAudio,
           isSelected: MultiSelectController.isSelected,

@@ -90,4 +90,12 @@ class AppSettingStorage {
   static Future<void> savePlayerStyle(PlayerStyle style) async {
     await Storage.instance.prefs.setString('playerStyle', style.name);
   }
+
+  static Future<void> setAcoustIdApikey(String apikey) async {
+    await Storage.instance.prefs.setString('AcoustIdApikey', apikey);
+  }
+
+  static String? getAcoustIdApikey() {
+    return Storage.instance.prefs.getString('AcoustIdApikey');
+  }
 }

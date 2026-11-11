@@ -114,5 +114,15 @@
   "categoryAlbums": "Albums",
   "categoryGenres": "Genres",
   "categoryFolders": "Folders",
-  "shufflePlay": "Shuffle Play"
+  "shufflePlay": "Shuffle Play",
+  "genre": "Genre",
+  "year": "Year",
+  "noMetadata": "No matching audio metadata was found",
+  "metadataUpdated": "Metadata updated successfully",
+  "failedToUpdateMetadata": "Failed to update audio metadata",
+  "trackNumber": "Track Number",
+  "importantRegisterYourApplicationToGetAnApiKey": "Important: Register your application to get an API key",
+  "findMetadata": "Find Metadata",
+  "save": "Save",
+  "acoustidForMetadata": "AcoustId (For Metadata)"
 }

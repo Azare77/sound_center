@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:material_ui/material_ui.dart';
@@ -33,6 +34,12 @@ class _AudioTemplateState extends State<AudioTemplate> {
     super.initState();
     cover = widget.audioEntity.cover;
     if (cover == null) getCover();
+  }
+
+  @override
+  void didUpdateWidget(covariant AudioTemplate oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!Platform.isLinux) getCover();
   }
 
   Future<void> getCover() async {
@@ -77,7 +84,10 @@ class _AudioTemplateState extends State<AudioTemplate> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image(
-                key: ValueKey(widget.audioEntity.id),
+                key: ValueKey((
+                  widget.audioEntity.id,
+                  widget.audioEntity.cover?.length,
+                )),
                 image: cover != null
                     ? MemoryImage(cover!)
                     : const AssetImage('assets/default-cover.png')

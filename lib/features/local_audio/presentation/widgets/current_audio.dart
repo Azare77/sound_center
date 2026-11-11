@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -21,11 +22,15 @@ class _CurrentAudioState extends State<CurrentAudio> {
   late int audioId;
   final double size = 50;
   final LocalPlayerRepositoryImp imp = LocalPlayerRepositoryImp();
+  StreamSubscription<AudioEntity?>? _audioSub;
 
   @override
   void initState() {
     audioId = widget.audioEntity.id;
     cover = widget.audioEntity.cover;
+    _audioSub = imp.audioChangedStream.listen((audio) {
+      getCover();
+    });
     if (cover == null) getCover();
     super.initState();
   }
@@ -43,6 +48,12 @@ class _CurrentAudioState extends State<CurrentAudio> {
   }
 
   @override
+  void dispose() {
+    _audioSub?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (audioId != widget.audioEntity.id) getCover();
     return ListTile(
@@ -51,6 +62,10 @@ class _CurrentAudioState extends State<CurrentAudio> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: Image(
+            key: ValueKey((
+              widget.audioEntity.id,
+              widget.audioEntity.cover?.length,
+            )),
             image: cover != null
                 ? MemoryImage(cover!)
                 : const AssetImage('assets/default-cover.png') as ImageProvider,

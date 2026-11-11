@@ -89,22 +89,31 @@ class _TextFieldBoxState extends State<TextFieldBox> {
 
   @override
   void initState() {
-    textDirection = widget.textDirection;
+    super.initState();
+
+    textDirection =
+        widget.textDirection ??
+        _getTextDirection(widget.controller?.text ?? '');
+
     if (widget.controller is CustomTextEditingController) {
       controller = widget.controller as CustomTextEditingController;
       controller?.validator ??= widget.validator;
     }
-    super.initState();
+
     if (widget.validator != null) {
       focusNode.addListener(() {
         if (!focusNode.hasFocus) {
           setState(() {});
         }
-        if (widget.onFocusChanged != null) {
-          widget.onFocusChanged!(focusNode);
-        }
+        widget.onFocusChanged?.call(focusNode);
       });
     }
+  }
+
+  TextDirection _getTextDirection(String value) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(value)
+        ? TextDirection.rtl
+        : TextDirection.ltr;
   }
 
   @override

@@ -28,6 +28,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "THEME_NAMES": MessageLookupByLibrary.simpleMessage(
       "----------------- THEM NAMES ----------------",
     ),
+    "acoustidForMetadata": MessageLookupByLibrary.simpleMessage(
+      "AcoustId (برای متادیتا)",
+    ),
     "adminInfo": MessageLookupByLibrary.simpleMessage("اطلاعات ادمین"),
     "album": MessageLookupByLibrary.simpleMessage("آلبوم"),
     "appBarBackground": MessageLookupByLibrary.simpleMessage("اپ بار"),
@@ -88,13 +91,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToRestoreBackup": MessageLookupByLibrary.simpleMessage(
       "بازیابی داده‌ها ناموفق بود.",
     ),
+    "failedToUpdateMetadata": MessageLookupByLibrary.simpleMessage(
+      "به‌روزرسانی اطلاعات متادیتای فایل صوتی ناموفق بود.",
+    ),
+    "findMetadata": MessageLookupByLibrary.simpleMessage("پیدا کردن متادیتا"),
     "format": MessageLookupByLibrary.simpleMessage("فرمت"),
+    "genre": MessageLookupByLibrary.simpleMessage("سبک"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("دریافت کلید API"),
     "glass": MessageLookupByLibrary.simpleMessage("شیشه‌ای"),
     "green": MessageLookupByLibrary.simpleMessage("سبز"),
     "host": MessageLookupByLibrary.simpleMessage("هاست"),
     "iconColor": MessageLookupByLibrary.simpleMessage("آیکون"),
     "importData": MessageLookupByLibrary.simpleMessage("وارد کردن داده‌ها"),
+    "importantRegisterYourApplicationToGetAnApiKey":
+        MessageLookupByLibrary.simpleMessage(
+          "مهم: برای دریافت کلید API، برنامه خود را ثبت کنید.",
+        ),
     "language": MessageLookupByLibrary.simpleMessage("زبان"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("جدید ترین"),
     "light": MessageLookupByLibrary.simpleMessage("روشن"),
@@ -107,6 +119,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading": MessageLookupByLibrary.simpleMessage("در حال بارگذاری"),
     "local": MessageLookupByLibrary.simpleMessage("محلی"),
     "location": MessageLookupByLibrary.simpleMessage("مکان"),
+    "metadataUpdated": MessageLookupByLibrary.simpleMessage(
+      "اطلاعات متادیتا با موفقیت به‌روزرسانی شد",
+    ),
     "moreInfo": MessageLookupByLibrary.simpleMessage("اطلاعات بیشتر"),
     "nameIsUsed": MessageLookupByLibrary.simpleMessage(
       "این نام قبلا استفاده شده است",
@@ -117,6 +132,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "آهنگ آزاد و بدون قفل DRM وجود ندارد",
     ),
     "noHistory": MessageLookupByLibrary.simpleMessage("بدون تاریخچه"),
+    "noMetadata": MessageLookupByLibrary.simpleMessage(
+      "هیچ اطلاعات متادیتایی مطابق با این فایل صوتی پیدا نشد",
+    ),
     "noPodcast": MessageLookupByLibrary.simpleMessage("بدون پادکست"),
     "noStream": MessageLookupByLibrary.simpleMessage("استریمی وجود ندارد"),
     "notification": MessageLookupByLibrary.simpleMessage("اعلان ها"),
@@ -136,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "اگر این اپ را از فروشگاه اپلیکیشن نصب کرده‌اید، پیشنهاد می‌کنیم از طریق همان فروشگاه به‌روزرسانی کنید.",
     ),
     "rssFeed": MessageLookupByLibrary.simpleMessage("آدرس فید"),
+    "save": MessageLookupByLibrary.simpleMessage("ذخیره"),
     "scaffoldBackground": MessageLookupByLibrary.simpleMessage("پس زمینه"),
     "scanning": MessageLookupByLibrary.simpleMessage("در حال اسکن"),
     "searchHint": MessageLookupByLibrary.simpleMessage("دنبال چی هستی؟"),
@@ -163,6 +182,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "thumbColor": MessageLookupByLibrary.simpleMessage("اسلایدر"),
     "title": MessageLookupByLibrary.simpleMessage("عنوان"),
+    "trackNumber": MessageLookupByLibrary.simpleMessage("شماره قطعه"),
     "tracks": MessageLookupByLibrary.simpleMessage("آهنگ‌ها"),
     "unknown": MessageLookupByLibrary.simpleMessage("نامشخص"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("لغو اشتراک"),
@@ -170,6 +190,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlLink": MessageLookupByLibrary.simpleMessage("لینک استریم"),
     "votes": MessageLookupByLibrary.simpleMessage("حمایت ها"),
     "website": MessageLookupByLibrary.simpleMessage("وب سایت"),
+    "year": MessageLookupByLibrary.simpleMessage("سال"),
     "yes": MessageLookupByLibrary.simpleMessage("بله"),
     "youAreUsingLatestVersion": MessageLookupByLibrary.simpleMessage(
       "برنامه شما به‌روز است.",

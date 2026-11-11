@@ -123,6 +123,16 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
     return _shuffle.map((i) => audios[i]).toList();
   }
 
+  void setMetadata(AudioEntity audio) async {
+    final index = audios.indexWhere((item) => item.id == audio.id);
+    if (index != -1) audios[index] = audio;
+    if (_currentAudio?.id == audios[index].id) {
+      _currentAudio = audios[index];
+    }
+    _audioChangedController.add(_currentAudio);
+    await PlayerStateStorage.saveLastAudio(_currentAudio!);
+  }
+
   @override
   Future<void> changeRepeatState() async {
     switch (repeatMode) {

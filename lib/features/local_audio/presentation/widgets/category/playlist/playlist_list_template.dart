@@ -34,7 +34,7 @@ class _PlaylistListTemplateState extends State<PlaylistListTemplate> {
       valueListenable: MultiSelectController.multiSelect,
       builder: (context, active, _) => ValueListenableBuilder<Set<Object>>(
         valueListenable: MultiSelectController.selected,
-        builder: (context, _, __) => Scrollbar(
+        builder: (context, _, _) => Scrollbar(
           controller: _scrollController,
           thumbVisibility: true,
           interactive: true,

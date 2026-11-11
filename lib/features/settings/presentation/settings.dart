@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/core/constants/constants.dart';
 import 'package:sound_center/features/settings/presentation/pages/about_dialog.dart';
+import 'package:sound_center/features/settings/presentation/pages/acoust_id_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/backup_dialog.dart';
 import 'package:sound_center/features/settings/presentation/pages/language_settings.dart';
 import 'package:sound_center/features/settings/presentation/pages/notification_settings.dart';
@@ -28,6 +29,13 @@ class Settings extends StatelessWidget {
             children: [
               Text(S.of(context).settings),
               Divider(),
+              TextButton(
+                onPressed: () => openDialog(context, AcoustIdSettings()),
+                child: Text(
+                  S.of(context).acoustidForMetadata,
+                  textDirection: .ltr,
+                ),
+              ),
               TextButton(
                 onPressed: () => openDialog(context, ProviderSettings()),
                 child: Text(S.of(context).podcastApi),

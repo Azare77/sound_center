@@ -69,7 +69,7 @@ class _CategoryListTemplateState extends State<CategoryListTemplate> {
       valueListenable: MultiSelectController.multiSelect,
       builder: (context, active, _) => ValueListenableBuilder<Set<Object>>(
         valueListenable: MultiSelectController.selected,
-        builder: (context, _, __) => Scrollbar(
+        builder: (context, _, _) => Scrollbar(
           controller: _scrollController,
           thumbVisibility: true,
           interactive: true,

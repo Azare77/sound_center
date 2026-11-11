@@ -62,6 +62,7 @@ class LocalAudioRepositoryLinux extends AudioRepositoryImp {
             genre: genre,
             dateAdded: metadata.file.lastModifiedSync(),
             trackNum: metadata.trackNumber ?? 0,
+            year: metadata.year?.year.toString() ?? '',
             isPodcast: false,
             isAlarm: false,
             artist: artist,

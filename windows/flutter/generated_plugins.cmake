@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  audio_decoder
   connectivity_plus
   permission_handler_windows
   share_plus

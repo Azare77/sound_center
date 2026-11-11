@@ -6,6 +6,7 @@ import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/features/local_audio/data/repositories/local_player_rpository_imp.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/presentation/bloc/local_bloc.dart';
+import 'package:sound_center/features/local_audio/presentation/widgets/player/metadata_dialog.dart';
 import 'package:sound_center/shared/Repository/player_repository.dart';
 import 'package:sound_center/shared/widgets/media_controller_button.dart';
 import 'package:sound_center/shared/widgets/player/play_pause_button.dart';
@@ -61,7 +62,7 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
       }
     });
 
-    _audioSub = imp.audioChangedStream.listen((ms) async {
+    _audioSub = imp.audioChangedStream.listen((audio) async {
       isFavorite = await AudioUtil.isFavorite(imp.getCurrentAudio!.id);
       _updateUi();
     });
@@ -82,22 +83,40 @@ class _PlayerNavigationState extends State<PlayerNavigation> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          onPressed: () {
-            LocalEvent event;
-            if (isFavorite) {
-              event = RemoveFromFavorites(audio: imp.getCurrentAudio!);
-            } else {
-              event = AddToFavorites(audio: imp.getCurrentAudio!);
-            }
-            BlocProvider.of<LocalBloc>(context).add(event);
-            setState(() {
-              isFavorite = !isFavorite;
-            });
-          },
-          icon: Icon(
-            isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-          ),
+        Row(
+          spacing: 5,
+          mainAxisSize: .min,
+          children: [
+            IconButton(
+              onPressed: () {
+                LocalEvent event;
+                if (isFavorite) {
+                  event = RemoveFromFavorites(audio: imp.getCurrentAudio!);
+                } else {
+                  event = AddToFavorites(audio: imp.getCurrentAudio!);
+                }
+                BlocProvider.of<LocalBloc>(context).add(event);
+                setState(() {
+                  isFavorite = !isFavorite;
+                });
+              },
+              icon: Icon(
+                isFavorite
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
+                await showDialog(
+                  context: context,
+                  builder: (_) => MetadataDialog(audio: imp.getCurrentAudio!),
+                );
+                return;
+              },
+              icon: Icon(Icons.edit_note_rounded),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         Row(

@@ -3586,10 +3586,11 @@ class $$PlaylistTableTableTableManager
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (playlistItemTableRefs)
-                    await $_getPrefetchedData<
+                    await $_getPrefetchedDataByColumns<
                       PlaylistTableData,
                       $PlaylistTableTable,
-                      PlaylistItemTableData
+                      PlaylistItemTableData,
+                      $PlaylistItemTableTable
                     >(
                       currentTable: table,
                       referencedTable: $$PlaylistTableTableReferences
@@ -3600,8 +3601,8 @@ class $$PlaylistTableTableTableManager
                             table,
                             p0,
                           ).playlistItemTableRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.playlistId == item.id),
+                      currentColumn: 'id',
+                      referencedColumn: 'playlist_id',
                       typedResults: items,
                     ),
                 ];

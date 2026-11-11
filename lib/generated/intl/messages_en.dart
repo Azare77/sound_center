@@ -28,6 +28,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "THEME_NAMES": MessageLookupByLibrary.simpleMessage(
       "----------------- THEM NAMES ----------------",
     ),
+    "acoustidForMetadata": MessageLookupByLibrary.simpleMessage(
+      "AcoustId (For Metadata)",
+    ),
     "adminInfo": MessageLookupByLibrary.simpleMessage("Admin Info"),
     "album": MessageLookupByLibrary.simpleMessage("Album"),
     "appBarBackground": MessageLookupByLibrary.simpleMessage(
@@ -90,13 +93,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToRestoreBackup": MessageLookupByLibrary.simpleMessage(
       "Failed to restore backup.",
     ),
+    "failedToUpdateMetadata": MessageLookupByLibrary.simpleMessage(
+      "Failed to update audio metadata",
+    ),
+    "findMetadata": MessageLookupByLibrary.simpleMessage("Find Metadata"),
     "format": MessageLookupByLibrary.simpleMessage("Format"),
+    "genre": MessageLookupByLibrary.simpleMessage("Genre"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
     "glass": MessageLookupByLibrary.simpleMessage("Glass"),
     "green": MessageLookupByLibrary.simpleMessage("Green"),
     "host": MessageLookupByLibrary.simpleMessage("Host"),
     "iconColor": MessageLookupByLibrary.simpleMessage("Icon"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
+    "importantRegisterYourApplicationToGetAnApiKey":
+        MessageLookupByLibrary.simpleMessage(
+          "Important: Register your application to get an API key",
+        ),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("Latest First"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),
@@ -109,6 +121,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading": MessageLookupByLibrary.simpleMessage("Loading"),
     "local": MessageLookupByLibrary.simpleMessage("Local"),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
+    "metadataUpdated": MessageLookupByLibrary.simpleMessage(
+      "Metadata updated successfully",
+    ),
     "moreInfo": MessageLookupByLibrary.simpleMessage("More Info"),
     "nameIsUsed": MessageLookupByLibrary.simpleMessage(
       "This name is already used",
@@ -117,6 +132,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noAudio": MessageLookupByLibrary.simpleMessage("NO AUDIO!!"),
     "noDrmFreeMusic": MessageLookupByLibrary.simpleMessage("NO DRM FREE MUSIC"),
     "noHistory": MessageLookupByLibrary.simpleMessage("No History"),
+    "noMetadata": MessageLookupByLibrary.simpleMessage(
+      "No matching audio metadata was found",
+    ),
     "noPodcast": MessageLookupByLibrary.simpleMessage("NO PODCAST"),
     "noStream": MessageLookupByLibrary.simpleMessage("No Stream"),
     "notification": MessageLookupByLibrary.simpleMessage("Notification"),
@@ -136,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "If you installed this app from an app store, we recommend updating it through the same store.",
     ),
     "rssFeed": MessageLookupByLibrary.simpleMessage("Rss Feed"),
+    "save": MessageLookupByLibrary.simpleMessage("Save"),
     "scaffoldBackground": MessageLookupByLibrary.simpleMessage(
       "scaffold Background",
     ),
@@ -165,6 +184,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "thumbColor": MessageLookupByLibrary.simpleMessage("Slider"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
+    "trackNumber": MessageLookupByLibrary.simpleMessage("Track Number"),
     "tracks": MessageLookupByLibrary.simpleMessage("Tracks"),
     "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
     "unsubscribe": MessageLookupByLibrary.simpleMessage("Unsubscribe"),
@@ -172,6 +192,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlLink": MessageLookupByLibrary.simpleMessage("Url Link"),
     "votes": MessageLookupByLibrary.simpleMessage("Votes"),
     "website": MessageLookupByLibrary.simpleMessage("Website"),
+    "year": MessageLookupByLibrary.simpleMessage("Year"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "youAreUsingLatestVersion": MessageLookupByLibrary.simpleMessage(
       "You\'re using the latest version.",

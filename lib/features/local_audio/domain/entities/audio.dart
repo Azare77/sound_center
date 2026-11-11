@@ -17,6 +17,8 @@ class AudioEntity {
     required this.isPodcast,
     required this.isAlarm,
     required this.dateAdded,
+    this.genres,
+    this.year = '',
     this.uri,
     this.cover,
   });
@@ -29,7 +31,9 @@ class AudioEntity {
   final String album;
   final String artist;
   final String genre;
+  final List<String>? genres;
   final int trackNum;
+  final String year;
   final bool isPodcast;
   final bool isAlarm;
   final DateTime dateAdded;
@@ -44,7 +48,9 @@ class AudioEntity {
     String? album,
     String? artist,
     String? genre,
+    List<String>? genres,
     int? trackNum,
+    String? year,
     bool? isPodcast,
     bool? isAlarm,
     DateTime? dateAdded,
@@ -59,7 +65,9 @@ class AudioEntity {
       album: album ?? this.album,
       artist: artist ?? this.artist,
       genre: genre ?? this.genre,
+      genres: genres ?? this.genres,
       trackNum: trackNum ?? this.trackNum,
+      year: year ?? this.year,
       isPodcast: isPodcast ?? this.isPodcast,
       isAlarm: isAlarm ?? this.isAlarm,
       dateAdded: dateAdded ?? this.dateAdded,
@@ -90,6 +98,8 @@ class AudioEntity {
       ),
       duration: song.duration ?? 0,
       trackNum: song.track ?? 0,
+      year: '',
+      genres: song.genre != null ? [song.genre!] : [],
       isPodcast: song.isPodcast ?? false,
       isAlarm: song.isAlarm ?? false,
       cover: null,
@@ -109,7 +119,9 @@ class AudioEntity {
       'album': album,
       'artist': artist,
       'genre': genre,
+      'genres': genres,
       'trackNum': trackNum,
+      'year': year,
       'isPodcast': isPodcast,
       'isAlarm': isAlarm,
       'dateAdded': dateAdded.toIso8601String(),
@@ -117,6 +129,14 @@ class AudioEntity {
   }
 
   factory AudioEntity.fromJson(Map<String, dynamic> json) {
+    //TODO: remove in next update
+    try {
+      json['year'] = json['year'] ?? '';
+      json['genres'] = json['genres'] as List<String>;
+    } catch (e) {
+      List<String> g = [];
+      json['genres'] = g;
+    }
     return AudioEntity(
       id: json['id'] as int,
       uri: json['uri'] as String?,
@@ -127,6 +147,8 @@ class AudioEntity {
       artist: json['artist'] as String,
       genre: json['genre'] as String,
       trackNum: json['trackNum'] as int,
+      year: json['year'] as String,
+      genres: json['genres'] as List<String>,
       isPodcast: json['isPodcast'] as bool,
       isAlarm: json['isAlarm'] as bool,
       dateAdded: DateTime.parse(json['dateAdded'] as String),

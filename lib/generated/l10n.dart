@@ -823,6 +823,91 @@ class S {
       args: [],
     );
   }
+
+  /// `Genre`
+  String get genre {
+    return Intl.message('Genre', name: 'genre', desc: '', args: []);
+  }
+
+  /// `Year`
+  String get year {
+    return Intl.message('Year', name: 'year', desc: '', args: []);
+  }
+
+  /// `No matching audio metadata was found`
+  String get noMetadata {
+    return Intl.message(
+      'No matching audio metadata was found',
+      name: 'noMetadata',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Metadata updated successfully`
+  String get metadataUpdated {
+    return Intl.message(
+      'Metadata updated successfully',
+      name: 'metadataUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update audio metadata`
+  String get failedToUpdateMetadata {
+    return Intl.message(
+      'Failed to update audio metadata',
+      name: 'failedToUpdateMetadata',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track Number`
+  String get trackNumber {
+    return Intl.message(
+      'Track Number',
+      name: 'trackNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Important: Register your application to get an API key`
+  String get importantRegisterYourApplicationToGetAnApiKey {
+    return Intl.message(
+      'Important: Register your application to get an API key',
+      name: 'importantRegisterYourApplicationToGetAnApiKey',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Find Metadata`
+  String get findMetadata {
+    return Intl.message(
+      'Find Metadata',
+      name: 'findMetadata',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message('Save', name: 'save', desc: '', args: []);
+  }
+
+  /// `AcoustId (For Metadata)`
+  String get acoustidForMetadata {
+    return Intl.message(
+      'AcoustId (For Metadata)',
+      name: 'acoustidForMetadata',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

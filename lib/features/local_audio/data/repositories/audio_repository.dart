@@ -1,7 +1,15 @@
+import 'dart:io';
+
+import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:drift/drift.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
 import 'package:sound_center/database/drift/database.dart';
 import 'package:sound_center/database/shared_preferences/loca_order_storage.dart';
+import 'package:sound_center/features/local_audio/data/repositories/metadata/acoust_id.dart';
+import 'package:sound_center/features/local_audio/data/repositories/metadata/channel.dart';
+import 'package:sound_center/features/local_audio/data/repositories/metadata/finger_print.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 import 'package:sound_center/features/local_audio/domain/entities/local_play_list.dart';
 import 'package:sound_center/features/local_audio/domain/repositories/audio_repository.dart';
@@ -339,5 +347,149 @@ abstract class AudioRepositoryImp implements AudioRepository {
     });
 
     return audios;
+  }
+
+  @override
+  Future<AudioEntity?> getMetadata(
+    AudioEntity audio,
+    Function(int) onStepChanged,
+  ) async {
+    onStepChanged.call(0);
+    final fingerprintData = await FingerprintService.generateFingerprint(audio);
+    final acoustId = AcoustId();
+
+    try {
+      final metadata = await acoustId.lookupMetadata(
+        fingerprint: fingerprintData.fingerprint,
+        duration: fingerprintData.duration,
+        onStepChanged: onStepChanged,
+      );
+      if (metadata == null) return null;
+      return audio.copyWith(
+        title: metadata.title,
+        artist: metadata.artists.isNotEmpty
+            ? metadata.artists.join(', ')
+            : metadata.albumArtist,
+        album: metadata.album,
+        year: metadata.releaseYear,
+        trackNum: metadata.trackNumber,
+        genres: metadata.genres.isNotEmpty
+            ? metadata.genres
+            : metadata.albumGenres,
+        genre:
+            metadata.genre ??
+            metadata.genres.firstOrNull ??
+            metadata.albumGenres.firstOrNull,
+        cover: metadata.coverBytes,
+      );
+    } catch (e) {
+      rethrow;
+    } finally {
+      acoustId.dispose();
+      fingerprintData.chromaprint.dispose();
+    }
+  }
+
+  Future<Uint8List?> getCover({
+    required String? title,
+    required String? artist,
+    required String? album,
+  }) async {
+    final acoustId = AcoustId();
+    return await acoustId.loadItunesCoverArt(title, artist, album);
+  }
+
+  Future<void> saveMetadata({
+    required AudioEntity audio,
+    Uint8List? coverBytes,
+  }) async {
+    final uri = audio.uri;
+
+    if (uri == null || uri.isEmpty) {
+      throw Exception('Audio content URI is unavailable');
+    }
+
+    final original = File(audio.path);
+
+    if (!await original.exists()) {
+      throw Exception('Audio file does not exist');
+    }
+    if (Platform.isLinux) {
+      updateMetadata(original, (metadata) {
+        metadata.setTitle(audio.title);
+        metadata.setArtist(audio.artist);
+        metadata.setAlbum(audio.album);
+
+        if (audio.genres != null) {
+          metadata.setGenres(audio.genres!);
+        }
+
+        final year = int.tryParse(audio.year);
+        if (year != null) {
+          metadata.setYear(DateTime(year));
+        }
+
+        metadata.setTrackNumber(audio.trackNum);
+
+        if (coverBytes != null) {
+          metadata.setPictures([
+            Picture(coverBytes, 'image/jpeg', PictureType.coverFront),
+          ]);
+        }
+      });
+      return;
+    }
+    final tempDir = await getTemporaryDirectory();
+    final extension = p.extension(audio.path);
+    final tempFile = File(
+      p.join(tempDir.path, 'metadata_${audio.id}$extension'),
+    );
+
+    try {
+      await original.copy(tempFile.path);
+      updateMetadata(tempFile, (metadata) {
+        metadata.setTitle(audio.title);
+        metadata.setArtist(audio.artist);
+        metadata.setAlbum(audio.album);
+
+        if (audio.genres != null) {
+          metadata.setGenres(audio.genres!);
+        }
+
+        final year = int.tryParse(audio.year);
+        if (year != null) {
+          metadata.setYear(DateTime(year));
+        }
+
+        metadata.setTrackNumber(audio.trackNum);
+
+        if (coverBytes != null) {
+          metadata.setPictures([
+            Picture(coverBytes, 'image/jpeg', PictureType.coverFront),
+          ]);
+        }
+      });
+
+      if (!await tempFile.exists() || await tempFile.length() == 0) {
+        throw Exception('Metadata output file is invalid');
+      }
+
+      final editedBytes = await tempFile.readAsBytes();
+      final writer = ScopedStorageWriter();
+
+      final preGranted = await writer.requestWriteAccess(uri);
+      if (!preGranted) {
+        throw Exception('Write permission denied');
+      }
+
+      final success = await writer.writeBytes(uri, editedBytes);
+      if (!success) {
+        throw Exception('Failed to save metadata or permission denied');
+      }
+    } finally {
+      if (await tempFile.exists()) {
+        await tempFile.delete();
+      }
+    }
   }
 }

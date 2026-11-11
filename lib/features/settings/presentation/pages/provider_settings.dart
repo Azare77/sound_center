@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:sound_center/core/util/text_util.dart';
 import 'package:sound_center/features/settings/data/settings_repository_imp.dart';
 import 'package:sound_center/features/settings/domain/settings_repository.dart';
 import 'package:sound_center/generated/l10n.dart';
@@ -97,26 +98,36 @@ class _ProviderSettingsState extends State<ProviderSettings> {
                   textDirection: TextDirection.ltr,
                 ),
               ),
-            Row(
-              mainAxisAlignment: .center,
-              spacing: 10,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    submit();
-                    Navigator.pop(context);
-                  },
-                  child: Text(S.of(context).submit),
-                ),
-                if (provider == PodcastProvider.podcatIndex)
+            Directionality(
+              textDirection: .ltr,
+              child: Row(
+                mainAxisAlignment: .center,
+                spacing: 10,
+                children: [
+                  if (provider == PodcastProvider.podcatIndex)
+                    ElevatedButton(
+                      onPressed: () async {
+                        final Uri url = Uri.parse(
+                          "https://api.podcastindex.org",
+                        );
+                        launchUrl(url, mode: LaunchMode.externalApplication);
+                      },
+                      child: Text(
+                        S.of(context).getApiKey,
+                        textDirection: TextUtil.getTextDirection(
+                          S.of(context).getApiKey,
+                        ),
+                      ),
+                    ),
                   ElevatedButton(
-                    onPressed: () async {
-                      final Uri url = Uri.parse("https://api.podcastindex.org");
-                      launchUrl(url, mode: LaunchMode.externalApplication);
+                    onPressed: () {
+                      submit();
+                      Navigator.pop(context);
                     },
-                    child: Text(S.of(context).getApiKey),
+                    child: Text(S.of(context).submit),
                   ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

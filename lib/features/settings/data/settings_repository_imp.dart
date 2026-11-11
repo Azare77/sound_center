@@ -82,4 +82,14 @@ class SettingsRepositoryImp implements SettingRepository {
   Future<void> setPlayerStyle(PlayerStyle style) {
     return AppSettingStorage.savePlayerStyle(style);
   }
+
+  @override
+  String? getAcoustIdApikey() {
+    return AppSettingStorage.getAcoustIdApikey();
+  }
+
+  @override
+  Future<void> setAcoustIdApikey(String apikey) {
+    return AppSettingStorage.setAcoustIdApikey(apikey);
+  }
 }

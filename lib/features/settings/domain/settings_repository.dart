@@ -34,4 +34,8 @@ abstract class SettingRepository {
   PlayerStyle getPlayerStyle();
 
   Future<void> setPlayerStyle(PlayerStyle style);
+
+  Future<void> setAcoustIdApikey(String apikey);
+
+  String? getAcoustIdApikey();
 }

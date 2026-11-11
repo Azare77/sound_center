@@ -47,6 +47,11 @@ abstract class AudioRepository {
 
   Future<List<PlaylistEntity>> getPlaylists();
 
+  Future<AudioEntity?> getMetadata(
+    AudioEntity audio,
+    Function(int) onStepChanged,
+  );
+
   Future<bool> createPlaylist(PlaylistEntity playlist);
 
   Future<bool> renamePlaylist(int playlistId, String newTitle);

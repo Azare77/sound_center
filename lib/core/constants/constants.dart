@@ -17,4 +17,6 @@ const int VERSION_NUMBER = 6;
 
 const String VERSION_NAME = "v1.2.0";
 
+const String REPO_ADDRESS = "https://github.com/Azare77/sound_center";
+
 final GlobalKey<NavigatorState> NAVIGATOR_KEY = GlobalKey<NavigatorState>();

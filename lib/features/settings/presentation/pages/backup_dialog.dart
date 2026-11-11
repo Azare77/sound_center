@@ -51,6 +51,7 @@ class BackupDialog extends StatelessWidget {
         provider: AppSettingStorage.getSavedProvider(),
         providerKeys: AppSettingStorage.getPodcastIndexKeys(),
         playerStyle: AppSettingStorage.getPlayerStyle(),
+        acoustId: AppSettingStorage.getAcoustIdApikey(),
       );
       final file = await createBackupFile(backup);
 
@@ -153,6 +154,11 @@ class BackupDialog extends StatelessWidget {
           await AppSettingStorage.saveCustomThemes(themes);
         }
 
+        final acoustIdApikey = backup.acoustId;
+        if (acoustIdApikey != null) {
+          await AppSettingStorage.setAcoustIdApikey(acoustIdApikey);
+        }
+
         final keys = backup.providerKeys;
 
         if (keys != null && keys['key'] != null && keys['secret'] != null) {
@@ -253,6 +259,7 @@ class AppBackup {
   final PodcastProvider? provider;
   final PlayerStyle? playerStyle;
   final Map<String, String>? providerKeys;
+  final String? acoustId;
 
   AppBackup({
     this.version,
@@ -263,6 +270,7 @@ class AppBackup {
     this.provider,
     this.playerStyle,
     this.providerKeys,
+    this.acoustId,
   });
 
   Map<String, dynamic> toJson() {
@@ -277,6 +285,7 @@ class AppBackup {
         'provider': provider?.name,
         'providerKeys': providerKeys,
         'playerStyle': playerStyle?.name,
+        'acoustId': acoustId,
       },
     };
   }
@@ -320,6 +329,7 @@ class AppBackup {
       providerKeys: data['providerKeys'] != null
           ? Map<String, String>.from(data['providerKeys'])
           : null,
+      acoustId: data['acoustId'] != null ? data['acoustId'] as String? : null,
     );
   }
 }

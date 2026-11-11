@@ -68,6 +68,9 @@ kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
     }
+    dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+    }
 }
 
 flutter {

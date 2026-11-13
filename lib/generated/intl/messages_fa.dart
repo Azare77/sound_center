@@ -94,8 +94,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToUpdateMetadata": MessageLookupByLibrary.simpleMessage(
       "به‌روزرسانی اطلاعات متادیتای فایل صوتی ناموفق بود.",
     ),
+    "fetchingMetadataFromMusicbrainz": MessageLookupByLibrary.simpleMessage(
+      "دریافت اطلاعات آهنگ از MusicBrainz",
+    ),
     "findMetadata": MessageLookupByLibrary.simpleMessage("پیدا کردن متادیتا"),
     "format": MessageLookupByLibrary.simpleMessage("فرمت"),
+    "generatingAudioFingerprint": MessageLookupByLibrary.simpleMessage(
+      "تولید اثر انگشت صوتی",
+    ),
     "genre": MessageLookupByLibrary.simpleMessage("سبک"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("دریافت کلید API"),
     "glass": MessageLookupByLibrary.simpleMessage("شیشه‌ای"),
@@ -119,6 +125,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading": MessageLookupByLibrary.simpleMessage("در حال بارگذاری"),
     "local": MessageLookupByLibrary.simpleMessage("محلی"),
     "location": MessageLookupByLibrary.simpleMessage("مکان"),
+    "lookingUpTrackOnAcoustid": MessageLookupByLibrary.simpleMessage(
+      "جستوجوی آهنگ در AcoustID",
+    ),
     "metadataUpdated": MessageLookupByLibrary.simpleMessage(
       "اطلاعات متادیتا با موفقیت به‌روزرسانی شد",
     ),
@@ -158,6 +167,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "scaffoldBackground": MessageLookupByLibrary.simpleMessage("پس زمینه"),
     "scanning": MessageLookupByLibrary.simpleMessage("در حال اسکن"),
     "searchHint": MessageLookupByLibrary.simpleMessage("دنبال چی هستی؟"),
+    "searchingForArtwork": MessageLookupByLibrary.simpleMessage(
+      " جستوجوی کاور آهنگ",
+    ),
     "selectProvider": MessageLookupByLibrary.simpleMessage(
       "سرویس دهنده خودت رو انتخاب کن",
     ),

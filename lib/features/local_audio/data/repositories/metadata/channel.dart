@@ -6,8 +6,6 @@ class ScopedStorageWriter {
   static const MethodChannel _channel = MethodChannel('scoped_storage_writer');
   static const Duration _timeout = Duration(seconds: 30);
 
-  /// فقط روی Android 11+ معنا دارد؛ روی نسخه‌های پایین‌تر همیشه true برمی‌گرداند
-  /// چون اجازه در لحظه‌ی writeBytes گرفته می‌شود، نه قبل از آن.
   Future<bool> requestWriteAccess(String uri) async {
     try {
       return await _channel

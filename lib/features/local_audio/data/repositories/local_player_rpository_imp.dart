@@ -131,6 +131,16 @@ class LocalPlayerRepositoryImp extends BasePlayerRepository {
     }
     _audioChangedController.add(_currentAudio);
     await PlayerStateStorage.saveLastAudio(_currentAudio!);
+    updateNotification();
+  }
+
+  void updateNotification() async {
+    final item = _currentAudio;
+    if (item == null) return;
+    (audioHandler as JustAudioNotificationHandler).setMediaItemFrom(
+      item,
+      cover: item.cover,
+    );
   }
 
   @override

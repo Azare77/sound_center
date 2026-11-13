@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:just_audio/just_audio.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sound_center/core/services/system_sleep_manager.dart';
 
 enum AudioSource { local, podcast, stream, cloud }
 
@@ -219,7 +220,10 @@ class JustAudioService {
     }
   }
 
-  Future<void> play() async => await _player.play();
+  Future<void> play() async {
+    await _player.play();
+    await SystemSleepManager.preventSleep();
+  }
 
   bool isPlaying() {
     return _player.playing;
@@ -227,19 +231,21 @@ class JustAudioService {
 
   Future<void> togglePlaying() async {
     if (_player.playing) {
-      await _player.pause();
+      await pause();
     } else {
-      await _player.play();
+      await play();
     }
   }
 
   Future<void> pause() async {
     await _player.pause();
+    await SystemSleepManager.allowSleep();
   }
 
   Future<void> release() async {
     try {
       await _player.stop();
+      await SystemSleepManager.dispose();
       await _player.clearAudioSources();
     } catch (e) {
       return;

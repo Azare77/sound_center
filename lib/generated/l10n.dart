@@ -908,6 +908,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Generating audio fingerprint`
+  String get generatingAudioFingerprint {
+    return Intl.message(
+      'Generating audio fingerprint',
+      name: 'generatingAudioFingerprint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Looking up track on AcoustID`
+  String get lookingUpTrackOnAcoustid {
+    return Intl.message(
+      'Looking up track on AcoustID',
+      name: 'lookingUpTrackOnAcoustid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fetching metadata from MusicBrainz`
+  String get fetchingMetadataFromMusicbrainz {
+    return Intl.message(
+      'Fetching metadata from MusicBrainz',
+      name: 'fetchingMetadataFromMusicbrainz',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Searching for artwork`
+  String get searchingForArtwork {
+    return Intl.message(
+      'Searching for artwork',
+      name: 'searchingForArtwork',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

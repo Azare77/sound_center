@@ -124,5 +124,9 @@
   "importantRegisterYourApplicationToGetAnApiKey": "Important: Register your application to get an API key",
   "findMetadata": "Find Metadata",
   "save": "Save",
-  "acoustidForMetadata": "AcoustId (For Metadata)"
+  "acoustidForMetadata": "AcoustId (For Metadata)",
+  "generatingAudioFingerprint": "Generating audio fingerprint",
+  "lookingUpTrackOnAcoustid": "Looking up track on AcoustID",
+  "fetchingMetadataFromMusicbrainz": "Fetching metadata from MusicBrainz",
+  "searchingForArtwork": "Searching for artwork"
 }

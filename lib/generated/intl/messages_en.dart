@@ -96,8 +96,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToUpdateMetadata": MessageLookupByLibrary.simpleMessage(
       "Failed to update audio metadata",
     ),
+    "fetchingMetadataFromMusicbrainz": MessageLookupByLibrary.simpleMessage(
+      "Fetching metadata from MusicBrainz",
+    ),
     "findMetadata": MessageLookupByLibrary.simpleMessage("Find Metadata"),
     "format": MessageLookupByLibrary.simpleMessage("Format"),
+    "generatingAudioFingerprint": MessageLookupByLibrary.simpleMessage(
+      "Generating audio fingerprint",
+    ),
     "genre": MessageLookupByLibrary.simpleMessage("Genre"),
     "getApiKey": MessageLookupByLibrary.simpleMessage("Get Api Key"),
     "glass": MessageLookupByLibrary.simpleMessage("Glass"),
@@ -121,6 +127,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading": MessageLookupByLibrary.simpleMessage("Loading"),
     "local": MessageLookupByLibrary.simpleMessage("Local"),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
+    "lookingUpTrackOnAcoustid": MessageLookupByLibrary.simpleMessage(
+      "Looking up track on AcoustID",
+    ),
     "metadataUpdated": MessageLookupByLibrary.simpleMessage(
       "Metadata updated successfully",
     ),
@@ -160,6 +169,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "scanning": MessageLookupByLibrary.simpleMessage("Scanning"),
     "searchHint": MessageLookupByLibrary.simpleMessage("what do you want?"),
+    "searchingForArtwork": MessageLookupByLibrary.simpleMessage(
+      "Searching for artwork",
+    ),
     "selectProvider": MessageLookupByLibrary.simpleMessage(
       "Select Your Provider",
     ),

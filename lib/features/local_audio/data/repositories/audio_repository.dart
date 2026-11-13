@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
+import 'package:audio_metadata_reader/src/parsers/containers/riff.dart';
 import 'package:drift/drift.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -414,7 +415,9 @@ abstract class AudioRepositoryImp implements AudioRepository {
     if (!await original.exists()) {
       throw Exception('Audio file does not exist');
     }
+
     if (Platform.isLinux) {
+      _generateTag(original, audio);
       updateMetadata(original, (metadata) {
         metadata.setTitle(audio.title);
         metadata.setArtist(audio.artist);
@@ -447,6 +450,7 @@ abstract class AudioRepositoryImp implements AudioRepository {
 
     try {
       await original.copy(tempFile.path);
+      _generateTag(tempFile, audio);
       updateMetadata(tempFile, (metadata) {
         metadata.setTitle(audio.title);
         metadata.setArtist(audio.artist);
@@ -491,5 +495,31 @@ abstract class AudioRepositoryImp implements AudioRepository {
         await tempFile.delete();
       }
     }
+  }
+
+  void _generateTag(File file, AudioEntity audio) {
+    final reader = file.openSync();
+    final bool hasExistingTag;
+    try {
+      hasExistingTag =
+          ApeParser.canUserParser(reader) ||
+          MP3Parser.hasID3v1Tag(reader) ||
+          MP3Parser.hasID3v2Tag(reader) ||
+          RiffParser.canUserParser(reader) ||
+          MP4Parser.canUserParser(reader) ||
+          FlacParser.canUserParser(reader);
+    } finally {
+      reader.closeSync();
+    }
+
+    if (hasExistingTag) return;
+
+    Id3v4Writer().write(
+      file,
+      Mp3Metadata()
+        ..songName = audio.title
+        ..originalArtist = audio.artist
+        ..album = audio.album,
+    );
   }
 }

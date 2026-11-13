@@ -98,16 +98,16 @@ class _MetadataDialogState extends State<MetadataDialog> {
       void setStep(int step) {
         switch (step) {
           case 0:
-            this.step = "Generating FingerPrint";
+            this.step = S.of(context).generatingAudioFingerprint;
             break;
           case 1:
-            this.step = "Searching AcoustId info";
+            this.step = S.of(context).lookingUpTrackOnAcoustid;
             break;
           case 2:
-            this.step = "Searching MusicBrainz info";
+            this.step = S.of(context).fetchingMetadataFromMusicbrainz;
             break;
           case 3:
-            this.step = "Searching for cover";
+            this.step = S.of(context).searchingForArtwork;
             break;
           default:
             this.step = null;
@@ -159,6 +159,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
       genre: _genreController.text.trim(),
       year: _yearController.text.trim(),
       trackNum: trackNumber,
+      cover: cover,
     );
 
     try {

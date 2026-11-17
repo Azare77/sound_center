@@ -11,6 +11,7 @@ import 'package:sound_center/features/local_audio/domain/repositories/audio_repo
 
 class LocalAudioRepositoryLinux extends AudioRepositoryImp {
   List<AudioEntity> allSongs = [];
+  final _zeroDate = DateTime.parse("0000-01-01 00:00:00.000");
 
   @override
   Future<List<AudioEntity>> fetchLocalAudios({
@@ -51,6 +52,10 @@ class LocalAudioRepositoryLinux extends AudioRepositoryImp {
             : unknown;
         final duration = metadata.duration?.inMilliseconds ?? 0;
         final fileSize = file.lengthSync();
+        String date = '';
+        if (metadata.year != _zeroDate) {
+          date = metadata.year?.year.toString() ?? '';
+        }
         allSongs.add(
           AudioEntity(
             id: generateStableId(title, artist, album, duration, fileSize),
@@ -62,7 +67,7 @@ class LocalAudioRepositoryLinux extends AudioRepositoryImp {
             genre: genre,
             dateAdded: metadata.file.lastModifiedSync(),
             trackNum: metadata.trackNumber ?? 0,
-            year: metadata.year?.year.toString() ?? '',
+            year: date,
             isPodcast: false,
             isAlarm: false,
             artist: artist,

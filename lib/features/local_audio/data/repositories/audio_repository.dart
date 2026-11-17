@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
+// ignore: implementation_imports
 import 'package:audio_metadata_reader/src/parsers/containers/riff.dart';
 import 'package:drift/drift.dart';
 import 'package:path/path.dart' as p;
@@ -423,9 +424,7 @@ abstract class AudioRepositoryImp implements AudioRepository {
         metadata.setArtist(audio.artist);
         metadata.setAlbum(audio.album);
 
-        if (audio.genres != null) {
-          metadata.setGenres(audio.genres!);
-        }
+        if (audio.genres != null) metadata.setGenres(audio.genres!);
 
         final year = int.tryParse(audio.year);
         if (year != null) {
@@ -456,9 +455,7 @@ abstract class AudioRepositoryImp implements AudioRepository {
         metadata.setArtist(audio.artist);
         metadata.setAlbum(audio.album);
 
-        if (audio.genres != null) {
-          metadata.setGenres(audio.genres!);
-        }
+        if (audio.genres != null) metadata.setGenres(audio.genres!);
 
         final year = int.tryParse(audio.year);
         if (year != null) {

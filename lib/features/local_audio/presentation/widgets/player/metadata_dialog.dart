@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +37,8 @@ class _MetadataDialogState extends State<MetadataDialog> {
   late final TextEditingController _artistController;
   late final TextEditingController _albumController;
   late final TextEditingController _genreController;
-  late final TextEditingController _trackNumController;
+
+  // late final TextEditingController _trackNumController;
   late final TextEditingController _yearController;
   Uint8List? cover;
   Uint8List? originalCover;
@@ -66,18 +70,28 @@ class _MetadataDialogState extends State<MetadataDialog> {
     if (_initialized) return;
     _initialized = true;
 
-    _titleController = TextEditingController(text: audio.title);
+    final metadata = readMetadata(File(audio.path));
+    final title = metadata.title?.trim() ?? '';
+    final album = metadata.album?.trim() ?? '';
+    final artist = audio.artist;
+    final genre = metadata.genres.join(',');
+    final year = metadata.year?.year ?? 0;
+    // final trackNum = metadata.trackNumber ?? 0;
 
-    _artistController = TextEditingController(text: normalize(audio.artist));
+    _titleController = TextEditingController(text: title);
 
-    _albumController = TextEditingController(text: normalize(audio.album));
+    _artistController = TextEditingController(text: normalize(artist));
 
-    _genreController = TextEditingController(text: normalize(audio.genre));
-    _trackNumController = TextEditingController(
-      text: audio.trackNum > 0 ? audio.trackNum.toString() : null,
+    _albumController = TextEditingController(text: normalize(album));
+
+    _genreController = TextEditingController(text: normalize(genre));
+    // _trackNumController = TextEditingController(
+    //   text: audio.trackNum > 0 ? trackNum.toString() : null,
+    // );
+
+    _yearController = TextEditingController(
+      text: normalize(year > 0 ? year.toString() : null),
     );
-
-    _yearController = TextEditingController(text: normalize(audio.year));
 
     cover = audio.cover;
   }
@@ -129,7 +143,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
       _artistController.text = normalize(result.artist);
       _albumController.text = normalize(result.album);
       _genreController.text = normalize(result.genre);
-      _trackNumController.text = result.trackNum.toString();
+      // _trackNumController.text = result.trackNum.toString();
       _yearController.text = normalize(result.year);
       cover = result.cover;
     } catch (e) {
@@ -150,15 +164,16 @@ class _MetadataDialogState extends State<MetadataDialog> {
   Future<void> saveMetadata() async {
     final localBloc = context.read<LocalBloc>();
 
-    final trackNumber = int.tryParse(_trackNumController.text.trim());
+    // final trackNumber = int.tryParse(_trackNumController.text.trim());
 
     final updatedAudio = audio.copyWith(
       title: _titleController.text.trim(),
       artist: _artistController.text.trim(),
       album: _albumController.text.trim(),
       genre: _genreController.text.trim(),
+      genres: _genreController.text.trim().split(','),
       year: _yearController.text.trim(),
-      trackNum: trackNumber,
+      // trackNum: trackNumber,
       cover: cover,
     );
 
@@ -232,7 +247,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
     _albumController.dispose();
     _genreController.dispose();
     _yearController.dispose();
-    _trackNumController.dispose();
+    // _trackNumController.dispose();
 
     super.dispose();
   }
@@ -295,29 +310,33 @@ class _MetadataDialogState extends State<MetadataDialog> {
                         label: S.of(context).title,
                         icon: Icons.music_note_outlined,
                         controller: _titleController,
+                        inputType: TextInputType.name,
                       ),
                       _buildField(
                         label: S.of(context).artist,
                         icon: Icons.person_rounded,
                         controller: _artistController,
+                        inputType: TextInputType.name,
                       ),
                       _buildField(
                         label: S.of(context).album,
                         icon: Icons.album_rounded,
                         controller: _albumController,
+                        inputType: TextInputType.name,
                       ),
                       _buildField(
                         label: S.of(context).genre,
                         icon: Icons.music_note_rounded,
                         controller: _genreController,
+                        inputType: TextInputType.name,
                       ),
-                      _buildField(
-                        label: S.of(context).trackNumber,
-                        controller: _trackNumController,
-                        icon: Icons.queue_music_outlined,
-                        inputType: TextInputType.number,
-                        format: FilteringTextInputFormatter.digitsOnly,
-                      ),
+                      // _buildField(
+                      //   label: S.of(context).trackNumber,
+                      //   controller: _trackNumController,
+                      //   icon: Icons.queue_music_outlined,
+                      //   inputType: TextInputType.number,
+                      //   format: FilteringTextInputFormatter.digitsOnly,
+                      // ),
                       _buildField(
                         label: S.of(context).year,
                         icon: Icons.calendar_month_outlined,

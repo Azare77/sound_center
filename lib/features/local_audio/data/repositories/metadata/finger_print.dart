@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:audio_decode/audio_decode.dart';
 import 'package:audio_decoder/audio_decoder.dart';
 import 'package:chromaprint/chromaprint.dart';
 import 'package:flutter/foundation.dart';
@@ -11,7 +10,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sound_center/features/local_audio/data/model/audio_metadata.dart';
 import 'package:sound_center/features/local_audio/domain/entities/audio.dart';
 
-// AcoustID & Chromaprint standards
 const _targetSampleRate = 11025;
 const _targetChannels = 1;
 
@@ -63,14 +61,12 @@ class _DecodedPcmResult {
   final int sampleRate;
   final int channels;
   final int durationSeconds;
-  final bool usedFastPath;
 
   _DecodedPcmResult({
     required this.samples,
     required this.sampleRate,
     required this.channels,
     required this.durationSeconds,
-    required this.usedFastPath,
   });
 }
 
@@ -79,48 +75,74 @@ Future<_DecodedPcmResult> _decodeAndResampleIsolateEntry(
 ) async {
   BackgroundIsolateBinaryMessenger.ensureInitialized(request.rootIsolateToken);
 
-  final sourceBytes = await File(request.audioPath).readAsBytes();
-
-  PcmAudio pcm;
-  var usedFastPath = true;
-  try {
-    pcm = decodeAudio(sourceBytes);
-  } on AudioDecodeException {
-    // for unsupported formats by audio_decode (like FLAC, M4A/AAC, WMA, AIFF...)
-    usedFastPath = false;
-    pcm = await _decodeViaNativePlugin(request.audioPath);
-  }
-
-  if (usedFastPath &&
-      (pcm.sampleRate != _targetSampleRate ||
-          pcm.channels != _targetChannels)) {
-    pcm = resample(pcm.toMono(), _targetSampleRate);
-  }
-
-  return _DecodedPcmResult(
-    samples: pcm.samples,
-    sampleRate: pcm.sampleRate,
-    channels: pcm.channels,
-    durationSeconds: pcm.duration.inSeconds,
-    usedFastPath: usedFastPath,
-  );
-}
-
-Future<PcmAudio> _decodeViaNativePlugin(String sourcePath) async {
   final tempDir = await getTemporaryDirectory();
   final workDir = await tempDir.createTemp('fingerprint_');
   try {
     final wavPath = '${workDir.path}/audio.wav';
     await AudioDecoder.convertToWav(
-      sourcePath,
+      request.audioPath,
       wavPath,
       sampleRate: _targetSampleRate,
       channels: _targetChannels,
       bitDepth: 16,
     );
     final wavBytes = await File(wavPath).readAsBytes();
-    return decodeAudio(wavBytes);
+    final pcm = _decodeWavBytes(wavBytes);
+
+    return _DecodedPcmResult(
+      samples: pcm.samples,
+      sampleRate: pcm.sampleRate,
+      channels: pcm.channels,
+      durationSeconds: pcm.duration.inSeconds,
+    );
   } finally {
     await workDir.delete(recursive: true);
   }
+}
+
+// تابع ساده برای خواندن PCM از فایل WAV (جایگزین decodeAudio از audio_decode)
+PcmAudio _decodeWavBytes(Uint8List wavBytes) {
+  // WAV header استاندارد 44 بایت است (برای PCM 16-bit)
+  // در صورت نیاز به دقت بیشتر، هدر را پارس کنید
+  final dataOffset = _findDataChunkOffset(wavBytes);
+  final samples = Int16List.sublistView(
+    wavBytes.buffer.asInt16List(),
+    dataOffset ~/ 2,
+  );
+
+  return PcmAudio(
+    samples: samples,
+    sampleRate: _targetSampleRate,
+    channels: _targetChannels,
+  );
+}
+
+int _findDataChunkOffset(Uint8List wavBytes) {
+  // جستجوی چانک "data" در هدر WAV
+  for (var i = 12; i < wavBytes.length - 8; i++) {
+    if (wavBytes[i] == 0x64 && // 'd'
+        wavBytes[i + 1] == 0x61 && // 'a'
+        wavBytes[i + 2] == 0x74 && // 't'
+        wavBytes[i + 3] == 0x61) {
+      // 'a'
+      return i + 8; // داده‌ها بعد از شناسه چانک و اندازه شروع می‌شوند
+    }
+  }
+  return 44; // پیش‌فرض: هدر استاندارد 44 بایتی
+}
+
+// کلاس ساده PcmAudio برای جایگزینی audio_decode
+class PcmAudio {
+  final Int16List samples;
+  final int sampleRate;
+  final int channels;
+
+  PcmAudio({
+    required this.samples,
+    required this.sampleRate,
+    required this.channels,
+  });
+
+  Duration get duration =>
+      Duration(seconds: samples.length ~/ (sampleRate * channels));
 }

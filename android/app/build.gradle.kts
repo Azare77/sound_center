@@ -53,7 +53,7 @@ extensions.configure<ApplicationExtension> {
 
     buildTypes {
         release {
-//            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
         }

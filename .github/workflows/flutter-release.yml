@@ -53,22 +53,6 @@ jobs:
       - name: Build APK
         run: flutter build apk --release --split-per-abi
 
-      - name: Sign APK with apksigner 34
-        run: |
-          # مسیر build-tools 34 (که از قبل نصب شده)
-          APKSIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
-
-          # امضای هر سه APK
-          for apk in build/app/outputs/flutter-apk/app-*-release.apk; do
-            echo "Signing $apk"
-            $APKSIGNER sign \
-              --ks android/app/release.jks \
-              --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-              --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-              --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-              "$apk"
-          done
-
       - name: Upload Release APK
         uses: softprops/action-gh-release@v1
         with:

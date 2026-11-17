@@ -50,17 +50,24 @@ jobs:
           echo "ANDROID_HOME=/opt/android-sdk" >> $GITHUB_ENV
           echo "ANDROID_SDK_ROOT=/opt/android-sdk" >> $GITHUB_ENV
 
-      - name: Ensure build-tools 34.0.0
-        run: |
-          yes | sdkmanager "build-tools;34.0.0" || true
-
-      - name: Check actual build-tools version
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          ls $ANDROID_HOME/build-tools/
-
       - name: Build APK
         run: flutter build apk --release --split-per-abi
+
+      - name: Sign APK with apksigner 34
+        run: |
+          # مسیر build-tools 34 (که از قبل نصب شده)
+          APKSIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
+
+          # امضای هر سه APK
+          for apk in build/app/outputs/flutter-apk/app-*-release.apk; do
+            echo "Signing $apk"
+            $APKSIGNER sign \
+              --ks android/app/release.jks \
+              --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+              --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+              --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+              "$apk"
+          done
 
       - name: Upload Release APK
         uses: softprops/action-gh-release@v1

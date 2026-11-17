@@ -1,0 +1,10 @@
+What's New:
+- Added a simple metadata editor for audio files.
+- Added AcoustID and iTunes integration to automatically identify tracks and fix metadata.
+
+Improvements:
+- Improved button labels and text throughout the app.
+- Improved layout direction on some pages.
+
+Fixed:
+- Fixed incorrect text direction on certain pages.

@@ -171,7 +171,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Search Using AcoustID",
     ),
     "searchUsingItnues": MessageLookupByLibrary.simpleMessage(
-      "Search Using ITunes",
+      "Search Using iTunes",
     ),
     "searchingForArtwork": MessageLookupByLibrary.simpleMessage(
       "Searching for artwork",

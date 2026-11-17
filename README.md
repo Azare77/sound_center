@@ -31,6 +31,7 @@ Currently available on Android and Linux desktop, with support for English and F
 | **Downloads manager**                     | ✔ Background using `background_downloader` |
 | **Localization**                          | ✔ English & Farsi (`intl`)                 |
 | **Custom Themes**                         | ✔ Create Custom Themes and share them      |
+| **Edit Metadata**                         | ✔ Edit Metadata Useing AcoustID & iTunes   |
 | **Live audio streams (internet radio)**   | ✔ Search and play radio stations           |
 | **Third-party sources (SoundCloud)**      | ✔ Search and play DRM free audios          |
 

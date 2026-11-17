@@ -1,5 +1,3 @@
-
-
 class ArtistEntity {
   final String name;
   final int totalLength;

@@ -1,3 +1,10 @@
+# 1.3.0
+
+* Add simple metadata editor
+* Add AcoustID & iTunes to fix tags automatically
+* Improve button labels and texts
+* Fix direction in some pages
+
 # 1.2.0
 
 * Add tabs for categorized content such as Favorites, Artists, and Folders

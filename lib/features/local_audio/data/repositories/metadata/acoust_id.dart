@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sound_center/features/local_audio/data/model/audio_metadata.dart';
 import 'package:sound_center/features/local_audio/data/model/itunes_track.dart';
 import 'package:sound_center/features/local_audio/data/repositories/metadata/metadata_parser.dart';

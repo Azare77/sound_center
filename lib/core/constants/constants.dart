@@ -13,9 +13,9 @@ const double LIST_ITEM_HEIGHT = 70;
 
 const double EXPANDED_HEIGHT = 300;
 
-const int VERSION_NUMBER = 6;
+const int VERSION_NUMBER = 7;
 
-const String VERSION_NAME = "v1.2.0";
+const String VERSION_NAME = "v1.3.0";
 
 const String REPO_ADDRESS = "https://github.com/Azare77/sound_center";
 

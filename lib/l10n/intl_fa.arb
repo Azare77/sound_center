@@ -123,7 +123,7 @@
   "trackNumber": "شماره قطعه",
   "AcoustIdNote": "مهم: برای دریافت کلید API، برنامه خود را در وب‌سایت AcoustID ثبت کنید. روی گزینه **Register your application** (که در تصویر مشخص شده) کلیک کنید\nنکته: برای بزرگ‌نمایی تصویر، روی آن کلیک یا لمس کنید",
   "searchUsingAcoustID": "جستوجو با AcoustId",
-  "searchUsingItnues": "جستوجو با ITunes",
+  "searchUsingItnues": "جستوجو با iTunes",
   "save": "ذخیره",
   "acoustidForMetadata": "AcoustId (برای متادیتا)",
   "generatingAudioFingerprint": "تولید اثر انگشت صوتی",

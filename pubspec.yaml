@@ -16,10 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.2.0+6
+version: 1.3.0+7
 
 environment:
-  sdk: ^3.10.4
+  sdk: ^3.11.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -33,7 +33,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  material_ui: ^1.4.0
+  material_ui: ^1.11.1
   intl: ^0.20.3
   collection: ^1.19.1
   #GET AUDIO DATA FROM DISK
@@ -43,7 +43,7 @@ dependencies:
       url: https://github.com/Azare77/on_audio_query
       path: packages/on_audio_query
       ref: main
-  audio_metadata_reader: ^1.8.0
+  audio_metadata_reader: ^1.8.1
   android_media_store: ^0.0.4
   #STATE MANAGEMENT
   bloc: ^9.2.1
@@ -54,29 +54,29 @@ dependencies:
   just_audio_media_kit: ^2.1.0
   audio_service: ^0.18.19
   audio_service_mpris: ^0.2.1
-  audio_decode: ^1.3.5
+  audio_decode: ^1.3.6
   audio_decoder: ^0.8.1
   chromaprint: ^0.2.1
   #DATABASE
-  drift: ^2.35.0
+  drift: ^2.35.4
   drift_flutter: ^0.3.1
-  crypto: ^3.0.7
+  crypto: ^3.0.8
   path_provider: ^2.1.6
-  shared_preferences: ^2.5.5
+  shared_preferences: ^2.5.6
   #UI
-  flutter_svg: ^2.3.0
+  flutter_svg: ^2.4.0
   flutter_html: ^3.0.0
-  text_scroll: ^0.2.1
-  url_launcher: ^6.3.2
-  toastification: ^3.2.0
+  text_scroll: ^0.3.0
+  url_launcher: ^6.3.3
+  toastification: ^3.2.2
   flutter_colorpicker:
     git:
       url: https://github.com/MindStudioOfficial/flutter_colorpicker
       ref: fix-material_ui
   #PODCAST
   podcast_search: ^0.7.16
-  cached_network_image: ^4.0.2
-  background_downloader: ^9.6.5
+  cached_network_image: ^4.0.7
+  background_downloader: ^9.6.6
   #STREAM
   radio_browser_api: ^2.1.0
   #Cloud
@@ -85,9 +85,9 @@ dependencies:
       url: https://github.com/Azare77/soundcloud_explode_dart
       ref: main
   #SHARE
-  app_links: ^7.2.1
-  share_plus: ^13.3.0
-  file_picker: ^13.1.0
+  app_links: ^7.2.2
+  share_plus: ^13.3.1
+  file_picker: ^13.4.0
   open_with_app: ^0.2.0
 
   path: any
@@ -97,7 +97,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  drift_dev: ^2.35.2
+  drift_dev: ^2.35.3
   build_runner: ^2.17.1
   mocktail: ^1.0.5
   flutter_launcher_icons: "^0.14.4"
@@ -110,7 +110,7 @@ dev_dependencies:
 #  intl_utils: ^2.8.12
 dependency_overrides:
   html: 0.15.6
-  freezed_annotation: 3.1.0
+
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: true

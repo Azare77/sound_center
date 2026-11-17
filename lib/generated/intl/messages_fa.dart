@@ -169,7 +169,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "جستوجو با AcoustId",
     ),
     "searchUsingItnues": MessageLookupByLibrary.simpleMessage(
-      "جستوجو با ITunes",
+      "جستوجو با iTunes",
     ),
     "searchingForArtwork": MessageLookupByLibrary.simpleMessage(
       " جستوجوی کاور آهنگ",

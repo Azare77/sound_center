@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -894,10 +895,10 @@ class S {
     );
   }
 
-  /// `Search Using ITunes`
+  /// `Search Using iTunes`
   String get searchUsingItnues {
     return Intl.message(
-      'Search Using ITunes',
+      'Search Using iTunes',
       name: 'searchUsingItnues',
       desc: '',
       args: [],
@@ -972,8 +973,10 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   @override
   bool isSupported(Locale locale) => _isSupported(locale);
+
   @override
   Future<S> load(Locale locale) => S.load(locale);
+
   @override
   bool shouldReload(AppLocalizationDelegate old) => false;
 

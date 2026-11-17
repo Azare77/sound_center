@@ -309,7 +309,10 @@ class _ThemeDesignerState extends State<ThemeDesigner> {
             },
             child: Text(S.of(context).copy),
           ),
-          ElevatedButton(onPressed: saveTheme, child: Text(S.of(context).ok)),
+          ElevatedButton(
+            onPressed: saveTheme,
+            child: Text(S.of(context).submit),
+          ),
         ],
       ),
     );
@@ -373,7 +376,7 @@ class _ItemEntry extends StatelessWidget {
               ),
               actions: <Widget>[
                 ElevatedButton(
-                  child: Text(S.of(context).ok),
+                  child: Text(S.of(context).submit),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

@@ -518,53 +518,6 @@ abstract class AudioRepositoryImp implements AudioRepository {
       }
     }
   }
-
-  void _generateTag(File file, AudioEntity audio, Uint8List? coverBytes) {
-    final reader = file.openSync();
-    final bool hasExistingTag;
-    try {
-      hasExistingTag =
-          ApeParser.canUserParser(reader) ||
-          MP3Parser.hasID3v1Tag(reader) ||
-          MP3Parser.hasID3v2Tag(reader) ||
-          RiffParser.canUserParser(reader) ||
-          MP4Parser.canUserParser(reader) ||
-          FlacParser.canUserParser(reader);
-    } finally {
-      reader.closeSync();
-    }
-
-    if (!hasExistingTag || Platform.isLinux) {
-      Id3v4Writer().write(
-        file,
-        Mp3Metadata()
-          ..songName = audio.title
-          ..originalArtist = audio.artist
-          ..album = audio.album,
-      );
-    }
-
-    updateMetadata(file, (metadata) {
-      metadata.setTitle(audio.title);
-      metadata.setArtist(audio.artist);
-      metadata.setAlbum(audio.album);
-
-      if (audio.genres != null) metadata.setGenres(audio.genres!);
-
-      final year = int.tryParse(audio.year);
-      if (year != null) {
-        metadata.setYear(DateTime(year));
-      }
-
-      metadata.setTrackNumber(audio.trackNum);
-
-      if (coverBytes != null) {
-        metadata.setPictures([
-          Picture(coverBytes, 'image/jpeg', PictureType.coverFront),
-        ]);
-      }
-    });
-  }
 }
 
 void _generateTagInBackground(Map<String, dynamic> params) {

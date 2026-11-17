@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AcoustIdNote": MessageLookupByLibrary.simpleMessage(
+      "Important: Register your application on the AcoustID website to get an API key. Click **Register your application** (highlighted in the screenshot).\nTip: Click or tap the image to zoom in",
+    ),
     "STREAM_NAMES": MessageLookupByLibrary.simpleMessage(
       "----------------- STREAM NAMES ----------------",
     ),
@@ -110,10 +113,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "host": MessageLookupByLibrary.simpleMessage("Host"),
     "iconColor": MessageLookupByLibrary.simpleMessage("Icon"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
-    "importantRegisterYourApplicationToGetAnApiKey":
-        MessageLookupByLibrary.simpleMessage(
-          "Important: Register your application to get an API key",
-        ),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("Latest First"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),

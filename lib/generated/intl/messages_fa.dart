@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AcoustIdNote": MessageLookupByLibrary.simpleMessage(
+      "مهم: برای دریافت کلید API، برنامه خود را در وب‌سایت AcoustID ثبت کنید. روی گزینه **Register your application** (که در تصویر مشخص شده) کلیک کنید\nنکته: برای بزرگ‌نمایی تصویر، روی آن کلیک یا لمس کنید",
+    ),
     "STREAM_NAMES": MessageLookupByLibrary.simpleMessage(
       "----------------- STREAM NAMES ----------------",
     ),
@@ -92,7 +95,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "بازیابی داده‌ها ناموفق بود.",
     ),
     "failedToUpdateMetadata": MessageLookupByLibrary.simpleMessage(
-      "به‌روزرسانی اطلاعات متادیتای فایل صوتی ناموفق بود.",
+      "به‌روزرسانی اطلاعات متادیتای فایل صوتی ناموفق بود",
     ),
     "fetchingMetadataFromMusicbrainz": MessageLookupByLibrary.simpleMessage(
       "دریافت اطلاعات آهنگ از MusicBrainz",
@@ -108,10 +111,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "host": MessageLookupByLibrary.simpleMessage("هاست"),
     "iconColor": MessageLookupByLibrary.simpleMessage("آیکون"),
     "importData": MessageLookupByLibrary.simpleMessage("وارد کردن داده‌ها"),
-    "importantRegisterYourApplicationToGetAnApiKey":
-        MessageLookupByLibrary.simpleMessage(
-          "مهم: برای دریافت کلید API، برنامه خود را ثبت کنید.",
-        ),
     "language": MessageLookupByLibrary.simpleMessage("زبان"),
     "latestFirst": MessageLookupByLibrary.simpleMessage("جدید ترین"),
     "light": MessageLookupByLibrary.simpleMessage("روشن"),

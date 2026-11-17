@@ -121,7 +121,7 @@
   "metadataUpdated": "Metadata updated successfully",
   "failedToUpdateMetadata": "Failed to update audio metadata",
   "trackNumber": "Track Number",
-  "importantRegisterYourApplicationToGetAnApiKey": "Important: Register your application to get an API key",
+  "AcoustIdNote": "Important: Register your application on the AcoustID website to get an API key. Click **Register your application** (highlighted in the screenshot).\nTip: Click or tap the image to zoom in",
   "searchUsingAcoustID": "Search Using AcoustID",
   "searchUsingItnues": "Search Using ITunes",
   "save": "Save",

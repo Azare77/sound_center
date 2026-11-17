@@ -50,6 +50,15 @@ jobs:
           echo "ANDROID_HOME=/opt/android-sdk" >> $GITHUB_ENV
           echo "ANDROID_SDK_ROOT=/opt/android-sdk" >> $GITHUB_ENV
 
+      - name: Ensure build-tools 34.0.0
+        run: |
+          yes | sdkmanager "build-tools;34.0.0" || true
+
+      - name: Check actual build-tools version
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls $ANDROID_HOME/build-tools/
+
       - name: Build APK
         run: flutter build apk --release --split-per-abi
 

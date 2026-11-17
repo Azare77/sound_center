@@ -17,6 +17,7 @@ if (keystorePropertiesFile.exists()) {
 extensions.configure<ApplicationExtension> {
     namespace = "app.soundcenter.player"
     compileSdk = 37
+    buildToolsVersion = "34.0.0"
     ndkVersion = "29.0.13113456"
 
     compileOptions {

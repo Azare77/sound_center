@@ -62,6 +62,12 @@ extensions.configure<ApplicationExtension> {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    // در build.gradle.kts (app module)
+    tasks.whenTaskAdded {
+        if (name.contains("ArtProfile")) {
+            enabled = false
+        }
+    }
 }
 
 kotlin {

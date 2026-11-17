@@ -29,11 +29,13 @@ class TextFieldBox extends StatefulWidget {
     this.onFocusChanged,
     this.autofillHints,
     this.margin = const EdgeInsets.all(10),
+    this.textCapitalization = TextCapitalization.none,
   });
 
   final TextEditingController? controller;
   final TextInputType? textInputType;
   final TextInputAction? textInputAction;
+  final TextCapitalization textCapitalization;
   final bool isPassword;
   final String? labelText;
   final String? hintText;
@@ -137,6 +139,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
         autofocus: widget.autofocus,
         autofillHints: widget.autofillHints,
         inputFormatters: widget.inputFormatters,
+        textCapitalization: widget.textCapitalization,
         onChanged: (String value) {
           _handleTextChange(value);
           if (widget.onChanged != null) {

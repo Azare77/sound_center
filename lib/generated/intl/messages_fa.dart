@@ -97,7 +97,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fetchingMetadataFromMusicbrainz": MessageLookupByLibrary.simpleMessage(
       "دریافت اطلاعات آهنگ از MusicBrainz",
     ),
-    "findMetadata": MessageLookupByLibrary.simpleMessage("پیدا کردن متادیتا"),
     "format": MessageLookupByLibrary.simpleMessage("فرمت"),
     "generatingAudioFingerprint": MessageLookupByLibrary.simpleMessage(
       "تولید اثر انگشت صوتی",
@@ -167,6 +166,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "scaffoldBackground": MessageLookupByLibrary.simpleMessage("پس زمینه"),
     "scanning": MessageLookupByLibrary.simpleMessage("در حال اسکن"),
     "searchHint": MessageLookupByLibrary.simpleMessage("دنبال چی هستی؟"),
+    "searchUsingAcoustID": MessageLookupByLibrary.simpleMessage(
+      "جستوجو با AcoustId",
+    ),
+    "searchUsingItnues": MessageLookupByLibrary.simpleMessage(
+      "جستوجو با ITunes",
+    ),
     "searchingForArtwork": MessageLookupByLibrary.simpleMessage(
       " جستوجوی کاور آهنگ",
     ),

@@ -99,7 +99,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fetchingMetadataFromMusicbrainz": MessageLookupByLibrary.simpleMessage(
       "Fetching metadata from MusicBrainz",
     ),
-    "findMetadata": MessageLookupByLibrary.simpleMessage("Find Metadata"),
     "format": MessageLookupByLibrary.simpleMessage("Format"),
     "generatingAudioFingerprint": MessageLookupByLibrary.simpleMessage(
       "Generating audio fingerprint",
@@ -169,6 +168,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "scanning": MessageLookupByLibrary.simpleMessage("Scanning"),
     "searchHint": MessageLookupByLibrary.simpleMessage("what do you want?"),
+    "searchUsingAcoustID": MessageLookupByLibrary.simpleMessage(
+      "Search Using AcoustID",
+    ),
+    "searchUsingItnues": MessageLookupByLibrary.simpleMessage(
+      "Search Using ITunes",
+    ),
     "searchingForArtwork": MessageLookupByLibrary.simpleMessage(
       "Searching for artwork",
     ),

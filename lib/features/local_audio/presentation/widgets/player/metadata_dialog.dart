@@ -29,19 +29,22 @@ class MetadataDialog extends StatefulWidget {
 }
 
 class _MetadataDialogState extends State<MetadataDialog> {
-  bool _isLoading = false;
+  bool _isLoadingAcoustId = false;
+  bool _isLoadingItunes = false;
   bool _isLoadingCover = false;
+
+  bool get _isLoading =>
+      _isLoadingAcoustId || _isLoadingItunes || _isLoadingCover;
   String? _error;
+  late AudioEntity originalAudio;
   late AudioEntity audio;
   late final TextEditingController _titleController;
   late final TextEditingController _artistController;
   late final TextEditingController _albumController;
   late final TextEditingController _genreController;
 
-  // late final TextEditingController _trackNumController;
   late final TextEditingController _yearController;
   Uint8List? cover;
-  Uint8List? originalCover;
   final repo = LocalAudioRepository();
   String? step;
 
@@ -51,7 +54,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
   void initState() {
     super.initState();
     audio = widget.audio;
-    originalCover = audio.cover;
+    originalAudio = widget.audio;
   }
 
   String normalize(String? value) {
@@ -71,12 +74,20 @@ class _MetadataDialogState extends State<MetadataDialog> {
     _initialized = true;
 
     final metadata = readMetadata(File(audio.path));
-    final title = metadata.title?.trim() ?? '';
-    final album = metadata.album?.trim() ?? '';
+    final title = metadata.title?.trim();
+    final album = metadata.album?.trim();
     final artist = audio.artist;
-    final genre = metadata.genres.join(',');
-    final year = metadata.year?.year ?? 0;
-    // final trackNum = metadata.trackNumber ?? 0;
+    final genre = metadata.genres.isNotEmpty
+        ? metadata.genres.join(',')
+        : audio.genre;
+    final year = metadata.year?.year;
+    originalAudio = originalAudio.copyWith(
+      title: title,
+      artist: normalize(artist),
+      album: normalize(album),
+      genre: normalize(genre),
+      year: year?.toString(),
+    );
 
     _titleController = TextEditingController(text: title);
 
@@ -85,12 +96,9 @@ class _MetadataDialogState extends State<MetadataDialog> {
     _albumController = TextEditingController(text: normalize(album));
 
     _genreController = TextEditingController(text: normalize(genre));
-    // _trackNumController = TextEditingController(
-    //   text: audio.trackNum > 0 ? trackNum.toString() : null,
-    // );
 
     _yearController = TextEditingController(
-      text: normalize(year > 0 ? year.toString() : null),
+      text: normalize(year != null && year > 0 ? year.toString() : null),
     );
 
     cover = audio.cover;
@@ -104,7 +112,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
     if (AppSettingStorage.getAcoustIdApikey() == null) return;
 
     setState(() {
-      _isLoading = true;
+      _isLoadingAcoustId = true;
       _error = null;
     });
 
@@ -137,15 +145,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
         return;
       }
 
-      audio = result;
-      // Update text fields
-      _titleController.text = normalize(result.title);
-      _artistController.text = normalize(result.artist);
-      _albumController.text = normalize(result.album);
-      _genreController.text = normalize(result.genre);
-      // _trackNumController.text = result.trackNum.toString();
-      _yearController.text = normalize(result.year);
-      cover = result.cover;
+      updateAudio(result);
     } catch (e) {
       if (!mounted) return;
 
@@ -155,16 +155,93 @@ class _MetadataDialogState extends State<MetadataDialog> {
     } finally {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isLoadingAcoustId = false;
         });
       }
     }
   }
 
+  Future<void> loadItunesMetadata() async {
+    if (_isLoading) return;
+    setState(() {
+      _isLoadingItunes = true;
+      _error = null;
+    });
+
+    try {
+      final AudioEntity? result = await repo.getItunesMetadata(
+        originalAudio,
+        title: _titleController.text.trim(),
+        artist: _artistController.text.trim(),
+        album: _albumController.text.trim(),
+      );
+
+      if (!mounted) return;
+      if (result == null) {
+        ToastMessage.showErrorMessage(title: S.of(context).noMetadata);
+        return;
+      }
+      updateAudio(result);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingItunes = false;
+        });
+      }
+    }
+  }
+
+  void updateAudio(AudioEntity result) {
+    audio = result;
+    // Update text fields
+    _titleController.text = normalize(result.title);
+    _artistController.text = normalize(result.artist);
+    _albumController.text = normalize(result.album);
+    _genreController.text = normalize(result.genre);
+    _yearController.text = normalize(result.year);
+    cover = result.cover;
+  }
+
+  Future<void> selectCover() async {
+    final image = await FilePicker.pickFile(type: FileType.image);
+    if (image == null) return;
+    cover = await image.xFile.readAsBytes();
+    setState(() {
+      audio = audio.copyWith(cover: cover);
+    });
+  }
+
+  Future<void> searchCover() async {
+    if (_isLoading) return;
+    setState(() {
+      _isLoadingCover = true;
+    });
+    final image = await repo.getCover(
+      title: _titleController.text.trim(),
+      artist: _artistController.text.trim(),
+      album: _albumController.text.trim(),
+    );
+
+    if (image == null) {
+      setState(() {
+        _isLoadingCover = false;
+      });
+      return;
+    }
+    cover = image;
+    setState(() {
+      audio = audio.copyWith(cover: cover);
+      _isLoadingCover = false;
+    });
+  }
+
   Future<void> saveMetadata() async {
     final localBloc = context.read<LocalBloc>();
-
-    // final trackNumber = int.tryParse(_trackNumController.text.trim());
 
     final updatedAudio = audio.copyWith(
       title: _titleController.text.trim(),
@@ -173,7 +250,6 @@ class _MetadataDialogState extends State<MetadataDialog> {
       genre: _genreController.text.trim(),
       genres: _genreController.text.trim().split(','),
       year: _yearController.text.trim(),
-      // trackNum: trackNumber,
       cover: cover,
     );
 
@@ -207,39 +283,6 @@ class _MetadataDialogState extends State<MetadataDialog> {
     }
   }
 
-  Future<void> selectCover() async {
-    final image = await FilePicker.pickFile(type: FileType.image);
-    if (image == null) return;
-    cover = await image.xFile.readAsBytes();
-    setState(() {
-      audio = audio.copyWith(cover: cover);
-    });
-  }
-
-  Future<void> searchCover() async {
-    if (_isLoadingCover || _isLoading) return;
-    setState(() {
-      _isLoadingCover = true;
-    });
-    final image = await repo.getCover(
-      title: _titleController.text.trim(),
-      artist: _artistController.text.trim(),
-      album: _albumController.text.trim(),
-    );
-
-    if (image == null) {
-      setState(() {
-        _isLoadingCover = false;
-      });
-      return;
-    }
-    cover = image;
-    setState(() {
-      audio = audio.copyWith(cover: cover);
-      _isLoadingCover = false;
-    });
-  }
-
   @override
   void dispose() {
     _titleController.dispose();
@@ -247,7 +290,6 @@ class _MetadataDialogState extends State<MetadataDialog> {
     _albumController.dispose();
     _genreController.dispose();
     _yearController.dispose();
-    // _trackNumController.dispose();
 
     super.dispose();
   }
@@ -298,7 +340,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
                           IconButton(
                             onPressed: () {
                               setState(() {
-                                cover = originalCover;
+                                cover = originalAudio.cover;
                                 audio = audio.copyWith(cover: cover);
                               });
                             },
@@ -311,37 +353,45 @@ class _MetadataDialogState extends State<MetadataDialog> {
                         icon: Icons.music_note_outlined,
                         controller: _titleController,
                         inputType: TextInputType.name,
+                        inputAction: TextInputAction.next,
+                        onRestorePressed: () =>
+                            _titleController.text = originalAudio.title,
                       ),
                       _buildField(
                         label: S.of(context).artist,
                         icon: Icons.person_rounded,
                         controller: _artistController,
                         inputType: TextInputType.name,
+                        inputAction: TextInputAction.next,
+                        onRestorePressed: () =>
+                            _artistController.text = originalAudio.artist,
                       ),
                       _buildField(
                         label: S.of(context).album,
                         icon: Icons.album_rounded,
                         controller: _albumController,
                         inputType: TextInputType.name,
+                        inputAction: TextInputAction.next,
+                        onRestorePressed: () =>
+                            _albumController.text = originalAudio.album,
                       ),
                       _buildField(
                         label: S.of(context).genre,
                         icon: Icons.music_note_rounded,
                         controller: _genreController,
                         inputType: TextInputType.name,
+                        inputAction: TextInputAction.next,
+                        onRestorePressed: () =>
+                            _genreController.text = originalAudio.genre,
                       ),
-                      // _buildField(
-                      //   label: S.of(context).trackNumber,
-                      //   controller: _trackNumController,
-                      //   icon: Icons.queue_music_outlined,
-                      //   inputType: TextInputType.number,
-                      //   format: FilteringTextInputFormatter.digitsOnly,
-                      // ),
                       _buildField(
                         label: S.of(context).year,
                         icon: Icons.calendar_month_outlined,
                         controller: _yearController,
                         inputType: TextInputType.number,
+                        inputAction: TextInputAction.done,
+                        onRestorePressed: () =>
+                            _yearController.text = originalAudio.year,
                       ),
 
                       if (_error != null) ...[
@@ -355,54 +405,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: (_isLoading || _isLoadingCover)
-                            ? null
-                            : loadData,
-                        child: SizedBox(
-                          height: 20,
-                          child: Center(
-                            child: _isLoading
-                                ? Row(
-                                    spacing: 5,
-                                    children: [
-                                      if (step != null)
-                                        Flexible(child: ScrollingText(step!)),
-                                      const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Text(
-                                    S.of(context).findMetadata,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: TextButton(
-                        onPressed: (_isLoading || _isLoadingCover)
-                            ? null
-                            : saveMetadata,
-                        child: Text(S.of(context).save),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _buildButtons(),
             ],
           ),
         ),
@@ -414,6 +417,8 @@ class _MetadataDialogState extends State<MetadataDialog> {
     required String label,
     required TextEditingController controller,
     required IconData icon,
+    required VoidCallback onRestorePressed,
+    TextInputAction? inputAction,
     TextInputType? inputType,
     TextInputFormatter? format,
   }) {
@@ -422,9 +427,89 @@ class _MetadataDialogState extends State<MetadataDialog> {
       labelText: label,
       textInputType: inputType,
       inputFormatters: format == null ? [] : [format],
+      textCapitalization: TextCapitalization.words,
+      textInputAction: inputAction,
+      maxLines: 1,
       prefixIcon: Icon(
         icon,
         color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.5),
+      ),
+      suffixIcon: IconButton(
+        onPressed: () {
+          setState(() {
+            onRestorePressed.call();
+          });
+        },
+        icon: Icon(
+          Icons.restore_rounded,
+          color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: .stretch,
+        spacing: 10,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: (_isLoading) ? null : loadData,
+                  child: Center(
+                    child: SizedBox(
+                      height: 20,
+                      child: Center(
+                        child: _isLoadingAcoustId
+                            ? Row(
+                                mainAxisSize: .min,
+                                spacing: 5,
+                                children: [
+                                  if (step != null)
+                                    Flexible(child: ScrollingText(step!)),
+                                  const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ScrollingText(S.of(context).searchUsingAcoustID),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: _isLoading ? null : loadItunesMetadata,
+                  child: SizedBox(
+                    height: 20,
+                    child: Center(
+                      child: _isLoadingItunes
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : ScrollingText(S.of(context).searchUsingItnues),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          TextButton(
+            onPressed: _isLoading ? null : saveMetadata,
+            child: Text(S.of(context).save),
+          ),
+        ],
       ),
     );
   }

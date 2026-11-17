@@ -884,11 +884,21 @@ class S {
     );
   }
 
-  /// `Find Metadata`
-  String get findMetadata {
+  /// `Search Using AcoustID`
+  String get searchUsingAcoustID {
     return Intl.message(
-      'Find Metadata',
-      name: 'findMetadata',
+      'Search Using AcoustID',
+      name: 'searchUsingAcoustID',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search Using ITunes`
+  String get searchUsingItnues {
+    return Intl.message(
+      'Search Using ITunes',
+      name: 'searchUsingItnues',
       desc: '',
       args: [],
     );

@@ -2,10 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:sound_center/features/local_audio/data/model/audio_metadata.dart';
-import 'package:sound_center/features/local_audio/data/repositories/metadata/acoustid_service.dart';
-import 'package:sound_center/features/local_audio/data/repositories/metadata/cover_art_service.dart';
+import 'package:sound_center/features/local_audio/data/model/itunes_track.dart';
 import 'package:sound_center/features/local_audio/data/repositories/metadata/metadata_parser.dart';
-import 'package:sound_center/features/local_audio/data/repositories/metadata/musicbrainz_service.dart';
+import 'package:sound_center/features/local_audio/data/repositories/metadata/services/acoustid_service.dart';
+import 'package:sound_center/features/local_audio/data/repositories/metadata/services/cover_art_service.dart';
+import 'package:sound_center/features/local_audio/data/repositories/metadata/services/itunes_service.dart';
+import 'package:sound_center/features/local_audio/data/repositories/metadata/services/musicbrainz_service.dart';
 
 class AcoustId {
   final AcoustIdService _acoustIdService;
@@ -94,7 +96,7 @@ class AcoustId {
       metadata.tags = MetadataParser.extractNames(data['tags']);
 
       if (metadata.genres.isNotEmpty) {
-        metadata.genre = metadata.genres.first;
+        metadata.genre = metadata.genres.join(",");
       }
 
       await _fetchWorkArtists(data, metadata);
@@ -332,6 +334,32 @@ class AcoustId {
     } catch (e) {
       debugPrint('Cover Art error: $e');
     }
+  }
+
+  Future<AudioMetadata?> lookupItunesMetadata(
+    String? title,
+    String? artist,
+    String? album,
+  ) async {
+    ItunesTrack? track = await ItunesService().checkItunes(
+      title,
+      artist,
+      album,
+    );
+    if (track == null) return null;
+    AudioMetadata metadata = AudioMetadata();
+    metadata.title = track.trackName;
+    metadata.albumArtist = track.artistName;
+    metadata.album = track.collectionName;
+    metadata.artists = track.albumArtistName?.split(',') ?? [];
+    metadata.genre = track.primaryGenreName;
+    metadata.releaseYear = track.releaseYear?.toString();
+    metadata.coverBytes = await loadItunesCoverArt(
+      metadata.title,
+      metadata.albumArtist,
+      metadata.album,
+    );
+    return metadata;
   }
 
   Future<Uint8List?> loadItunesCoverArt(

@@ -14,7 +14,7 @@ class ToastMessage {
       overlayState: NAVIGATOR_KEY.currentState?.overlay,
       type: ToastificationType.error,
       style: ToastificationStyle.flatColored,
-      title: Text(title),
+      title: Text(title, style: TextStyle(fontFamily: "Vazir")),
       description: description != null ? Text(description) : null,
       alignment: Alignment.bottomCenter,
       autoCloseDuration: const Duration(seconds: 2),

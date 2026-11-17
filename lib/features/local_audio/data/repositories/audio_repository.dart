@@ -392,6 +392,44 @@ abstract class AudioRepositoryImp implements AudioRepository {
     }
   }
 
+  Future<AudioEntity?> getItunesMetadata(
+    AudioEntity audio, {
+    String? title,
+    String? artist,
+    String? album,
+  }) async {
+    final acoustId = AcoustId();
+    try {
+      final metadata = await acoustId.lookupItunesMetadata(
+        title ?? audio.title,
+        artist ?? audio.artist,
+        album ?? audio.album,
+      );
+      if (metadata == null) return null;
+      return audio.copyWith(
+        title: metadata.title,
+        artist: metadata.artists.isNotEmpty
+            ? metadata.artists.join(',')
+            : metadata.albumArtist,
+        album: metadata.album,
+        year: metadata.releaseYear,
+        trackNum: metadata.trackNumber,
+        genres: metadata.genres.isNotEmpty
+            ? metadata.genres
+            : metadata.albumGenres,
+        genre:
+            metadata.genre ??
+            metadata.genres.firstOrNull ??
+            metadata.albumGenres.firstOrNull,
+        cover: metadata.coverBytes,
+      );
+    } catch (e) {
+      rethrow;
+    } finally {
+      acoustId.dispose();
+    }
+  }
+
   Future<Uint8List?> getCover({
     required String? title,
     required String? artist,

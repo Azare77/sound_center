@@ -4,6 +4,7 @@ import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 // ignore: implementation_imports
 import 'package:audio_metadata_reader/src/parsers/containers/riff.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sound_center/core/util/audio/audio_util.dart';
@@ -455,58 +456,42 @@ abstract class AudioRepositoryImp implements AudioRepository {
       throw Exception('Audio file does not exist');
     }
 
+    // Linux
     if (Platform.isLinux) {
-      _generateTag(original, audio);
-      updateMetadata(original, (metadata) {
-        metadata.setTitle(audio.title);
-        metadata.setArtist(audio.artist);
-        metadata.setAlbum(audio.album);
-
-        if (audio.genres != null) metadata.setGenres(audio.genres!);
-
-        final year = int.tryParse(audio.year);
-        if (year != null) {
-          metadata.setYear(DateTime(year));
-        }
-
-        metadata.setTrackNumber(audio.trackNum);
-
-        if (coverBytes != null) {
-          metadata.setPictures([
-            Picture(coverBytes, 'image/jpeg', PictureType.coverFront),
-          ]);
-        }
+      await compute(_generateTagInBackground, {
+        'filePath': original.path,
+        'title': audio.title,
+        'artist': audio.artist,
+        'album': audio.album,
+        'genres': audio.genres,
+        'year': audio.year,
+        'trackNum': audio.trackNum,
+        'coverBytes': coverBytes,
       });
+
       return;
     }
+
+    // Android
     final tempDir = await getTemporaryDirectory();
     final extension = p.extension(audio.path);
+
     final tempFile = File(
       p.join(tempDir.path, 'metadata_${audio.id}$extension'),
     );
 
     try {
       await original.copy(tempFile.path);
-      _generateTag(tempFile, audio);
-      updateMetadata(tempFile, (metadata) {
-        metadata.setTitle(audio.title);
-        metadata.setArtist(audio.artist);
-        metadata.setAlbum(audio.album);
 
-        if (audio.genres != null) metadata.setGenres(audio.genres!);
-
-        final year = int.tryParse(audio.year);
-        if (year != null) {
-          metadata.setYear(DateTime(year));
-        }
-
-        metadata.setTrackNumber(audio.trackNum);
-
-        if (coverBytes != null) {
-          metadata.setPictures([
-            Picture(coverBytes, 'image/jpeg', PictureType.coverFront),
-          ]);
-        }
+      await compute(_generateTagInBackground, {
+        'filePath': tempFile.path,
+        'title': audio.title,
+        'artist': audio.artist,
+        'album': audio.album,
+        'genres': audio.genres,
+        'year': audio.year,
+        'trackNum': audio.trackNum,
+        'coverBytes': coverBytes,
       });
 
       if (!await tempFile.exists() || await tempFile.length() == 0) {
@@ -517,11 +502,13 @@ abstract class AudioRepositoryImp implements AudioRepository {
       final writer = ScopedStorageWriter();
 
       final preGranted = await writer.requestWriteAccess(uri);
+
       if (!preGranted) {
         throw Exception('Write permission denied');
       }
 
       final success = await writer.writeBytes(uri, editedBytes);
+
       if (!success) {
         throw Exception('Failed to save metadata or permission denied');
       }
@@ -532,7 +519,7 @@ abstract class AudioRepositoryImp implements AudioRepository {
     }
   }
 
-  void _generateTag(File file, AudioEntity audio) {
+  void _generateTag(File file, AudioEntity audio, Uint8List? coverBytes) {
     final reader = file.openSync();
     final bool hasExistingTag;
     try {
@@ -547,14 +534,93 @@ abstract class AudioRepositoryImp implements AudioRepository {
       reader.closeSync();
     }
 
-    if (hasExistingTag) return;
+    if (!hasExistingTag || Platform.isLinux) {
+      Id3v4Writer().write(
+        file,
+        Mp3Metadata()
+          ..songName = audio.title
+          ..originalArtist = audio.artist
+          ..album = audio.album,
+      );
+    }
 
+    updateMetadata(file, (metadata) {
+      metadata.setTitle(audio.title);
+      metadata.setArtist(audio.artist);
+      metadata.setAlbum(audio.album);
+
+      if (audio.genres != null) metadata.setGenres(audio.genres!);
+
+      final year = int.tryParse(audio.year);
+      if (year != null) {
+        metadata.setYear(DateTime(year));
+      }
+
+      metadata.setTrackNumber(audio.trackNum);
+
+      if (coverBytes != null) {
+        metadata.setPictures([
+          Picture(coverBytes, 'image/jpeg', PictureType.coverFront),
+        ]);
+      }
+    });
+  }
+}
+
+void _generateTagInBackground(Map<String, dynamic> params) {
+  final file = File(params['filePath'] as String);
+
+  final reader = file.openSync();
+
+  final bool hasExistingTag;
+
+  try {
+    hasExistingTag =
+        ApeParser.canUserParser(reader) ||
+        MP3Parser.hasID3v1Tag(reader) ||
+        MP3Parser.hasID3v2Tag(reader) ||
+        RiffParser.canUserParser(reader) ||
+        MP4Parser.canUserParser(reader) ||
+        FlacParser.canUserParser(reader);
+  } finally {
+    reader.closeSync();
+  }
+
+  if (!hasExistingTag || Platform.isLinux) {
     Id3v4Writer().write(
       file,
       Mp3Metadata()
-        ..songName = audio.title
-        ..originalArtist = audio.artist
-        ..album = audio.album,
+        ..songName = params['title']
+        ..originalArtist = params['artist']
+        ..album = params['album'],
     );
   }
+
+  updateMetadata(file, (metadata) {
+    metadata.setTitle(params['title']);
+    metadata.setArtist(params['artist']);
+    metadata.setAlbum(params['album']);
+
+    final genres = params['genres'];
+
+    if (genres != null) {
+      metadata.setGenres(List<String>.from(genres));
+    }
+
+    final year = int.tryParse(params['year']);
+
+    if (year != null) {
+      metadata.setYear(DateTime(year));
+    }
+
+    metadata.setTrackNumber(params['trackNum']);
+
+    final coverBytes = params['coverBytes'] as Uint8List?;
+
+    if (coverBytes != null) {
+      metadata.setPictures([
+        Picture(coverBytes, 'image/jpeg', PictureType.coverFront),
+      ]);
+    }
+  });
 }

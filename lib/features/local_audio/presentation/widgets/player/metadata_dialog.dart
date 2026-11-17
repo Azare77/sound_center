@@ -29,24 +29,28 @@ class MetadataDialog extends StatefulWidget {
 }
 
 class _MetadataDialogState extends State<MetadataDialog> {
+  late AudioEntity originalAudio;
+  late AudioEntity audio;
+  Uint8List? cover;
+
   bool _isLoadingAcoustId = false;
   bool _isLoadingItunes = false;
   bool _isLoadingCover = false;
+  bool _isSaving = false;
 
   bool get _isLoading =>
-      _isLoadingAcoustId || _isLoadingItunes || _isLoadingCover;
+      _isLoadingAcoustId || _isLoadingItunes || _isLoadingCover || _isSaving;
+
   String? _error;
-  late AudioEntity originalAudio;
-  late AudioEntity audio;
+  String? step;
+
   late final TextEditingController _titleController;
   late final TextEditingController _artistController;
   late final TextEditingController _albumController;
   late final TextEditingController _genreController;
-
   late final TextEditingController _yearController;
-  Uint8List? cover;
+
   final repo = LocalAudioRepository();
-  String? step;
 
   bool _initialized = false;
 
@@ -86,7 +90,7 @@ class _MetadataDialogState extends State<MetadataDialog> {
       artist: normalize(artist),
       album: normalize(album),
       genre: normalize(genre),
-      year: year?.toString(),
+      year: normalize(year != null && year > 0 ? year.toString() : null),
     );
 
     _titleController = TextEditingController(text: title);
@@ -242,7 +246,9 @@ class _MetadataDialogState extends State<MetadataDialog> {
 
   Future<void> saveMetadata() async {
     final localBloc = context.read<LocalBloc>();
-
+    setState(() {
+      _isSaving = true;
+    });
     final updatedAudio = audio.copyWith(
       title: _titleController.text.trim(),
       artist: _artistController.text.trim(),
@@ -430,6 +436,11 @@ class _MetadataDialogState extends State<MetadataDialog> {
       textCapitalization: TextCapitalization.words,
       textInputAction: inputAction,
       maxLines: 1,
+      onSubmitted: (_) {
+        if (inputAction == TextInputAction.next) {
+          FocusScope.of(context).nextFocus();
+        }
+      },
       prefixIcon: Icon(
         icon,
         color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.5),
@@ -507,7 +518,13 @@ class _MetadataDialogState extends State<MetadataDialog> {
           ),
           TextButton(
             onPressed: _isLoading ? null : saveMetadata,
-            child: Text(S.of(context).save),
+            child: _isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(S.of(context).save),
           ),
         ],
       ),

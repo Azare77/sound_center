@@ -64,6 +64,12 @@ extensions.configure<ApplicationExtension> {
     }
 }
 
+tasks.whenTaskAdded {
+    if (name.contains("ArtProfile")) {
+        enabled = false
+    }
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
@@ -92,11 +98,6 @@ android.applicationVariants.configureEach {
 }
 
 //TODO: use in Newer Versions
-//tasks.whenTaskAdded {
-//    if (name.contains("ArtProfile")) {
-//        enabled = false
-//    }
-//}
 //androidComponents {
 //    onVariants(selector().withBuildType("release")) { variant ->
 //        variant.outputs.forEach { output ->
